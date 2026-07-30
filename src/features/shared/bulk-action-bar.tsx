@@ -1,0 +1,57 @@
+import { Download, Printer, Trash2, X } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+
+import { Button } from "@/components";
+
+/** Floating action bar shown while table rows are selected (shared across modules). */
+export function BulkActionBar({
+  count,
+  onDelete,
+  onExport,
+  onPrint,
+  onClear,
+}: {
+  count: number;
+  onDelete: () => void;
+  onExport: () => void;
+  onPrint: () => void;
+  onClear: () => void;
+}) {
+  return (
+    <AnimatePresence>
+      {count > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 16 }}
+          transition={{ duration: 0.18, ease: "easeOut" }}
+          className="fixed bottom-6 left-1/2 z-40 -translate-x-1/2"
+        >
+          <div className="flex items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3 py-2 shadow-lg">
+            <span className="px-1 text-[12.5px] font-medium text-neutral-800">
+              {count} selected
+            </span>
+            <span className="h-5 w-px bg-neutral-200" />
+            <Button variant="ghost" onClick={onExport}>
+              <Download />
+              Export
+            </Button>
+            <Button variant="ghost" onClick={onPrint}>
+              <Printer />
+              Print
+            </Button>
+            <Button variant="ghost" className="text-red-600 hover:bg-red-50 hover:text-red-700" onClick={onDelete}>
+              <Trash2 />
+              Delete
+            </Button>
+            <span className="h-5 w-px bg-neutral-200" />
+            <Button variant="ghost" onClick={onClear} aria-label="Cancel selection">
+              <X />
+              Cancel
+            </Button>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}

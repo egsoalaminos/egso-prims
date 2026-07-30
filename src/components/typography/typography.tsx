@@ -1,0 +1,78 @@
+import * as React from "react";
+
+import { cn } from "@/lib/utils";
+
+/**
+ * Typography scale from the Design Foundation. Sizes are fixed pixel values —
+ * do not restyle per usage; pick the correct component instead.
+ */
+
+type TextProps<T extends React.ElementType> = {
+  as?: T;
+  className?: string;
+  children?: React.ReactNode;
+} & Omit<React.ComponentPropsWithoutRef<T>, "as" | "className" | "children">;
+
+function createText<D extends React.ElementType>(
+  defaultTag: D,
+  baseClass: string,
+  displayName: string,
+) {
+  function Text<T extends React.ElementType = D>({
+    as,
+    className,
+    children,
+    ...props
+  }: TextProps<T>) {
+    const Tag = (as ?? defaultTag) as React.ElementType;
+    return (
+      <Tag className={cn(baseClass, className)} {...props}>
+        {children}
+      </Tag>
+    );
+  }
+  Text.displayName = displayName;
+  return Text;
+}
+
+/** 20px semibold — one per page (e.g. "Welcome back, Administrator"). */
+export const PageTitle = createText(
+  "h1",
+  "text-[20px] font-semibold tracking-tight text-neutral-900",
+  "PageTitle",
+);
+
+/** 14px semibold — card and section headings. */
+export const SectionTitle = createText(
+  "h2",
+  "text-[14px] font-semibold text-neutral-900",
+  "SectionTitle",
+);
+
+/** 13px muted — descriptive line under a page title. */
+export const Subtitle = createText(
+  "p",
+  "text-[13px] text-neutral-500",
+  "Subtitle",
+);
+
+/** 10px uppercase micro-label — sidebar groups, table headers. */
+export const OverlineLabel = createText(
+  "div",
+  "text-[10px] font-semibold uppercase tracking-wider text-neutral-400",
+  "OverlineLabel",
+);
+
+/** 11.5px muted — meta text, timestamps, helper copy. */
+export const Caption = createText(
+  "span",
+  "text-[11.5px] text-neutral-500",
+  "Caption",
+);
+
+/** 13px default body copy. */
+export const BodyText = createText(
+  "p",
+  "text-[13px] text-neutral-700",
+  "BodyText",
+);

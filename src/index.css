@@ -1,0 +1,487 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * General Services Office design system — ported verbatim from the Design Foundation
+ * (design-reference/styles-reference.css). Do not modify values without a
+ * design-change instruction.
+ *
+ * The @theme inline block maps CSS custom properties to Tailwind utility
+ * classes (e.g. --color-primary -> bg-primary, text-primary).
+ *
+ * The :root and .dark blocks define the actual color values using oklch.
+ * All colors MUST use oklch format.
+ *
+ * To add a new semantic color:
+ * 1. Add the variable to :root (light value) and .dark (dark value)
+ * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ */
+
+@theme inline {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-canvas: var(--canvas);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.129 0.042 264.695);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.129 0.042 264.695);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.129 0.042 264.695);
+  --primary: oklch(0.208 0.042 265.755);
+  --primary-foreground: oklch(0.984 0.003 247.858);
+  --secondary: oklch(0.968 0.007 247.896);
+  --secondary-foreground: oklch(0.208 0.042 265.755);
+  --muted: oklch(0.968 0.007 247.896);
+  --muted-foreground: oklch(0.554 0.046 257.417);
+  --accent: oklch(0.968 0.007 247.896);
+  --accent-foreground: oklch(0.208 0.042 265.755);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.984 0.003 247.858);
+  --border: oklch(0.929 0.013 255.508);
+  --input: oklch(0.929 0.013 255.508);
+  --ring: oklch(0.704 0.04 256.788);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.984 0.003 247.858);
+  --sidebar-foreground: oklch(0.129 0.042 264.695);
+  --sidebar-primary: oklch(0.208 0.042 265.755);
+  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-accent: oklch(0.968 0.007 247.896);
+  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
+  --sidebar-border: oklch(0.929 0.013 255.508);
+  --sidebar-ring: oklch(0.704 0.04 256.788);
+  /* Content canvas behind cards — #FAFAFA in the Design Foundation */
+  --canvas: oklch(0.9851 0 0);
+}
+
+.dark {
+  --background: oklch(0.129 0.042 264.695);
+  --foreground: oklch(0.984 0.003 247.858);
+  --card: oklch(0.208 0.042 265.755);
+  --card-foreground: oklch(0.984 0.003 247.858);
+  --popover: oklch(0.208 0.042 265.755);
+  --popover-foreground: oklch(0.984 0.003 247.858);
+  --primary: oklch(0.929 0.013 255.508);
+  --primary-foreground: oklch(0.208 0.042 265.755);
+  --secondary: oklch(0.279 0.041 260.031);
+  --secondary-foreground: oklch(0.984 0.003 247.858);
+  --muted: oklch(0.279 0.041 260.031);
+  --muted-foreground: oklch(0.704 0.04 256.788);
+  --accent: oklch(0.279 0.041 260.031);
+  --accent-foreground: oklch(0.984 0.003 247.858);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.984 0.003 247.858);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.551 0.027 264.364);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.208 0.042 265.755);
+  --sidebar-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-accent: oklch(0.279 0.041 260.031);
+  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.551 0.027 264.364);
+  --canvas: oklch(0.129 0.042 264.695);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  /* The official print forms are portalled to <body> and only exist on paper. */
+  [data-print-form] {
+    display: none;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/*
+ * ---------------------------------------------------------------------------
+ * Dark theme
+ *
+ * The application was built on Tailwind's neutral ramp (text-neutral-800,
+ * bg-white, border-neutral-200 …) rather than semantic tokens. Tailwind v4
+ * compiles every one of those utilities to a CSS variable lookup —
+ * `.text-neutral-800 { color: var(--color-neutral-800) }` — so inverting the
+ * ramp here re-themes every screen at once, with no component changes and no
+ * redesign.
+ *
+ * The ramp is mirrored, not recoloured: 50 becomes the darkest surface and 950
+ * the lightest text, so every existing contrast pairing keeps its relationship.
+ */
+.dark {
+  --color-white: oklch(0.181 0.004 285.9); /* card / raised surface */
+  --color-black: oklch(0.985 0 0);
+
+  --color-neutral-50: oklch(0.145 0.004 285.9); /* page background */
+  --color-neutral-100: oklch(0.205 0.004 285.9);
+  --color-neutral-200: oklch(0.269 0.005 285.9); /* borders */
+  --color-neutral-300: oklch(0.335 0.006 285.9);
+  --color-neutral-400: oklch(0.478 0.008 286.0);
+  --color-neutral-500: oklch(0.596 0.009 286.1); /* muted text */
+  --color-neutral-600: oklch(0.708 0.010 286.2);
+  --color-neutral-700: oklch(0.808 0.008 286.3);
+  --color-neutral-800: oklch(0.885 0.006 286.3); /* body text */
+  --color-neutral-900: oklch(0.945 0.004 286.3); /* headings */
+  --color-neutral-950: oklch(0.985 0.002 286.3);
+
+  /* Status tints are lifted so coloured text stays legible on dark surfaces. */
+  --color-red-50: oklch(0.258 0.062 25.3);
+  --color-red-100: oklch(0.312 0.078 25.3);
+  --color-emerald-50: oklch(0.248 0.055 165.4);
+  --color-emerald-100: oklch(0.300 0.070 165.4);
+  --color-amber-50: oklch(0.268 0.055 85.0);
+  --color-amber-100: oklch(0.322 0.070 85.0);
+  --color-blue-50: oklch(0.258 0.060 255.0);
+  --color-blue-100: oklch(0.312 0.075 255.0);
+  --color-violet-50: oklch(0.262 0.062 295.0);
+  --color-violet-100: oklch(0.316 0.078 295.0);
+  --color-sky-50: oklch(0.256 0.058 240.0);
+  --color-orange-50: oklch(0.266 0.060 60.0);
+  --color-rose-50: oklch(0.258 0.062 15.0);
+
+  color-scheme: dark;
+}
+
+/*
+ * ---------------------------------------------------------------------------
+ * Accent colour
+ *
+ * `data-accent` on <html> selects the accent ramp. Components read the three
+ * --accent-* variables, so adding a colour here needs no component change.
+ * Neutral (the default) keeps the original near-black Linear look.
+ */
+:root {
+  --accent-solid: var(--color-neutral-900);
+  --accent-solid-hover: var(--color-neutral-800);
+  --accent-contrast: var(--color-white);
+  --accent-ring: var(--color-neutral-300);
+  --accent-subtle: var(--color-neutral-100);
+  --accent-text: var(--color-neutral-900);
+}
+
+.dark {
+  --accent-solid: var(--color-neutral-800);
+  --accent-solid-hover: var(--color-neutral-700);
+  --accent-contrast: var(--color-neutral-50);
+}
+
+[data-accent="blue"] {
+  --accent-solid: oklch(0.546 0.198 259.8);
+  --accent-solid-hover: oklch(0.488 0.198 259.8);
+  --accent-contrast: oklch(0.985 0 0);
+  --accent-ring: oklch(0.707 0.146 259.8);
+  --accent-subtle: color-mix(in oklch, oklch(0.546 0.198 259.8) 12%, transparent);
+  --accent-text: oklch(0.546 0.198 259.8);
+}
+
+[data-accent="green"] {
+  --accent-solid: oklch(0.527 0.142 160.2);
+  --accent-solid-hover: oklch(0.470 0.142 160.2);
+  --accent-contrast: oklch(0.985 0 0);
+  --accent-ring: oklch(0.696 0.130 160.2);
+  --accent-subtle: color-mix(in oklch, oklch(0.527 0.142 160.2) 12%, transparent);
+  --accent-text: oklch(0.527 0.142 160.2);
+}
+
+[data-accent="red"] {
+  --accent-solid: oklch(0.577 0.213 27.3);
+  --accent-solid-hover: oklch(0.517 0.213 27.3);
+  --accent-contrast: oklch(0.985 0 0);
+  --accent-ring: oklch(0.712 0.170 27.3);
+  --accent-subtle: color-mix(in oklch, oklch(0.577 0.213 27.3) 12%, transparent);
+  --accent-text: oklch(0.577 0.213 27.3);
+}
+
+[data-accent="purple"] {
+  --accent-solid: oklch(0.541 0.211 295.4);
+  --accent-solid-hover: oklch(0.487 0.211 295.4);
+  --accent-contrast: oklch(0.985 0 0);
+  --accent-ring: oklch(0.702 0.165 295.4);
+  --accent-subtle: color-mix(in oklch, oklch(0.541 0.211 295.4) 12%, transparent);
+  --accent-text: oklch(0.541 0.211 295.4);
+}
+
+/* Accent-driven utilities. Components opt in; nothing else changes. */
+@utility ui-accent {
+  background-color: var(--accent-solid);
+  color: var(--accent-contrast);
+}
+
+@utility ui-accent-hover {
+  &:hover {
+    background-color: var(--accent-solid-hover);
+  }
+}
+
+@utility ui-accent-fg {
+  color: var(--accent-text);
+}
+
+@utility ui-accent-soft {
+  background-color: var(--accent-subtle);
+}
+
+@utility ui-accent-ring {
+  &:focus-visible {
+    outline: 2px solid var(--accent-ring);
+    outline-offset: 1px;
+  }
+}
+
+@utility scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/*
+ * Print rules — no design tokens are changed here.
+ *
+ * A page marks its printable area with [data-print-sheet]; anything marked
+ * [data-print-hide] plus the app chrome (sidebar, top bar, toasts) is
+ * suppressed. The printed document is therefore the same DOM the user sees
+ * on screen, so there is only ever one template to maintain.
+ */
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 12mm;
+  }
+
+  /*
+   * The form is portalled to <body>, so when one is present it *is* the
+   * document. Everything else in <body> is hidden outright — the app frame,
+   * the drawer overlay, any Radix portal — rather than trying to unpick their
+   * layouts for print. Scoped by :has so the wide utility reports, which print
+   * from inside the app frame, are untouched.
+   */
+  body:has(> [data-print-form]) > *:not([data-print-form]) {
+    display: none !important;
+  }
+
+  body > [data-print-form] {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    background: #fff !important;
+  }
+
+  /*
+   * Printed reports are always the light document, whatever theme is active
+   * on screen. Restoring the stock ramp here reverses the .dark overrides for
+   * print only, so no report layout or component needs a print-specific
+   * variant.
+   */
+  :root,
+  .dark {
+    --color-white: #fff;
+    --color-black: #000;
+    --color-neutral-50: oklch(0.985 0 0);
+    --color-neutral-100: oklch(0.97 0 0);
+    --color-neutral-200: oklch(0.922 0 0);
+    --color-neutral-300: oklch(0.87 0 0);
+    --color-neutral-400: oklch(0.708 0 0);
+    --color-neutral-500: oklch(0.556 0 0);
+    --color-neutral-600: oklch(0.439 0 0);
+    --color-neutral-700: oklch(0.371 0 0);
+    --color-neutral-800: oklch(0.269 0 0);
+    --color-neutral-900: oklch(0.205 0 0);
+    --color-neutral-950: oklch(0.145 0 0);
+    --color-red-50: oklch(0.971 0.013 17.4);
+    --color-red-100: oklch(0.936 0.032 17.7);
+    --color-emerald-50: oklch(0.979 0.021 166.1);
+    --color-emerald-100: oklch(0.95 0.052 163.1);
+    --color-amber-50: oklch(0.987 0.022 95.3);
+    --color-amber-100: oklch(0.962 0.059 95.6);
+    --color-blue-50: oklch(0.97 0.014 254.6);
+    --color-blue-100: oklch(0.932 0.032 255.6);
+    --color-violet-50: oklch(0.969 0.016 293.8);
+    --color-violet-100: oklch(0.943 0.029 294.6);
+    --color-sky-50: oklch(0.977 0.013 236.6);
+    --color-orange-50: oklch(0.98 0.016 73.7);
+    --color-rose-50: oklch(0.969 0.015 12.4);
+
+    /* Semantic tokens too: anything inheriting `color: var(--foreground)`
+       would otherwise print near-white on white. */
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.129 0.042 264.695);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.129 0.042 264.695);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.129 0.042 264.695);
+    --muted: oklch(0.968 0.007 247.896);
+    --muted-foreground: oklch(0.554 0.046 257.417);
+    --border: oklch(0.929 0.013 255.508);
+    --input: oklch(0.929 0.013 255.508);
+
+    color-scheme: light;
+  }
+
+  /* The sheet always paints the light document. */
+  [data-print-sheet],
+  [data-print-sheet] * {
+    border-color: var(--color-neutral-200);
+  }
+
+  /* The official forms rule their own grid — keep those borders black. */
+  [data-print-form] th,
+  [data-print-form] td,
+  [data-print-form] .border-t,
+  [data-print-form] .border-b {
+    border-color: #000 !important;
+  }
+
+  [data-print-form] * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  html,
+  body,
+  /* the app canvas tint must not bleed onto paper */
+  [class*="bg-canvas"] {
+    background: #fff !important;
+  }
+
+  /*
+   * Release the document for print. A drawer or modal is usually open when a
+   * document is printed, and Radix locks scrolling by putting `overflow:
+   * hidden` (and padding) on <body> inline. A portalled sheet is a child of
+   * <body>, so that lock clips it to one viewport and the pages come out
+   * blank. These win over the inline styles.
+   */
+  :root,
+  html body,
+  /* react-remove-scroll (Radix's scroll lock) targets this attribute, so the
+     release has to out-specify it, not merely out-!important it. */
+  html body[data-scroll-locked] {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    position: static !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* App chrome never prints. Drawers and modals included: what goes on paper
+     is always a [data-print-sheet], which is rendered outside the dialog. */
+  aside,
+  header,
+  [data-sonner-toaster],
+  [role="dialog"],
+  [data-radix-popper-content-wrapper] {
+    display: none !important;
+  }
+
+  /* Release the fixed-viewport shell so the sheet can flow. */
+  main {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    padding: 0 !important;
+  }
+
+  [data-print-hide] {
+    display: none !important;
+  }
+
+  /* The sheet fills the page, flat — no card chrome. */
+  [data-print-sheet] {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #fff !important;
+  }
+
+  /* Keep the table and its comparison panel side by side on paper, since
+     print width falls below the lg breakpoint. */
+  [data-print-row] {
+    flex-direction: row !important;
+    align-items: stretch !important;
+  }
+
+  [data-print-aside] {
+    width: 29% !important;
+    flex: 0 0 29% !important;
+  }
+
+  [data-print-sheet] * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

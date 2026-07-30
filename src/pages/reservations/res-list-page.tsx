@@ -1,0 +1,330 @@
+import * as React from "react";
+import { useNavigate } from "react-router-dom";
+import type { ColumnDef, RowSelectionState } from "@tanstack/react-table";
+import { format } from "date-fns";
+import {
+  Building2,
+  CalendarCheck2,
+  CalendarClock,
+  CalendarDays,
+  CheckCircle2,
+  Clock3,
+  Plus,
+} from "lucide-react";
+
+import {
+  Button,
+  DeleteModal,
+  DepartmentChip,
+  DocumentNumber,
+  DropdownFilter,
+  EnterpriseTable,
+  ExportButton,
+  FilterBar,
+  MetricCard,
+  PageHeader,
+  PageTransition,
+  PrintButton,
+  SearchBar,
+  StatusBadge,
+  TableCard,
+  toast,
+} from "@/components";
+import { deleteReservations, exportReservationsCsv } from "@/features/reservations/api";
+import { useReservations } from "@/features/reservations/hooks";
+import { formatDate } from "@/features/reservations/lib";
+import {
+  FACILITIES,
+  RESERVATION_STATUSES,
+  facilityName,
+  formatTime,
+  type Reservation,
+  type ReservationStatus,
+} from "@/features/reservations/types";
+import { DEPARTMENTS, departmentByCode } from "@/features/purchase-requests/types";
+import { BulkActionBar } from "@/features/shared/bulk-action-bar";
+import { ResDrawer } from "@/features/reservations/components/res-drawer";
+import { ReservationCalendar } from "@/features/reservations/components/reservation-calendar";
+
+const ALL = "__all";
+
+export function ResListPage() {
+  const navigate = useNavigate();
+
+  const [search, setSearch] = React.useState("");
+  const [facility, setFacility] = React.useState(ALL);
+  const [department, setDepartment] = React.useState(ALL);
+  const [status, setStatus] = React.useState(ALL);
+
+  const filters = React.useMemo(
+    () => ({
+      search: search || undefined,
+      facilityId: facility === ALL ? undefined : facility,
+      departmentCode: department === ALL ? undefined : department,
+      status: status === ALL ? undefined : (status as ReservationStatus),
+    }),
+    [search, facility, department, status],
+  );
+
+  const { data, loading, refresh } = useReservations(filters);
+  // KPI + calendar data always reflect the whole register, independent of filters.
+  const stats = useReservations(React.useMemo(() => ({}), []));
+
+  const today = format(new Date(), "yyyy-MM-dd");
+  const pendingCount = stats.data.filter((r) => r.status === "Pending").length;
+  const approvedCount = stats.data.filter((r) => r.status === "Approved").length;
+  const activeCount = stats.data.filter((r) => r.status === "Approved" && r.date === today).length;
+  const completedCount = stats.data.filter((r) => r.status === "Completed").length;
+  const todayCount = stats.data.filter(
+    (r) => r.date === today && !["Cancelled", "Rejected"].includes(r.status),
+  ).length;
+  const availableFacilities = FACILITIES.filter((f) => f.available).length;
+
+  const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
+  const [selectedRows, setSelectedRows] = React.useState<Reservation[]>([]);
+  const [confirmBulkDelete, setConfirmBulkDelete] = React.useState(false);
+
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [activeId, setActiveId] = React.useState<string | null>(null);
+
+  const openDrawer = (r: Reservation) => {
+    setActiveId(r.id);
+    setDrawerOpen(true);
+  };
+
+
+  const refreshAll = () => {
+    void refresh();
+    void stats.refresh();
+  };
+
+  const downloadCsv = (rows: Reservation[], suffix: string) => {
+    const blob = new Blob([exportReservationsCsv(rows)], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `reservations-${suffix}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success(`Exported ${rows.length} reservation${rows.length === 1 ? "" : "s"}`);
+  };
+
+  const removeRows = async (rows: Reservation[]) => {
+    await deleteReservations(rows.map((r) => r.id));
+    setRowSelection({});
+    toast.success(`Deleted ${rows.length} reservation${rows.length === 1 ? "" : "s"}`);
+    refreshAll();
+  };
+
+  const columns = React.useMemo<ColumnDef<Reservation, unknown>[]>(
+    () => [
+      {
+        header: "Reservation",
+        accessorKey: "resNumber",
+        cell: ({ row }) => (
+          <DocumentNumber
+            value={row.original.resNumber}
+            chipColor={departmentByCode(row.original.departmentCode).color}
+          />
+        ),
+      },
+      {
+        header: "Facility",
+        accessorKey: "facilityId",
+        cell: ({ getValue }) => (
+          <span className="block max-w-[160px] truncate text-neutral-700">
+            {facilityName(getValue<string>())}
+          </span>
+        ),
+      },
+      {
+        header: "Office",
+        accessorKey: "departmentCode",
+        cell: ({ getValue }) => {
+          const dept = departmentByCode(getValue<string>());
+          return <DepartmentChip code={dept.code} name={dept.name} color={dept.color} />;
+        },
+      },
+      {
+        header: "Borrower",
+        accessorKey: "borrower",
+        cell: ({ getValue }) => (
+          <span className="whitespace-nowrap text-neutral-600">{getValue<string>()}</span>
+        ),
+      },
+      {
+        header: "Purpose",
+        accessorKey: "purpose",
+        cell: ({ getValue }) => (
+          <span className="block max-w-[220px] truncate">{getValue<string>()}</span>
+        ),
+        meta: { className: "text-neutral-600" },
+      },
+      {
+        header: "Date",
+        accessorKey: "date",
+        cell: ({ getValue }) => (
+          <span className="whitespace-nowrap text-neutral-600">{formatDate(getValue<string>())}</span>
+        ),
+      },
+      {
+        header: "Time",
+        id: "time",
+        accessorFn: (r) => r.startTime,
+        cell: ({ row }) => (
+          <span className="whitespace-nowrap tabular-nums text-neutral-500">
+            {formatTime(row.original.startTime)} – {formatTime(row.original.endTime)}
+          </span>
+        ),
+      },
+      {
+        header: "Status",
+        accessorKey: "status",
+        cell: ({ getValue }) => <StatusBadge status={getValue<ReservationStatus>()} />,
+      },
+      {
+        header: "Created",
+        accessorKey: "createdAt",
+        cell: ({ getValue }) => (
+          <span className="whitespace-nowrap text-neutral-500">
+            {format(new Date(getValue<string>()), "d MMM yyyy")}
+          </span>
+        ),
+      },
+
+    ],
+    [navigate],
+  );
+
+  return (
+    <PageTransition className="space-y-4">
+      <PageHeader
+        title="Facility Reservations"
+        description="Schedule municipal facilities, manage bookings, and lend event equipment."
+        actions={
+          <Button onClick={() => navigate("/reservations/new")}>
+            <Plus />
+            New Reservation
+          </Button>
+        }
+      />
+
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
+        <MetricCard label="Pending Reservations" value={pendingCount} icon={Clock3} loading={stats.loading} />
+        <MetricCard label="Approved Reservations" value={approvedCount} icon={CheckCircle2} loading={stats.loading} />
+        <MetricCard label="Active Today" value={activeCount} icon={CalendarClock} loading={stats.loading} />
+        <MetricCard label="Completed" value={completedCount} icon={CalendarCheck2} loading={stats.loading} />
+        <MetricCard label="Today's Reservations" value={todayCount} icon={CalendarDays} loading={stats.loading} />
+        <MetricCard label="Available Facilities" value={availableFacilities} icon={Building2} loading={stats.loading} />
+      </div>
+
+      {/* Primary visual: the interactive calendar */}
+      <ReservationCalendar
+        reservations={stats.data}
+        loading={stats.loading}
+        onSelectReservation={openDrawer}
+      />
+
+      <div className="h-[540px]">
+        <TableCard
+          fillContainer
+          toolbar={
+            <FilterBar
+              className="shrink-0"
+              end={
+                <>
+                  <ExportButton onClick={() => downloadCsv(data, "all")} disabled={data.length === 0} />
+                  <PrintButton onClick={() => window.print()} />
+                </>
+              }
+            >
+              <SearchBar
+                placeholder="Search reservation, borrower…"
+                widthClassName="w-56"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              <DropdownFilter
+                label="Facility"
+                value={facility}
+                onChange={setFacility}
+                options={[
+                  { value: ALL, label: "All Facilities" },
+                  ...FACILITIES.map((f) => ({ value: f.id, label: f.name })),
+                ]}
+              />
+              <DropdownFilter
+                label="Office"
+                value={department}
+                onChange={setDepartment}
+                options={[
+                  { value: ALL, label: "All Offices" },
+                  ...DEPARTMENTS.map((d) => ({ value: d.code, label: d.name })),
+                ]}
+              />
+              <DropdownFilter
+                label="Status"
+                value={status}
+                onChange={setStatus}
+                options={[
+                  { value: ALL, label: "All Statuses" },
+                  ...RESERVATION_STATUSES.map((s) => ({ value: s, label: s })),
+                ]}
+              />
+            </FilterBar>
+          }
+        >
+          <EnterpriseTable
+            columns={columns}
+            data={data}
+            loading={loading}
+            skeletonRows={8}
+            fillContainer
+            stickyHeader
+            pageSize={10}
+            minWidth={1200}
+            enableRowSelection
+            rowSelection={rowSelection}
+            onRowSelectionChange={setRowSelection}
+            onSelectedRowsChange={setSelectedRows}
+            getRowId={(r) => r.id}
+            onRowClick={openDrawer}
+            emptyState={{
+              icon: CalendarDays,
+              title: "No reservations found",
+              description: "Try adjusting the filters, or book a facility for an upcoming activity.",
+              action: { label: "New Reservation", onClick: () => navigate("/reservations/new") },
+            }}
+          />
+        </TableCard>
+      </div>
+
+      <BulkActionBar
+        count={selectedRows.length}
+        onExport={() => downloadCsv(selectedRows, "selection")}
+        onPrint={() => window.print()}
+        onDelete={() => setConfirmBulkDelete(true)}
+        onClear={() => setRowSelection({})}
+      />
+
+      <DeleteModal
+        open={confirmBulkDelete}
+        onOpenChange={setConfirmBulkDelete}
+        title={`Delete ${selectedRows.length} reservation${selectedRows.length === 1 ? "" : "s"}?`}
+        description="Selected reservations and their attachments, comments, and history will be permanently removed."
+        onConfirm={async () => {
+          await removeRows(selectedRows);
+          setConfirmBulkDelete(false);
+        }}
+      />
+
+      <ResDrawer
+        resId={activeId}
+        open={drawerOpen}
+        onOpenChange={setDrawerOpen}
+        onChanged={refreshAll}
+        onEdit={(id) => navigate(`/reservations/${id}/edit`)}
+      />
+    </PageTransition>
+  );
+}
