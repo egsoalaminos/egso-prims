@@ -17,6 +17,7 @@ import {
   LogOut,
   Package,
   Settings,
+  ShieldAlert,
   ShoppingCart,
   Sun,
   Zap,
@@ -71,6 +72,11 @@ const reservationItem: ModuleNavItem = {
   label: "Facility Reservation",
   to: "/reservations",
   badge: { text: "5", color: "green" },
+};
+const violationItem: ModuleNavItem = {
+  icon: ShieldAlert,
+  label: "Violation Management",
+  to: "/violations",
 };
 const reportsItem: ModuleNavItem = { icon: BarChart3, label: "Reports", to: "/reports" };
 
@@ -250,6 +256,7 @@ function AppSidebar({
           </CollapsibleNavGroup>
           {renderItem(inventoryItem)}
           {renderItem(reservationItem)}
+          {renderItem(violationItem)}
           <CollapsibleNavGroup
             icon={Gauge}
             label="Utilities"
@@ -324,6 +331,7 @@ function useBreadcrumbs(): BreadcrumbItem[] {
     { prefix: "/ris", label: "Request for Issuance Slip", newLabel: "New RIS" },
     { prefix: "/inventory", label: "Inventory", newLabel: "New Item" },
     { prefix: "/reservations", label: "Facility Reservation", newLabel: "New Reservation" },
+    { prefix: "/violations", label: "Violation Management", newLabel: "" },
     { prefix: "/energy", label: "Energy Consumption", newLabel: "" },
     { prefix: "/water", label: "Water Consumption", newLabel: "" },
     { prefix: "/fuel", label: "Fuel Consumption", newLabel: "" },

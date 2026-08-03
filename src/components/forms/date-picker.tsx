@@ -42,8 +42,18 @@ export function DatePicker({
         </button>
       </PopoverTrigger>
       <PopoverContent align="start" className="w-auto p-0">
+        {/*
+         * `required` stops react-day-picker treating a click on the already
+         * selected day as a deselect. Without it that click returns undefined,
+         * which React Hook Form reads as "unset" and falls back to the default
+         * — so the button kept showing a date while the form held none, and
+         * submitting failed with "select a date" against a filled-in field.
+         * Every date in this app is a required field, so clearing by
+         * re-clicking is never the intent.
+         */}
         <Calendar
           mode="single"
+          required
           selected={value}
           onSelect={(d) => {
             onChange?.(d);

@@ -26,6 +26,7 @@ import { InventoryEditPage } from "@/pages/inventory/inventory-edit-page";
 import { ResListPage } from "@/pages/reservations/res-list-page";
 import { ResCreatePage } from "@/pages/reservations/res-create-page";
 import { ResEditPage } from "@/pages/reservations/res-edit-page";
+import { ViolationListPage } from "@/pages/violations/violation-list-page";
 import { ReportsPage } from "@/pages/reports/reports-page";
 import { AuditListPage } from "@/pages/audit/audit-list-page";
 import { SettingsPage } from "@/pages/settings/settings-page";
@@ -72,6 +73,7 @@ export const router = createBrowserRouter([
           { path: "reservations", element: <ResListPage /> },
           { path: "reservations/new", element: <ResCreatePage /> },
           { path: "reservations/:id/edit", element: <ResEditPage /> },
+          { path: "violations", element: <ViolationListPage /> },
           { path: "energy", element: <EnergyDashboardPage /> },
           { path: "energy/summary", element: <EnergySummaryPage /> },
           // Retired: the detailed energy report now lives in the Reports module.

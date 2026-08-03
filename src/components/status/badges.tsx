@@ -83,7 +83,9 @@ export type DocumentStatus =
   | "No Change"
   | "Active"
   | "Inactive"
-  | "Archived";
+  | "Archived"
+  | "Paid"
+  | "No Record";
 
 const statusTone: Record<DocumentStatus, Tone> = {
   Pending: "amber",
@@ -116,6 +118,10 @@ const statusTone: Record<DocumentStatus, Tone> = {
   Active: "emerald",
   Inactive: "neutral",
   Archived: "neutral",
+  // Violation payment state. A profile with nothing on record is neither
+  // settled nor outstanding, so it reads neutral rather than green.
+  Paid: "emerald",
+  "No Record": "neutral",
 };
 
 export function StatusBadge({
