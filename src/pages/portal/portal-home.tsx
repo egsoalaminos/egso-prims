@@ -1,20 +1,31 @@
-import { useNavigate } from "react-router-dom";
-import { motion } from "motion/react";
+import { Link, useNavigate } from "react-router-dom";
+import { motion, useReducedMotion } from "motion/react";
 import { ArrowRight, CheckCircle2, FileText, ScanLine } from "lucide-react";
 
-import { Button, ContainerCard } from "@/components";
-import { BRAND_LOGO } from "@/lib/brand";
+import { Button, ContainerCard, buttonVariants } from "@/components";
 import { PORTAL_SERVICES } from "@/features/portal/data";
 
-/** Entrance transition shared by the hero elements — staggered rise + fade. */
-const rise = (delay: number) => ({
-  initial: { opacity: 0, y: 14 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.45, delay, ease: [0.16, 1, 0.3, 1] as const },
-});
+/**
+ * Entrance transition shared by the hero elements — staggered rise + fade.
+ *
+ * `still` collapses it to a plain fade for visitors who have asked their system
+ * to reduce motion. The elements still arrive; they simply stop travelling.
+ */
+const rise = (delay: number, still: boolean) =>
+  still
+    ? {
+        initial: { opacity: 0 },
+        animate: { opacity: 1 },
+        transition: { duration: 0.2, delay: 0 },
+      }
+    : {
+        initial: { opacity: 0, y: 14 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.45, delay, ease: [0.16, 1, 0.3, 1] as const },
+      };
 
 /**
- * Public portal landing — a single-viewport service gateway. The hero states
+ * Public portal landing — a single-viewport service gateway. The heading states
  * what the system is and offers its two primary actions; the four services sit
  * immediately below, so a visitor sees every available action without
  * scrolling. Announcements, contact and marketing sections are deliberately
@@ -22,42 +33,39 @@ const rise = (delay: number) => ({
  */
 export function PortalHome() {
   const navigate = useNavigate();
+  const still = useReducedMotion() ?? false;
 
   return (
     <div className="mx-auto flex min-h-[calc(100vh-57px)] max-w-6xl flex-col justify-center gap-10 px-5 py-10">
       {/* Hero */}
-      <section className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
+      <section
+        aria-labelledby="portal-title"
+        className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]"
+      >
         <div>
-          <motion.div
-            {...rise(0)}
-            className="inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-3 py-1 text-[11px] font-medium uppercase tracking-[0.14em] text-neutral-500"
-          >
-            <img src={BRAND_LOGO} alt="" className="h-4 w-4 object-contain" aria-hidden />
-            Municipality of Alaminos, Laguna
-          </motion.div>
-
           <motion.h1
-            {...rise(0.08)}
-            className="mt-5 text-[34px] font-semibold leading-[1.08] tracking-tight text-neutral-900 sm:text-[44px]"
+            {...rise(0.08, still)}
+            id="portal-title"
+            className="text-[34px] font-semibold leading-[1.08] tracking-tight text-neutral-900 sm:text-[44px]"
           >
             General Services Office
           </motion.h1>
           <motion.p
-            {...rise(0.14)}
+            {...rise(0.14, still)}
             className="mt-2 text-[18px] font-medium leading-snug text-neutral-600 sm:text-[22px]"
           >
             Purchase Request &amp; Inventory Management System
           </motion.p>
 
           <motion.p
-            {...rise(0.2)}
-            className="mt-5 max-w-xl text-[13.5px] leading-relaxed text-neutral-500"
+            {...rise(0.2, still)}
+            className="mt-5 max-w-xl text-[13px] leading-relaxed text-neutral-500"
           >
             A centralized digital platform for submitting purchase requests, requesting inventory
             items, reserving government facilities, and tracking request status online.
           </motion.p>
 
-          <motion.div {...rise(0.28)} className="mt-7 flex flex-wrap items-center gap-3">
+          <motion.div {...rise(0.28, still)} className="mt-7 flex flex-wrap items-center gap-3">
             <Button
               onClick={() => navigate("/portal/request")}
               className="px-5 py-2.5 text-[13px] [&_svg]:h-4 [&_svg]:w-4"
@@ -77,40 +85,56 @@ export function PortalHome() {
         </div>
 
         {/* Right — a floating preview of the system, built from real primitives */}
-        <HeroPreview />
+        <HeroPreview still={still} />
       </section>
 
       {/* Services — all four in one row on desktop, horizontal scroll below lg */}
-      <section>
+      <section aria-labelledby="portal-services">
+        <h2 id="portal-services" className="sr-only">
+          Available services
+        </h2>
         <div className="-mx-5 overflow-x-auto px-5 pb-1 lg:mx-0 lg:overflow-visible lg:px-0">
           <div className="grid auto-cols-[minmax(230px,1fr)] grid-flow-col gap-4 lg:grid-flow-row lg:grid-cols-4">
             {PORTAL_SERVICES.map((s, i) => {
               const Icon = s.icon;
               return (
-                <motion.div key={s.title} {...rise(0.34 + i * 0.07)} className="min-w-0">
-                  <ContainerCard
-                    hoverable
-                    className="group flex h-full cursor-pointer flex-col p-3 transition hover:-translate-y-1 hover:shadow-lg hover:shadow-neutral-200/60"
-                    onClick={() => navigate(s.to)}
+                <motion.div key={s.title} {...rise(0.34 + i * 0.07, still)} className="min-w-0">
+                  {/*
+                   * The whole card is the link, so the hit area matches what the
+                   * hover state promises and one tab stop reaches each service.
+                   * The call to action below is styled text rather than a button:
+                   * a control inside a link is invalid, and a second tab stop for
+                   * the same destination only slows a keyboard visitor down.
+                   */}
+                  <Link
+                    to={s.to}
+                    className="group block h-full rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 focus-visible:ring-offset-2"
                   >
-                    <div
-                      className={`grid h-24 place-items-center rounded-lg bg-gradient-to-br ${s.gradient}`}
+                    <ContainerCard
+                      hoverable
+                      className="flex h-full flex-col p-3 transition hover:-translate-y-1 hover:shadow-lg hover:shadow-neutral-200/60 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
                     >
-                      <div className="grid h-12 w-12 place-items-center rounded-2xl border border-white bg-white shadow-sm transition group-hover:scale-105">
-                        <Icon className="h-6 w-6 text-neutral-800" />
+                      <div
+                        className={`grid h-24 place-items-center rounded-lg bg-gradient-to-br ${s.gradient}`}
+                      >
+                        <div className="grid h-12 w-12 place-items-center rounded-2xl border border-white bg-white shadow-sm transition group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100">
+                          <Icon className="h-6 w-6 text-neutral-800" />
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex flex-1 flex-col px-1 pt-3">
-                      <div className="text-[13.5px] font-semibold text-neutral-900">{s.title}</div>
-                      <p className="mt-1 flex-1 text-[12px] leading-snug text-neutral-500">
-                        {s.description}
-                      </p>
-                      <Button variant="secondary" className="mt-3 w-full justify-between">
-                        {s.cta}
-                        <ArrowRight className="text-neutral-400 transition group-hover:translate-x-0.5" />
-                      </Button>
-                    </div>
-                  </ContainerCard>
+                      <div className="flex flex-1 flex-col px-1 pt-3">
+                        <h3 className="text-[13px] font-semibold text-neutral-900">{s.title}</h3>
+                        <p className="mt-1 flex-1 text-[12px] leading-snug text-neutral-500">
+                          {s.description}
+                        </p>
+                        <span
+                          className={`${buttonVariants({ variant: "secondary" })} mt-3 w-full justify-between`}
+                        >
+                          {s.cta}
+                          <ArrowRight className="text-neutral-400 transition group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0" />
+                        </span>
+                      </div>
+                    </ContainerCard>
+                  </Link>
                 </motion.div>
               );
             })}
@@ -125,24 +149,35 @@ export function PortalHome() {
  * Government-themed hero visual: a mock request record floating over a faint
  * brand glow, with a status card drifting alongside it. Composed from the same
  * card primitives the real system uses, so the preview reads as the product.
+ *
+ * Hidden from assistive technology. Every figure in it — the reference number,
+ * the items, the peso totals, the approval — is invented to illustrate the
+ * product, and a screen reader announcing a fabricated approved purchase
+ * request on a live municipal portal would be stating something untrue.
  */
-function HeroPreview() {
+function HeroPreview({ still }: { still: boolean }) {
+  /** The perpetual drift stops when the visitor has asked for less motion. */
+  const drift = (distance: number, duration: number, delay = 0) =>
+    still
+      ? undefined
+      : {
+          animate: { y: [0, distance, 0] },
+          transition: { duration, repeat: Infinity, ease: "easeInOut" as const, delay },
+        };
+
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.96 }}
+      aria-hidden
+      initial={{ opacity: 0, scale: still ? 1 : 0.96 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: still ? 0.2 : 0.6, delay: still ? 0 : 0.2, ease: [0.16, 1, 0.3, 1] }}
       className="relative hidden h-[340px] lg:block"
     >
       {/* Soft brand glow behind the stack */}
       <div className="absolute inset-x-8 top-6 h-64 rounded-[2rem] bg-gradient-to-br from-neutral-900/5 via-[#4c1017]/10 to-transparent blur-2xl" />
 
       {/* Primary record card — drifts gently */}
-      <motion.div
-        animate={{ y: [0, -10, 0] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute left-2 top-4 w-[76%]"
-      >
+      <motion.div {...drift(-10, 6)} className="absolute left-2 top-4 w-[76%]">
         <ContainerCard className="p-5 shadow-xl shadow-neutral-300/40">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -151,10 +186,10 @@ function HeroPreview() {
               </div>
               <div>
                 <div className="text-[12.5px] font-semibold text-neutral-900">Purchase Request</div>
-                <div className="text-[10.5px] tabular-nums text-neutral-400">PR-2026-000221</div>
+                <div className="text-[11px] tabular-nums text-neutral-400">PR-2026-000221</div>
               </div>
             </div>
-            <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
+            <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700">
               Approved
             </span>
           </div>
@@ -176,7 +211,7 @@ function HeroPreview() {
           </div>
 
           <div className="mt-3 flex items-center justify-between border-t border-neutral-100 pt-3">
-            <span className="text-[10.5px] uppercase tracking-wider text-neutral-400">
+            <span className="text-[11px] uppercase tracking-wider text-neutral-400">
               Grand Total
             </span>
             <span className="text-[14px] font-semibold tabular-nums tracking-tight text-neutral-900">
@@ -187,11 +222,7 @@ function HeroPreview() {
       </motion.div>
 
       {/* Status card — floats on a slower, offset cycle */}
-      <motion.div
-        animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 0.4 }}
-        className="absolute bottom-2 right-0 w-[52%]"
-      >
+      <motion.div {...drift(10, 7, 0.4)} className="absolute bottom-2 right-0 w-[52%]">
         <ContainerCard className="p-4 shadow-xl shadow-neutral-300/40">
           <div className="flex items-center gap-2 text-[11.5px] font-semibold text-neutral-900">
             <CheckCircle2 className="h-4 w-4 text-emerald-600" />
@@ -209,7 +240,7 @@ function HeroPreview() {
                   />
                   <span
                     className={
-                      "text-[10.5px] " +
+                      "text-[11px] " +
                       (i === arr.length - 1 ? "font-medium text-neutral-800" : "text-neutral-400")
                     }
                   >
