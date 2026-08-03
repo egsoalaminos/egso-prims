@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { useRealtimeRefresh } from "@/features/shared/use-realtime";
+import { reportLoadFailure } from "@/features/shared/load-guard";
 import {
   listWaterAccounts,
   listWaterBills,
@@ -34,10 +35,13 @@ export function useWaterAccounts(filters: AccountListFilters = {}) {
   const load = React.useCallback(async () => {
     const seq = ++requestSeq.current;
     setLoading(true);
-    const rows = await listWaterAccounts(filtersRef.current);
-    if (seq === requestSeq.current) {
-      setData(rows);
-      setLoading(false);
+    try {
+      const rows = await listWaterAccounts(filtersRef.current);
+      if (seq === requestSeq.current) setData(rows);
+    } catch (e) {
+      if (seq === requestSeq.current) reportLoadFailure(e, "water accounts");
+    } finally {
+      if (seq === requestSeq.current) setLoading(false);
     }
   }, []);
 
@@ -64,10 +68,13 @@ export function useWaterBills(filters: WaterBillFilters = {}) {
   const load = React.useCallback(async () => {
     const seq = ++requestSeq.current;
     setLoading(true);
-    const rows = await listWaterBills(filtersRef.current);
-    if (seq === requestSeq.current) {
-      setData(rows);
-      setLoading(false);
+    try {
+      const rows = await listWaterBills(filtersRef.current);
+      if (seq === requestSeq.current) setData(rows);
+    } catch (e) {
+      if (seq === requestSeq.current) reportLoadFailure(e, "water bills");
+    } finally {
+      if (seq === requestSeq.current) setLoading(false);
     }
   }, []);
 
@@ -94,10 +101,13 @@ export function useWaterSubmeters(filters: SubmeterListFilters = {}) {
   const load = React.useCallback(async () => {
     const seq = ++requestSeq.current;
     setLoading(true);
-    const rows = await listWaterSubmeters(filtersRef.current);
-    if (seq === requestSeq.current) {
-      setData(rows);
-      setLoading(false);
+    try {
+      const rows = await listWaterSubmeters(filtersRef.current);
+      if (seq === requestSeq.current) setData(rows);
+    } catch (e) {
+      if (seq === requestSeq.current) reportLoadFailure(e, "water submeters");
+    } finally {
+      if (seq === requestSeq.current) setLoading(false);
     }
   }, []);
 
@@ -124,10 +134,13 @@ export function useWaterSubmeterBills(filters: SubmeterBillFilters = {}) {
   const load = React.useCallback(async () => {
     const seq = ++requestSeq.current;
     setLoading(true);
-    const rows = await listWaterSubmeterBills(filtersRef.current);
-    if (seq === requestSeq.current) {
-      setData(rows);
-      setLoading(false);
+    try {
+      const rows = await listWaterSubmeterBills(filtersRef.current);
+      if (seq === requestSeq.current) setData(rows);
+    } catch (e) {
+      if (seq === requestSeq.current) reportLoadFailure(e, "submeter bills");
+    } finally {
+      if (seq === requestSeq.current) setLoading(false);
     }
   }, []);
 
@@ -154,10 +167,13 @@ export function useWaterMeterReadings(filters: MeterReadingFilters = {}) {
   const load = React.useCallback(async () => {
     const seq = ++requestSeq.current;
     setLoading(true);
-    const rows = await listWaterMeterReadings(filtersRef.current);
-    if (seq === requestSeq.current) {
-      setData(rows);
-      setLoading(false);
+    try {
+      const rows = await listWaterMeterReadings(filtersRef.current);
+      if (seq === requestSeq.current) setData(rows);
+    } catch (e) {
+      if (seq === requestSeq.current) reportLoadFailure(e, "meter readings");
+    } finally {
+      if (seq === requestSeq.current) setLoading(false);
     }
   }, []);
 

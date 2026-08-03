@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { useRealtimeRefresh } from "@/features/shared/use-realtime";
+import { reportLoadFailure } from "@/features/shared/load-guard";
 
 import { getPurchaseOrder, listPurchaseOrders } from "@/features/purchase-orders/api";
 import type { POListFilters, PurchaseOrder } from "@/features/purchase-orders/types";
@@ -22,10 +23,13 @@ export function usePurchaseOrders(filters: POListFilters) {
   const load = React.useCallback(async () => {
     const seq = ++requestSeq.current;
     setLoading(true);
-    const rows = await listPurchaseOrders(filtersRef.current);
-    if (seq === requestSeq.current) {
-      setData(rows);
-      setLoading(false);
+    try {
+      const rows = await listPurchaseOrders(filtersRef.current);
+      if (seq === requestSeq.current) setData(rows);
+    } catch (e) {
+      if (seq === requestSeq.current) reportLoadFailure(e, "purchase orders");
+    } finally {
+      if (seq === requestSeq.current) setLoading(false);
     }
   }, []);
 
@@ -50,8 +54,13 @@ export function usePurchaseOrder(id: string | null) {
       return;
     }
     setLoading(true);
-    setData(await getPurchaseOrder(id));
-    setLoading(false);
+    try {
+      setData(await getPurchaseOrder(id));
+    } catch (e) {
+      reportLoadFailure(e, "this purchase order");
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
 
   React.useEffect(() => {

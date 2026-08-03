@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { useRealtimeRefresh } from "@/features/shared/use-realtime";
+import { reportLoadFailure } from "@/features/shared/load-guard";
 
 import { getRequest, listRequests } from "@/features/ris/api";
 import type { RISListFilters, RequestForIssuance } from "@/features/ris/types";
@@ -22,10 +23,13 @@ export function useRequests(filters: RISListFilters) {
   const load = React.useCallback(async () => {
     const seq = ++requestSeq.current;
     setLoading(true);
-    const rows = await listRequests(filtersRef.current);
-    if (seq === requestSeq.current) {
-      setData(rows);
-      setLoading(false);
+    try {
+      const rows = await listRequests(filtersRef.current);
+      if (seq === requestSeq.current) setData(rows);
+    } catch (e) {
+      if (seq === requestSeq.current) reportLoadFailure(e, "issuance slips");
+    } finally {
+      if (seq === requestSeq.current) setLoading(false);
     }
   }, []);
 
@@ -50,8 +54,13 @@ export function useRequest(id: string | null) {
       return;
     }
     setLoading(true);
-    setData(await getRequest(id));
-    setLoading(false);
+    try {
+      setData(await getRequest(id));
+    } catch (e) {
+      reportLoadFailure(e, "this issuance slip");
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
 
   React.useEffect(() => {

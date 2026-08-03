@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { useRealtimeRefresh } from "@/features/shared/use-realtime";
+import { reportLoadFailure } from "@/features/shared/load-guard";
 
 import { getReservation, listReservations } from "@/features/reservations/api";
 import type {
@@ -25,10 +26,13 @@ export function useReservations(filters: ReservationListFilters) {
   const load = React.useCallback(async () => {
     const seq = ++requestSeq.current;
     setLoading(true);
-    const rows = await listReservations(filtersRef.current);
-    if (seq === requestSeq.current) {
-      setData(rows);
-      setLoading(false);
+    try {
+      const rows = await listReservations(filtersRef.current);
+      if (seq === requestSeq.current) setData(rows);
+    } catch (e) {
+      if (seq === requestSeq.current) reportLoadFailure(e, "reservations");
+    } finally {
+      if (seq === requestSeq.current) setLoading(false);
     }
   }, []);
 
@@ -53,8 +57,13 @@ export function useReservation(id: string | null) {
       return;
     }
     setLoading(true);
-    setData(await getReservation(id));
-    setLoading(false);
+    try {
+      setData(await getReservation(id));
+    } catch (e) {
+      reportLoadFailure(e, "this reservation");
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
 
   React.useEffect(() => {

@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { useRealtimeRefresh } from "@/features/shared/use-realtime";
+import { reportLoadFailure } from "@/features/shared/load-guard";
 
 import { listViolations, listViolators } from "@/features/violations/api";
 import { buildProfileList } from "@/features/violations/lib";
@@ -26,11 +27,16 @@ export function useViolatorProfiles(filters: ViolationListFilters) {
   const load = React.useCallback(async () => {
     const seq = ++requestSeq.current;
     setLoading(true);
-    const [people, tickets] = await Promise.all([listViolators(), listViolations()]);
-    if (seq === requestSeq.current) {
-      setViolators(people);
-      setViolations(tickets);
-      setLoading(false);
+    try {
+      const [people, tickets] = await Promise.all([listViolators(), listViolations()]);
+      if (seq === requestSeq.current) {
+        setViolators(people);
+        setViolations(tickets);
+      }
+    } catch (e) {
+      if (seq === requestSeq.current) reportLoadFailure(e, "violator profiles");
+    } finally {
+      if (seq === requestSeq.current) setLoading(false);
     }
   }, []);
 

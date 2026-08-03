@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { useRealtimeRefresh } from "@/features/shared/use-realtime";
+import { reportLoadFailure } from "@/features/shared/load-guard";
 import {
   listFuelOdometerReadings,
   listFuelTransactions,
@@ -31,10 +32,13 @@ export function useFuelVehicles(filters: VehicleListFilters = {}) {
   const load = React.useCallback(async () => {
     const seq = ++requestSeq.current;
     setLoading(true);
-    const rows = await listFuelVehicles(filtersRef.current);
-    if (seq === requestSeq.current) {
-      setData(rows);
-      setLoading(false);
+    try {
+      const rows = await listFuelVehicles(filtersRef.current);
+      if (seq === requestSeq.current) setData(rows);
+    } catch (e) {
+      if (seq === requestSeq.current) reportLoadFailure(e, "vehicles");
+    } finally {
+      if (seq === requestSeq.current) setLoading(false);
     }
   }, []);
 
@@ -61,10 +65,13 @@ export function useFuelTransactions(filters: FuelTransactionFilters = {}) {
   const load = React.useCallback(async () => {
     const seq = ++requestSeq.current;
     setLoading(true);
-    const rows = await listFuelTransactions(filtersRef.current);
-    if (seq === requestSeq.current) {
-      setData(rows);
-      setLoading(false);
+    try {
+      const rows = await listFuelTransactions(filtersRef.current);
+      if (seq === requestSeq.current) setData(rows);
+    } catch (e) {
+      if (seq === requestSeq.current) reportLoadFailure(e, "fuel transactions");
+    } finally {
+      if (seq === requestSeq.current) setLoading(false);
     }
   }, []);
 
@@ -94,10 +101,13 @@ export function useFuelTrips(filters: FuelTripFilters = {}) {
   const load = React.useCallback(async () => {
     const seq = ++requestSeq.current;
     setLoading(true);
-    const rows = await listFuelTrips(filtersRef.current);
-    if (seq === requestSeq.current) {
-      setData(rows);
-      setLoading(false);
+    try {
+      const rows = await listFuelTrips(filtersRef.current);
+      if (seq === requestSeq.current) setData(rows);
+    } catch (e) {
+      if (seq === requestSeq.current) reportLoadFailure(e, "trips");
+    } finally {
+      if (seq === requestSeq.current) setLoading(false);
     }
   }, []);
 
@@ -127,10 +137,13 @@ export function useFuelOdometerReadings(filters: OdometerReadingFilters = {}) {
   const load = React.useCallback(async () => {
     const seq = ++requestSeq.current;
     setLoading(true);
-    const rows = await listFuelOdometerReadings(filtersRef.current);
-    if (seq === requestSeq.current) {
-      setData(rows);
-      setLoading(false);
+    try {
+      const rows = await listFuelOdometerReadings(filtersRef.current);
+      if (seq === requestSeq.current) setData(rows);
+    } catch (e) {
+      if (seq === requestSeq.current) reportLoadFailure(e, "odometer readings");
+    } finally {
+      if (seq === requestSeq.current) setLoading(false);
     }
   }, []);
 

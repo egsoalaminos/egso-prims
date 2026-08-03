@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { useRealtimeRefresh } from "@/features/shared/use-realtime";
+import { reportLoadFailure } from "@/features/shared/load-guard";
 
 import { listAuditEntries } from "@/features/audit/api";
 import type { AuditEntry, AuditListFilters } from "@/features/audit/types";
@@ -22,10 +23,13 @@ export function useAuditEntries(filters: AuditListFilters) {
   const load = React.useCallback(async () => {
     const seq = ++requestSeq.current;
     setLoading(true);
-    const rows = await listAuditEntries(filtersRef.current);
-    if (seq === requestSeq.current) {
-      setData(rows);
-      setLoading(false);
+    try {
+      const rows = await listAuditEntries(filtersRef.current);
+      if (seq === requestSeq.current) setData(rows);
+    } catch (e) {
+      if (seq === requestSeq.current) reportLoadFailure(e, "the audit trail");
+    } finally {
+      if (seq === requestSeq.current) setLoading(false);
     }
   }, []);
 
