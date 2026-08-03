@@ -57,9 +57,11 @@ export function PortalHome() {
             Purchase Request &amp; Inventory Management System
           </motion.p>
 
+          {/* Measured in characters, not pixels: the line length is what the
+              eye tracks, and it has to survive a change to the type size. */}
           <motion.p
             {...rise(0.2, still)}
-            className="mt-5 max-w-xl text-[13px] leading-relaxed text-neutral-500"
+            className="mt-5 max-w-[68ch] text-[13px] leading-relaxed text-neutral-500"
           >
             A centralized digital platform for submitting purchase requests, requesting inventory
             items, reserving government facilities, and tracking request status online.
@@ -88,11 +90,10 @@ export function PortalHome() {
         <HeroPreview still={still} />
       </section>
 
-      {/* Services — all four in one row on desktop, horizontal scroll below lg */}
-      <section aria-labelledby="portal-services">
-        <h2 id="portal-services" className="sr-only">
-          Available services
-        </h2>
+      {/* Services — all four in one row on desktop, horizontal scroll below lg.
+          Named with aria-label rather than a visually hidden heading: the
+          section needs an accessible name, not a clipped node in the layout. */}
+      <section aria-label="Available services">
         <div className="-mx-5 overflow-x-auto px-5 pb-1 lg:mx-0 lg:overflow-visible lg:px-0">
           <div className="grid auto-cols-[minmax(230px,1fr)] grid-flow-col gap-4 lg:grid-flow-row lg:grid-cols-4">
             {PORTAL_SERVICES.map((s, i) => {
