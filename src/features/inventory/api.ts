@@ -1,5 +1,6 @@
 import { isoDate, requireDb, searchOr, unwrap } from "@/lib/db";
 import { uploadAttachmentInputs } from "@/lib/storage";
+import { getConfigNumber, getConfigString } from "@/features/config/api";
 import {
   itemValue,
   stockStatusOf,
@@ -24,21 +25,31 @@ const DEFAULT_LOCATION = "GSO Stockroom A";
 /**
  * Stock thresholds, derived from the quantity being stocked rather than typed.
  *
- * A quarter of the stocking level is the point to reorder, a tenth the point
- * it is critical — proportions that hold whatever the item is, from a handful
- * of printers to hundreds of sacks of cement. They are set from the quantity
- * received so they describe a normal stocking level, and deliberately not
- * recomputed as stock is issued: a threshold that fell with the balance would
- * never be crossed.
+ * A share of the stocking level is the point to reorder, a smaller share the
+ * point it is critical — proportions that hold whatever the item is, from a
+ * handful of printers to hundreds of sacks of cement. They are set from the
+ * quantity received so they describe a normal stocking level, and deliberately
+ * not recomputed as stock is issued: a threshold that fell with the balance
+ * would never be crossed.
+ *
+ * The two shares are the office's to set, in Settings → Inventory. The
+ * defaults here are the values the module used before that setting existed,
+ * and are what a caller gets if configuration cannot be read.
  */
-export function stockThresholds(quantity: number): {
+export function stockThresholds(
+  quantity: number,
+  reorderPercent = 25,
+  criticalPercent = 10,
+): {
   reorderLevel: number;
   criticalLevel: number;
 } {
   if (quantity <= 0) return { reorderLevel: 0, criticalLevel: 0 };
+  const share = (percent: number, fallback: number) =>
+    Number.isFinite(percent) && percent > 0 && percent <= 100 ? percent / 100 : fallback;
   return {
-    reorderLevel: Math.max(1, Math.round(quantity * 0.25)),
-    criticalLevel: Math.max(1, Math.round(quantity * 0.1)),
+    reorderLevel: Math.max(1, Math.round(quantity * share(reorderPercent, 0.25))),
+    criticalLevel: Math.max(1, Math.round(quantity * share(criticalPercent, 0.1))),
   };
 }
 const LEDGER = "stock_card";
@@ -159,7 +170,14 @@ export async function createInventoryItem(input: ItemDraftInput): Promise<Invent
   const at = nowIso();
   const id = `inv-${Date.now()}`;
   const itemCode = input.itemCode?.trim() || (await nextItemCode(input.category));
-  const thresholds = stockThresholds(input.beginningBalance);
+  // Read at the moment of stocking, so an item keeps the thresholds that were
+  // in force when it was received rather than shifting under a later change.
+  const [reorderPercent, criticalPercent, defaultLocation] = await Promise.all([
+    getConfigNumber("Inventory", "reorder_percent"),
+    getConfigNumber("Inventory", "critical_percent"),
+    getConfigString("Inventory", "default_stock_location"),
+  ]);
+  const thresholds = stockThresholds(input.beginningBalance, reorderPercent, criticalPercent);
   const attachments = (await uploadAttachmentInputs(input.attachments, itemCode)).map(
     (a) => ({ ...a, id: uid(), uploadedAt: at }),
   );
@@ -170,7 +188,7 @@ export async function createInventoryItem(input: ItemDraftInput): Promise<Invent
     category: input.category,
     description: input.description ?? null,
     unit: input.unit,
-    location: input.location ?? DEFAULT_LOCATION,
+    location: input.location ?? (defaultLocation || DEFAULT_LOCATION),
     on_hand: input.beginningBalance,
     reorder_level: thresholds.reorderLevel,
     critical_level: thresholds.criticalLevel,

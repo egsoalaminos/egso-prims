@@ -18,10 +18,11 @@ import {
   Stepper,
   Textarea,
 } from "@/components";
+import { useConfigOptions, useConfigText } from "@/features/config/use-module-config";
 import type { PRDraftInput } from "@/features/purchase-requests/api";
 import {
-  ITEM_UNITS,
   departmentByCode,
+  FUNDING_SOURCES,
   type PRAttachment,
   type PurchaseRequest,
 } from "@/features/purchase-requests/types";
@@ -54,6 +55,10 @@ export interface PRWizardProps {
 export function PRWizard({ initial, submitLabel, submitting, onSubmit, onCancel }: PRWizardProps) {
   const [step, setStep] = React.useState(0);
   const [files, setFiles] = React.useState<File[]>([]);
+  // The fund a new request is recorded against. The form does not ask, so
+  // Settings is the only place it is chosen; an unrecognised value falls back
+  // rather than reaching the column, which accepts a fixed set.
+  const configuredFund = useConfigText("Procurement", "default_funding_source");
 
   const form = useForm<PRFormValues>({
     resolver: zodResolver(prFormSchema),
@@ -77,7 +82,9 @@ export function PRWizard({ initial, submitLabel, submitting, onSubmit, onCancel 
           requester: "",
           purpose: "",
           requestDate: new Date(),
-          // No longer collected in the form; kept so the record stays complete.
+          // Not collected in the form. Settings → Procurement is the only place
+          // it is chosen, so the value is applied on submit, once configuration
+          // has loaded — a default here would be captured before it arrives.
           fundingSource: "General Fund",
           items: [{ ...emptyItem }],
         },
@@ -94,7 +101,11 @@ export function PRWizard({ initial, submitLabel, submitting, onSubmit, onCancel 
       departmentCode: values.departmentCode,
       requester: values.requester,
       purpose: values.purpose,
-      fundingSource: values.fundingSource,
+      fundingSource: initial
+        ? values.fundingSource
+        : ((FUNDING_SOURCES as readonly string[]).includes(configuredFund)
+            ? (configuredFund as PRDraftInput["fundingSource"])
+            : values.fundingSource),
       requestDate: format(values.requestDate, "yyyy-MM-dd"),
       items: values.items,
       attachments: files.map((f) => ({
@@ -200,6 +211,8 @@ function StepDetails({ form }: { form: FormApi }) {
 
 function StepItems({ form }: { form: FormApi }) {
   const { register, control, watch, formState } = form;
+  // Units of measure, as the office set them in Settings → Procurement.
+  const { options: itemUnits } = useConfigOptions("Procurement", "item_units");
   const { fields, append, remove } = useFieldArray({ control, name: "items" });
   const items = watch("items");
   const total = items.reduce(
@@ -249,7 +262,7 @@ function StepItems({ form }: { form: FormApi }) {
               name={`items.${i}.unit`}
               render={({ field }) => (
                 <SelectField
-                  options={ITEM_UNITS.map((u) => ({ value: u, label: u }))}
+                  options={itemUnits.map((u) => ({ value: u, label: u }))}
                   value={field.value}
                   onChange={field.onChange}
                   invalid={!!rowErr?.unit}

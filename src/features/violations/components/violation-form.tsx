@@ -21,10 +21,10 @@ import {
   toast,
 } from "@/components";
 import { formatPHP } from "@/lib/format";
+import { useConfigNumber, useConfigOptions } from "@/features/config/use-module-config";
 import { recordViolation, updateViolation } from "@/features/violations/api";
 import { matchViolator } from "@/features/violations/lib";
 import {
-  VIOLATION_TYPES,
   type Violation,
   type Violator,
   type ViolatorProfile,
@@ -90,6 +90,10 @@ export function ViolationForm({
     },
   });
 
+  // Settings may carry a standard fine, which pre-fills a new violation only —
+  // an existing one always shows the amount it was actually assessed.
+  const defaultFine = useConfigNumber("Violation Management", "default_fine_amount");
+
   React.useEffect(() => {
     if (!open) return;
     form.reset({
@@ -99,10 +103,10 @@ export function ViolationForm({
       apprehendedBy: violation?.apprehendedBy ?? "",
       citationNo: violation?.citationNo ?? "",
       dateIssued: violation ? new Date(violation.dateIssued) : new Date(),
-      amount: violation?.amount ?? 0,
+      amount: violation?.amount ?? defaultFine,
       remarks: violation?.remarks ?? "",
     });
-  }, [open, violation, violator, form]);
+  }, [open, violation, violator, defaultFine, form]);
 
   // Whether the typed name already belongs to someone on file — what the hint
   // under the field reports, and what decides reuse versus creation on save.
@@ -153,13 +157,22 @@ export function ViolationForm({
     setSubmitting(false);
   });
 
-  // The usual offences, plus anything already typed on a past violation, so a
-  // one-off type entered last week is offered instead of retyped.
-  const typeOptions = React.useMemo(() => {
-    const seen = new Set(VIOLATION_TYPES);
-    for (const p of profiles) for (const v of p.violations) seen.add(v.violationType);
-    return [...seen].sort((a, b) => a.localeCompare(b));
-  }, [profiles]);
+  // The offences configured in Settings, plus anything already typed on a past
+  // violation, so a one-off type entered last week is offered instead of
+  // retyped — and a type the office has since retired stays editable.
+  const recordedTypes = React.useMemo(
+    () => profiles.flatMap((p) => p.violations.map((v) => v.violationType)),
+    [profiles],
+  );
+  const { options: configuredTypes } = useConfigOptions(
+    "Violation Management",
+    "violation_types",
+    recordedTypes,
+  );
+  const typeOptions = React.useMemo(
+    () => [...configuredTypes].sort((a, b) => a.localeCompare(b)),
+    [configuredTypes],
+  );
 
   const err = form.formState.errors;
   const amount = form.watch("amount");

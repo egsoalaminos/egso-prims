@@ -27,9 +27,10 @@ import {
   Stepper,
   Textarea,
 } from "@/components";
+import { useConfigNumber, useConfigText } from "@/features/config/use-module-config";
 import { findConflicts, type ReservationDraftInput } from "@/features/reservations/api";
 import {
-  TIME_SLOTS,
+  buildTimeSlots,
   equipmentById,
   equipmentName,
   facilityById,
@@ -303,6 +304,17 @@ function StepSchedule({
   const { register, control, watch, formState } = form;
   const err = formState.errors;
   const facilityId = watch("facilityId");
+
+  // The bookable window, as the office set it in Settings → Facility
+  // Reservation. Both dropdowns read the same list so a start can never be
+  // offered that the end cannot follow.
+  const opening = useConfigText("Facility Reservation", "opening_time");
+  const closing = useConfigText("Facility Reservation", "closing_time");
+  const slotMinutes = useConfigNumber("Facility Reservation", "slot_minutes");
+  const timeSlots = React.useMemo(
+    () => buildTimeSlots(opening, closing, slotMinutes),
+    [opening, closing, slotMinutes],
+  );
   // Only a facility from the register carries a description and capacity.
   const facility = facilityById(facilityId);
 
@@ -338,7 +350,7 @@ function StepSchedule({
             render={({ field }) => (
               <SelectField
                 placeholder="Start…"
-                options={TIME_SLOTS.map((t) => ({
+                options={timeSlots.map((t) => ({
                   value: t,
                   label: formatTime(t) + (slotBlocked(t) ? " · booked" : ""),
                   disabled: slotBlocked(t),
@@ -357,7 +369,7 @@ function StepSchedule({
             render={({ field }) => (
               <SelectField
                 placeholder="End…"
-                options={TIME_SLOTS.map((t) => ({
+                options={timeSlots.map((t) => ({
                   value: t,
                   label: formatTime(t),
                   disabled: endDisabled(t),

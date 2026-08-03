@@ -25,7 +25,7 @@ import {
   ITEM_CATEGORIES,
   type InventoryItem,
 } from "@/features/inventory/types";
-import { ITEM_UNITS } from "@/features/purchase-requests/types";
+import { useConfigOptions } from "@/features/config/use-module-config";
 import type { AttachmentRecord } from "@/features/shared/attachment-list";
 import {
   itemFormSchema,
@@ -53,6 +53,9 @@ export function InvWizard({ initial, submitting, onSubmit, onCancel }: InvWizard
   const [step, setStep] = React.useState(0);
   const [files, setFiles] = React.useState<File[]>([]);
   const [existing, setExisting] = React.useState<InventoryItem[]>([]);
+  // Units of measure are shared with Procurement — an item is counted the same
+  // way whether it is being requested or received.
+  const { options: configuredUnits } = useConfigOptions("Procurement", "item_units");
 
   React.useEffect(() => {
     // Values already on the register join the standard lists, so anything a
@@ -67,11 +70,11 @@ export function InvWizard({ initial, submitting, onSubmit, onCancel }: InvWizard
       ]
         .filter(Boolean)
         .sort(),
-      units: [...new Set<string>([...ITEM_UNITS, ...existing.map((r) => r.unit)])]
+      units: [...new Set<string>([...configuredUnits, ...existing.map((r) => r.unit)])]
         .filter(Boolean)
         .sort(),
     }),
-    [existing],
+    [existing, configuredUnits],
   );
 
   const form = useForm<ItemFormValues>({

@@ -31,12 +31,12 @@ import {
   Stepper,
   Textarea,
 } from "@/components";
+import { useConfigOptions } from "@/features/config/use-module-config";
 import type { PODraftInput } from "@/features/purchase-orders/api";
 import { poSupplierName, type PurchaseOrder } from "@/features/purchase-orders/types";
 import { listPurchaseRequests } from "@/features/purchase-requests/api";
 import { canRaisePO } from "@/features/purchase-requests/lib";
 import {
-  ITEM_UNITS,
   departmentByCode,
   type PurchaseRequest,
 } from "@/features/purchase-requests/types";
@@ -413,6 +413,8 @@ function StepDetails({
 
 function StepItems({ form }: { form: FormApi }) {
   const { register, control, watch, formState } = form;
+  // Units of measure, as the office set them in Settings → Procurement.
+  const { options: itemUnits } = useConfigOptions("Procurement", "item_units");
   const { fields, append, remove } = useFieldArray({ control, name: "items" });
   const items = watch("items");
   const total = items.reduce(
@@ -461,7 +463,7 @@ function StepItems({ form }: { form: FormApi }) {
               name={`items.${i}.unit`}
               render={({ field }) => (
                 <SelectField
-                  options={ITEM_UNITS.map((u) => ({ value: u, label: u }))}
+                  options={itemUnits.map((u) => ({ value: u, label: u }))}
                   value={field.value}
                   onChange={field.onChange}
                   invalid={!!rowErr?.unit}

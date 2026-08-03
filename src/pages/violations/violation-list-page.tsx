@@ -29,9 +29,9 @@ import {
 } from "@/features/violations/api";
 import { useViolatorProfiles } from "@/features/violations/hooks";
 import { summarize } from "@/features/violations/lib";
+import { useConfigOptions } from "@/features/config/use-module-config";
 import {
   PROFILE_STATUSES,
-  VIOLATION_TYPES,
   type ProfileStatus,
   type Violation,
   type Violator,
@@ -74,14 +74,22 @@ export function ViolationListPage() {
   // Summary cards read the whole register, independent of the filters.
   const stats = React.useMemo(() => summarize(allProfiles), [allProfiles]);
 
-  // Violation type is free text on the form, so the filter offers the standard
-  // list plus whatever has actually been recorded — otherwise a typed-in type
-  // could never be filtered for.
-  const typeFilterOptions = React.useMemo(() => {
-    const seen = new Set(VIOLATION_TYPES);
-    for (const p of allProfiles) for (const v of p.violations) seen.add(v.violationType);
-    return [...seen].sort((a, b) => a.localeCompare(b));
-  }, [allProfiles]);
+  // Violation type is free text on the form, so the filter offers the types
+  // configured in Settings plus whatever has actually been recorded —
+  // otherwise a typed-in type could never be filtered for.
+  const recordedTypes = React.useMemo(
+    () => allProfiles.flatMap((p) => p.violations.map((v) => v.violationType)),
+    [allProfiles],
+  );
+  const { options: configuredTypes } = useConfigOptions(
+    "Violation Management",
+    "violation_types",
+    recordedTypes,
+  );
+  const typeFilterOptions = React.useMemo(
+    () => [...configuredTypes].sort((a, b) => a.localeCompare(b)),
+    [configuredTypes],
+  );
 
   const [activeId, setActiveId] = React.useState<string | null>(null);
   const [drawerOpen, setDrawerOpen] = React.useState(false);
@@ -271,7 +279,7 @@ export function ViolationListPage() {
   );
 
   return (
-    <PageTransition className="space-y-4">
+    <PageTransition className="flex h-full min-h-0 flex-col gap-4">
       <PageHeader
         title="Violation Management"
         description="Manage violator profiles, recorded violations, and payment history."
@@ -283,7 +291,7 @@ export function ViolationListPage() {
         }
       />
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid shrink-0 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard
           label="Total Violators"
           value={stats.totalViolators}
@@ -312,7 +320,7 @@ export function ViolationListPage() {
         />
       </div>
 
-      <div className="h-[600px]">
+      <div className="min-h-0 flex-1">
         <TableCard
           fillContainer
           toolbar={

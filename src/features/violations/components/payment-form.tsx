@@ -20,13 +20,10 @@ import {
   toast,
 } from "@/components";
 import { formatPHP } from "@/lib/format";
+import { useConfigOptions } from "@/features/config/use-module-config";
 import { recordPayment } from "@/features/violations/api";
 import { formatDate } from "@/features/violations/lib";
-import {
-  PAYMENT_METHODS,
-  type Violation,
-  type Violator,
-} from "@/features/violations/types";
+import { type Violation, type Violator } from "@/features/violations/types";
 
 /**
  * Payment is full-only: the assessed amount is settled in one go, so the
@@ -71,6 +68,10 @@ export function PaymentForm({
 }) {
   const [submitting, setSubmitting] = React.useState(false);
   const assessed = violation?.amount ?? 0;
+  const { options: paymentMethods } = useConfigOptions(
+    "Violation Management",
+    "payment_methods",
+  );
 
   const form = useForm<PaymentValues>({
     resolver: zodResolver(paymentSchema(assessed)),
@@ -202,7 +203,7 @@ export function PaymentForm({
                 render={({ field }) => (
                   <SelectField
                     placeholder="Optional — select method…"
-                    options={PAYMENT_METHODS.map((m) => ({ value: m, label: m }))}
+                    options={paymentMethods.map((m) => ({ value: m, label: m }))}
                     value={field.value || undefined}
                     onChange={field.onChange}
                   />

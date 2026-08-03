@@ -117,12 +117,42 @@ export function timesOverlap(aStart: string, aEnd: string, bStart: string, bEnd:
   return aStart < bEnd && bStart < aEnd;
 }
 
-/** Selectable half-hour slots, 07:00–19:00. */
-/** Half-hour slots across the facility day, 5:00 AM through 8:00 PM. */
-export const TIME_SLOTS: string[] = Array.from({ length: 31 }, (_, i) => {
-  const h = 5 + Math.floor(i / 2);
-  return `${String(h).padStart(2, "0")}:${i % 2 === 0 ? "00" : "30"}`;
-});
+const minutesOf = (hhmm: string): number | null => {
+  const m = /^(\d{1,2}):(\d{2})$/.exec(hhmm.trim());
+  if (!m) return null;
+  const h = Number(m[1]);
+  const mins = Number(m[2]);
+  return h >= 0 && h <= 23 && mins >= 0 && mins <= 59 ? h * 60 + mins : null;
+};
+
+/**
+ * The times the reservation form offers, from the opening time to the closing
+ * time inclusive.
+ *
+ * The office sets the window and the interval in Settings → Facility
+ * Reservation. Anything unparseable or inverted falls back to the defaults
+ * below rather than producing an empty dropdown, so a mistyped setting cannot
+ * make the form unusable.
+ */
+export function buildTimeSlots(
+  opening = "05:00",
+  closing = "20:00",
+  stepMinutes = 30,
+): string[] {
+  const start = minutesOf(opening) ?? 5 * 60;
+  const end = minutesOf(closing) ?? 20 * 60;
+  const step = Number.isFinite(stepMinutes) && stepMinutes >= 5 ? Math.round(stepMinutes) : 30;
+  if (end <= start) return buildTimeSlots();
+
+  const slots: string[] = [];
+  for (let t = start; t <= end; t += step) {
+    slots.push(`${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`);
+  }
+  return slots;
+}
+
+/** Default slots — 5:00 AM to 8:00 PM every half hour, before Settings apply. */
+export const TIME_SLOTS: string[] = buildTimeSlots();
 
 /** "13:30" → "1:30 PM" */
 export function formatTime(time: string): string {
