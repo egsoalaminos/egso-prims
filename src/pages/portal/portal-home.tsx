@@ -58,10 +58,12 @@ export function PortalHome() {
           </motion.p>
 
           {/* Measured in characters, not pixels: the line length is what the
-              eye tracks, and it has to survive a change to the type size. */}
+              eye tracks, and it has to survive a change to the type size. The
+              ch unit is the width of a zero, which is wider than average prose,
+              so 58ch lands around 70 real characters. */}
           <motion.p
             {...rise(0.2, still)}
-            className="mt-5 max-w-[68ch] text-[13px] leading-relaxed text-neutral-500"
+            className="mt-5 max-w-[58ch] text-[13px] leading-relaxed text-neutral-500"
           >
             A centralized digital platform for submitting purchase requests, requesting inventory
             items, reserving government facilities, and tracking request status online.
@@ -123,7 +125,7 @@ export function PortalHome() {
                         </div>
                       </div>
                       <div className="flex flex-1 flex-col px-1 pt-3">
-                        <h3 className="text-[13px] font-semibold text-neutral-900">{s.title}</h3>
+                        <h2 className="text-[13px] font-semibold text-neutral-900">{s.title}</h2>
                         <p className="mt-1 flex-1 text-[12px] leading-snug text-neutral-500">
                           {s.description}
                         </p>
