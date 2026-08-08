@@ -30,7 +30,6 @@ import {
   NotificationBell,
   OfficeSwitcher,
   ProfileMenu,
-  QuickActionCard,
   SearchBar,
   Sidebar,
   SidebarBrand,
@@ -39,7 +38,6 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarItem,
-  SidebarMeter,
   SidebarUser,
   toast,
   TopBar,
@@ -49,6 +47,7 @@ import { useAuth } from "@/features/auth/auth-context";
 import { useNotifications } from "@/features/notifications/hooks";
 import { NotificationDrawer } from "@/features/notifications/components/notification-drawer";
 import { useAppearanceSync, useBranding } from "@/features/config/use-appearance";
+import { useNavCounts, type NavCounts } from "@/features/shared/use-nav-counts";
 
 interface ModuleNavItem {
   icon: React.ComponentType<{ className?: string }>;
@@ -57,6 +56,14 @@ interface ModuleNavItem {
   to?: string;
   badge?: { text: string; color: "blue" | "green" | "orange" };
   dot?: "orange" | "green" | "red";
+  /**
+   * Which live count fills this item's badge. Items without one never carry a
+   * badge — there are no hardcoded counts left in this file.
+   */
+  countKey?: keyof NavCounts;
+  badgeColor?: "blue" | "green" | "orange";
+  /** Show the count as a presence dot rather than a number. */
+  countAsDot?: boolean;
 }
 
 // Single top-level modules (unchanged — remain plain nav items).
@@ -65,13 +72,15 @@ const inventoryItem: ModuleNavItem = {
   icon: Package,
   label: "Inventory",
   to: "/inventory",
-  badge: { text: "12", color: "orange" },
+  countKey: "stockAlerts",
+  badgeColor: "orange",
 };
 const reservationItem: ModuleNavItem = {
   icon: CalendarDays,
   label: "Facility Reservation",
   to: "/reservations",
-  badge: { text: "5", color: "green" },
+  countKey: "pendingReservations",
+  badgeColor: "green",
 };
 const violationItem: ModuleNavItem = {
   icon: ShieldAlert,
@@ -86,9 +95,16 @@ const procurementChildren: ModuleNavItem[] = [
     icon: FileText,
     label: "Purchase Requests",
     to: "/purchase-requests",
-    badge: { text: "18", color: "blue" },
+    countKey: "pendingPRs",
+    badgeColor: "blue",
   },
-  { icon: ShoppingCart, label: "Purchase Orders", to: "/purchase-orders", dot: "orange" },
+  {
+    icon: ShoppingCart,
+    label: "Purchase Orders",
+    to: "/purchase-orders",
+    countKey: "pendingPOs",
+    countAsDot: true,
+  },
   { icon: ClipboardList, label: "Request for Issuance Slip", to: "/ris" },
 ];
 const utilitiesChildren: ModuleNavItem[] = [
@@ -197,17 +213,33 @@ const systemNav: (ModuleNavItem & { trailing?: React.ReactNode })[] = [
   { icon: Sun, label: "Appearance", trailing: <Sun className="h-4 w-4 text-neutral-400" /> },
 ];
 
-const quickAccess = [
-  { color: "bg-blue-500", label: "Recent Purchase Requests" },
-  { color: "bg-violet-500", label: "Recent Purchase Orders" },
-  { color: "bg-emerald-500", label: "Recent RIS" },
-  { color: "bg-orange-500", label: "Pending Approvals" },
-];
-
 function isActive(pathname: string, to?: string) {
   if (!to) return false;
   if (to === "/") return pathname === "/";
   return pathname === to || pathname.startsWith(`${to}/`);
+}
+
+/**
+ * Resolves an item's live count into a badge or a dot, and strips the count
+ * fields so they never reach `SidebarItem`. A count of zero yields neither —
+ * an empty queue should read as quiet, not as a `0` to decode.
+ */
+function withCount(item: ModuleNavItem, counts: NavCounts): ModuleNavItem {
+  const { countKey, badgeColor, countAsDot, ...rest } = item;
+  if (!countKey) return rest;
+  const value = counts[countKey];
+  if (value <= 0) return rest;
+  return countAsDot
+    ? { ...rest, dot: "orange" }
+    : { ...rest, badge: { text: String(value), color: badgeColor ?? "blue" } };
+}
+
+/** Initials from a display name: "Juan Dela Cruz" → "JD", "Mayor" → "M". */
+function initialsOf(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "?";
+  const letters = parts.length === 1 ? [parts[0][0]] : [parts[0][0], parts[parts.length - 1][0]];
+  return letters.join("").toUpperCase();
 }
 
 function AppSidebar({
@@ -222,15 +254,19 @@ function AppSidebar({
   const { user } = useAuth();
   const branding = useBranding();
   const { expanded, toggle } = useSidebarGroups();
+  const counts = useNavCounts();
 
-  const renderItem = ({ to, ...item }: ModuleNavItem) => (
-    <SidebarItem
-      key={item.label}
-      {...item}
-      active={isActive(pathname, to)}
-      onClick={to ? () => navigate(to) : undefined}
-    />
-  );
+  const renderItem = (navItem: ModuleNavItem) => {
+    const { to, ...item } = withCount(navItem, counts);
+    return (
+      <SidebarItem
+        key={item.label}
+        {...item}
+        active={isActive(pathname, to)}
+        onClick={to ? () => navigate(to) : undefined}
+      />
+    );
+  };
   const procurementActive = procurementChildren.some((c) => isActive(pathname, c.to));
   const utilitiesActive = utilitiesChildren.some((c) => isActive(pathname, c.to));
 
@@ -279,32 +315,12 @@ function AppSidebar({
             />
           ))}
         </SidebarGroup>
-        <SidebarGroup label="Quick Access" className="mt-5">
-          {quickAccess.map((item) => (
-            <QuickActionCard
-              key={item.label}
-              {...item}
-              onClick={
-                item.label === "Recent Purchase Requests"
-                  ? () => navigate("/purchase-requests")
-                  : undefined
-              }
-            />
-          ))}
-        </SidebarGroup>
-        <SidebarMeter
-          value="₱18.4M / ₱25M"
-          tag="FY 2026"
-          description="Procurement budget utilization"
-          percent={73}
-          action={{ label: "View Budget" }}
-        />
       </SidebarContent>
       <SidebarFooter>
         <SidebarUser
           name={user?.name ?? "Administrator"}
           detail="System Settings · Sign Out"
-          initials="AD"
+          initials={initialsOf(user?.name ?? "Administrator")}
           onOpenMenu={() => navigate("/settings")}
           onSettings={() => navigate("/settings")}
           onSignOut={onRequestSignOut}
@@ -385,7 +401,7 @@ function AppTopBar({
           <ProfileMenu
             name={user?.name ?? "Administrator"}
             detail={user?.office ?? "General Services Office"}
-            initials="AD"
+            initials={initialsOf(user?.name ?? "Administrator")}
             items={[
               { label: "Settings", icon: Settings, onClick: () => navigate("/settings") },
               { label: "Sign Out", icon: LogOut, destructive: true, onClick: onRequestSignOut },

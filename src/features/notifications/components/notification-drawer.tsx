@@ -1,17 +1,7 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
-import {
-  ArrowUpRight,
-  Bell,
-  CalendarDays,
-  CheckCheck,
-  Droplets,
-  Fuel,
-  Package,
-  ShoppingCart,
-  Zap,
-} from "lucide-react";
+import { ArrowUpRight, Bell, CheckCheck } from "lucide-react";
 
 import {
   Button,
@@ -31,16 +21,7 @@ import {
   notificationRoute,
   type AppNotification,
 } from "@/features/notifications/types";
-
-/** Per-module icon, matching the sidebar's module iconography. */
-const MODULE_ICON: Record<string, React.ComponentType<{ className?: string }>> = {
-  Procurement: ShoppingCart,
-  Inventory: Package,
-  Facilities: CalendarDays,
-  Energy: Zap,
-  Water: Droplets,
-  Fuel: Fuel,
-};
+import { MODULE_ICON } from "@/features/notifications/module-icons";
 
 type FilterKey = "All" | "Unread" | (typeof NOTIFICATION_MODULES)[number];
 

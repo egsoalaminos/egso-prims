@@ -38,7 +38,6 @@ export {
   SidebarItem,
   SidebarFooter,
 } from "@/components/navigation/sidebar";
-export { SidebarMeter } from "@/components/navigation/sidebar-meter";
 export { SidebarUser } from "@/components/navigation/sidebar-user";
 export { Breadcrumb, type BreadcrumbItem } from "@/components/navigation/breadcrumb";
 export { Stepper, type StepperStep } from "@/components/navigation/stepper";
@@ -163,5 +162,4 @@ export {
   DepartmentChip,
   InfoChip,
 } from "@/components/utilities/display";
-export { QuickActionCard } from "@/components/utilities/quick-action-card";
 export { NotificationCard } from "@/components/utilities/notification-card";
