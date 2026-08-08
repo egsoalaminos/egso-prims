@@ -88,59 +88,12 @@ export function PortalLayout() {
         <Outlet />
       </main>
 
+      {/* One line. The landing has to hold in a single screen, so the footer
+          carries the office's address and stops there. */}
       <footer className="mt-auto border-t bg-white" style={{ borderColor: RULE }}>
-        <div className="mx-auto grid max-w-5xl gap-8 px-5 py-9 sm:grid-cols-[1.2fr_1fr_1fr]">
-          <div className="flex items-start gap-3">
-            <img src={BRAND_LOGO} alt="" className="h-9 w-9 shrink-0 object-contain" />
-            <div>
-              <div
-                className="text-[13.5px] font-semibold"
-                style={{ fontFamily: SERIF, color: SEAL }}
-              >
-                General Services Office
-              </div>
-              <div className="mt-0.5 text-[11.5px] leading-relaxed text-neutral-500">
-                {PORTAL_CONTACT.municipality}
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <h2 className="text-[10px] font-semibold uppercase tracking-[0.14em] text-neutral-400">
-              Office
-            </h2>
-            <address className="mt-2 space-y-1 text-[11.5px] not-italic leading-relaxed text-neutral-600">
-              <div>{PORTAL_CONTACT.address}</div>
-              <div>{PORTAL_CONTACT.hours}</div>
-            </address>
-          </div>
-
-          <div>
-            <h2 className="text-[10px] font-semibold uppercase tracking-[0.14em] text-neutral-400">
-              Contact
-            </h2>
-            <div className="mt-2 space-y-1 text-[11.5px] leading-relaxed">
-              <a
-                href={`mailto:${PORTAL_CONTACT.email}`}
-                className="block text-neutral-600 underline-offset-2 hover:underline"
-              >
-                {PORTAL_CONTACT.email}
-              </a>
-              <a
-                href={`tel:${PORTAL_CONTACT.phone.replace(/[^\d+]/g, "")}`}
-                className="block text-neutral-600 underline-offset-2 hover:underline"
-              >
-                {PORTAL_CONTACT.phone}
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div className="border-t" style={{ borderColor: RULE }}>
-          <p className="mx-auto max-w-5xl px-5 py-4 text-[11px] text-neutral-400">
-            © {new Date().getFullYear()} Municipality of Alaminos, Laguna. All rights reserved.
-          </p>
-        </div>
+        <address className="mx-auto max-w-5xl px-5 py-3.5 text-center text-[11.5px] not-italic leading-relaxed text-neutral-500">
+          {PORTAL_CONTACT.address}
+        </address>
       </footer>
     </div>
   );
