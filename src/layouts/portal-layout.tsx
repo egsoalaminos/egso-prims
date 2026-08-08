@@ -2,6 +2,7 @@ import { Link, NavLink, Outlet } from "react-router-dom";
 
 import { BRAND_LOGO } from "@/lib/brand";
 import { PORTAL_CONTACT, PORTAL_SERVICES } from "@/features/portal/data";
+import { BURGUNDY, BURGUNDY_TINT, GOLD, PAPER, RULE, SERIF } from "@/features/portal/theme";
 
 /**
  * Public portal frame.
@@ -10,17 +11,9 @@ import { PORTAL_CONTACT, PORTAL_SERVICES } from "@/features/portal/data";
  * then the province, then the municipality, then the office — above a ruled
  * line. That hierarchy is the whole reason this reads as government rather than
  * as a product, so it is set in a serif and given the page's first 80 pixels.
- *
- * Colours are written as literal hex rather than routed through a custom
- * property. A property whose value is another property is substituted where it
- * is declared, not where it is used, which is how an earlier attempt at theming
- * this portal quietly failed.
  */
 
-const SEAL = "#6B1220";
-const GOLD = "#A9822F";
-const PAPER = "#FBFAF7";
-const RULE = "#E4E0D7";
+const SEAL = BURGUNDY;
 
 export function PortalLayout() {
   return (
@@ -48,7 +41,7 @@ export function PortalLayout() {
               </span>
               <span
                 className="text-[17px] font-semibold tracking-tight"
-                style={{ fontFamily: '"Source Serif 4", Georgia, serif', color: SEAL }}
+                style={{ fontFamily: SERIF, color: SEAL }}
               >
                 Municipality of Alaminos
               </span>
@@ -74,7 +67,7 @@ export function PortalLayout() {
                     ({
                       ["--tw-ring-color" as string]: SEAL,
                       color: isActive ? SEAL : undefined,
-                      background: isActive ? "#F6EFEF" : undefined,
+                      background: isActive ? BURGUNDY_TINT : undefined,
                     }) as React.CSSProperties
                   }
                 >
@@ -97,7 +90,7 @@ export function PortalLayout() {
             <div>
               <div
                 className="text-[13.5px] font-semibold"
-                style={{ fontFamily: '"Source Serif 4", Georgia, serif', color: SEAL }}
+                style={{ fontFamily: SERIF, color: SEAL }}
               >
                 General Services Office
               </div>

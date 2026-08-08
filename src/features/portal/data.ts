@@ -16,6 +16,13 @@ export interface PortalService {
   /** Says what the visitor is about to do, in the same words as the button. */
   cta: string;
   to: string;
+  /**
+   * `filing` starts a new transaction; `lookup` checks one already filed. The
+   * landing page gives the two different treatments — three cards for the
+   * things you can file, and a single reference field for the one you check —
+   * so tracking is not offered twice on the same screen.
+   */
+  kind: "filing" | "lookup";
 }
 
 export const PORTAL_SERVICES: PortalService[] = [
@@ -27,6 +34,7 @@ export const PORTAL_SERVICES: PortalService[] = [
       "Ask the General Services Office to procure supplies, equipment, or services for your office.",
     cta: "File a request",
     to: "/portal/request",
+    kind: "filing",
   },
   {
     icon: ClipboardList,
@@ -36,6 +44,7 @@ export const PORTAL_SERVICES: PortalService[] = [
       "Draw items your office needs from stock the General Services Office already holds.",
     cta: "Request supplies",
     to: "/portal/ris",
+    kind: "filing",
   },
   {
     icon: CalendarDays,
@@ -45,6 +54,7 @@ export const PORTAL_SERVICES: PortalService[] = [
       "Book a municipal hall, court, or vehicle, and borrow equipment for an official activity.",
     cta: "Reserve a facility",
     to: "/portal/reserve",
+    kind: "filing",
   },
   {
     icon: SearchCheck,
@@ -54,6 +64,7 @@ export const PORTAL_SERVICES: PortalService[] = [
       "Follow a request you have already filed, using the reference number on your receipt.",
     cta: "Track a request",
     to: "/portal/track",
+    kind: "lookup",
   },
 ];
 
