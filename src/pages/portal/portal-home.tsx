@@ -15,18 +15,16 @@ import {
 } from "@/features/portal/theme";
 
 /**
- * Public portal landing.
+ * Public portal landing — one screen, no scroll.
  *
- * One job: send a visitor into the right transaction, or tell them where the
- * one they already filed has got to. No announcements, no statistics, and no
- * illustration of a request that was never made.
+ * A visitor at a counter should see every window at once. Everything here is
+ * sized so the three things you can file and the one thing you can check fit
+ * inside a single viewport, which is also the discipline that keeps anything
+ * unnecessary off the page: there is no room for it.
  *
- * The previous revision floated a mock Purchase Request beside the heading —
- * approved, itemised, totalling ₱35,988. It was marked `aria-hidden` on the
- * reasoning that a screen reader announcing a fabricated approved request on a
- * municipal portal would be stating something untrue. That reasoning was right
- * and stopped one step short: it was equally untrue for everyone who could see
- * it. It is gone.
+ * The height reserved for the frame — letterhead, gold rule, service nav, and
+ * the address line at the foot — is the 168px subtracted below. Change either
+ * and this has to move with it.
  */
 export function PortalHome() {
   const navigate = useNavigate();
@@ -35,14 +33,13 @@ export function PortalHome() {
 
   const filing = PORTAL_SERVICES.filter((s) => s.kind === "filing");
 
-  /** Entrance: one short staggered sequence, then the page holds still. */
   const rise = (delay: number) =>
     still
       ? { initial: { opacity: 0 }, animate: { opacity: 1 }, transition: { duration: 0.2 } }
       : {
-          initial: { opacity: 0, y: 12 },
+          initial: { opacity: 0, y: 10 },
           animate: { opacity: 1, y: 0 },
-          transition: { duration: 0.4, delay, ease: [0.16, 1, 0.3, 1] as const },
+          transition: { duration: 0.38, delay, ease: [0.16, 1, 0.3, 1] as const },
         };
 
   const track = (e: React.FormEvent) => {
@@ -52,91 +49,64 @@ export function PortalHome() {
   };
 
   return (
-    <div className="mx-auto max-w-5xl px-5 py-12 sm:py-16">
-      {/*
-       * The seal earns the right-hand column. Something has to hold that space
-       * — the previous revision filled it with a fabricated approved request —
-       * and on a government page the honest answer is the credential itself,
-       * shown at a size where the palms, the coconut and the bolo are actually
-       * legible rather than reduced to a coloured dot in the letterhead.
-       */}
-      <header className="grid items-center gap-10 lg:grid-cols-[1fr_auto]">
-        <motion.div {...rise(0.04)} className="max-w-2xl">
+    <div className="mx-auto flex min-h-[calc(100vh-168px)] max-w-5xl flex-col justify-center gap-7 px-5 py-8">
+      <motion.header {...rise(0.04)} className="flex items-center justify-between gap-8">
+        <div>
           <h1
-            className="text-[32px] leading-[1.1] tracking-tight sm:text-[42px]"
+            className="text-[30px] leading-[1.08] tracking-tight sm:text-[38px]"
             style={{ fontFamily: SERIF, color: BURGUNDY, fontWeight: 600 }}
           >
             General Services Office
           </h1>
-          <p className="mt-4 max-w-[54ch] text-[14px] leading-relaxed text-neutral-600">
-            File purchase requests, draw supplies from municipal stock, and reserve government
-            facilities — without visiting the Municipal Hall. Every submission is issued a reference
-            number you can use to follow it.
+          <p className="mt-2.5 max-w-[56ch] text-[13.5px] leading-relaxed text-neutral-600">
+            File requests and reserve municipal facilities without visiting the Municipal Hall.
+            Every submission is issued a reference number.
           </p>
-        </motion.div>
+        </div>
 
-        <motion.div
-          {...rise(0.1)}
+        {/* The seal, at a size where it is actually readable as the seal. */}
+        <img
+          src={BRAND_LOGO}
+          alt=""
           aria-hidden
-          className="relative hidden shrink-0 lg:block"
-        >
-          <div
-            className="absolute inset-0 -m-6 rounded-full blur-2xl"
-            style={{ background: BURGUNDY_TINT }}
-          />
-          <img
-            src={BRAND_LOGO}
-            alt=""
-            className="relative h-[190px] w-[190px] object-contain"
-          />
-        </motion.div>
-      </header>
+          className="hidden h-[120px] w-[120px] shrink-0 object-contain lg:block"
+        />
+      </motion.header>
 
-      {/* Services. Cards, because each is a separate errand a visitor picks up
-          and carries out on its own — and deliberately not numbered 01/02/03,
-          which would assert an order that does not exist between them. */}
-      <section aria-labelledby="services-heading" className="mt-12">
-        <h2
-          id="services-heading"
-          className="text-[10px] font-semibold uppercase tracking-[0.16em] text-neutral-500"
-        >
-          What you can file
-        </h2>
-
-        <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <section aria-label="Services you can file">
+        <ul className="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
           {filing.map((service, i) => {
             const Icon = service.icon;
             return (
-              <motion.li key={service.to} {...rise(0.12 + i * 0.06)} className="min-w-0">
+              <motion.li key={service.to} {...rise(0.1 + i * 0.05)} className="min-w-0">
                 <Link
                   to={service.to}
                   className="group flex h-full flex-col border bg-white transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
                   style={{ borderColor: RULE, ["--tw-ring-color" as string]: BURGUNDY }}
                 >
-                  {/* A ruled header band, the way an official form is capped. */}
                   <span style={{ height: 3, background: GOLD }} />
-
-                  <span className="flex flex-1 flex-col p-5">
-                    <span
-                      className="grid h-10 w-10 place-items-center rounded-full"
-                      style={{ background: BURGUNDY_TINT, color: BURGUNDY }}
-                    >
-                      <Icon className="h-5 w-5" />
+                  <span className="flex flex-1 flex-col p-4">
+                    <span className="flex items-center gap-2.5">
+                      <span
+                        className="grid h-8 w-8 shrink-0 place-items-center rounded-full"
+                        style={{ background: BURGUNDY_TINT, color: BURGUNDY }}
+                      >
+                        <Icon className="h-4 w-4" />
+                      </span>
+                      <span
+                        className="text-[15px] font-semibold leading-snug text-neutral-900"
+                        style={{ fontFamily: SERIF }}
+                      >
+                        {service.title}
+                      </span>
                     </span>
 
-                    <span
-                      className="mt-4 block text-[17px] font-semibold leading-snug text-neutral-900"
-                      style={{ fontFamily: SERIF }}
-                    >
-                      {service.title}
-                    </span>
-
-                    <span className="mt-2 block flex-1 text-[13px] leading-relaxed text-neutral-600">
+                    <span className="mt-2.5 block flex-1 text-[12.5px] leading-relaxed text-neutral-600">
                       {service.description}
                     </span>
 
                     <span
-                      className="mt-5 inline-flex items-center gap-1.5 text-[12.5px] font-semibold"
+                      className="mt-3.5 inline-flex items-center gap-1.5 text-[12.5px] font-semibold"
                       style={{ color: BURGUNDY }}
                     >
                       {service.cta}
@@ -151,40 +121,39 @@ export function PortalHome() {
       </section>
 
       {/*
-       * The thing most visitors actually return for, and the signature of the
-       * page. A transaction with a municipal office lives or dies by its
-       * control number, so the lookup is drawn as the control-number block on a
-       * government form: a ruled box, a small-caps label, and the number set
-       * large in tabular figures — wide enough to read aloud over a phone.
+       * The control-number block. A transaction with a municipal office lives
+       * or dies by its reference, so it is drawn the way that field is drawn on
+       * the form itself — ruled, labelled in small caps, the number set in the
+       * serif at a size that survives being read aloud over a phone.
        */}
       <motion.section
-        {...rise(0.32)}
+        {...rise(0.28)}
         aria-labelledby="track-heading"
-        className="mt-6 border bg-white"
+        className="border bg-white"
         style={{ borderColor: RULE }}
       >
         <div style={{ height: 3, background: BURGUNDY }} />
-        <form onSubmit={track} className="p-5 sm:p-6">
+        <form onSubmit={track} className="p-4 sm:p-5">
           <h2
             id="track-heading"
             className="text-[10px] font-semibold uppercase tracking-[0.16em] text-neutral-500"
           >
             Already filed something? Enter its reference number
           </h2>
-          <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-stretch">
+          <div className="mt-2.5 flex flex-col gap-2.5 sm:flex-row sm:items-stretch">
             <input
               value={reference}
               onChange={(e) => setReference(e.target.value)}
               placeholder="PR-2026-0214"
               aria-label="Reference number from your receipt"
-              className="min-w-0 flex-1 border-b-2 bg-transparent pb-2 text-[22px] font-semibold uppercase tracking-[0.06em] tabular-nums text-neutral-900 placeholder:font-normal placeholder:tracking-normal placeholder:text-neutral-300 focus:outline-none sm:text-[26px]"
+              className="min-w-0 flex-1 border-b-2 bg-transparent pb-1.5 text-[20px] font-semibold uppercase tracking-[0.06em] tabular-nums text-neutral-900 placeholder:font-normal placeholder:tracking-normal placeholder:text-neutral-300 focus:outline-none sm:text-[24px]"
               style={{ borderColor: RULE, fontFamily: SERIF }}
               onFocus={(e) => (e.currentTarget.style.borderColor = BURGUNDY)}
               onBlur={(e) => (e.currentTarget.style.borderColor = RULE)}
             />
             <button
               type="submit"
-              className="inline-flex shrink-0 items-center justify-center gap-2 px-6 py-3 text-[13px] font-semibold text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+              className="inline-flex shrink-0 items-center justify-center gap-2 px-6 py-2.5 text-[13px] font-semibold text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
               style={{ background: BURGUNDY, ["--tw-ring-color" as string]: BURGUNDY }}
               onMouseEnter={(e) => (e.currentTarget.style.background = BURGUNDY_DEEP)}
               onMouseLeave={(e) => (e.currentTarget.style.background = BURGUNDY)}
@@ -193,16 +162,8 @@ export function PortalHome() {
               Track
             </button>
           </div>
-          <p className="mt-3 text-[12px] text-neutral-500">
-            Printed on the receipt shown after you submit. Begins with PR, PO, RIS, or FR.
-          </p>
         </form>
       </motion.section>
-
-      <motion.p {...rise(0.4)} className="mt-6 text-[12.5px] leading-relaxed text-neutral-500">
-        No account is required. Submissions are reviewed by the General Services Office during
-        office hours.
-      </motion.p>
     </div>
   );
 }

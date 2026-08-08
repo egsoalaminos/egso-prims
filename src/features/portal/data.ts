@@ -68,11 +68,13 @@ export const PORTAL_SERVICES: PortalService[] = [
   },
 ];
 
+/**
+ * The office's own line. The footer prints the address and nothing else — the
+ * landing has to hold in a single screen, and a directory of hours and numbers
+ * is not what a visitor came to the counter for.
+ */
 export const PORTAL_CONTACT = {
   municipality: "Municipality of Alaminos, Province of Laguna",
   office: "General Services Office",
-  address: "G/F Municipal Hall, Poblacion, Alaminos, Laguna 4001",
-  email: "gso@alaminos.gov.ph",
-  phone: "(049) 521-0143",
-  hours: "Monday to Friday, 8:00 AM – 5:00 PM (except holidays)",
+  address: "Daniel Fandiño Street, Poblacion III, Alaminos, Laguna 4001, Philippines",
 };
