@@ -1,81 +1,59 @@
 import { CalendarDays, ClipboardList, FileText, SearchCheck } from "lucide-react";
 
-/** Static content for the public portal (announcements, contact, services). */
+/** Static content for the public portal: the service directory and the office's
+ *  real contact details. Nothing here may describe activity that has not
+ *  happened — an earlier revision carried three invented announcements
+ *  ("Central supplies restocked", a maintenance window in July) that no screen
+ *  ever rendered. */
 
 export interface PortalService {
   icon: React.ComponentType<{ className?: string }>;
+  /** Full name, as it appears on the form itself. */
   title: string;
+  /** Short form for the header navigation, where space is tight. */
+  navLabel: string;
   description: string;
+  /** Says what the visitor is about to do, in the same words as the button. */
   cta: string;
   to: string;
-  /** Tailwind gradient stops for the card hero area. */
-  gradient: string;
 }
 
 export const PORTAL_SERVICES: PortalService[] = [
   {
     icon: FileText,
     title: "Purchase Request",
+    navLabel: "Purchase Request",
     description:
-      "Submit official purchase requests for office supplies, equipment, and operational requirements.",
-    cta: "Create PR",
+      "Ask the General Services Office to procure supplies, equipment, or services for your office.",
+    cta: "File a request",
     to: "/portal/request",
-    gradient: "from-blue-100 to-cyan-100",
   },
   {
     icon: ClipboardList,
-    title: "Requisition & Issue Slip (RIS)",
+    title: "Requisition & Issue Slip",
+    navLabel: "Requisition",
     description:
-      "Request available inventory items from the General Services Office inventory.",
-    cta: "Request Items",
+      "Draw items your office needs from stock the General Services Office already holds.",
+    cta: "Request supplies",
     to: "/portal/ris",
-    gradient: "from-emerald-100 to-lime-100",
   },
   {
     icon: CalendarDays,
     title: "Facility Reservation",
+    navLabel: "Reservation",
     description:
-      "Reserve available government facilities through an online scheduling system.",
-    cta: "Reserve Facility",
+      "Book a municipal hall, court, or vehicle, and borrow equipment for an official activity.",
+    cta: "Reserve a facility",
     to: "/portal/reserve",
-    gradient: "from-sky-100 to-indigo-100",
   },
   {
     icon: SearchCheck,
-    title: "Track Request",
+    title: "Track a Request",
+    navLabel: "Track",
     description:
-      "Track submitted Purchase Requests and Facility Reservations using the generated reference number.",
-    cta: "Track Request",
+      "Follow a request you have already filed, using the reference number on your receipt.",
+    cta: "Track a request",
     to: "/portal/track",
-    gradient: "from-amber-100 to-orange-100",
-  },
-];
-
-export interface PortalAnnouncement {
-  date: string;
-  tag: "Advisory" | "Notice" | "Maintenance";
-  title: string;
-  body: string;
-}
-
-export const PORTAL_ANNOUNCEMENTS: PortalAnnouncement[] = [
-  {
-    date: "18 Jul 2026",
-    tag: "Advisory",
-    title: "Q3 procurement cut-off",
-    body: "Purchase Requests chargeable to third-quarter allotments must be submitted on or before July 31 to make the Bids & Awards Committee calendar.",
-  },
-  {
-    date: "15 Jul 2026",
-    tag: "Notice",
-    title: "Central supplies restocked",
-    body: "Common-use office supplies for Q3 have arrived. Departments may now submit Requests for Issuance Slips against central stock.",
-  },
-  {
-    date: "12 Jul 2026",
-    tag: "Maintenance",
-    title: "Scheduled system maintenance",
-    body: "General Services Office will undergo maintenance on July 27, 10:00 PM – 12:00 MN. Submissions during this window may be briefly unavailable.",
   },
 ];
 
@@ -85,5 +63,5 @@ export const PORTAL_CONTACT = {
   address: "G/F Municipal Hall, Poblacion, Alaminos, Laguna 4001",
   email: "gso@alaminos.gov.ph",
   phone: "(049) 521-0143",
-  hours: "Monday – Friday · 8:00 AM – 5:00 PM (except holidays)",
+  hours: "Monday to Friday, 8:00 AM – 5:00 PM (except holidays)",
 };

@@ -1,70 +1,146 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet } from "react-router-dom";
+
 import { BRAND_LOGO } from "@/lib/brand";
+import { PORTAL_CONTACT, PORTAL_SERVICES } from "@/features/portal/data";
 
 /**
- * Public portal frame: government letterhead top bar + minimal footer, no
- * sidebar, no authentication. Shares the design tokens with the admin system.
+ * Public portal frame.
+ *
+ * A municipal office identifies itself the way its paper does: the Republic,
+ * then the province, then the municipality, then the office — above a ruled
+ * line. That hierarchy is the whole reason this reads as government rather than
+ * as a product, so it is set in a serif and given the page's first 80 pixels.
+ *
+ * Colours are written as literal hex rather than routed through a custom
+ * property. A property whose value is another property is substituted where it
+ * is declared, not where it is used, which is how an earlier attempt at theming
+ * this portal quietly failed.
  */
+
+const SEAL = "#6B1220";
+const GOLD = "#A9822F";
+const PAPER = "#FBFAF7";
+const RULE = "#E4E0D7";
+
 export function PortalLayout() {
   return (
-    <div className="min-h-screen bg-canvas font-sans antialiased">
-      {/* Government letterhead */}
-      <header className="sticky top-0 z-20 border-b border-neutral-200 bg-white/85 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center gap-3 px-5 py-3">
-          <Link to="/portal" className="flex items-center gap-2.5">
+    <div className="flex min-h-screen flex-col font-sans antialiased" style={{ background: PAPER }}>
+      <a
+        href="#portal-main"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white focus:px-3 focus:py-2 focus:text-[13px] focus:font-medium focus:text-neutral-900 focus:shadow-lg focus:outline-none focus:ring-2"
+        style={{ ["--tw-ring-color" as string]: SEAL }}
+      >
+        Skip to main content
+      </a>
+
+      <header className="sticky top-0 z-20 border-b bg-white/90 backdrop-blur" style={{ borderColor: RULE }}>
+        {/* Letterhead */}
+        <div className="mx-auto flex max-w-5xl items-center gap-3.5 px-5 py-3.5">
+          <Link to="/portal" className="flex items-center gap-3.5 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2" style={{ ["--tw-ring-color" as string]: SEAL }}>
             <img
               src={BRAND_LOGO}
-              alt="Municipality of Alaminos seal"
-              className="h-9 w-9 object-contain"
+              alt=""
+              className="h-11 w-11 shrink-0 object-contain"
             />
             <span className="flex flex-col leading-tight">
-              <span className="text-[10px] uppercase tracking-[0.12em] text-neutral-400">
-                Municipality of Alaminos, Laguna
+              <span className="text-[9.5px] uppercase tracking-[0.18em] text-neutral-500">
+                Republic of the Philippines · Province of Laguna
               </span>
-              <span className="text-[13px] font-semibold tracking-tight text-neutral-900">
-                General Services Office
+              <span
+                className="text-[17px] font-semibold tracking-tight"
+                style={{ fontFamily: '"Source Serif 4", Georgia, serif', color: SEAL }}
+              >
+                Municipality of Alaminos
               </span>
-              <span className="hidden text-[10.5px] text-neutral-500 sm:block">
-                Purchase Request &amp; Inventory Management System
-              </span>
+              <span className="text-[11px] text-neutral-600">General Services Office</span>
             </span>
           </Link>
         </div>
+
+        {/* The gold rule is the seam between the letterhead and the service
+            counter — the same device a printed municipal form uses. */}
+        <div style={{ height: 2, background: GOLD }} />
+
+        {/* Until now the portal had no navigation at all: every inner page could
+            only be left through the logo. */}
+        <nav aria-label="Portal services" className="border-t bg-white" style={{ borderColor: RULE }}>
+          <ul className="mx-auto flex max-w-5xl gap-1 overflow-x-auto px-3 py-1.5 text-[12.5px]">
+            {PORTAL_SERVICES.map((s) => (
+              <li key={s.to}>
+                <NavLink
+                  to={s.to}
+                  className="block whitespace-nowrap rounded-md px-2.5 py-1.5 text-neutral-600 transition hover:bg-neutral-100 hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 aria-[current=page]:font-semibold"
+                  style={({ isActive }) =>
+                    ({
+                      ["--tw-ring-color" as string]: SEAL,
+                      color: isActive ? SEAL : undefined,
+                      background: isActive ? "#F6EFEF" : undefined,
+                    }) as React.CSSProperties
+                  }
+                >
+                  {s.navLabel}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </header>
 
-      <Outlet />
+      <main id="portal-main" className="flex-1">
+        <Outlet />
+      </main>
 
-      {/* Minimal footer */}
-      <footer className="border-t border-neutral-200 bg-white">
-        <div className="mx-auto flex max-w-6xl flex-col gap-6 px-5 py-8 sm:flex-row sm:items-start sm:justify-between">
-          <div className="flex items-start gap-2.5">
-            <img
-              src={BRAND_LOGO}
-              alt="Municipality of Alaminos seal"
-              className="h-8 w-8 shrink-0 object-contain"
-            />
+      <footer className="mt-auto border-t bg-white" style={{ borderColor: RULE }}>
+        <div className="mx-auto grid max-w-5xl gap-8 px-5 py-9 sm:grid-cols-[1.2fr_1fr_1fr]">
+          <div className="flex items-start gap-3">
+            <img src={BRAND_LOGO} alt="" className="h-9 w-9 shrink-0 object-contain" />
             <div>
-              <div className="text-[13px] font-semibold text-neutral-900">
+              <div
+                className="text-[13.5px] font-semibold"
+                style={{ fontFamily: '"Source Serif 4", Georgia, serif', color: SEAL }}
+              >
                 General Services Office
               </div>
-              <div className="text-[11.5px] text-neutral-500">
-                Municipality of Alaminos, Laguna
+              <div className="mt-0.5 text-[11.5px] leading-relaxed text-neutral-500">
+                {PORTAL_CONTACT.municipality}
               </div>
             </div>
           </div>
-          <address className="text-[11.5px] not-italic leading-relaxed text-neutral-500 sm:text-right">
-            Municipal Hall Compound,
-            <br />
-            Brgy. Poblacion,
-            <br />
-            Alaminos, Laguna,
-            <br />
-            Philippines
-          </address>
+
+          <div>
+            <h2 className="text-[10px] font-semibold uppercase tracking-[0.14em] text-neutral-400">
+              Office
+            </h2>
+            <address className="mt-2 space-y-1 text-[11.5px] not-italic leading-relaxed text-neutral-600">
+              <div>{PORTAL_CONTACT.address}</div>
+              <div>{PORTAL_CONTACT.hours}</div>
+            </address>
+          </div>
+
+          <div>
+            <h2 className="text-[10px] font-semibold uppercase tracking-[0.14em] text-neutral-400">
+              Contact
+            </h2>
+            <div className="mt-2 space-y-1 text-[11.5px] leading-relaxed">
+              <a
+                href={`mailto:${PORTAL_CONTACT.email}`}
+                className="block text-neutral-600 underline-offset-2 hover:underline"
+              >
+                {PORTAL_CONTACT.email}
+              </a>
+              <a
+                href={`tel:${PORTAL_CONTACT.phone.replace(/[^\d+]/g, "")}`}
+                className="block text-neutral-600 underline-offset-2 hover:underline"
+              >
+                {PORTAL_CONTACT.phone}
+              </a>
+            </div>
+          </div>
         </div>
-        <div className="border-t border-neutral-100">
-          <p className="mx-auto max-w-6xl px-5 py-4 text-[11px] text-neutral-400">
-            Copyright © Municipality of Alaminos, Laguna
+
+        <div className="border-t" style={{ borderColor: RULE }}>
+          <p className="mx-auto max-w-5xl px-5 py-4 text-[11px] text-neutral-400">
+            © {new Date().getFullYear()} Municipality of Alaminos, Laguna. All rights reserved.
           </p>
         </div>
       </footer>
