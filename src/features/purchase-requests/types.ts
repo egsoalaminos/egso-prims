@@ -21,6 +21,17 @@ export const PR_STATUSES: PRStatus[] = [
   "Completed",
 ];
 
+/**
+ * Statuses that count as "awaiting someone". A Draft belongs to its author and
+ * is not yet anyone's queue, so it is deliberately absent. Shared by the
+ * dashboard tile and the sidebar badge so the two can never disagree.
+ */
+export const PENDING_PR_STATUSES: PRStatus[] = [
+  "Submitted",
+  "Department Head Review",
+  "Budget Review",
+];
+
 export interface Department {
   code: string;
   name: string;

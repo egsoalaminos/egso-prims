@@ -8,13 +8,11 @@ import {
   Boxes,
   Calendar,
   CalendarDays,
-  CheckCircle2,
   ClipboardCheck,
   ClipboardList,
   Clock,
   FileText,
   History,
-  Info,
   Package,
   Plus,
   ShoppingCart,
@@ -29,6 +27,7 @@ import {
   CardCarousel,
   CurrencyDisplay,
   DocumentNumber,
+  EmptyState,
   EnterpriseTable,
   InfoChip,
   InformationCard,
@@ -41,14 +40,24 @@ import {
   StatusBadge,
   SummaryCard,
   TableCard,
+  toast,
   type DocumentStatus,
 } from "@/components";
 import { listPurchaseRequests } from "@/features/purchase-requests/api";
-import { departmentByCode, prTotal, type PurchaseRequest } from "@/features/purchase-requests/types";
+import {
+  departmentByCode,
+  prTotal,
+  PENDING_PR_STATUSES,
+  type PurchaseRequest,
+} from "@/features/purchase-requests/types";
 import { listPurchaseOrders } from "@/features/purchase-orders/api";
 import { listRequests } from "@/features/ris/api";
 import { listInventoryItems } from "@/features/inventory/api";
 import { stockStatusOf, type InventoryItem } from "@/features/inventory/types";
+import { useNotifications } from "@/features/notifications/hooks";
+import { markAllNotificationsRead } from "@/features/notifications/api";
+import { notificationRoute } from "@/features/notifications/types";
+import { MODULE_ICON, moduleTone } from "@/features/notifications/module-icons";
 import { listReservations } from "@/features/reservations/api";
 import { facilityById, type Reservation } from "@/features/reservations/types";
 import { listAuditEntries } from "@/features/audit/api";
@@ -111,7 +120,6 @@ function useDashboardData() {
 
 /* ---------------- presentation mappers ---------------- */
 
-const PENDING_PR_STATUSES = ["Submitted", "Department Head Review", "Budget Review"];
 
 const moduleActivity: Record<string, { icon: React.ComponentType<{ className?: string }>; tone: string }> = {
   "Purchase Requests": { icon: FileText, tone: "text-emerald-600 bg-emerald-50" },
@@ -124,11 +132,8 @@ const moduleActivity: Record<string, { icon: React.ComponentType<{ className?: s
   System: { icon: Workflow, tone: "text-orange-600 bg-orange-50" },
 };
 
-const systemNotifications = [
-  { icon: Info, tone: "info" as const, title: "Quarterly report due", body: "Q3 procurement summary due September 30.", time: "Today" },
-  { icon: AlertTriangle, tone: "warning" as const, title: "Low stock items need review", body: "Review the low stock report and re-order.", time: "Today" },
-  { icon: CheckCircle2, tone: "success" as const, title: "System backup complete", body: "Nightly backup finished successfully.", time: "Yesterday" },
-];
+/** How many notifications the dashboard panel shows before deferring to the drawer. */
+const DASHBOARD_NOTIFICATION_LIMIT = 5;
 
 /* ---------------- Page ---------------- */
 
@@ -136,6 +141,22 @@ export function DashboardPage() {
   const navigate = useNavigate();
   const { data, loading } = useDashboardData();
   const today = format(new Date(), "yyyy-MM-dd");
+
+  const {
+    data: notifications,
+    loading: notificationsLoading,
+    refresh: refreshNotifications,
+    unreadCount,
+  } = useNotifications({ limit: DASHBOARD_NOTIFICATION_LIMIT });
+
+  const markAllRead = React.useCallback(async () => {
+    try {
+      await markAllNotificationsRead();
+      await refreshNotifications();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Unable to mark notifications read.");
+    }
+  }, [refreshNotifications]);
 
   const pendingPRs = data?.prs.filter((p) => PENDING_PR_STATUSES.includes(p.status)).length ?? 0;
   const lowStock =
@@ -313,15 +334,42 @@ export function DashboardPage() {
         <InformationCard
           icon={Bell}
           title="System Notifications"
-          action={{ label: "Mark all read" }}
+          action={
+            unreadCount > 0
+              ? { label: "Mark all read", onClick: () => void markAllRead() }
+              : undefined
+          }
         >
-          <ul className="space-y-3">
-            {systemNotifications.map((n) => (
-              <li key={n.title}>
-                <NotificationCard {...n} />
-              </li>
-            ))}
-          </ul>
+          {notifications.length === 0 ? (
+            <EmptyState
+              icon={Bell}
+              title={notificationsLoading ? "Loading notifications…" : "Nothing to review"}
+              description={
+                notificationsLoading
+                  ? undefined
+                  : "Notifications appear here as requests move through approval."
+              }
+            />
+          ) : (
+            <ul className="space-y-3">
+              {notifications.map((n) => {
+                const route = notificationRoute(n);
+                return (
+                  <li key={n.id}>
+                    <NotificationCard
+                      icon={MODULE_ICON[n.module] ?? Bell}
+                      tone={moduleTone(n.module)}
+                      title={n.title}
+                      body={n.description}
+                      time={formatDistanceToNow(new Date(n.createdAt), { addSuffix: true })}
+                      unread={!n.isRead}
+                      onClick={route ? () => navigate(route) : undefined}
+                    />
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </InformationCard>
       </div>
 
