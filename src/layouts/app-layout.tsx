@@ -48,6 +48,7 @@ import { useNotifications } from "@/features/notifications/hooks";
 import { NotificationDrawer } from "@/features/notifications/components/notification-drawer";
 import { useAppearanceSync, useBranding } from "@/features/config/use-appearance";
 import { useNavCounts, type NavCounts } from "@/features/shared/use-nav-counts";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 
 interface ModuleNavItem {
   icon: React.ComponentType<{ className?: string }>;
@@ -245,9 +246,15 @@ function initialsOf(name: string): string {
 function AppSidebar({
   collapsed,
   onRequestSignOut,
+  className,
+  onNavigate,
 }: {
   collapsed: boolean;
   onRequestSignOut: () => void;
+  /** Overrides the rail's `hidden md:flex` when rendered inside the mobile drawer. */
+  className?: string;
+  /** Called after any navigation, so the mobile drawer can close itself. */
+  onNavigate?: () => void;
 }) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -256,6 +263,15 @@ function AppSidebar({
   const { expanded, toggle } = useSidebarGroups();
   const counts = useNavCounts();
 
+  /** Navigates, then lets the mobile drawer close itself behind the new route. */
+  const go = React.useCallback(
+    (to: string) => {
+      navigate(to);
+      onNavigate?.();
+    },
+    [navigate, onNavigate],
+  );
+
   const renderItem = (navItem: ModuleNavItem) => {
     const { to, ...item } = withCount(navItem, counts);
     return (
@@ -263,7 +279,7 @@ function AppSidebar({
         key={item.label}
         {...item}
         active={isActive(pathname, to)}
-        onClick={to ? () => navigate(to) : undefined}
+        onClick={to ? () => go(to) : undefined}
       />
     );
   };
@@ -271,7 +287,7 @@ function AppSidebar({
   const utilitiesActive = utilitiesChildren.some((c) => isActive(pathname, c.to));
 
   return (
-    <Sidebar collapsed={collapsed}>
+    <Sidebar collapsed={collapsed} className={className}>
       <SidebarBrand
         icon={Building2}
         logo={branding.logo}
@@ -311,7 +327,7 @@ function AppSidebar({
               key={item.label}
               {...item}
               active={isActive(pathname, to)}
-              onClick={to ? () => navigate(to) : undefined}
+              onClick={to ? () => go(to) : undefined}
             />
           ))}
         </SidebarGroup>
@@ -321,8 +337,8 @@ function AppSidebar({
           name={user?.name ?? "Administrator"}
           detail="System Settings · Sign Out"
           initials={initialsOf(user?.name ?? "Administrator")}
-          onOpenMenu={() => navigate("/settings")}
-          onSettings={() => navigate("/settings")}
+          onOpenMenu={() => go("/settings")}
+          onSettings={() => go("/settings")}
           onSignOut={onRequestSignOut}
         />
       </SidebarFooter>
@@ -423,12 +439,24 @@ export function AppLayout() {
   const [signingOut, setSigningOut] = React.useState(false);
   const [notificationsOpen, setNotificationsOpen] = React.useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(readSidebarCollapsed);
+  const [mobileNavOpen, setMobileNavOpen] = React.useState(false);
   // Applies the stored theme + accent to <html> for every page in the shell.
   useAppearanceSync();
   // Realtime-backed, so the badge moves without a page refresh.
   const { unreadCount } = useNotifications(React.useMemo(() => ({}), []));
 
+  /**
+   * One button, two jobs. The rail is `hidden md:flex`, so below that
+   * breakpoint there is nothing to collapse — the same control has to open the
+   * drawer instead. The check reads the viewport at click time rather than
+   * tracking it in state, which keeps the two behaviours from ever disagreeing
+   * after a resize or an orientation change.
+   */
   const toggleSidebar = React.useCallback(() => {
+    if (!window.matchMedia("(min-width: 768px)").matches) {
+      setMobileNavOpen(true);
+      return;
+    }
     setSidebarCollapsed((c) => {
       const next = !c;
       try {
@@ -439,6 +467,12 @@ export function AppLayout() {
       return next;
     });
   }, []);
+
+  // A route change from anywhere — a breadcrumb, a card, the back button —
+  // should not leave the drawer sitting open over the page it navigated to.
+  React.useEffect(() => {
+    setMobileNavOpen(false);
+  }, [location.pathname]);
 
   const requestSignOut = () => setConfirmSignOut(true);
 
@@ -471,6 +505,24 @@ export function AppLayout() {
           <Outlet key={location.pathname} />
         </AnimatePresence>
       </AppShell>
+
+      {/* Below 768px the rail is display:none, so this drawer is the only way
+          to reach any module. `flex` overrides the rail's own `hidden`
+          (tailwind-merge resolves the display conflict in favour of the last
+          class), and the drawer is never collapsed — an icon-only rail makes
+          no sense when it is already an overlay. */}
+      <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
+        <SheetContent side="left" className="w-[260px] p-0 md:hidden">
+          <SheetTitle className="sr-only">Navigation</SheetTitle>
+          <AppSidebar
+            collapsed={false}
+            onRequestSignOut={requestSignOut}
+            onNavigate={() => setMobileNavOpen(false)}
+            className="flex h-full w-full border-r-0"
+          />
+        </SheetContent>
+      </Sheet>
+
       <NotificationDrawer open={notificationsOpen} onOpenChange={setNotificationsOpen} />
       <ConfirmationModal
         open={confirmSignOut}
