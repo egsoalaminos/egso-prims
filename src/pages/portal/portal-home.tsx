@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion, useReducedMotion } from "motion/react";
 import { ArrowRight, SearchCheck } from "lucide-react";
 
+import { BRAND_LOGO } from "@/lib/brand";
 import { PORTAL_SERVICES } from "@/features/portal/data";
 import {
   BURGUNDY,
@@ -52,22 +53,44 @@ export function PortalHome() {
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-12 sm:py-16">
-      <motion.header {...rise(0.04)} className="max-w-2xl">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500">
-          Online services
-        </p>
-        <h1
-          className="mt-3 text-[32px] leading-[1.1] tracking-tight sm:text-[42px]"
-          style={{ fontFamily: SERIF, color: BURGUNDY, fontWeight: 600 }}
+      {/*
+       * The seal earns the right-hand column. Something has to hold that space
+       * — the previous revision filled it with a fabricated approved request —
+       * and on a government page the honest answer is the credential itself,
+       * shown at a size where the palms, the coconut and the bolo are actually
+       * legible rather than reduced to a coloured dot in the letterhead.
+       */}
+      <header className="grid items-center gap-10 lg:grid-cols-[1fr_auto]">
+        <motion.div {...rise(0.04)} className="max-w-2xl">
+          <h1
+            className="text-[32px] leading-[1.1] tracking-tight sm:text-[42px]"
+            style={{ fontFamily: SERIF, color: BURGUNDY, fontWeight: 600 }}
+          >
+            General Services Office
+          </h1>
+          <p className="mt-4 max-w-[54ch] text-[14px] leading-relaxed text-neutral-600">
+            File purchase requests, draw supplies from municipal stock, and reserve government
+            facilities — without visiting the Municipal Hall. Every submission is issued a reference
+            number you can use to follow it.
+          </p>
+        </motion.div>
+
+        <motion.div
+          {...rise(0.1)}
+          aria-hidden
+          className="relative hidden shrink-0 lg:block"
         >
-          General Services Office
-        </h1>
-        <p className="mt-4 max-w-[54ch] text-[14px] leading-relaxed text-neutral-600">
-          File purchase requests, draw supplies from municipal stock, and reserve government
-          facilities — without visiting the Municipal Hall. Every submission is issued a reference
-          number you can use to follow it.
-        </p>
-      </motion.header>
+          <div
+            className="absolute inset-0 -m-6 rounded-full blur-2xl"
+            style={{ background: BURGUNDY_TINT }}
+          />
+          <img
+            src={BRAND_LOGO}
+            alt=""
+            className="relative h-[190px] w-[190px] object-contain"
+          />
+        </motion.div>
+      </header>
 
       {/* Services. Cards, because each is a separate errand a visitor picks up
           and carries out on its own — and deliberately not numbered 01/02/03,

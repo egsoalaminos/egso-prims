@@ -33,11 +33,16 @@ export function PortalLayout() {
             <img
               src={BRAND_LOGO}
               alt=""
-              className="h-11 w-11 shrink-0 object-contain"
+              className="h-14 w-14 shrink-0 object-contain"
             />
             <span className="flex flex-col leading-tight">
-              <span className="text-[9.5px] uppercase tracking-[0.18em] text-neutral-500">
-                Republic of the Philippines · Province of Laguna
+              {/* Split rather than joined by a middot: on a narrow phone the
+                  single line broke mid-province, which reads as a typo. */}
+              <span className="text-[9.5px] uppercase tracking-[0.16em] text-neutral-500">
+                Republic of the Philippines
+              </span>
+              <span className="text-[9.5px] uppercase tracking-[0.16em] text-neutral-500">
+                Province of Laguna
               </span>
               <span
                 className="text-[17px] font-semibold tracking-tight"
