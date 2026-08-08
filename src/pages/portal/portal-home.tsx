@@ -49,7 +49,7 @@ export function PortalHome() {
   };
 
   return (
-    <div className="mx-auto flex min-h-[calc(100vh-168px)] max-w-5xl flex-col justify-center gap-7 px-5 py-8">
+    <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col justify-center gap-6 px-5 py-6">
       <motion.header {...rise(0.04)} className="flex items-center justify-between gap-8">
         <div>
           <h1

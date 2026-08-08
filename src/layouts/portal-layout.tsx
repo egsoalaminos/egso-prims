@@ -84,7 +84,11 @@ export function PortalLayout() {
         </nav>
       </header>
 
-      <main id="portal-main" className="flex-1">
+      {/* A flex column rather than a plain block: it lets the landing claim
+          exactly the height left over from the letterhead and the address line
+          without either of them having to publish a pixel figure. Pages taller
+          than the viewport still grow and scroll as normal. */}
+      <main id="portal-main" className="flex flex-1 flex-col">
         <Outlet />
       </main>
 
