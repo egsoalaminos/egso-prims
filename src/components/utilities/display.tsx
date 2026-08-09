@@ -37,12 +37,22 @@ export interface DocumentNumberProps {
   className?: string;
 }
 
-/** Document identity: colored chip + medium-weight number (PR table anatomy). */
+/**
+ * Document identity: office chip + control number.
+ *
+ * The number is set in the serif with tabular figures, the same way the portal
+ * draws a reference on its lookup and its acknowledgement slip. It is the same
+ * artifact in both places — the thing a person quotes over the phone — and it
+ * was reading as two different objects. Tabular figures also make a column of
+ * them line up digit for digit, which a proportional face does not.
+ */
 export function DocumentNumber({ value, chipColor, className }: DocumentNumberProps) {
   return (
     <span className={cn("flex items-center gap-2.5", className)}>
-      {chipColor && <span className={cn("h-6 w-6 shrink-0 rounded-md", chipColor)} />}
-      <span className="whitespace-nowrap font-medium text-neutral-900">{value}</span>
+      {chipColor && <span className={cn("h-6 w-6 shrink-0", chipColor)} />}
+      <span className="whitespace-nowrap font-serif font-semibold tabular-nums tracking-[0.01em] text-neutral-900">
+        {value}
+      </span>
     </span>
   );
 }

@@ -24,13 +24,26 @@
   /* The institutional voice: page titles and anything that names the office or
      one of its documents. Inter carries the interface; this carries the name. */
   --font-serif: "Source Serif 4", Georgia, serif;
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
+  /*
+   * Square, everywhere. Government paper has no rounded corners, and the
+   * portal has been square since it was rebuilt — leaving the admin rounded
+   * meant one system with two geometries.
+   *
+   * Set to literal zero rather than derived from `--radius`, because the scale
+   * was relative: `--radius-xl` was `calc(var(--radius) + 4px)`, so zeroing
+   * `--radius` alone still left four pixels of curve on every card. That is
+   * exactly the bug the login page hit.
+   *
+   * `rounded-full` resolves independently of this scale, so status pills,
+   * avatars and the seal stay round.
+   */
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+  --radius-4xl: 0px;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -286,46 +299,28 @@
 }
 
 /*
- * Public portal scope.
+ * The municipal surfaces — the public portal and the login page.
  *
- * `data-municipal` sits on the portal's root element and nowhere else, so every
- * rule here is invisible to the admin system. It exists so the shared form
- * components — the wizards, their buttons, their steppers — can wear the
- * municipal palette on the portal without being edited, because the admin
- * create and edit pages render those same components.
+ * This block is nearly empty now, and that is the point: the burgundy is the
+ * application's default accent and the corners are square everywhere, so the
+ * portal no longer needs its own copy of either. What remains is the anchor
+ * the two pages pin their palette to, so a future accent change in Settings
+ * recolours the admin without repainting the office's own front door.
  *
- * Every value below is a literal. A custom property whose value is another
- * custom property is substituted where it is *declared*, not where it is used:
- * `--accent-solid: var(--color-neutral-900)` at :root bakes in the root's
- * colour and inherits downward as that literal, so re-pointing `--radius` or
- * `--color-neutral-900` inside this block would change nothing. Redeclaring
- * each variable outright is the fix. An earlier attempt at theming this portal
- * died on exactly this rule.
+ * The values are literals for a reason worth keeping written down: a custom
+ * property whose value is another custom property is substituted where it is
+ * *declared*, not where it is used. `--accent-solid: var(--color-neutral-900)`
+ * at :root baked in the root's colour and inherited downward as that literal,
+ * so re-pointing it from a nested scope changed nothing. An earlier attempt at
+ * theming this portal died on exactly that.
  */
 [data-municipal] {
-  /* Buttons, active steps, focus rings — the burgundy taken from the seal. */
   --accent-solid: #7a1d2b;
   --accent-solid-hover: #5e1621;
   --accent-contrast: #ffffff;
   --accent-ring: #c08a93;
   --accent-subtle: #f8f0f0;
   --accent-text: #7a1d2b;
-
-  /*
-   * Square corners. Government paper has none, and the portal's own surfaces —
-   * letterhead, service cards, the reference block — are already square, so a
-   * rounded form card was the one shape disagreeing with the page it sat on.
-   * `rounded-full` resolves independently of these, so status pills and
-   * avatars stay round.
-   */
-  --radius: 0px;
-  --radius-sm: 0px;
-  --radius-md: 0px;
-  --radius-lg: 0px;
-  --radius-xl: 0px;
-  --radius-2xl: 0px;
-  --radius-3xl: 0px;
-  --radius-4xl: 0px;
 }
 
 /*
