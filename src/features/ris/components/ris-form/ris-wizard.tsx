@@ -4,13 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ArrowLeft,
   ArrowRight,
-  FileText,
   Plus,
   Save,
-  ScanText,
   Send,
   Trash2,
-  X,
 } from "lucide-react";
 
 import {
@@ -19,7 +16,6 @@ import {
   Combobox,
   ContainerCard,
   DepartmentChip,
-  DragDropUpload,
   Field,
   IconButton,
   Input,
@@ -35,7 +31,6 @@ import { listPurchaseRequests } from "@/features/purchase-requests/api";
 import { listPurchaseOrders } from "@/features/purchase-orders/api";
 import { canRaisePO } from "@/features/purchase-requests/lib";
 import { departmentByCode, type PurchaseRequest } from "@/features/purchase-requests/types";
-import type { AttachmentRecord } from "@/features/shared/attachment-list";
 import { RISItemsTable } from "@/features/ris/components/ris-items-table";
 import {
   risFormSchema,
@@ -46,7 +41,6 @@ import {
 const WIZARD_STEPS = [
   { label: "Slip Details", description: "Requester & receiver" },
   { label: "Items to Issue", description: "Stock & quantities" },
-  { label: "Attachments", description: "Supporting documents" },
   { label: "Review", description: "Confirm & submit" },
 ];
 
@@ -80,7 +74,6 @@ export function RISWizard({
   onCancel,
 }: RISWizardProps) {
   const [step, setStep] = React.useState(0);
-  const [files, setFiles] = React.useState<File[]>([]);
   const [approvedPRs, setApprovedPRs] = React.useState<PurchaseRequest[]>([]);
   const [inventory, setInventory] = React.useState<InventoryItem[]>([]);
 
@@ -217,13 +210,6 @@ export function RISWizard({
         issuedQty: row.issuedQty,
       };
     }),
-    attachments: files.map((f) => ({
-      name: f.name,
-      kind: f.type === "application/pdf" ? "pdf" : "image",
-      size: f.size,
-      uploadedBy: "Administrator",
-      file: f,
-    })),
   });
 
   const submit = (asDraft: boolean) =>
@@ -251,8 +237,7 @@ export function RISWizard({
           />
         )}
         {step === 1 && <StepItems form={form} inventory={inventory} />}
-        {step === 2 && <StepAttachments files={files} setFiles={setFiles} existing={initial?.attachments} />}
-        {step === 3 && <StepReview form={form} inventory={inventory} files={files} existing={initial?.attachments} />}
+        {step === 2 && <StepReview form={form} inventory={inventory} />}
       </div>
 
       <div className="flex items-center justify-between border-t border-neutral-100 px-5 py-4">
@@ -552,117 +537,17 @@ function StepItems({ form, inventory }: { form: FormApi; inventory: InventoryIte
   );
 }
 
-/* ---------------- Step 3 — Attachments ---------------- */
-
-function StepAttachments({
-  files,
-  setFiles,
-  existing,
-}: {
-  files: File[];
-  setFiles: (files: File[]) => void;
-  existing?: AttachmentRecord[];
-}) {
-  const previews = React.useMemo(
-    () =>
-      files.map((f) => ({
-        file: f,
-        url: f.type.startsWith("image/") ? URL.createObjectURL(f) : null,
-      })),
-    [files],
-  );
-  React.useEffect(
-    () => () => previews.forEach((p) => p.url && URL.revokeObjectURL(p.url)),
-    [previews],
-  );
-
-  return (
-    <div className="space-y-4">
-      <DragDropUpload
-        accept="application/pdf,image/*"
-        hint="Signed RIS forms, PR copies, or delivery receipts · PDF & images"
-        onFilesChange={setFiles}
-      />
-
-      <div className="flex items-start gap-2 rounded-lg bg-blue-50/60 px-3 py-2.5">
-        <ScanText className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-600" />
-        <p className="text-[11.5px] leading-snug text-blue-700">
-          OCR-ready — uploaded PDFs and images will be parsed automatically for item and quantity
-          extraction once document intelligence is enabled.
-        </p>
-      </div>
-
-      {previews.some((p) => p.url) && (
-        <div>
-          <Caption as="div" className="mb-2">
-            Image previews
-          </Caption>
-          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-            {previews
-              .filter((p) => p.url)
-              .map((p) => (
-                <div
-                  key={p.file.name}
-                  className="group relative overflow-hidden rounded-lg border border-neutral-200"
-                >
-                  <img src={p.url!} alt={p.file.name} className="h-24 w-full object-cover" />
-                  <button
-                    aria-label={`Remove ${p.file.name}`}
-                    onClick={() => setFiles(files.filter((f) => f !== p.file))}
-                    className="absolute right-1 top-1 grid h-5 w-5 place-items-center rounded-full bg-white/90 text-neutral-600 opacity-0 shadow-sm transition group-hover:opacity-100"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                  <div className="truncate bg-white px-2 py-1 text-[10.5px] text-neutral-600">
-                    {p.file.name}
-                  </div>
-                </div>
-              ))}
-          </div>
-        </div>
-      )}
-
-      {existing && existing.length > 0 && (
-        <div>
-          <Caption as="div" className="mb-2">
-            Already attached
-          </Caption>
-          <ul className="space-y-1.5">
-            {existing.map((a) => (
-              <li
-                key={a.id}
-                className="flex items-center gap-2.5 rounded-lg border border-neutral-200 bg-neutral-50/60 px-3 py-2"
-              >
-                <FileText className="h-3.5 w-3.5 shrink-0 text-neutral-500" />
-                <span className="min-w-0 flex-1 truncate text-[12.5px] text-neutral-700">
-                  {a.name}
-                </span>
-                <Caption className="shrink-0 text-[10.5px]">kept on save</Caption>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
-  );
-}
-
 /* ---------------- Step 4 — Review ---------------- */
 
 function StepReview({
   form,
   inventory,
-  files,
-  existing,
 }: {
   form: FormApi;
   inventory: InventoryItem[];
-  files: File[];
-  existing?: AttachmentRecord[];
 }) {
   const values = form.getValues();
   const dept = departmentByCode(values.departmentCode);
-  const attachmentCount = files.length + (existing?.length ?? 0);
   const reviewItems = values.items.map((row, i) => {
     const inv = inventory.find((s) => s.id === row.inventoryItemId);
     return {
@@ -686,14 +571,6 @@ function StepReview({
         <ReviewField label="Fund" value={values.fund || "—"} />
         <ReviewField label="Division" value={values.division || "—"} />
         <ReviewField label="FPP Code" value={values.fppCode || "—"} />
-        <ReviewField
-          label="Attachments"
-          value={
-            attachmentCount === 0
-              ? "None"
-              : `${attachmentCount} file${attachmentCount === 1 ? "" : "s"}`
-          }
-        />
         <div className="col-span-2">
           <ReviewField label="Purpose" value={values.purpose} />
         </div>

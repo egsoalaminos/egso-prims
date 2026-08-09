@@ -29,5 +29,4 @@ export const RIS_STEP_FIELDS: (keyof RISFormValues)[][] = [
   ["requester", "departmentCode", "purpose"],
   ["items"],
   [],
-  [],
 ];

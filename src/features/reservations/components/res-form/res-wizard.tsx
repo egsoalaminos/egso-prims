@@ -10,14 +10,12 @@ import {
   Plus,
   Send,
   Trash2,
-  X,
 } from "lucide-react";
 
 import {
   Button,
   ContainerCard,
   DatePicker,
-  DragDropUpload,
   Field,
   IconButton,
   Input,
@@ -39,7 +37,6 @@ import {
   type Reservation,
 } from "@/features/reservations/types";
 import { departmentByCode } from "@/features/purchase-requests/types";
-import type { AttachmentRecord } from "@/features/shared/attachment-list";
 import { ResEquipmentTable } from "@/features/reservations/components/res-equipment-table";
 import {
   resFormSchema,
@@ -51,7 +48,7 @@ const WIZARD_STEPS = [
   { label: "Borrower", description: "Who is requesting" },
   { label: "Schedule", description: "Facility & time" },
   { label: "Equipment", description: "Items to borrow" },
-  { label: "Review", description: "Attachments & submit" },
+  { label: "Review", description: "Confirm & submit" },
 ];
 
 export interface ResWizardProps {
@@ -64,7 +61,6 @@ export interface ResWizardProps {
 /** Four-step reservation form shared by the create and edit pages. */
 export function ResWizard({ initial, submitting, onSubmit, onCancel }: ResWizardProps) {
   const [step, setStep] = React.useState(0);
-  const [files, setFiles] = React.useState<File[]>([]);
   const [conflicts, setConflicts] = React.useState<Reservation[]>([]);
   const [dayBookings, setDayBookings] = React.useState<Reservation[]>([]);
   const [checking, setChecking] = React.useState(false);
@@ -186,13 +182,6 @@ export function ResWizard({ initial, submitting, onSubmit, onCancel }: ResWizard
         quantity: row.quantity,
         remarks: row.remarks || undefined,
       })),
-      attachments: files.map((f) => ({
-        name: f.name,
-        kind: f.type === "application/pdf" ? "pdf" : "image",
-        size: f.size,
-        uploadedBy: "Administrator",
-        file: f,
-      })),
     };
     await onSubmit(input);
   });
@@ -216,7 +205,7 @@ export function ResWizard({ initial, submitting, onSubmit, onCancel }: ResWizard
           />
         )}
         {step === 2 && <StepEquipment form={form} />}
-        {step === 3 && <StepReview form={form} files={files} setFiles={setFiles} existing={initial?.attachments} />}
+        {step === 3 && <StepReview form={form} />}
       </div>
 
       <div className="flex items-center justify-between border-t border-neutral-100 px-5 py-4">
@@ -508,35 +497,12 @@ function StepEquipment({ form }: { form: FormApi }) {
   );
 }
 
-/* ---------------- Step 4 — Attachments & review ---------------- */
+/* ---------------- Step 4 — Review ---------------- */
 
-function StepReview({
-  form,
-  files,
-  setFiles,
-  existing,
-}: {
-  form: FormApi;
-  files: File[];
-  setFiles: (files: File[]) => void;
-  existing?: AttachmentRecord[];
-}) {
+function StepReview({ form }: { form: FormApi }) {
   const values = form.getValues();
   const facility = facilityById(values.facilityId);
   const dept = departmentByCode(values.departmentCode);
-  const attachmentCount = files.length + (existing?.length ?? 0);
-  const previews = React.useMemo(
-    () =>
-      files.map((f) => ({
-        file: f,
-        url: f.type.startsWith("image/") ? URL.createObjectURL(f) : null,
-      })),
-    [files],
-  );
-  React.useEffect(
-    () => () => previews.forEach((p) => p.url && URL.revokeObjectURL(p.url)),
-    [previews],
-  );
   const reviewEquipment = values.equipment.map((e, i) => ({
     id: `review-${i}`,
     equipmentId: e.equipmentId,
@@ -547,34 +513,6 @@ function StepReview({
 
   return (
     <div className="space-y-5">
-      <section>
-        <SectionTitle as="h3" className="mb-2">
-          Attachments
-        </SectionTitle>
-        <DragDropUpload
-          accept="application/pdf,image/*"
-          hint="Activity design, request letters, or setup layouts · PDF & images"
-          onFilesChange={setFiles}
-        />
-        {previews.some((p) => p.url) && (
-          <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-4">
-            {previews
-              .filter((p) => p.url)
-              .map((p) => (
-                <div key={p.file.name} className="group relative overflow-hidden rounded-lg border border-neutral-200">
-                  <img src={p.url!} alt={p.file.name} className="h-24 w-full object-cover" />
-                  <button
-                    aria-label={`Remove ${p.file.name}`}
-                    onClick={() => setFiles(files.filter((f) => f !== p.file))}
-                    className="absolute right-1 top-1 grid h-5 w-5 place-items-center rounded-full bg-white/90 text-neutral-600 opacity-0 shadow-sm transition group-hover:opacity-100"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </div>
-              ))}
-          </div>
-        )}
-      </section>
 
       <section>
         <SectionTitle as="h3" className="mb-2">
@@ -597,10 +535,6 @@ function StepReview({
           <div className="col-span-2">
             <ReviewField label="Purpose" value={values.purpose} />
           </div>
-          <ReviewField
-            label="Attachments"
-            value={attachmentCount === 0 ? "None" : `${attachmentCount} file${attachmentCount === 1 ? "" : "s"}`}
-          />
           <ReviewField label="Equipment Items" value={String(values.equipment.length)} />
         </div>
         {reviewEquipment.length > 0 && (
