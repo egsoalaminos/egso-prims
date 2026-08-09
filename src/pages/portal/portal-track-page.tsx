@@ -6,22 +6,24 @@ import { Building2, Clock3, SearchCheck } from "lucide-react";
 
 import {
   ApprovalTimeline,
-  Button,
-  Caption,
-  ContainerCard,
-  ErrorState,
-  Input,
   OverlineLabel,
   PageTransition,
-  SectionTitle,
   Skeleton,
   SkeletonText,
   StatusBadge,
 } from "@/components";
 import { trackReference, type TrackResult } from "@/features/portal/track";
 import { PortalPageHeader } from "@/features/portal/components/submission-success";
+import { BURGUNDY, BURGUNDY_DEEP, GOLD, RULE, SERIF } from "@/features/portal/theme";
 
-/** Public read-only tracking by reference number (PR / PO / RIS / FR). */
+/**
+ * Public read-only tracking by reference number (PR / PO / RIS / FR).
+ *
+ * The search field is drawn as the same control-number block the landing uses.
+ * A visitor arriving here from the landing has already typed into that field
+ * once; finding a different-looking one on the next screen would suggest they
+ * had reached a different system.
+ */
 export function PortalTrackPage() {
   const [params] = useSearchParams();
   const [ref, setRef] = React.useState(params.get("ref") ?? "");
@@ -37,7 +39,7 @@ export function PortalTrackPage() {
     setLoading(false);
   }, []);
 
-  // Auto-search when arriving with ?ref= (e.g. from a submission screen).
+  // Auto-search when arriving with ?ref= (e.g. from the acknowledgement slip).
   React.useEffect(() => {
     const initial = params.get("ref");
     if (initial) void search(initial);
@@ -45,80 +47,117 @@ export function PortalTrackPage() {
   }, []);
 
   return (
-    <PageTransition className="mx-auto max-w-2xl px-5 py-10">
+    <PageTransition className="mx-auto w-full max-w-2xl px-5 py-10">
       <PortalPageHeader
-        title="Track Request"
-        description="Enter the reference number from your submission receipt — PR, PO, RIS, or FR."
+        title="Track a request"
+        description="Enter the reference number printed on your receipt — PR, PO, RIS, or FR."
       />
 
-      <ContainerCard className="p-4">
+      <section className="border bg-white" style={{ borderColor: RULE }}>
+        <div style={{ height: 3, background: BURGUNDY }} />
         <form
           onSubmit={(e) => {
             e.preventDefault();
             void search(ref);
           }}
-          className="flex gap-2"
+          className="p-4 sm:p-5"
         >
-          <Input
-            placeholder="e.g. PR-2026-0214"
-            value={ref}
-            onChange={(e) => setRef(e.target.value)}
-            className="uppercase placeholder:normal-case"
-          />
-          <Button type="submit" loading={loading} className="shrink-0">
-            <SearchCheck />
-            Track
-          </Button>
+          <label
+            htmlFor="reference"
+            className="text-[10px] font-semibold uppercase tracking-[0.16em] text-neutral-500"
+          >
+            Reference number
+          </label>
+          <div className="mt-2.5 flex flex-col gap-2.5 sm:flex-row sm:items-stretch">
+            <input
+              id="reference"
+              value={ref}
+              onChange={(e) => setRef(e.target.value)}
+              placeholder="PR-2026-0214"
+              className="min-w-0 flex-1 border-b-2 bg-transparent pb-1.5 text-[20px] font-semibold uppercase tracking-[0.06em] tabular-nums text-neutral-900 placeholder:font-normal placeholder:tracking-normal placeholder:text-neutral-300 focus:outline-none sm:text-[24px]"
+              style={{ borderColor: RULE, fontFamily: SERIF }}
+              onFocus={(e) => (e.currentTarget.style.borderColor = BURGUNDY)}
+              onBlur={(e) => (e.currentTarget.style.borderColor = RULE)}
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              className="inline-flex shrink-0 items-center justify-center gap-2 px-6 py-2.5 text-[13px] font-semibold text-white transition disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+              style={{ background: BURGUNDY, ["--tw-ring-color" as string]: BURGUNDY }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = BURGUNDY_DEEP)}
+              onMouseLeave={(e) => (e.currentTarget.style.background = BURGUNDY)}
+            >
+              <SearchCheck className="h-4 w-4" />
+              {loading ? "Searching" : "Track"}
+            </button>
+          </div>
         </form>
-      </ContainerCard>
+      </section>
 
       {loading && (
-        <ContainerCard padded className="mt-4">
+        <div className="mt-4 border bg-white p-5" style={{ borderColor: RULE }}>
           <Skeleton className="h-5 w-44" />
           <Skeleton className="mt-2 h-3 w-64" />
           <SkeletonText lines={5} className="mt-5" />
-        </ContainerCard>
+        </div>
       )}
 
       {!loading && searched && !result && (
-        <ContainerCard className="mt-4">
-          <ErrorState
-            title="Reference not found"
-            description="Double-check the reference number on your receipt. It should start with PR-, PO-, RIS-, or FR-."
-          />
-        </ContainerCard>
+        <div className="mt-4 border bg-white p-8 text-center" style={{ borderColor: RULE }}>
+          <h2
+            className="text-[16px] font-semibold"
+            style={{ fontFamily: SERIF, color: BURGUNDY }}
+          >
+            No record under that number
+          </h2>
+          <p className="mx-auto mt-1.5 max-w-sm text-[12.5px] leading-relaxed text-neutral-600">
+            Check the reference against your receipt. It begins with PR, PO, RIS, or FR, followed
+            by the year.
+          </p>
+        </div>
       )}
 
       {!loading && result && (
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.22, ease: "easeOut" }}
+          className="mt-4 border bg-white"
+          style={{ borderColor: RULE }}
         >
-          <ContainerCard padded className="mt-4">
+          <div style={{ height: 3, background: GOLD }} />
+          <div className="p-5">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="min-w-0">
-                <Caption className="text-[10.5px] uppercase tracking-wider">{result.kind}</Caption>
-                <div className="text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
+                <div className="text-[9.5px] font-semibold uppercase tracking-[0.16em] text-neutral-500">
+                  {result.kind}
+                </div>
+                <div
+                  className="mt-0.5 text-[22px] font-semibold tabular-nums tracking-[0.03em] text-neutral-900"
+                  style={{ fontFamily: SERIF }}
+                >
                   {result.number}
                 </div>
-                <p className="mt-0.5 max-w-md truncate text-[12px] text-neutral-500">
+                <p className="mt-1 max-w-md truncate text-[12px] text-neutral-500">
                   {result.title}
                 </p>
               </div>
               <StatusBadge status={result.status} />
             </div>
 
-            <div className="mt-4 grid grid-cols-1 gap-3 rounded-lg bg-neutral-50/60 p-3.5 sm:grid-cols-2">
+            <div
+              className="mt-4 grid grid-cols-1 gap-3 border-y py-4 sm:grid-cols-2"
+              style={{ borderColor: RULE }}
+            >
               <div>
-                <OverlineLabel>Current Office</OverlineLabel>
+                <OverlineLabel>Current office</OverlineLabel>
                 <div className="mt-0.5 flex items-center gap-1.5 text-[12.5px] text-neutral-800">
                   <Building2 className="h-3.5 w-3.5 text-neutral-400" />
                   {result.currentOffice}
                 </div>
               </div>
               <div>
-                <OverlineLabel>Latest Update</OverlineLabel>
+                <OverlineLabel>Latest update</OverlineLabel>
                 <div className="mt-0.5 flex items-start gap-1.5 text-[12.5px] text-neutral-800">
                   <Clock3 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-neutral-400" />
                   <span>
@@ -132,12 +171,15 @@ export function PortalTrackPage() {
             </div>
 
             <div className="mt-5">
-              <SectionTitle as="h3" className="mb-3">
-                Progress Timeline
-              </SectionTitle>
+              <h3
+                className="mb-3 text-[13.5px] font-semibold"
+                style={{ fontFamily: SERIF, color: BURGUNDY }}
+              >
+                Progress
+              </h3>
               <ApprovalTimeline steps={result.timeline} />
             </div>
-          </ContainerCard>
+          </div>
         </motion.div>
       )}
     </PageTransition>

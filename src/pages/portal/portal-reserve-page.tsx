@@ -10,6 +10,7 @@ import {
   PortalPageHeader,
   SubmissionSuccess,
 } from "@/features/portal/components/submission-success";
+import { GOLD, RULE } from "@/features/portal/theme";
 
 /** Public facility reservation form — the same enterprise wizard, no login. */
 export function PortalReservePage() {
@@ -32,25 +33,34 @@ export function PortalReservePage() {
   };
 
   return (
-    <PageTransition className="mx-auto max-w-6xl px-5 py-10">
+    <PageTransition className="mx-auto w-full max-w-5xl px-5 py-10">
       {reference ? (
         <SubmissionSuccess
           reference={reference}
-          message="Your facility reservation has been received. The GSO will confirm the schedule after review."
+          message="Your facility reservation has been received. The General Services Office will confirm the schedule after review."
         />
       ) : (
         <>
           <PortalPageHeader
-            title="Reserve a Facility"
-            description="Book municipal facilities and borrow event equipment for official activities."
+            title="Reserve a facility"
+            description="Book municipal facilities and borrow event equipment for official activities. The calendar shows dates already taken."
           />
-          <ReservationCalendar
-            reservations={calendar.data}
-            loading={calendar.loading}
-            onSelectReservation={() => {}}
-            className="mb-6"
-          />
-          <ResWizard submitting={submitting} onSubmit={submit} onCancel={() => navigate("/portal")} />
+          <div className="border bg-white" style={{ borderColor: RULE }}>
+            <div style={{ height: 3, background: GOLD }} />
+            <div className="p-5 sm:p-6">
+              <ReservationCalendar
+                reservations={calendar.data}
+                loading={calendar.loading}
+                onSelectReservation={() => {}}
+                className="mb-6"
+              />
+              <ResWizard
+                submitting={submitting}
+                onSubmit={submit}
+                onCancel={() => navigate("/portal")}
+              />
+            </div>
+          </div>
         </>
       )}
     </PageTransition>
