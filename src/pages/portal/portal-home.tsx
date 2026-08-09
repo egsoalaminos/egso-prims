@@ -22,9 +22,9 @@ import {
  * inside a single viewport, which is also the discipline that keeps anything
  * unnecessary off the page: there is no room for it.
  *
- * The height reserved for the frame — letterhead, gold rule, service nav, and
- * the address line at the foot — is the 168px subtracted below. Change either
- * and this has to move with it.
+ * `flex-1` claims exactly the height the letterhead and the address line leave
+ * behind — the layout measures the fold, so no figure here needs updating when
+ * either of them changes.
  */
 export function PortalHome() {
   const navigate = useNavigate();
@@ -144,7 +144,7 @@ export function PortalHome() {
             <input
               value={reference}
               onChange={(e) => setReference(e.target.value)}
-              placeholder="PR-2026-0214"
+              placeholder="PR-2026-000214"
               aria-label="Reference number from your receipt"
               className="min-w-0 flex-1 border-b-2 bg-transparent pb-1.5 text-[20px] font-semibold uppercase tracking-[0.06em] tabular-nums text-neutral-900 placeholder:font-normal placeholder:tracking-normal placeholder:text-neutral-300 focus:outline-none sm:text-[24px]"
               style={{ borderColor: RULE, fontFamily: SERIF }}

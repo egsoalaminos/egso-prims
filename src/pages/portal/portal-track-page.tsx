@@ -73,7 +73,7 @@ export function PortalTrackPage() {
               id="reference"
               value={ref}
               onChange={(e) => setRef(e.target.value)}
-              placeholder="PR-2026-0214"
+              placeholder="PR-2026-000214"
               className="min-w-0 flex-1 border-b-2 bg-transparent pb-1.5 text-[20px] font-semibold uppercase tracking-[0.06em] tabular-nums text-neutral-900 placeholder:font-normal placeholder:tracking-normal placeholder:text-neutral-300 focus:outline-none sm:text-[24px]"
               style={{ borderColor: RULE, fontFamily: SERIF }}
               onFocus={(e) => (e.currentTarget.style.borderColor = BURGUNDY)}
