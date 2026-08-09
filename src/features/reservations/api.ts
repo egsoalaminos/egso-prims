@@ -102,8 +102,7 @@ export interface ReservationDraftInput {
   startTime: string;
   endTime: string;
   equipment: Omit<ReservedEquipment, "id">[];
-  /** Optional: the upload step was removed from every form. */
-  attachments?: AttachmentInput[];
+  attachments: AttachmentInput[];
 }
 
 async function assertNoConflict(input: ReservationDraftInput, excludeId?: string) {
@@ -126,7 +125,7 @@ export async function createReservation(input: ReservationDraftInput): Promise<R
   await assertNoConflict(input);
   const resNumber = await nextDocumentNumber("FR");
   const at = nowIso();
-  const attachments = (await uploadAttachmentInputs(input.attachments ?? [], resNumber)).map((a) => ({
+  const attachments = (await uploadAttachmentInputs(input.attachments, resNumber)).map((a) => ({
     ...a,
     id: uid(),
     uploadedAt: at,
@@ -170,9 +169,7 @@ export async function updateReservation(
   if (!current) throw new Error(`Reservation not found: ${id}`);
   const at = nowIso();
   const uploaded = await uploadAttachmentInputs(
-    (input.attachments ?? []).filter(
-      (a) => !current.attachments.some((e) => e.name === a.name),
-    ),
+    input.attachments.filter((a) => !current.attachments.some((e) => e.name === a.name)),
     current.resNumber,
   );
   const row = {

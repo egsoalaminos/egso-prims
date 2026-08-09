@@ -34,7 +34,7 @@ export function PortalRequestPage() {
         <>
           <PortalPageHeader
             title="File a purchase request"
-            description="Complete the three steps to submit a purchase request for procurement review."
+            description="Complete the four steps to submit a purchase request for procurement review."
           />
           {/* No panel around the wizard: it already renders its own bordered
               card, and wrapping it produced a frame inside a frame. It sits on

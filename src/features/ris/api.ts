@@ -90,8 +90,7 @@ export interface RISDraftInput {
   fppCode?: string;
   receivedBy: string;
   items: Omit<RISItem, "id">[];
-  /** Optional: the upload step was removed from every form. */
-  attachments?: AttachmentInput[];
+  attachments: AttachmentInput[];
 }
 
 export async function createRequest(
@@ -102,7 +101,7 @@ export async function createRequest(
   const risNumber = await nextDocumentNumber("RIS");
   const at = nowIso();
   const status: RISStatus = options.asDraft ? "Draft" : "Pending Approval";
-  const attachments = (await uploadAttachmentInputs(input.attachments ?? [], risNumber)).map((a) => ({
+  const attachments = (await uploadAttachmentInputs(input.attachments, risNumber)).map((a) => ({
     ...a,
     id: uid(),
     uploadedAt: at,
@@ -149,9 +148,7 @@ export async function updateRequest(id: string, input: RISDraftInput): Promise<R
   if (!current) throw new Error(`RIS not found: ${id}`);
   const at = nowIso();
   const uploaded = await uploadAttachmentInputs(
-    (input.attachments ?? []).filter(
-      (a) => !current.attachments.some((e) => e.name === a.name),
-    ),
+    input.attachments.filter((a) => !current.attachments.some((e) => e.name === a.name)),
     current.risNumber,
   );
   const row = {

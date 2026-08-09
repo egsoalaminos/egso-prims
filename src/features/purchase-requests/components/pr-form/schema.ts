@@ -24,12 +24,10 @@ export const prFormSchema = z.object({
 
 export type PRFormValues = z.infer<typeof prFormSchema>;
 
-/**
- * Field names validated before leaving each wizard step. Unused in single-page
- * mode, where `prFormSchema` checks everything at once on submit.
- */
+/** Field names validated before leaving each wizard step. */
 export const STEP_FIELDS: (keyof PRFormValues)[][] = [
   ["departmentCode", "requester", "purpose"],
   ["items"],
+  [], // attachments are optional
   [],
 ];

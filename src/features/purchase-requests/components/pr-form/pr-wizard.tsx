@@ -2,12 +2,14 @@ import * as React from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
-import { ArrowLeft, ArrowRight, Plus, Send, Trash2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, FileText, Plus, Send, Trash2, X } from "lucide-react";
 
 import {
   Button,
+  Caption,
   ContainerCard,
   CurrencyDisplay,
+  DragDropUpload,
   Field,
   IconButton,
   Input,
@@ -21,6 +23,7 @@ import type { PRDraftInput } from "@/features/purchase-requests/api";
 import {
   departmentByCode,
   FUNDING_SOURCES,
+  type PRAttachment,
   type PurchaseRequest,
 } from "@/features/purchase-requests/types";
 import {
@@ -33,6 +36,7 @@ import { PRItemsTable } from "@/features/purchase-requests/components/pr-items-t
 const WIZARD_STEPS = [
   { label: "Request Details", description: "Office & purpose" },
   { label: "Line Items", description: "Items & costs" },
+  { label: "Attachments", description: "Supporting documents" },
   { label: "Review", description: "Confirm & submit" },
 ];
 
@@ -47,9 +51,10 @@ export interface PRWizardProps {
   onCancel: () => void;
 }
 
-/** Purchase Request form shared by the portal and the create/edit pages. */
+/** Four-step Purchase Request form shared by the create and edit pages. */
 export function PRWizard({ initial, submitLabel, submitting, onSubmit, onCancel }: PRWizardProps) {
   const [step, setStep] = React.useState(0);
+  const [files, setFiles] = React.useState<File[]>([]);
   // The fund a new request is recorded against. The form does not ask, so
   // Settings is the only place it is chosen; an unrecognised value falls back
   // rather than reaching the column, which accepts a fixed set.
@@ -103,6 +108,13 @@ export function PRWizard({ initial, submitLabel, submitting, onSubmit, onCancel 
             : values.fundingSource),
       requestDate: format(values.requestDate, "yyyy-MM-dd"),
       items: values.items,
+      attachments: files.map((f) => ({
+        name: f.name,
+        kind: f.type === "application/pdf" ? "pdf" : "image",
+        size: f.size,
+        uploadedBy: values.requester,
+        file: f,
+      })),
     };
     await onSubmit(input);
   });
@@ -116,7 +128,10 @@ export function PRWizard({ initial, submitLabel, submitting, onSubmit, onCancel 
       <div className="px-5 py-5">
         {step === 0 && <StepDetails form={form} />}
         {step === 1 && <StepItems form={form} />}
-        {step === 2 && <StepReview form={form} />}
+        {step === 2 && (
+          <StepAttachments files={files} setFiles={setFiles} existing={initial?.attachments} />
+        )}
+        {step === 3 && <StepReview form={form} files={files} existing={initial?.attachments} />}
       </div>
 
       <div className="flex items-center justify-between border-t border-neutral-100 px-5 py-4">
@@ -298,12 +313,107 @@ function StepItems({ form }: { form: FormApi }) {
   );
 }
 
+/* ---------------- Step 3 — Attachments ---------------- */
 
-/* ---------------- Step 3 — Review ---------------- */
+function StepAttachments({
+  files,
+  setFiles,
+  existing,
+}: {
+  files: File[];
+  setFiles: (files: File[]) => void;
+  existing?: PRAttachment[];
+}) {
+  const previews = React.useMemo(
+    () =>
+      files.map((f) => ({
+        file: f,
+        url: f.type.startsWith("image/") ? URL.createObjectURL(f) : null,
+      })),
+    [files],
+  );
+  React.useEffect(
+    () => () => previews.forEach((p) => p.url && URL.revokeObjectURL(p.url)),
+    [previews],
+  );
 
-function StepReview({ form }: { form: FormApi }) {
+  return (
+    <div className="space-y-4">
+      <DragDropUpload
+        accept="application/pdf,image/*"
+        hint="PDF quotations, canvass sheets, or photos · up to 10 MB each"
+        onFilesChange={setFiles}
+      />
+
+      {previews.some((p) => p.url) && (
+        <div>
+          <Caption as="div" className="mb-2">
+            Image previews
+          </Caption>
+          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+            {previews
+              .filter((p) => p.url)
+              .map((p) => (
+                <div
+                  key={p.file.name}
+                  className="group relative overflow-hidden rounded-lg border border-neutral-200"
+                >
+                  <img src={p.url!} alt={p.file.name} className="h-24 w-full object-cover" />
+                  <button
+                    aria-label={`Remove ${p.file.name}`}
+                    onClick={() => setFiles(files.filter((f) => f !== p.file))}
+                    className="absolute right-1 top-1 grid h-5 w-5 place-items-center rounded-full bg-white/90 text-neutral-600 opacity-0 shadow-sm transition group-hover:opacity-100"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                  <div className="truncate bg-white px-2 py-1 text-[10.5px] text-neutral-600">
+                    {p.file.name}
+                  </div>
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
+
+      {existing && existing.length > 0 && (
+        <div>
+          <Caption as="div" className="mb-2">
+            Already attached
+          </Caption>
+          <ul className="space-y-1.5">
+            {existing.map((a) => (
+              <li
+                key={a.id}
+                className="flex items-center gap-2.5 rounded-lg border border-neutral-200 bg-neutral-50/60 px-3 py-2"
+              >
+                <FileText className="h-3.5 w-3.5 shrink-0 text-neutral-500" />
+                <span className="min-w-0 flex-1 truncate text-[12.5px] text-neutral-700">
+                  {a.name}
+                </span>
+                <Caption className="shrink-0 text-[10.5px]">kept on save</Caption>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ---------------- Step 4 — Review ---------------- */
+
+function StepReview({
+  form,
+  files,
+  existing,
+}: {
+  form: FormApi;
+  files: File[];
+  existing?: PRAttachment[];
+}) {
   const values = form.getValues();
   const dept = departmentByCode(values.departmentCode);
+  const attachmentCount = files.length + (existing?.length ?? 0);
 
   const reviewItems = values.items.map((it, i) => ({ ...it, id: `review-${i}` }));
 
@@ -316,6 +426,10 @@ function StepReview({ form }: { form: FormApi }) {
         <div className="col-span-2">
           <ReviewField label="Purpose" value={values.purpose} />
         </div>
+        <ReviewField
+          label="Attachments"
+          value={attachmentCount === 0 ? "None" : `${attachmentCount} file${attachmentCount === 1 ? "" : "s"}`}
+        />
         <ReviewField label="Line Items" value={String(values.items.length)} />
       </div>
 
