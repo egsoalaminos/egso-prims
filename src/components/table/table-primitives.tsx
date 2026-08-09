@@ -38,7 +38,12 @@ export function TableHeaderRow({
   return (
     <tr
       className={cn(
-        "bg-neutral-50 text-[11px] uppercase tracking-wider text-neutral-400",
+        // Was bg-neutral-50 with neutral-400 labels — the same #FAFAFA as the
+        // canvas behind it, so the header band was invisible and the column
+        // names were the faintest text on the page. The accent tokens give it a
+        // tint and a legible label, and they carry a dark-mode value, which a
+        // literal colour would not.
+        "bg-(--accent-subtle) text-[11px] uppercase tracking-wider text-(--accent-text)",
         className,
       )}
       {...props}
@@ -53,7 +58,7 @@ export function TableHead({
 }: React.ThHTMLAttributes<HTMLTableCellElement> & { first?: boolean }) {
   return (
     <th
-      className={cn("py-2.5 font-medium", first ? "px-5" : "px-4", className)}
+      className={cn("py-2.5 font-semibold", first ? "px-5" : "px-4", className)}
       {...props}
     />
   );

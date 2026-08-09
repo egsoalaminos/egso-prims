@@ -2,7 +2,7 @@ import type { AttachmentRecord } from "@/features/shared/attachment-list";
 import type { ThreadComment } from "@/features/shared/comment-thread";
 import type { HistoryEntry } from "@/features/shared/history-feed";
 
-/** Request for Issuance Slip domain types. Shapes mirror the future Supabase schema. */
+/** Requisition and Issue Slip domain types. Shapes mirror the future Supabase schema. */
 
 export type RISStatus =
   | "Draft"

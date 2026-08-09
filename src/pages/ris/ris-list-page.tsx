@@ -163,7 +163,7 @@ export function RISListPage() {
   return (
     <PageTransition className="flex h-full min-h-0 flex-col gap-4">
       <PageHeader
-        title="Request for Issuance Slips"
+        title="Requisition and Issue Slips"
         description="Issue supplies from central stock against approved purchase requests."
         actions={
           <Button onClick={() => navigate("/ris/new")}>

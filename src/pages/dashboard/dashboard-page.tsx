@@ -166,7 +166,7 @@ export function DashboardPage() {
   const stats = [
     { label: "Pending Purchase Requests", value: pendingPRs, icon: FileText, trend: { label: "awaiting review", direction: "up" as const } },
     { label: "Pending Purchase Orders", value: data?.poPending ?? 0, icon: ShoppingCart, trend: { label: "awaiting approval", direction: "up" as const } },
-    { label: "Pending Request for Issuance Slips", value: data?.risPending ?? 0, icon: ClipboardList, trend: { label: "awaiting approval", direction: "down" as const } },
+    { label: "Pending Requisition and Issue Slips", value: data?.risPending ?? 0, icon: ClipboardList, trend: { label: "awaiting approval", direction: "down" as const } },
     { label: "Inventory Alerts", value: lowStock, icon: AlertTriangle, trend: { label: "low, critical & out of stock", direction: "down" as const } },
   ];
 
