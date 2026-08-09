@@ -32,7 +32,7 @@ export function PortalReservePage() {
   };
 
   return (
-    <PageTransition className="mx-auto w-full max-w-5xl px-5 py-10">
+    <PageTransition className="mx-auto w-full max-w-3xl px-5 py-10">
       {reference ? (
         <SubmissionSuccess
           reference={reference}
