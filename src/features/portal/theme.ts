@@ -1,5 +1,10 @@
 /**
- * Portal palette, taken from the municipal seal rather than invented.
+ * The municipal palette, taken from the seal rather than invented.
+ *
+ * Named for the portal because that is where it started, but it is no longer
+ * portal-only: the login page wears it too, since that is the door the same
+ * office opens to its own staff. Anything carrying `data-municipal` draws from
+ * here.
  *
  * The seal of Alaminos carries four colours: a green ring, a red quarter with
  * palms, a gold quarter with a coconut and bolo, and a strip of blue sky. Two

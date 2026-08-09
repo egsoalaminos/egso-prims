@@ -18,6 +18,7 @@ import {
 } from "@/components";
 import { DEV_CREDENTIALS, useAuth } from "@/features/auth/auth-context";
 import { useBranding } from "@/features/config/use-appearance";
+import { BURGUNDY, GOLD, PAPER, SERIF } from "@/features/portal/theme";
 
 const loginSchema = z.object({
   email: z.string().min(1, "Enter your email address").email("Enter a valid email address"),
@@ -42,7 +43,10 @@ export function LoginPage() {
 
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "", remember: true },
+    // Off by default. These are shared office desktops and the system keeps an
+    // audit trail: a session left open records the next person's actions under
+    // the previous person's name. Anyone on their own machine can still tick it.
+    defaultValues: { email: "", password: "", remember: false },
   });
   const remember = form.watch("remember");
 
@@ -78,33 +82,53 @@ export function LoginPage() {
   };
 
   return (
-    <div className="grid min-h-screen place-items-center bg-canvas px-4 font-sans antialiased">
+    // `data-municipal` is the same hook the portal root carries. It buys the
+    // burgundy accent, the square corners and the table-header treatment from
+    // the stylesheet without editing Button, Input or ContainerCard — all three
+    // are the admin's components too.
+    <div
+      data-municipal
+      className="grid min-h-screen place-items-center px-4 font-sans antialiased"
+      style={{ background: PAPER }}
+    >
       <motion.div
         initial={{ opacity: 0, y: 14, scale: 0.985 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.28, ease: "easeOut" }}
         className="w-full max-w-sm"
       >
-        {/* Brand */}
+        {/*
+         * The same letterhead the portal opens with, centred for a login card:
+         * Republic, province, municipality, office. The seal is shown bare —
+         * it was previously clipped into a rounded square and given a drop
+         * shadow, which turns a coat of arms into an app icon.
+         */}
         <div className="mb-6 flex flex-col items-center text-center">
           {branding.logo ? (
-            <img
-              src={branding.logo}
-              alt="General Services Office"
-              className="h-12 w-12 rounded-xl object-contain shadow-sm"
-            />
+            <img src={branding.logo} alt="" className="h-16 w-16 object-contain" />
           ) : (
-            <div className="grid h-12 w-12 place-items-center rounded-xl bg-neutral-900 text-white shadow-sm">
-              <Building2 className="h-6 w-6" />
+            <div className="grid h-16 w-16 place-items-center rounded-full bg-neutral-900 text-white">
+              <Building2 className="h-7 w-7" />
             </div>
           )}
-          <h1 className="mt-3 text-[20px] font-semibold tracking-tight text-neutral-900">
-            General Services Office
-          </h1>
-          <p className="mt-0.5 text-[12.5px] text-neutral-500">
-            Purchase Request &amp; Inventory Management System
+          <p className="mt-3 text-[9.5px] uppercase tracking-[0.16em] text-neutral-500">
+            Republic of the Philippines
           </p>
-          <p className="text-[11px] text-neutral-400">{branding.organizationName}</p>
+          <p className="text-[9.5px] uppercase tracking-[0.16em] text-neutral-500">
+            Province of Laguna
+          </p>
+          <h1
+            className="mt-1 text-[21px] leading-tight tracking-tight"
+            style={{ fontFamily: SERIF, color: BURGUNDY, fontWeight: 600 }}
+          >
+            Municipality of Alaminos
+          </h1>
+          <p className="mt-0.5 text-[12.5px] font-medium text-neutral-700">
+            {branding.officeName}
+          </p>
+
+          {/* The seam every other municipal surface uses. */}
+          <span className="mt-4 block h-[2px] w-16" style={{ background: GOLD }} />
         </div>
 
         <ContainerCard className="p-6">
