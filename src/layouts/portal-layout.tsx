@@ -17,7 +17,14 @@ const SEAL = BURGUNDY;
 
 export function PortalLayout() {
   return (
-    <div className="flex min-h-screen flex-col font-sans antialiased" style={{ background: PAPER }}>
+    // `data-portal` is the hook the stylesheet uses to give the shared form
+    // components the municipal palette and square corners. It sits on this
+    // element and nowhere else, so the admin system cannot be reached by it.
+    <div
+      data-portal
+      className="flex min-h-screen flex-col font-sans antialiased"
+      style={{ background: PAPER }}
+    >
       <a
         href="#portal-main"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white focus:px-3 focus:py-2 focus:text-[13px] focus:font-medium focus:text-neutral-900 focus:shadow-lg focus:outline-none focus:ring-2"
