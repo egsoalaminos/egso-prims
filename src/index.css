@@ -267,7 +267,7 @@
 /*
  * Public portal scope.
  *
- * `data-portal` sits on the portal's root element and nowhere else, so every
+ * `data-municipal` sits on the portal's root element and nowhere else, so every
  * rule here is invisible to the admin system. It exists so the shared form
  * components — the wizards, their buttons, their steppers — can wear the
  * municipal palette on the portal without being edited, because the admin
@@ -281,7 +281,7 @@
  * each variable outright is the fix. An earlier attempt at theming this portal
  * died on exactly this rule.
  */
-[data-portal] {
+[data-municipal] {
   /* Buttons, active steps, focus rings — the burgundy taken from the seal. */
   --accent-solid: #7a1d2b;
   --accent-solid-hover: #5e1621;
@@ -321,16 +321,16 @@
  * on the row, so the components need no edit — and they are shared with every
  * admin list, which is exactly why this is scoped.
  */
-[data-portal] thead tr {
+[data-municipal] thead tr {
   background-color: #f8f0f0;
   color: #7a1d2b;
 }
 
-[data-portal] thead th {
+[data-municipal] thead th {
   font-weight: 600;
 }
 
-[data-portal] thead {
+[data-municipal] thead {
   border-bottom: 2px solid #e3cdd1;
 }
 
