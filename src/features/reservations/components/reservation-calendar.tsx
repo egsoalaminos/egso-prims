@@ -32,23 +32,32 @@ import { formatTime, facilityById, type Reservation, type ReservationStatus } fr
 
 type CalendarView = "month" | "week" | "day";
 
-/** Calendar chip/dot tints per workflow status. */
+/**
+ * Calendar chip/dot tints per workflow status.
+ *
+ * These are the same four tones the status tags carry, written as literal
+ * classes because a calendar chip is a filled block rather than a ruled stamp —
+ * it needs a hover state and a wash, not a border. Kept in step with
+ * `statusTone` in components/status/badges.tsx: settled, in process, halted,
+ * inert, all off the seal.
+ */
 const chipTone: Record<ReservationStatus, string> = {
-  Pending: "bg-amber-50 text-amber-700 hover:bg-amber-100",
-  Approved: "bg-emerald-50 text-emerald-700 hover:bg-emerald-100",
-  Completed: "bg-neutral-100 text-neutral-600 hover:bg-neutral-200/70",
-  Draft: "bg-neutral-100 text-neutral-500 hover:bg-neutral-200/70",
-  Rejected: "bg-red-50 text-red-600 hover:bg-red-100",
-  Cancelled: "bg-neutral-100 text-neutral-400 line-through hover:bg-neutral-200/70",
+  Pending: "bg-(--tone-process-tint) text-(--tone-process) hover:brightness-97",
+  Approved: "bg-(--tone-settled-tint) text-(--tone-settled) hover:brightness-97",
+  Rejected: "bg-(--tone-halted-tint) text-(--tone-halted) hover:brightness-97",
+  Completed: "bg-(--tone-inert-tint) text-(--tone-inert) hover:brightness-97",
+  Draft: "bg-(--tone-inert-tint) text-(--tone-inert) hover:brightness-97",
+  Cancelled:
+    "bg-(--tone-inert-tint) text-(--tone-inert) line-through hover:brightness-97",
 };
 
 const dotTone: Record<ReservationStatus, string> = {
-  Pending: "bg-amber-500",
-  Approved: "bg-emerald-500",
-  Completed: "bg-neutral-400",
-  Draft: "bg-neutral-300",
-  Rejected: "bg-red-500",
-  Cancelled: "bg-neutral-300",
+  Pending: "bg-(--tone-process)",
+  Approved: "bg-(--tone-settled)",
+  Rejected: "bg-(--tone-halted)",
+  Completed: "bg-(--tone-inert)",
+  Draft: "bg-(--tone-inert)",
+  Cancelled: "bg-(--tone-inert)",
 };
 
 function EventPreview({ reservation }: { reservation: Reservation }) {

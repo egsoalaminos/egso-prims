@@ -114,8 +114,14 @@
   --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
   --sidebar-border: oklch(0.929 0.013 255.508);
   --sidebar-ring: oklch(0.704 0.04 256.788);
-  /* Content canvas behind cards — #FAFAFA in the Design Foundation */
-  --canvas: oklch(0.9851 0 0);
+  /*
+   * Content canvas behind cards. Was #FAFAFA — the Design Foundation's cold
+   * grey, extracted from the SaaS template. It is now the portal's bond paper,
+   * so a clerk moving from the public counter to the back office is standing on
+   * the same ground. Cards stay white; that contrast is what gives both halves
+   * their depth.
+   */
+  --canvas: #fbfaf7;
 }
 
 .dark {
@@ -151,7 +157,41 @@
   --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.551 0.027 264.364);
-  --canvas: oklch(0.129 0.042 264.695);
+  /* Matches the dark ramp's page background, warm-tilted like its light twin. */
+  --canvas: oklch(0.145 0.004 80);
+}
+
+/*
+ * ---------------------------------------------------------------------------
+ * Paper
+ *
+ * The admin was built on Tailwind's neutral ramp — `border-neutral-200` alone
+ * appears in 241 places — and that ramp is cold grey. The portal is warm bond
+ * paper with a #E4E0D7 rule. Side by side they read as two products.
+ *
+ * Rather than edit 241 call sites, the ramp itself is re-pointed. Tailwind v4
+ * compiles `border-neutral-200` to `var(--color-neutral-200)`, so warming the
+ * variable re-materialises every screen at once — the same mechanism the dark
+ * block below already relies on.
+ *
+ * Only the surface end of the ramp moves. 400 and up are text, and warming ink
+ * makes it look faded rather than institutional, so they are left alone.
+ *
+ * --color-white is deliberately untouched: cards stay white on warm ground,
+ * which is exactly the relationship the portal already draws.
+ */
+:root {
+  --color-neutral-50: #f7f5f0; /* row hover, zebra, header bands */
+  --color-neutral-100: #efece4; /* faint rule, inner dividers */
+  --color-neutral-200: #e4e0d7; /* the portal's rule — card and table borders */
+  --color-neutral-300: #d3cec2; /* hover borders, focus rings */
+
+  /*
+   * The seam. A municipal form separates its letterhead from its body with a
+   * gold rule, and so does the portal (portal-layout.tsx). Never a fill: a
+   * broad field of this reads as a certificate border.
+   */
+  --rule-gold: #a9822f;
 }
 
 @layer base {
@@ -191,10 +231,16 @@
   --color-white: oklch(0.181 0.004 285.9); /* card / raised surface */
   --color-black: oklch(0.985 0 0);
 
-  --color-neutral-50: oklch(0.145 0.004 285.9); /* page background */
-  --color-neutral-100: oklch(0.205 0.004 285.9);
-  --color-neutral-200: oklch(0.269 0.005 285.9); /* borders */
-  --color-neutral-300: oklch(0.335 0.006 285.9);
+  /*
+   * The surface end carries the same warm tilt as the light ramp above — hue
+   * swung from 285.9 (blue-violet) to 80 (the paper's own hue) at the same
+   * lightness, so every contrast pairing keeps its relationship and only the
+   * temperature changes. Without this, switching to dark switched products.
+   */
+  --color-neutral-50: oklch(0.145 0.004 80); /* page background */
+  --color-neutral-100: oklch(0.205 0.005 80);
+  --color-neutral-200: oklch(0.269 0.006 80); /* borders */
+  --color-neutral-300: oklch(0.335 0.007 80);
   --color-neutral-400: oklch(0.478 0.008 286.0);
   --color-neutral-500: oklch(0.596 0.009 286.1); /* muted text */
   --color-neutral-600: oklch(0.708 0.010 286.2);
@@ -217,6 +263,10 @@
   --color-sky-50: oklch(0.256 0.058 240.0);
   --color-orange-50: oklch(0.266 0.060 60.0);
   --color-rose-50: oklch(0.258 0.062 15.0);
+
+  /* The seal's gold is nearly invisible against a dark card; lifted until the
+     seam still reads as a seam. */
+  --rule-gold: #c29a45;
 
   color-scheme: dark;
 }
@@ -324,6 +374,44 @@
 }
 
 /*
+ * ---------------------------------------------------------------------------
+ * Status tones
+ *
+ * Four, not eight. The old palette spent a distinct hue on every workflow stage
+ * — "BAC Review" violet, "Budget Review" sky — which encoded a stage in a colour
+ * no clerk could read a meaning out of. These four carry meaning instead, and
+ * all three coloured ones are drawn off the municipal seal rather than picked
+ * from a framework's ramp.
+ *
+ * theme.ts warns that burgundy, gold and green together stop looking like a
+ * municipality. That warning is about a broad field of green; a 2px rule on a
+ * 60px tag is not a field.
+ */
+:root {
+  --tone-settled: #1f5c3a; /* approved, completed, released, paid */
+  --tone-settled-tint: #eef3ef;
+  --tone-process: #8a6a26; /* pending and every review stage */
+  --tone-process-tint: #faf4e8;
+  --tone-halted: #7a1d2b; /* rejected, failed, out of stock */
+  --tone-halted-tint: #f8f0f0;
+  --tone-inert: #6b6660; /* draft, cancelled, archived, no record */
+  --tone-inert-tint: #f4f2ed;
+}
+
+/* Lifted until each still carries its own text on a dark card, with the tints
+   rebuilt as translucent washes so they sit on whatever surface is behind. */
+.dark {
+  --tone-settled: #6bbd8e;
+  --tone-settled-tint: color-mix(in oklch, #6bbd8e 16%, transparent);
+  --tone-process: #d3a852;
+  --tone-process-tint: color-mix(in oklch, #d3a852 16%, transparent);
+  --tone-halted: #e39aa8;
+  --tone-halted-tint: color-mix(in oklch, #e39aa8 16%, transparent);
+  --tone-inert: #a9a49c;
+  --tone-inert-tint: color-mix(in oklch, #a9a49c 14%, transparent);
+}
+
+/*
  * Table headers used to be corrected here for the portal alone, because
  * `TableHeaderRow` painted #FAFAFA on the portal's #FBFAF7 paper and vanished.
  * The component now reads `--accent-subtle` and `--accent-text` directly, so
@@ -331,8 +419,19 @@
  * say. The ruled underline is the one part worth keeping everywhere.
  */
 thead {
-  border-bottom: 2px solid var(--accent-subtle);
+  border-bottom: 2px solid color-mix(in oklch, var(--accent-solid) 32%, transparent);
 }
+
+/*
+ * The column divider used to live here as `--rule-head: var(--accent-solid)`,
+ * which is the trap this file warns about three times over: a custom property
+ * whose value is another custom property resolves where it is *declared*. Set
+ * at :root it baked in the admin's accent and inherited that literal into the
+ * portal, so changing the accent in Settings would have repainted the portal's
+ * table rules too. `TableHeaderRow` now carries the color-mix as a real border
+ * colour, which resolves against whichever accent scope the table is sitting
+ * in.
+ */
 
 /* Accent-driven utilities. Components opt in; nothing else changes. */
 @utility ui-accent {
@@ -359,6 +458,17 @@ thead {
     outline: 2px solid var(--accent-ring);
     outline-offset: 1px;
   }
+}
+
+/*
+ * A sticky header cell paints over the rows scrolling beneath it, so it needs
+ * an opaque ground — and `--accent-subtle` is a translucent wash in dark mode.
+ * The card surface is laid down as the colour, the accent tint as an image on
+ * top of it, so one class works in both themes.
+ */
+@utility table-head-band {
+  background-color: var(--color-white);
+  background-image: linear-gradient(var(--accent-subtle), var(--accent-subtle));
 }
 
 @utility scrollbar-none {
@@ -450,6 +560,19 @@ thead {
     --muted-foreground: oklch(0.554 0.046 257.417);
     --border: oklch(0.929 0.013 255.508);
     --input: oklch(0.929 0.013 255.508);
+
+    /* Status tones too. The dark ramp lifts these into pastels so they can hold
+       a dark card; on paper those wash out to nothing, so the ink values are
+       restored for print regardless of the theme on screen. */
+    --tone-settled: #1f5c3a;
+    --tone-settled-tint: #eef3ef;
+    --tone-process: #8a6a26;
+    --tone-process-tint: #faf4e8;
+    --tone-halted: #7a1d2b;
+    --tone-halted-tint: #f8f0f0;
+    --tone-inert: #6b6660;
+    --tone-inert-tint: #f4f2ed;
+    --rule-gold: #a9822f;
 
     color-scheme: light;
   }

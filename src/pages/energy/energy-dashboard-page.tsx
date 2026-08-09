@@ -238,7 +238,7 @@ export function EnergyDashboardPage() {
         id: "accountNumber",
         accessorFn: (c) => c.account.accountNumber,
         cell: ({ row }) => (
-          <DocumentNumber value={row.original.account.accountNumber} chipColor="bg-amber-500" />
+          <DocumentNumber value={row.original.account.accountNumber} />
         ),
       },
       {

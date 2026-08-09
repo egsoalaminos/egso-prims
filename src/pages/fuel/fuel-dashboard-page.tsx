@@ -333,7 +333,7 @@ export function FuelDashboardPage() {
         id: "plateNumber",
         accessorFn: (r) => r.vehicle.plateNumber,
         cell: ({ row }) => (
-          <DocumentNumber value={row.original.vehicle.plateNumber} chipColor="bg-violet-500" />
+          <DocumentNumber value={row.original.vehicle.plateNumber} />
         ),
       },
       {

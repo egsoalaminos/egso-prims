@@ -654,7 +654,10 @@ export function AnalyticsPanels({
                         energyOverall.decreased,
                         energyOverall.unchanged,
                       ],
-                      backgroundColor: ["#ef4444", "#10b981", "#d4d4d4"],
+                      // Increased / Decreased / No Change, in the same seal
+                      // tones the status tags use for halted, settled and inert
+                      // — a rise in municipal spend is the exception to flag.
+                      backgroundColor: ["#7a1d2b", "#1f5c3a", "#c9c4bb"],
                       borderWidth: 2,
                       borderColor: "#ffffff",
                     },
@@ -742,7 +745,10 @@ export function AnalyticsPanels({
                         waterOverall.decreased,
                         waterOverall.unchanged,
                       ],
-                      backgroundColor: ["#ef4444", "#10b981", "#d4d4d4"],
+                      // Increased / Decreased / No Change, in the same seal
+                      // tones the status tags use for halted, settled and inert
+                      // — a rise in municipal spend is the exception to flag.
+                      backgroundColor: ["#7a1d2b", "#1f5c3a", "#c9c4bb"],
                       borderWidth: 2,
                       borderColor: "#ffffff",
                     },
@@ -826,7 +832,10 @@ export function AnalyticsPanels({
                   datasets: [
                     {
                       data: [fuelOverall.increased, fuelOverall.decreased, fuelOverall.unchanged],
-                      backgroundColor: ["#ef4444", "#10b981", "#d4d4d4"],
+                      // Increased / Decreased / No Change, in the same seal
+                      // tones the status tags use for halted, settled and inert
+                      // — a rise in municipal spend is the exception to flag.
+                      backgroundColor: ["#7a1d2b", "#1f5c3a", "#c9c4bb"],
                       borderWidth: 2,
                       borderColor: "#ffffff",
                     },

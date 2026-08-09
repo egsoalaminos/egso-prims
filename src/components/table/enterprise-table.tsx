@@ -161,8 +161,11 @@ export function EnterpriseTable<TData>({
   const showPagination =
     !!pageSize && !showEmpty && !loading && table.getPageCount() > 1;
 
+  // `bg-neutral-50` used to be the sticky ground, which meant a pinned header
+  // dropped the accent band the moment it started sticking. `table-head-band`
+  // is the same band, made opaque so the rows cannot show through it.
   const stickyHeadClass = stickyHeader
-    ? "sticky top-0 z-[5] bg-neutral-50 shadow-[inset_0_-1px_0_0_var(--color-border)]"
+    ? "sticky top-0 z-[5] table-head-band shadow-[inset_0_-1px_0_0_var(--color-border)]"
     : undefined;
 
   return (
@@ -313,6 +316,9 @@ export function TableCard({
 }) {
   return (
     <ContainerCard
+      // The seam only appears when there is a title to announce; an untitled
+      // table card is a container, not a document.
+      seam={!!title}
       className={cn(fillContainer && "flex h-full min-h-0 flex-col overflow-hidden", className)}
     >
       {title && (

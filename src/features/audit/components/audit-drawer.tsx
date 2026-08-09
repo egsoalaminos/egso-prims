@@ -179,7 +179,7 @@ export function AuditDrawer({
                 <Field label="Action Performed">{entry.action}</Field>
                 <Field label="Affected Record">
                   {entry.documentNumber ? (
-                    <DocumentNumber value={entry.documentNumber} chipColor="bg-neutral-800" />
+                    <DocumentNumber value={entry.documentNumber} />
                   ) : (
                     <span className="text-neutral-400">—</span>
                   )}

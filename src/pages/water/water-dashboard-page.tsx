@@ -264,7 +264,7 @@ export function WaterDashboardPage() {
         id: "accountNumber",
         accessorFn: (c) => c.account.accountNumber,
         cell: ({ row }) => (
-          <DocumentNumber value={row.original.account.accountNumber} chipColor="bg-sky-500" />
+          <DocumentNumber value={row.original.account.accountNumber} />
         ),
       },
       {

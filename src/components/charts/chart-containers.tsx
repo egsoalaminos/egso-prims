@@ -4,15 +4,31 @@ import { InformationCard } from "@/components/cards/information-card";
 import { Skeleton } from "@/components/feedback/skeleton";
 import { ChartCanvas } from "@/components/charts/chart-canvas";
 
-/** Default categorical palette drawn from the Design Foundation accents. */
+/**
+ * Categorical palette, taken from the seal.
+ *
+ * This was a seven-hue framework rainbow — blue, emerald, violet, orange, sky,
+ * rose, amber — which is what a SaaS analytics product looks like and has
+ * nothing to do with the office the charts belong to.
+ *
+ * The order matters. The first three are the seal's own colours at full
+ * strength, so a two- or three-series chart (the common case: this year against
+ * last, or budget against actual) reads as the municipality. Positions four
+ * through seven step down in weight rather than reaching for new hues, so a
+ * seven-category chart stays legible without ever leaving the family.
+ *
+ * Chart.js takes literal colours, not custom properties, so these cannot be
+ * tokens. They are the same values as `--tone-*` and `theme.ts`, kept in step
+ * by hand.
+ */
 export const chartPalette = [
-  "#3b82f6", // blue-500
-  "#10b981", // emerald-500
-  "#8b5cf6", // violet-500
-  "#f97316", // orange-500
-  "#0ea5e9", // sky-500
-  "#f43f5e", // rose-500
-  "#f59e0b", // amber-500
+  "#7a1d2b", // seal burgundy — the primary series
+  "#a9822f", // seal gold
+  "#1f5c3a", // seal green
+  "#a8636f", // burgundy, lightened
+  "#c9ab6f", // gold, lightened
+  "#6b9880", // green, lightened
+  "#6b6660", // warm ink, for the residual "other" slice
 ];
 
 export interface ChartCardProps {

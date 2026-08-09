@@ -11,12 +11,26 @@ import { cn } from "@/lib/utils";
 export function Table({
   className,
   minWidth = 900,
+  ruled = false,
   ...props
-}: React.TableHTMLAttributes<HTMLTableElement> & { minWidth?: number }) {
+}: React.TableHTMLAttributes<HTMLTableElement> & {
+  minWidth?: number;
+  /**
+   * Rules the body columns as well as the header, giving the full grid of a
+   * printed form. For the line-item tables inside a document (PR, RIS,
+   * reservation equipment) — the ones that actually reach paper. A list of two
+   * hundred rows is left unruled; there the vertical lines are just noise.
+   */
+  ruled?: boolean;
+}) {
   return (
     <div className="overflow-x-auto">
       <table
-        className={cn("w-full text-left", className)}
+        className={cn(
+          "w-full text-left",
+          ruled && "[&_tbody_td+td]:border-l [&_tbody_td+td]:border-neutral-100",
+          className,
+        )}
         style={{ minWidth }}
         {...props}
       />
@@ -44,6 +58,18 @@ export function TableHeaderRow({
         // tint and a legible label, and they carry a dark-mode value, which a
         // literal colour would not.
         "bg-(--accent-subtle) text-[11px] uppercase tracking-wider text-(--accent-text)",
+        // A government form rules its columns. Without this the headings ran
+        // together — "Quantity" and "Unit" separated by nothing but whitespace,
+        // which is the one place a reader most needs to know where one field
+        // ends. Applied to every header cell after the first, so no call site
+        // has to opt in.
+        //
+        // The colour is mixed here rather than held in a custom property: a
+        // property whose value is `var(--accent-solid)` resolves where it is
+        // declared, so a :root token would have carried the admin's accent into
+        // the portal. As a border colour it resolves against whichever accent
+        // scope the table is actually in.
+        "[&>th+th]:border-l [&>th+th]:border-[color-mix(in_oklch,var(--accent-solid)_20%,transparent)]",
         className,
       )}
       {...props}

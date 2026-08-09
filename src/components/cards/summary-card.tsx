@@ -5,14 +5,17 @@ import { ContainerCard } from "@/components/cards/container-card";
 
 export interface SummaryCardTag {
   label: string;
-  /** Tailwind bg class, e.g. "bg-emerald-500". */
+  /** Tailwind bg class, e.g. "bg-(--tone-settled)". */
   color: string;
 }
 
 export interface SummaryCardProps {
   name: string;
   meta: string;
-  /** Tailwind gradient stops for the hero area, e.g. "from-blue-100 to-cyan-100". */
+  /**
+   * Background classes for the hero panel. Callers passed gradient stops here;
+   * a flat tint class works the same way.
+   */
   gradient: string;
   icon: React.ComponentType<{ className?: string }>;
   stat: string;
@@ -23,7 +26,15 @@ export interface SummaryCardProps {
   className?: string;
 }
 
-/** Operational summary carousel card (Design Foundation "Operational Summary"). */
+/**
+ * Operational summary carousel card.
+ *
+ * The hero panel was a two-stop gradient — blue→cyan, violet→fuchsia,
+ * rose→orange — six of them across one dashboard row, which read as a
+ * marketing site rather than as an office's morning summary. It is now a flat
+ * tint with a ruled edge, and the icon tile that sits on it lost its floating
+ * shadow: on paper, nothing hovers.
+ */
 export function SummaryCard({
   name,
   meta,
@@ -43,17 +54,17 @@ export function SummaryCard({
     >
       <div
         className={cn(
-          "relative grid h-32 place-items-center overflow-hidden rounded-lg bg-gradient-to-br",
+          "relative grid h-32 place-items-center overflow-hidden rounded-lg border border-neutral-200",
           gradient,
         )}
       >
         {badge && (
-          <span className="absolute right-2 top-2 rounded-full border border-emerald-100 bg-white/90 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700">
+          <span className="absolute right-2 top-2 border border-(--tone-settled)/25 bg-white px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.06em] text-(--tone-settled)">
             {badge}
           </span>
         )}
-        <div className="grid h-14 w-14 place-items-center rounded-2xl border border-white bg-white shadow-sm">
-          <Icon className="h-7 w-7 text-neutral-800" />
+        <div className="grid h-14 w-14 place-items-center border border-neutral-200 bg-white">
+          <Icon className="h-7 w-7 text-(--accent-text)" />
         </div>
       </div>
       <div className="mt-3 px-1">
@@ -61,12 +72,14 @@ export function SummaryCard({
         <div className="text-[11.5px] text-neutral-500">{meta}</div>
       </div>
       <div className="mt-3 flex items-center justify-between px-1">
-        <div className="flex -space-x-1.5">
+        {/* Overlapped discs read as a photo stack of people. These are counts
+            of documents, so they sit in a row as square keys instead. */}
+        <div className="flex gap-1">
           {tags.map((t, idx) => (
             <div
               key={idx}
               className={cn(
-                "grid h-5 w-5 place-items-center rounded-full border-2 border-white text-[9px] font-bold text-white",
+                "grid h-5 w-5 place-items-center text-[9px] font-bold text-white",
                 t.color,
               )}
             >

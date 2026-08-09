@@ -28,7 +28,8 @@ export function InformationCard({
   children,
 }: InformationCardProps) {
   return (
-    <ContainerCard padded className={className}>
+    // Always titled by definition, so it always carries the seam.
+    <ContainerCard seam padded className={className}>
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           {Icon && <Icon className="h-4 w-4 text-neutral-600" />}

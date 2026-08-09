@@ -16,15 +16,25 @@ export interface HistoryEntry {
   at: string;
 }
 
+/*
+ * One tone for every kind of entry.
+ *
+ * These were five hues — emerald for a creation, blue for an edit, violet for a
+ * status change — which turned a document's history into a colour-coded chart
+ * nobody had the key to. The five icons already distinguish the five kinds, and
+ * a history is a single chronological record, not five parallel ones.
+ */
+const ENTRY_TILE = "bg-(--accent-subtle) text-(--accent-text)";
+
 const kindPresentation: Record<
   HistoryEntry["kind"],
   { icon: React.ComponentType<{ className?: string }>; tone: string }
 > = {
-  create: { icon: FilePlus2, tone: "text-emerald-600 bg-emerald-50" },
-  update: { icon: PenLine, tone: "text-blue-600 bg-blue-50" },
-  status: { icon: Workflow, tone: "text-violet-600 bg-violet-50" },
-  comment: { icon: MessageSquare, tone: "text-sky-600 bg-sky-50" },
-  attachment: { icon: Paperclip, tone: "text-amber-600 bg-amber-50" },
+  create: { icon: FilePlus2, tone: ENTRY_TILE },
+  update: { icon: PenLine, tone: ENTRY_TILE },
+  status: { icon: Workflow, tone: ENTRY_TILE },
+  comment: { icon: MessageSquare, tone: ENTRY_TILE },
+  attachment: { icon: Paperclip, tone: ENTRY_TILE },
 };
 
 /** Chronological audit feed shared across document modules. */

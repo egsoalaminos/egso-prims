@@ -12,7 +12,6 @@ import { departmentByCode, PR_STATUSES } from "@/features/purchase-requests/type
 import { PO_STATUSES, supplierById, SUPPLIERS } from "@/features/purchase-orders/types";
 import { RIS_STATUSES } from "@/features/ris/types";
 import {
-  categoryColor,
   ITEM_CATEGORIES,
   STOCK_STATUSES,
   itemValue,
@@ -21,7 +20,6 @@ import {
 import {
   FACILITIES,
   RESERVATION_STATUSES,
-  facilityById,
   facilityName,
   formatTime,
 } from "@/features/reservations/types";
@@ -49,7 +47,6 @@ export interface FlatRow {
   drawerModule: "pr" | "po" | "ris" | "inv" | "res" | null;
   drawerId: string | null;
   values: Record<string, string | number>;
-  chipColor?: string;
 }
 
 export interface ReportColumn {
@@ -153,7 +150,6 @@ export const REPORT_DEFS: ReportDef[] = [
           id: pr.id,
           drawerModule: "pr",
           drawerId: pr.id,
-          chipColor: departmentByCode(pr.departmentCode).color,
           values: {
             number: pr.prNumber,
             office: pr.departmentCode,
@@ -192,7 +188,6 @@ export const REPORT_DEFS: ReportDef[] = [
           id: po.id,
           drawerModule: "po",
           drawerId: po.id,
-          chipColor: departmentByCode(po.departmentCode).color,
           values: {
             number: po.poNumber,
             pr: po.prNumber,
@@ -231,7 +226,6 @@ export const REPORT_DEFS: ReportDef[] = [
           id: r.id,
           drawerModule: "ris",
           drawerId: r.id,
-          chipColor: departmentByCode(r.departmentCode).color,
           values: {
             number: r.risNumber,
             pr: r.prNumber ?? "—",
@@ -270,7 +264,6 @@ export const REPORT_DEFS: ReportDef[] = [
           id: it.id,
           drawerModule: "inv",
           drawerId: it.id,
-          chipColor: categoryColor(it.category),
           values: {
             code: it.itemCode,
             name: it.name,
@@ -307,7 +300,6 @@ export const REPORT_DEFS: ReportDef[] = [
           id: it.id,
           drawerModule: "inv" as const,
           drawerId: it.id,
-          chipColor: categoryColor(it.category),
           values: {
             code: it.itemCode,
             name: it.name,
@@ -345,7 +337,6 @@ export const REPORT_DEFS: ReportDef[] = [
           id: it.id,
           drawerModule: "inv",
           drawerId: it.id,
-          chipColor: categoryColor(it.category),
           values: {
             code: it.itemCode,
             name: it.name,
@@ -417,7 +408,6 @@ export const REPORT_DEFS: ReportDef[] = [
           id: r.id,
           drawerModule: "res",
           drawerId: r.id,
-          chipColor: facilityById(r.facilityId)?.color,
           values: {
             number: r.resNumber,
             facility: facilityName(r.facilityId),
@@ -463,7 +453,6 @@ export const REPORT_DEFS: ReportDef[] = [
               id: `${c.account.id}-${year}-${month}`,
               drawerModule: null,
               drawerId: null,
-              chipColor: "bg-amber-500",
               values: {
                 account: c.account.accountNumber,
                 submeter: "— (no submeters)",
@@ -483,7 +472,6 @@ export const REPORT_DEFS: ReportDef[] = [
           id: `${s.submeter.id}-${year}-${month}`,
           drawerModule: null,
           drawerId: null,
-          chipColor: "bg-amber-500",
           values: {
             account: c.account.accountNumber,
             submeter: `${s.submeter.submeterName} (${s.submeter.submeterNumber})`,
@@ -548,7 +536,6 @@ export const REPORT_DEFS: ReportDef[] = [
         id: `${c.account.id}-${year}-${month}`,
         drawerModule: null,
         drawerId: null,
-        chipColor: "bg-sky-500",
         values: {
           account: c.account.accountNumber,
           location: c.account.location,
@@ -592,7 +579,6 @@ export const REPORT_DEFS: ReportDef[] = [
           id: `${c.vehicle.id}-${year}-${month}`,
           drawerModule: null,
           drawerId: null,
-          chipColor: "bg-violet-500",
           values: {
             vehicle: c.vehicle.vehicleName,
             plate: c.vehicle.plateNumber,
@@ -661,7 +647,6 @@ export const REPORT_DEFS: ReportDef[] = [
             id: t.id,
             drawerModule: null,
             drawerId: null,
-            chipColor: "bg-violet-500",
             values: {
               controlNo: t.controlNo,
               date: format(new Date(t.tripDate), "d MMM yyyy"),

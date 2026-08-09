@@ -1,53 +1,65 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Status pill anatomy from the Design Foundation:
- * rounded-full, 50-tint background, 700 text, 500 dot, 11.5px medium.
+ * Status tags.
+ *
+ * These were rounded-full pills in eight hues, and the eight were the problem:
+ * "BAC Review" was violet and "Budget Review" was sky, which spends a colour on
+ * a workflow stage without saying anything a clerk could act on. Colour that
+ * carries no meaning is decoration, and a municipal system has no room for it.
+ *
+ * Four tones remain, and each one answers the only question a status is asked:
+ * is this finished, is it moving, did it stop, or is it not in play. All three
+ * coloured tones come off the seal of Alaminos rather than a framework's ramp,
+ * so they belong to the same system as the burgundy in the letterhead.
+ *
+ * Every one of the thirty status labels survives — the text still says exactly
+ * which review desk a document is sitting on. Only the colour collapses.
+ *
+ * The anatomy is a stamp, not a bubble: square, a 2px rule down the leading
+ * edge in the tone, a hairline border, a faint tint, and small uppercase. The
+ * tokens live in index.css so dark mode and print resolve without a second
+ * definition here.
  */
-type Tone = "amber" | "emerald" | "blue" | "red" | "violet" | "neutral" | "sky" | "orange";
+type Tone = "settled" | "process" | "halted" | "inert";
 
-const pillTone: Record<Tone, string> = {
-  amber: "bg-amber-50 text-amber-700",
-  emerald: "bg-emerald-50 text-emerald-700",
-  blue: "bg-blue-50 text-blue-700",
-  red: "bg-red-50 text-red-700",
-  violet: "bg-violet-50 text-violet-700",
-  neutral: "bg-neutral-100 text-neutral-700",
-  sky: "bg-sky-50 text-sky-700",
-  orange: "bg-orange-50 text-orange-700",
+const toneVars: Record<Tone, React.CSSProperties> = {
+  settled: {
+    "--tag-ink": "var(--tone-settled)",
+    "--tag-tint": "var(--tone-settled-tint)",
+  } as React.CSSProperties,
+  process: {
+    "--tag-ink": "var(--tone-process)",
+    "--tag-tint": "var(--tone-process-tint)",
+  } as React.CSSProperties,
+  halted: {
+    "--tag-ink": "var(--tone-halted)",
+    "--tag-tint": "var(--tone-halted-tint)",
+  } as React.CSSProperties,
+  inert: {
+    "--tag-ink": "var(--tone-inert)",
+    "--tag-tint": "var(--tone-inert-tint)",
+  } as React.CSSProperties,
 };
 
-const dotTone: Record<Tone, string> = {
-  amber: "bg-amber-500",
-  emerald: "bg-emerald-500",
-  blue: "bg-blue-500",
-  red: "bg-red-500",
-  violet: "bg-violet-500",
-  neutral: "bg-neutral-500",
-  sky: "bg-sky-500",
-  orange: "bg-orange-500",
-};
-
-function Pill({
+function Tag({
   tone,
   children,
-  showDot = true,
   className,
 }: {
   tone: Tone;
   children: React.ReactNode;
-  showDot?: boolean;
   className?: string;
 }) {
   return (
     <span
+      style={toneVars[tone]}
       className={cn(
-        "inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2 py-0.5 text-[11.5px] font-medium",
-        pillTone[tone],
+        "inline-flex items-center whitespace-nowrap border border-l-2 px-2 py-0.5 text-[10.5px] font-semibold uppercase tracking-[0.06em]",
+        "border-(--tag-ink)/25 border-l-(--tag-ink) bg-(--tag-tint) text-(--tag-ink)",
         className,
       )}
     >
-      {showDot && <span className={cn("h-1.5 w-1.5 rounded-full", dotTone[tone])} />}
       {children}
     </span>
   );
@@ -88,40 +100,48 @@ export type DocumentStatus =
   | "No Record";
 
 const statusTone: Record<DocumentStatus, Tone> = {
-  Pending: "amber",
-  Approved: "emerald",
-  "For Review": "blue",
-  Rejected: "red",
-  Draft: "neutral",
-  Completed: "emerald",
-  Cancelled: "neutral",
-  Submitted: "blue",
-  "Department Head Review": "amber",
-  "BAC Review": "violet",
-  "Budget Review": "sky",
-  "Pending Approval": "amber",
-  Released: "blue",
-  Available: "emerald",
-  "Low Stock": "amber",
-  Critical: "orange",
-  "Out of Stock": "red",
-  Information: "blue",
-  Success: "emerald",
-  Warning: "amber",
-  Error: "red",
-  Failed: "red",
-  // Energy consumption movement: a rise in spend is the exception to flag.
-  Increased: "red",
-  Decreased: "emerald",
-  "No Change": "neutral",
-  // Fuel vehicle registry / submeter state.
-  Active: "emerald",
-  Inactive: "neutral",
-  Archived: "neutral",
-  // Violation payment state. A profile with nothing on record is neither
-  // settled nor outstanding, so it reads neutral rather than green.
-  Paid: "emerald",
-  "No Record": "neutral",
+  // Settled — the document has reached its end and nothing is owed.
+  Approved: "settled",
+  Completed: "settled",
+  Released: "settled",
+  Available: "settled",
+  Paid: "settled",
+  Active: "settled",
+  Success: "settled",
+
+  // In process — sitting on someone's desk. Every review stage lands here; the
+  // label names the desk, which is the part a clerk actually needs.
+  Pending: "process",
+  "For Review": "process",
+  Submitted: "process",
+  "Department Head Review": "process",
+  "BAC Review": "process",
+  "Budget Review": "process",
+  "Pending Approval": "process",
+  "Low Stock": "process",
+  Warning: "process",
+
+  // Halted — stopped, and someone has to act before it moves again.
+  Rejected: "halted",
+  Error: "halted",
+  Failed: "halted",
+  "Out of Stock": "halted",
+  Critical: "halted",
+
+  // Inert — not in play. Neither good news nor bad.
+  Draft: "inert",
+  Cancelled: "inert",
+  Inactive: "inert",
+  Archived: "inert",
+  Information: "inert",
+  "No Record": "inert",
+  "No Change": "inert",
+
+  // Energy and water consumption movement. A rise in spend is the exception a
+  // municipal budget has to answer for, so it reads as halted rather than as
+  // merely informational — this inversion predates the retone and is kept.
+  Increased: "halted",
+  Decreased: "settled",
 };
 
 export function StatusBadge({
@@ -132,9 +152,9 @@ export function StatusBadge({
   className?: string;
 }) {
   return (
-    <Pill tone={statusTone[status]} className={className}>
+    <Tag tone={statusTone[status]} className={className}>
       {status}
-    </Pill>
+    </Tag>
   );
 }
 
@@ -142,11 +162,16 @@ export function StatusBadge({
 
 export type Priority = "Low" | "Medium" | "High" | "Urgent";
 
+/**
+ * Only what needs attention is coloured. Low and Medium share the inert tone
+ * because a list where every row is tinted tells a clerk nothing — the two are
+ * still distinguished, by the word.
+ */
 const priorityTone: Record<Priority, Tone> = {
-  Low: "neutral",
-  Medium: "blue",
-  High: "amber",
-  Urgent: "red",
+  Low: "inert",
+  Medium: "inert",
+  High: "process",
+  Urgent: "halted",
 };
 
 export function PriorityBadge({
@@ -157,9 +182,9 @@ export function PriorityBadge({
   className?: string;
 }) {
   return (
-    <Pill tone={priorityTone[priority]} className={className}>
+    <Tag tone={priorityTone[priority]} className={className}>
       {priority}
-    </Pill>
+    </Tag>
   );
 }
 
@@ -168,11 +193,12 @@ export function PriorityBadge({
 export type ApprovalState = "Awaiting" | "Endorsed" | "Approved" | "Returned" | "Denied";
 
 const approvalTone: Record<ApprovalState, Tone> = {
-  Awaiting: "amber",
-  Endorsed: "blue",
-  Approved: "emerald",
-  Returned: "violet",
-  Denied: "red",
+  Awaiting: "process",
+  // A returned document is not a dead one — it is back on someone's desk.
+  Returned: "process",
+  Endorsed: "settled",
+  Approved: "settled",
+  Denied: "halted",
 };
 
 export function ApprovalBadge({
@@ -183,26 +209,28 @@ export function ApprovalBadge({
   className?: string;
 }) {
   return (
-    <Pill tone={approvalTone[state]} className={className}>
+    <Tag tone={approvalTone[state]} className={className}>
       {state}
-    </Pill>
+    </Tag>
   );
 }
 
 /* ---------------- Notification Badge ---------------- */
 
-const countTone: Record<"blue" | "green" | "orange" | "red", string> = {
-  blue: "bg-blue-50 text-blue-600",
-  green: "bg-green-50 text-green-600",
-  orange: "bg-orange-50 text-orange-600",
-  red: "bg-red-50 text-red-600",
-};
-
-const notifDotTone: Record<"blue" | "green" | "orange" | "red", string> = {
-  blue: "bg-blue-500",
-  green: "bg-green-500",
-  orange: "bg-orange-500",
-  red: "bg-red-500",
+/**
+ * Sidebar and nav counts.
+ *
+ * The colour prop is kept so the thirty-odd call sites need no edit, but the
+ * blue/green/orange/red ramp it used to select is gone: a count of pending
+ * requisitions is not a different kind of fact when it is rendered in a
+ * different hue. Everything maps onto the four tones, and the shape is the same
+ * square tag as a status so a sidebar row and a table cell agree.
+ */
+const countTone: Record<"blue" | "green" | "orange" | "red", Tone> = {
+  blue: "inert",
+  green: "settled",
+  orange: "process",
+  red: "halted",
 };
 
 export interface NotificationBadgeProps {
@@ -212,22 +240,30 @@ export interface NotificationBadgeProps {
   className?: string;
 }
 
-/** Sidebar/nav count chip (`18`) or attention dot, per the Design Foundation. */
+/** Sidebar/nav count chip (`18`) or attention dot. */
 export function NotificationBadge({
   count,
   color = "blue",
   className,
 }: NotificationBadgeProps) {
+  const tone = countTone[color];
+
   if (count === undefined) {
+    // The dot stays round. It is a mark, not a stamp, and a 6px square reads as
+    // a rendering fault.
     return (
-      <span className={cn("h-1.5 w-1.5 rounded-full", notifDotTone[color], className)} />
+      <span
+        style={toneVars[tone]}
+        className={cn("h-1.5 w-1.5 rounded-full bg-(--tag-ink)", className)}
+      />
     );
   }
+
   return (
     <span
+      style={toneVars[tone]}
       className={cn(
-        "rounded-md px-1.5 py-0.5 text-[10px] font-medium",
-        countTone[color],
+        "border border-(--tag-ink)/25 bg-(--tag-tint) px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-(--tag-ink)",
         className,
       )}
     >

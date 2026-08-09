@@ -122,10 +122,7 @@ export function ResListPage() {
         header: "Reservation",
         accessorKey: "resNumber",
         cell: ({ row }) => (
-          <DocumentNumber
-            value={row.original.resNumber}
-            chipColor={departmentByCode(row.original.departmentCode).color}
-          />
+          <DocumentNumber value={row.original.resNumber} />
         ),
       },
       {
@@ -142,7 +139,7 @@ export function ResListPage() {
         accessorKey: "departmentCode",
         cell: ({ getValue }) => {
           const dept = departmentByCode(getValue<string>());
-          return <DepartmentChip code={dept.code} name={dept.name} color={dept.color} />;
+          return <DepartmentChip code={dept.code} name={dept.name} />;
         },
       },
       {

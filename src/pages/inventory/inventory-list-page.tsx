@@ -34,7 +34,6 @@ import {
 import { deleteInventoryItems, exportInventoryCsv } from "@/features/inventory/api";
 import { useInventoryItems, useStockCard } from "@/features/inventory/hooks";
 import {
-  categoryColor,
   ITEM_CATEGORIES,
   STOCK_STATUSES,
   itemValue,
@@ -122,10 +121,7 @@ export function InventoryListPage() {
         header: "Item Code",
         accessorKey: "itemCode",
         cell: ({ row }) => (
-          <DocumentNumber
-            value={row.original.itemCode}
-            chipColor={categoryColor(row.original.category)}
-          />
+          <DocumentNumber value={row.original.itemCode} />
         ),
       },
       {

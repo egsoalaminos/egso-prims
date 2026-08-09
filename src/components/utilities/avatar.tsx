@@ -11,17 +11,28 @@ export interface AvatarProps {
   initials?: string;
   name?: string;
   size?: keyof typeof sizes;
-  /** Tailwind gradient stops; defaults to the Foundation's indigo→blue. */
+  /**
+   * Optional background override, as Tailwind classes. Callers used to pass
+   * gradient stops here; a flat class works the same way.
+   */
   gradient?: string;
   className?: string;
 }
 
-/** Initials avatar on a gradient disc (Design Foundation profile chip). */
+/**
+ * Initials avatar.
+ *
+ * Was an indigo→blue gradient disc, inherited from the template the design
+ * system was extracted from. A gradient is the single loudest consumer-app
+ * signal an interface can carry, and a municipal office's staff directory is
+ * the last place that belongs. Flat seal burgundy instead — the same colour the
+ * office signs its name in.
+ */
 export function Avatar({
   initials,
   name,
   size = "md",
-  gradient = "from-indigo-500 to-blue-500",
+  gradient = "bg-(--accent-solid)",
   className,
 }: AvatarProps) {
   const text =
@@ -36,7 +47,7 @@ export function Avatar({
     <span
       title={name}
       className={cn(
-        "grid shrink-0 place-items-center rounded-full bg-gradient-to-br font-semibold text-white",
+        "grid shrink-0 place-items-center rounded-full font-semibold text-(--accent-contrast)",
         gradient,
         sizes[size],
         className,

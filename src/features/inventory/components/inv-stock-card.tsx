@@ -13,13 +13,20 @@ import {
 } from "@/components";
 import type { StockCardEntry, StockTransactionType } from "@/features/inventory/types";
 
+/*
+ * A stock card is a ledger, and a ledger is written in one ink. These six
+ * transaction types were emerald, blue, amber, violet and orange, which made a
+ * column of plain words look like a legend — and the words already say which
+ * kind of movement each row is. What matters numerically is the in/out column
+ * beside them, and that keeps its colour.
+ */
 const typeTone: Record<StockTransactionType, string> = {
   "Beginning Balance": "text-neutral-600",
-  "Purchase Order": "text-emerald-700",
-  "RIS Release": "text-blue-700",
-  "Manual Adjustment": "text-amber-700",
-  Return: "text-violet-700",
-  Correction: "text-orange-700",
+  "Purchase Order": "text-neutral-700",
+  "RIS Release": "text-neutral-700",
+  "Manual Adjustment": "text-neutral-700",
+  Return: "text-neutral-700",
+  Correction: "text-neutral-700",
 };
 
 /** Per-item stock-card ledger table. */

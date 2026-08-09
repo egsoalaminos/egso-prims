@@ -350,7 +350,7 @@ function renderCell(col: ReportColumn, row: FlatRow) {
   const value = row.values[col.id];
   switch (col.kind) {
     case "docnum":
-      return <DocumentNumber value={String(value)} chipColor={row.chipColor} />;
+      return <DocumentNumber value={String(value)} />;
     case "currency":
       return <CurrencyDisplay amount={Number(value)} />;
     case "number":
