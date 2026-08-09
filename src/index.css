@@ -307,6 +307,33 @@
   --radius-4xl: 0px;
 }
 
+/*
+ * Table headers, portal only.
+ *
+ * `TableHeaderRow` paints `bg-neutral-50` (#FAFAFA) with `text-neutral-400`.
+ * On the admin's own #FAFAFA canvas that is a deliberate near-invisible band,
+ * but the portal's paper is #FBFAF7 — the two sit within a tenth of a percent
+ * of each other in lightness, one cool and one warm, so the header stopped
+ * reading as a header and the mismatch showed as a faint grey smudge.
+ *
+ * A burgundy wash from the same seal palette, semibold burgundy labels, and a
+ * ruled underline instead. The element selectors outrank the utility classes
+ * on the row, so the components need no edit — and they are shared with every
+ * admin list, which is exactly why this is scoped.
+ */
+[data-portal] thead tr {
+  background-color: #f8f0f0;
+  color: #7a1d2b;
+}
+
+[data-portal] thead th {
+  font-weight: 600;
+}
+
+[data-portal] thead {
+  border-bottom: 2px solid #e3cdd1;
+}
+
 /* Accent-driven utilities. Components opt in; nothing else changes. */
 @utility ui-accent {
   background-color: var(--accent-solid);
