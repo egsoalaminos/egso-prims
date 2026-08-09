@@ -28,7 +28,7 @@ export function PortalRISPage() {
       {reference ? (
         <SubmissionSuccess
           reference={reference}
-          message="Your Request for Issuance Slip has been received and routed to the General Services Office for approval."
+          message="Your Requisition and Issue Slip has been received and routed to the General Services Office for approval."
         />
       ) : (
         <>

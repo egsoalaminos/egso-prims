@@ -26,7 +26,7 @@ export function RISCreatePage() {
   return (
     <PageTransition className="space-y-6">
       <PageHeader
-        title="New Request for Issuance Slip"
+        title="New Requisition and Issue Slip"
         description={
           sourcePo
             ? `Issuing stock received against ${sourcePo}.`

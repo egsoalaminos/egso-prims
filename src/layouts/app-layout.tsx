@@ -106,7 +106,7 @@ const procurementChildren: ModuleNavItem[] = [
     countKey: "pendingPOs",
     countAsDot: true,
   },
-  { icon: ClipboardList, label: "Request for Issuance Slip", to: "/ris" },
+  { icon: ClipboardList, label: "Requisition and Issue Slip", to: "/ris" },
 ];
 const utilitiesChildren: ModuleNavItem[] = [
   { icon: Zap, label: "Energy Consumption", to: "/energy" },
@@ -360,7 +360,7 @@ function useBreadcrumbs(): BreadcrumbItem[] {
   const sections: { prefix: string; label: string; newLabel: string }[] = [
     { prefix: "/purchase-requests", label: "Purchase Requests", newLabel: "New Request" },
     { prefix: "/purchase-orders", label: "Purchase Orders", newLabel: "New Order" },
-    { prefix: "/ris", label: "Request for Issuance Slip", newLabel: "New RIS" },
+    { prefix: "/ris", label: "Requisition and Issue Slip", newLabel: "New RIS" },
     { prefix: "/inventory", label: "Inventory", newLabel: "New Item" },
     { prefix: "/reservations", label: "Facility Reservation", newLabel: "New Reservation" },
     { prefix: "/violations", label: "Violation Management", newLabel: "" },

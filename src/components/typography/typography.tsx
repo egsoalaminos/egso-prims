@@ -36,9 +36,16 @@ function createText<D extends React.ElementType>(
 }
 
 /** 20px semibold — one per page (e.g. "Welcome back, Administrator"). */
+/**
+ * Page titles carry the institutional voice: the serif, in the accent colour.
+ * They name a module of a municipal office — "Purchase Requests", "Requisition
+ * and Issue Slips" — and naming is the one place the office should sound like
+ * itself rather than like an application. Body copy and data stay in Inter and
+ * in ink; this is the exception, not a new default.
+ */
 export const PageTitle = createText(
   "h1",
-  "text-[20px] font-semibold tracking-tight text-neutral-900",
+  "font-serif text-[22px] font-semibold tracking-tight text-(--accent-text)",
   "PageTitle",
 );
 

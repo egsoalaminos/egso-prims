@@ -38,7 +38,7 @@ export const PORTAL_SERVICES: PortalService[] = [
   },
   {
     icon: ClipboardList,
-    title: "Requisition & Issue Slip",
+    title: "Requisition and Issue Slip",
     navLabel: "Requisition",
     description:
       "Draw items your office needs from stock the General Services Office already holds.",
