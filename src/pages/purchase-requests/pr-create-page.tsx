@@ -21,7 +21,7 @@ export function PRCreatePage() {
     <PageTransition className="space-y-6">
       <PageHeader
         title="New Purchase Request"
-        description="Complete the four steps to submit a request for procurement review."
+        description="Complete the three steps to submit a request for procurement review."
       />
       <PRWizard
         submitLabel="Submit Request"

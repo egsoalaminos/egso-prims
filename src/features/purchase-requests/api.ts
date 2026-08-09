@@ -75,14 +75,15 @@ export interface PRDraftInput {
   fundingSource: PurchaseRequest["fundingSource"];
   requestDate: string;
   items: Omit<PurchaseRequest["items"][number], "id">[];
-  attachments: AttachmentInput[];
+  /** Optional: the upload step was removed from every form. */
+  attachments?: AttachmentInput[];
 }
 
 export async function createPurchaseRequest(input: PRDraftInput): Promise<PurchaseRequest> {
   const db = requireDb();
   const prNumber = await nextDocumentNumber("PR");
   const at = nowIso();
-  const attachments = (await uploadAttachmentInputs(input.attachments, prNumber)).map((a) => ({
+  const attachments = (await uploadAttachmentInputs(input.attachments ?? [], prNumber)).map((a) => ({
     ...a,
     id: uid(),
     uploadedAt: at,
@@ -122,7 +123,9 @@ export async function updatePurchaseRequest(
   if (!current) throw new Error(`Purchase request not found: ${id}`);
   const at = nowIso();
   const uploaded = await uploadAttachmentInputs(
-    input.attachments.filter((a) => !current.attachments.some((e) => e.name === a.name)),
+    (input.attachments ?? []).filter(
+      (a) => !current.attachments.some((e) => e.name === a.name),
+    ),
     current.prNumber,
   );
   const row = {
