@@ -209,23 +209,41 @@
  * ---------------------------------------------------------------------------
  * Accent colour
  *
- * `data-accent` on <html> selects the accent ramp. Components read the three
+ * `data-accent` on <html> selects the accent ramp. Components read the
  * --accent-* variables, so adding a colour here needs no component change.
- * Neutral (the default) keeps the original near-black Linear look.
+ *
+ * The default is the burgundy taken from the municipal seal — the same value
+ * the portal and the login page carry. It used to be near-black, inherited
+ * from the SaaS template the design system was extracted from, which is what
+ * made signing in feel like crossing into a different product.
+ *
+ * Literal values, not `var(--color-neutral-900)` style indirection: a custom
+ * property whose value is another custom property is substituted where it is
+ * declared, so the old form could not be re-pointed from a nested scope. The
+ * `[data-municipal]` block below relies on that being fixed here too.
  */
 :root {
-  --accent-solid: var(--color-neutral-900);
-  --accent-solid-hover: var(--color-neutral-800);
-  --accent-contrast: var(--color-white);
-  --accent-ring: var(--color-neutral-300);
-  --accent-subtle: var(--color-neutral-100);
-  --accent-text: var(--color-neutral-900);
+  --accent-solid: #7a1d2b;
+  --accent-solid-hover: #5e1621;
+  --accent-contrast: #ffffff;
+  --accent-ring: #c08a93;
+  --accent-subtle: #f8f0f0;
+  --accent-text: #7a1d2b;
 }
 
+/*
+ * Dark mode raises the same hue until it can carry white text on a dark
+ * surface — #7A1D2B is nearly black against a dark card. This block matters
+ * more than it looks: the stored theme is `system`, so anyone whose machine is
+ * in dark mode sees this ramp rather than the one above.
+ */
 .dark {
-  --accent-solid: var(--color-neutral-800);
-  --accent-solid-hover: var(--color-neutral-700);
-  --accent-contrast: var(--color-neutral-50);
+  --accent-solid: #a83249;
+  --accent-solid-hover: #bd4059;
+  --accent-contrast: #ffffff;
+  --accent-ring: #8e2b3e;
+  --accent-subtle: color-mix(in oklch, #a83249 18%, transparent);
+  --accent-text: #e39aa8;
 }
 
 [data-accent="blue"] {
