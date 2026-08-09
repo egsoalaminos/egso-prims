@@ -283,8 +283,7 @@ function StepItems({ form }: { form: FormApi }) {
             <div className="self-center justify-self-end">
               <IconButton
                 aria-label={`Remove item ${i + 1}`}
-                variant="ghost"
-                className="text-red-500 hover:bg-red-50"
+                variant="danger"
                 onClick={() => remove(i)}
                 disabled={fields.length === 1}
               >

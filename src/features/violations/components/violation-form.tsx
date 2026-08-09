@@ -242,18 +242,18 @@ export function ViolationForm({
           {!isEdit && !locked && typedName?.trim() && (
             <div
               className={`flex items-start gap-2 rounded-lg px-3.5 py-2.5 ${
-                matched ? "bg-emerald-50" : "bg-neutral-50"
+                matched ? "bg-(--tone-settled-tint)" : "bg-neutral-50"
               }`}
             >
               {matched ? (
-                <UserCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600" />
+                <UserCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-(--tone-settled)" />
               ) : (
                 <UserPlus className="mt-0.5 h-3.5 w-3.5 shrink-0 text-neutral-500" />
               )}
               <div className="min-w-0">
                 <div
                   className={`text-[12.5px] font-medium ${
-                    matched ? "text-emerald-700" : "text-neutral-800"
+                    matched ? "text-(--tone-settled)" : "text-neutral-800"
                   }`}
                 >
                   {matched

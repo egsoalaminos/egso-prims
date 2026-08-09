@@ -53,13 +53,13 @@ function Summary({
 }: {
   label: string;
   value: string;
-  tone?: "neutral" | "emerald" | "amber";
+  tone?: "neutral" | "settled" | "process";
 }) {
   const toneClass =
-    tone === "emerald"
-      ? "text-emerald-600"
-      : tone === "amber"
-        ? "text-amber-600"
+    tone === "settled"
+      ? "text-(--tone-settled)"
+      : tone === "process"
+        ? "text-(--tone-process)"
         : "text-neutral-900";
   return (
     <div className="rounded-lg border border-neutral-200 p-3">
@@ -195,11 +195,11 @@ export function ViolatorDrawer({
                 {/* What they owe — recomputes the moment a payment is recorded */}
                 <section className="grid grid-cols-3 gap-3 lg:grid-cols-6">
                   <Summary label="Total Violations" value={String(profile.totalViolations)} />
-                  <Summary label="Paid" value={String(profile.paidCount)} tone="emerald" />
+                  <Summary label="Paid" value={String(profile.paidCount)} tone="settled" />
                   <Summary
                     label="Pending"
                     value={String(profile.pendingCount)}
-                    tone={profile.pendingCount > 0 ? "amber" : "neutral"}
+                    tone={profile.pendingCount > 0 ? "process" : "neutral"}
                   />
                   <Summary
                     label="Total Assessed"
@@ -208,12 +208,12 @@ export function ViolatorDrawer({
                   <Summary
                     label="Total Amount Paid"
                     value={formatPHP(profile.totalPaid, { decimals: 2 })}
-                    tone="emerald"
+                    tone="settled"
                   />
                   <Summary
                     label="Outstanding Balance"
                     value={formatPHP(profile.outstandingBalance, { decimals: 2 })}
-                    tone={profile.outstandingBalance > 0 ? "amber" : "emerald"}
+                    tone={profile.outstandingBalance > 0 ? "process" : "settled"}
                   />
                 </section>
 
@@ -306,7 +306,7 @@ export function ViolatorDrawer({
                                         Record Payment
                                       </Button>
                                       <Button
-                                        variant="ghost"
+                                        variant="danger"
                                         size="xs"
                                         onClick={() => setPendingCancel(v)}
                                       >
@@ -326,9 +326,8 @@ export function ViolatorDrawer({
                                   )}
                                   <IconButton
                                     aria-label={`Delete violation ${v.violationNo}`}
-                                    variant="ghost"
+                                    variant="danger"
                                     size="icon-sm"
-                                    className="text-red-500 hover:bg-red-50"
                                     onClick={() => setPendingDelete(v)}
                                   >
                                     <Trash2 />

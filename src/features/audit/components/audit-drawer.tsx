@@ -206,7 +206,7 @@ export function AuditDrawer({
                     <OverlineLabel>Previous Value</OverlineLabel>
                     <ChangeValue value={entry.previousValue} />
                   </section>
-                  <section className="rounded-lg border border-emerald-100 bg-emerald-50/50 p-3.5">
+                  <section className="rounded-lg border border-(--tone-settled)/25 bg-(--tone-settled-tint) p-3.5">
                     <OverlineLabel>Updated Value</OverlineLabel>
                     <ChangeValue value={entry.updatedValue} emphasis />
                   </section>

@@ -37,6 +37,26 @@ export const BURGUNDY_TINT = "#F8F0F0";
 /** Rules and card headers. Never a fill. */
 export const GOLD = "#A9822F";
 
+/**
+ * The seam — the 2px rule across the top of a card, and what its colour means.
+ *
+ * Both colours were already in use and neither was ever explained, so the same
+ * device said two things at once and a reader had no key. It also came in two
+ * thicknesses: 2px on the letterhead and the admin's cards, 3px on every portal
+ * card. One rule now, one thickness:
+ *
+ * - **GOLD** — a municipal document. Something the office issues or you are
+ *   drafting: the acknowledgement slip, a tracked record, a wizard. Gold is
+ *   what a printed form rules its letterhead with.
+ * - **BURGUNDY** — a place where you enter something. Only the two
+ *   reference-number blocks wear it, and that is the whole point: burgundy on
+ *   this system means *act here*, the same thing it means on an active nav row.
+ *
+ * The landing's service cards keep gold. They are the office's own counter
+ * windows, listed the way a form lists what it can be used for.
+ */
+export const SEAM_HEIGHT = 2;
+
 /** Page ground — bond paper, a touch warmer than the admin system's canvas. */
 export const PAPER = "#FBFAF7";
 

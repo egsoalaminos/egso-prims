@@ -47,7 +47,6 @@ export function PortalReservePage() {
           <ReservationCalendar
             reservations={calendar.data}
             loading={calendar.loading}
-            onSelectReservation={() => {}}
             className="mb-6"
           />
           <ResWizard

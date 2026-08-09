@@ -6,6 +6,8 @@ import { Building2, Clock3, SearchCheck } from "lucide-react";
 
 import {
   ApprovalTimeline,
+  Button,
+  InstitutionalLabel,
   OverlineLabel,
   PageTransition,
   Skeleton,
@@ -14,7 +16,7 @@ import {
 } from "@/components";
 import { trackReference, type TrackResult } from "@/features/portal/track";
 import { PortalPageHeader } from "@/features/portal/components/submission-success";
-import { BURGUNDY, BURGUNDY_DEEP, GOLD, RULE, SERIF } from "@/features/portal/theme";
+import { BURGUNDY, GOLD, RULE, SEAM_HEIGHT, SERIF } from "@/features/portal/theme";
 
 /**
  * Public read-only tracking by reference number (PR / PO / RIS / FR).
@@ -54,7 +56,7 @@ export function PortalTrackPage() {
       />
 
       <section className="border bg-white" style={{ borderColor: RULE }}>
-        <div style={{ height: 3, background: BURGUNDY }} />
+        <div style={{ height: SEAM_HEIGHT, background: BURGUNDY }} />
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -62,34 +64,24 @@ export function PortalTrackPage() {
           }}
           className="p-4 sm:p-5"
         >
-          <label
-            htmlFor="reference"
-            className="text-[10px] font-semibold uppercase tracking-[0.16em] text-neutral-500"
-          >
+          <InstitutionalLabel as="label" htmlFor="reference">
             Reference number
-          </label>
+          </InstitutionalLabel>
           <div className="mt-2.5 flex flex-col gap-2.5 sm:flex-row sm:items-stretch">
             <input
               id="reference"
               value={ref}
               onChange={(e) => setRef(e.target.value)}
               placeholder="PR-2026-000214"
-              className="min-w-0 flex-1 border-b-2 bg-transparent pb-1.5 text-[20px] font-semibold uppercase tracking-[0.06em] tabular-nums text-neutral-900 placeholder:font-normal placeholder:tracking-normal placeholder:text-neutral-300 focus:outline-none sm:text-[24px]"
+              className="min-w-0 flex-1 border-b-2 bg-transparent pb-1.5 text-[22px] font-semibold uppercase tracking-[0.06em] tabular-nums text-neutral-900 placeholder:font-normal placeholder:tracking-normal placeholder:text-neutral-500 focus:outline-none"
               style={{ borderColor: RULE, fontFamily: SERIF }}
               onFocus={(e) => (e.currentTarget.style.borderColor = BURGUNDY)}
               onBlur={(e) => (e.currentTarget.style.borderColor = RULE)}
             />
-            <button
-              type="submit"
-              disabled={loading}
-              className="inline-flex shrink-0 items-center justify-center gap-2 px-6 py-2.5 text-[13px] font-semibold text-white transition disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-              style={{ background: BURGUNDY, ["--tw-ring-color" as string]: BURGUNDY }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = BURGUNDY_DEEP)}
-              onMouseLeave={(e) => (e.currentTarget.style.background = BURGUNDY)}
-            >
-              <SearchCheck className="h-4 w-4" />
+            <Button type="submit" size="lg" loading={loading} className="shrink-0">
+              {!loading && <SearchCheck />}
               {loading ? "Searching" : "Track"}
-            </button>
+            </Button>
           </div>
         </form>
       </section>
@@ -125,20 +117,18 @@ export function PortalTrackPage() {
           className="mt-4 border bg-white"
           style={{ borderColor: RULE }}
         >
-          <div style={{ height: 3, background: GOLD }} />
+          <div style={{ height: SEAM_HEIGHT, background: GOLD }} />
           <div className="p-5">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="min-w-0">
-                <div className="text-[9.5px] font-semibold uppercase tracking-[0.16em] text-neutral-500">
-                  {result.kind}
-                </div>
+                <InstitutionalLabel>{result.kind}</InstitutionalLabel>
                 <div
                   className="mt-0.5 text-[22px] font-semibold tabular-nums tracking-[0.03em] text-neutral-900"
                   style={{ fontFamily: SERIF }}
                 >
                   {result.number}
                 </div>
-                <p className="mt-1 max-w-md truncate text-[12px] text-neutral-500">
+                <p className="mt-1 max-w-md truncate text-[12.5px] text-neutral-500">
                   {result.title}
                 </p>
               </div>
@@ -162,7 +152,7 @@ export function PortalTrackPage() {
                   <Clock3 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-neutral-400" />
                   <span>
                     {result.latestEvent}
-                    <span className="block text-[11px] text-neutral-500">
+                    <span className="block text-[10.5px] text-neutral-500">
                       {format(new Date(result.updatedAt), "d MMM yyyy · h:mm a")}
                     </span>
                   </span>
@@ -172,7 +162,7 @@ export function PortalTrackPage() {
 
             <div className="mt-5">
               <h3
-                className="mb-3 text-[13.5px] font-semibold"
+                className="mb-3 text-[12.5px] font-semibold"
                 style={{ fontFamily: SERIF, color: BURGUNDY }}
               >
                 Progress

@@ -12,6 +12,7 @@ import {
   Checkbox,
   ConfirmationModal,
   Field,
+  InstitutionalLabel,
   Input,
   toast,
 } from "@/components";
@@ -116,12 +117,8 @@ export function LoginPage() {
               <Building2 className="h-7 w-7" />
             </div>
           )}
-          <p className="mt-3 text-[9.5px] uppercase tracking-[0.16em] text-neutral-500">
-            Republic of the Philippines
-          </p>
-          <p className="text-[9.5px] uppercase tracking-[0.16em] text-neutral-500">
-            Province of Laguna
-          </p>
+          <InstitutionalLabel className="mt-3">Republic of the Philippines</InstitutionalLabel>
+          <InstitutionalLabel>Province of Laguna</InstitutionalLabel>
           <h1
             className="mt-1 text-[21px] leading-tight tracking-tight"
             style={{ fontFamily: SERIF, color: BURGUNDY, fontWeight: 600 }}

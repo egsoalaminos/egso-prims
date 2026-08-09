@@ -403,7 +403,7 @@ export function FuelVehicleDrawer({
                                 {onEditTrip && (
                                   <IconButton
                                     aria-label={`Edit trip ${t.controlNo}`}
-                                    variant="ghost"
+                                    variant="danger"
                                     size="icon-sm"
                                     onClick={() => onEditTrip(vehicle, t)}
                                   >
@@ -412,9 +412,8 @@ export function FuelVehicleDrawer({
                                 )}
                                 <IconButton
                                   aria-label={`Delete trip ${t.controlNo}`}
-                                  variant="ghost"
+                                  variant="danger"
                                   size="icon-sm"
-                                  className="text-red-500 hover:bg-red-50"
                                   onClick={() => setPendingTripDelete(t)}
                                 >
                                   <Trash2 />
@@ -471,7 +470,7 @@ export function FuelVehicleDrawer({
                           (comparison.status === "Increased"
                             ? "text-red-600"
                             : comparison.status === "Decreased"
-                              ? "text-emerald-700"
+                              ? "text-(--tone-settled)"
                               : "text-neutral-500")
                         }
                       >
@@ -639,7 +638,7 @@ export function FuelVehicleDrawer({
                                 {onEditReading && (
                                   <IconButton
                                     aria-label={`Edit reading of ${format(new Date(r.readingDate), "d MMM yyyy")}`}
-                                    variant="ghost"
+                                    variant="danger"
                                     size="icon-sm"
                                     onClick={() => onEditReading(vehicle, r)}
                                   >
@@ -648,9 +647,8 @@ export function FuelVehicleDrawer({
                                 )}
                                 <IconButton
                                   aria-label={`Delete reading of ${format(new Date(r.readingDate), "d MMM yyyy")}`}
-                                  variant="ghost"
+                                  variant="danger"
                                   size="icon-sm"
-                                  className="text-red-500 hover:bg-red-50"
                                   onClick={() => setPendingReadingDelete(r)}
                                 >
                                   <Trash2 />
@@ -739,7 +737,7 @@ export function FuelVehicleDrawer({
                               <span className="inline-flex items-center gap-1">
                                 <IconButton
                                   aria-label={`Edit transaction of ${format(new Date(t.txnDate), "d MMM yyyy")}`}
-                                  variant="ghost"
+                                  variant="danger"
                                   size="icon-sm"
                                   onClick={() => onEditTransaction(vehicle, t)}
                                 >
@@ -747,9 +745,8 @@ export function FuelVehicleDrawer({
                                 </IconButton>
                                 <IconButton
                                   aria-label={`Delete transaction of ${format(new Date(t.txnDate), "d MMM yyyy")}`}
-                                  variant="ghost"
+                                  variant="danger"
                                   size="icon-sm"
-                                  className="text-red-500 hover:bg-red-50"
                                   onClick={() => setPendingDelete(t)}
                                 >
                                   <Trash2 />

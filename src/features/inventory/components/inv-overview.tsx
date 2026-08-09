@@ -164,7 +164,7 @@ export function InvOverview({
                 </span>
                 <span className="shrink-0 tabular-nums">
                   {e.quantityIn > 0 ? (
-                    <span className="text-emerald-700">+{e.quantityIn}</span>
+                    <span className="text-(--tone-settled)">+{e.quantityIn}</span>
                   ) : (
                     <span className="text-red-600">−{e.quantityOut}</span>
                   )}

@@ -12,7 +12,6 @@ const sizeClasses = {
   sm: "sm:max-w-md",
   md: "sm:max-w-2xl",
   lg: "sm:max-w-4xl",
-  xl: "sm:max-w-6xl",
   "2xl": "sm:max-w-5xl",
   wide: "w-[94vw] sm:max-w-[1500px]",
 } as const;

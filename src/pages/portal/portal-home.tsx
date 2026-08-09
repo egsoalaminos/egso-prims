@@ -3,16 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion, useReducedMotion } from "motion/react";
 import { ArrowRight, SearchCheck } from "lucide-react";
 
+import { Button, InstitutionalLabel } from "@/components";
 import { BRAND_LOGO } from "@/lib/brand";
 import { PORTAL_SERVICES } from "@/features/portal/data";
-import {
-  BURGUNDY,
-  BURGUNDY_DEEP,
-  BURGUNDY_TINT,
-  GOLD,
-  RULE,
-  SERIF,
-} from "@/features/portal/theme";
+import { BURGUNDY, BURGUNDY_TINT, GOLD, RULE, SEAM_HEIGHT, SERIF } from "@/features/portal/theme";
 
 /**
  * Public portal landing — one screen, no scroll.
@@ -58,7 +52,7 @@ export function PortalHome() {
           >
             General Services Office
           </h1>
-          <p className="mt-2.5 max-w-[56ch] text-[13.5px] leading-relaxed text-neutral-600">
+          <p className="mt-2.5 max-w-[56ch] text-[12.5px] leading-relaxed text-neutral-600">
             File requests and reserve municipal facilities without visiting the Municipal Hall.
             Every submission is issued a reference number.
           </p>
@@ -84,7 +78,7 @@ export function PortalHome() {
                   className="group flex h-full flex-col border bg-white transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
                   style={{ borderColor: RULE, ["--tw-ring-color" as string]: BURGUNDY }}
                 >
-                  <span style={{ height: 3, background: GOLD }} />
+                  <span style={{ height: SEAM_HEIGHT, background: GOLD }} />
                   <span className="flex flex-1 flex-col p-4">
                     <span className="flex items-center gap-2.5">
                       <span
@@ -94,7 +88,7 @@ export function PortalHome() {
                         <Icon className="h-4 w-4" />
                       </span>
                       <span
-                        className="text-[15px] font-semibold leading-snug text-neutral-900"
+                        className="text-[14px] font-semibold leading-snug text-neutral-900"
                         style={{ fontFamily: SERIF }}
                       >
                         {service.title}
@@ -132,35 +126,26 @@ export function PortalHome() {
         className="border bg-white"
         style={{ borderColor: RULE }}
       >
-        <div style={{ height: 3, background: BURGUNDY }} />
+        <div style={{ height: SEAM_HEIGHT, background: BURGUNDY }} />
         <form onSubmit={track} className="p-4 sm:p-5">
-          <h2
-            id="track-heading"
-            className="text-[10px] font-semibold uppercase tracking-[0.16em] text-neutral-500"
-          >
+          <InstitutionalLabel as="h2" id="track-heading">
             Already filed something? Enter its reference number
-          </h2>
+          </InstitutionalLabel>
           <div className="mt-2.5 flex flex-col gap-2.5 sm:flex-row sm:items-stretch">
             <input
               value={reference}
               onChange={(e) => setReference(e.target.value)}
               placeholder="PR-2026-000214"
               aria-label="Reference number from your receipt"
-              className="min-w-0 flex-1 border-b-2 bg-transparent pb-1.5 text-[20px] font-semibold uppercase tracking-[0.06em] tabular-nums text-neutral-900 placeholder:font-normal placeholder:tracking-normal placeholder:text-neutral-300 focus:outline-none sm:text-[24px]"
+              className="min-w-0 flex-1 border-b-2 bg-transparent pb-1.5 text-[22px] font-semibold uppercase tracking-[0.06em] tabular-nums text-neutral-900 placeholder:font-normal placeholder:tracking-normal placeholder:text-neutral-500 focus:outline-none"
               style={{ borderColor: RULE, fontFamily: SERIF }}
               onFocus={(e) => (e.currentTarget.style.borderColor = BURGUNDY)}
               onBlur={(e) => (e.currentTarget.style.borderColor = RULE)}
             />
-            <button
-              type="submit"
-              className="inline-flex shrink-0 items-center justify-center gap-2 px-6 py-2.5 text-[13px] font-semibold text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-              style={{ background: BURGUNDY, ["--tw-ring-color" as string]: BURGUNDY }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = BURGUNDY_DEEP)}
-              onMouseLeave={(e) => (e.currentTarget.style.background = BURGUNDY)}
-            >
-              <SearchCheck className="h-4 w-4" />
+            <Button type="submit" size="lg" className="shrink-0">
+              <SearchCheck />
               Track
-            </button>
+            </Button>
           </div>
         </form>
       </motion.section>

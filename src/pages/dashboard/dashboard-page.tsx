@@ -232,12 +232,12 @@ export function DashboardPage() {
    * row means the same thing it means in any table below it.
    */
   const operationalSummary = [
-    { name: "Inventory Summary", meta: "Live stock position", gradient: "bg-neutral-50", icon: Package, stat: `${totalUnits.toLocaleString()} units` },
-    { name: "Recent Purchase Orders", meta: "Across all suppliers", gradient: "bg-neutral-50", icon: ShoppingCart, stat: `${data?.poCount ?? 0} orders` },
-    { name: "Recent RIS", meta: "Released & completed", gradient: "bg-neutral-50", icon: ClipboardList, stat: `${data?.risIssued ?? 0} issued` },
-    { name: "Upcoming Reservations", meta: "Pending & approved", gradient: "bg-neutral-50", icon: CalendarDays, stat: `${data?.reservations.filter((r) => ["Pending", "Approved"].includes(r.status)).length ?? 0} scheduled` },
-    { name: "Low Stock Items", meta: "Requires attention", gradient: "bg-neutral-50", icon: AlertTriangle, stat: `${lowStock} items` },
-    { name: "Pending Approvals", meta: "Across departments", gradient: "bg-neutral-50", icon: ClipboardCheck, stat: `${pendingPRs + (data?.poPending ?? 0) + (data?.risPending ?? 0)} pending` },
+    { name: "Inventory Summary", meta: "Live stock position", panel: "bg-neutral-50", icon: Package, stat: `${totalUnits.toLocaleString()} units` },
+    { name: "Recent Purchase Orders", meta: "Across all suppliers", panel: "bg-neutral-50", icon: ShoppingCart, stat: `${data?.poCount ?? 0} orders` },
+    { name: "Recent RIS", meta: "Released & completed", panel: "bg-neutral-50", icon: ClipboardList, stat: `${data?.risIssued ?? 0} issued` },
+    { name: "Upcoming Reservations", meta: "Pending & approved", panel: "bg-neutral-50", icon: CalendarDays, stat: `${data?.reservations.filter((r) => ["Pending", "Approved"].includes(r.status)).length ?? 0} scheduled` },
+    { name: "Low Stock Items", meta: "Requires attention", panel: "bg-neutral-50", icon: AlertTriangle, stat: `${lowStock} items` },
+    { name: "Pending Approvals", meta: "Across departments", panel: "bg-neutral-50", icon: ClipboardCheck, stat: `${pendingPRs + (data?.poPending ?? 0) + (data?.risPending ?? 0)} pending` },
   ];
 
   const inventoryHealth = (data?.items ?? []).slice(0, 5).map((it) => {
@@ -291,9 +291,14 @@ export function DashboardPage() {
         }
       />
 
+      {/* No `onOpen` on these. It was `() => {}`, which drew a corner arrow on
+          all four metric cards that did nothing when clicked — the same defect
+          the portal's calendar had. `MetricCard` renders the arrow only when a
+          handler exists, so dropping it removes the affordance rather than
+          leaving a dead one on the first screen of the day. */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((s) => (
-          <MetricCard key={s.label} {...s} loading={loading} onOpen={() => {}} />
+          <MetricCard key={s.label} {...s} loading={loading} />
         ))}
       </div>
 

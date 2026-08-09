@@ -85,21 +85,29 @@ function EventChip({
   showTime = true,
 }: {
   reservation: Reservation;
-  onOpen: (reservation: Reservation) => void;
+  onOpen?: (reservation: Reservation) => void;
   showTime?: boolean;
 }) {
   const facility = facilityById(reservation.facilityId);
+  // Read-only on the public portal: with no handler the chip renders as a span,
+  // so it neither takes focus nor invites a click it cannot answer.
+  const Tag = onOpen ? "button" : "span";
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onOpen(reservation);
-          }}
+        <Tag
+          onClick={
+            onOpen
+              ? (e: React.MouseEvent) => {
+                  e.stopPropagation();
+                  onOpen(reservation);
+                }
+              : undefined
+          }
           className={cn(
             "flex w-full items-center gap-1 truncate rounded-md px-1.5 py-0.5 text-left text-[10.5px] font-medium transition",
             chipTone[reservation.status],
+            !onOpen && "cursor-default",
           )}
         >
           <span className={cn("h-1.5 w-1.5 shrink-0 rounded-full", dotTone[reservation.status])} />
@@ -107,7 +115,7 @@ function EventChip({
             {showTime && <span className="tabular-nums">{reservation.startTime}</span>}{" "}
             {facility?.shortName}
           </span>
-        </button>
+        </Tag>
       </TooltipTrigger>
       <TooltipContent side="bottom" className="border border-neutral-200 bg-white text-neutral-900 shadow-lg">
         <EventPreview reservation={reservation} />
@@ -129,7 +137,15 @@ export function ReservationCalendar({
 }: {
   reservations: Reservation[];
   loading?: boolean;
-  onSelectReservation: (reservation: Reservation) => void;
+  /**
+   * Omit to render the calendar read-only.
+   *
+   * The public reserve page used to pass `() => {}` here, which left every
+   * booking looking clickable and doing nothing — the worst kind of control.
+   * Out there the calendar answers one question, "is this date already taken",
+   * and a visitor has no business opening another office's reservation anyway.
+   */
+  onSelectReservation?: (reservation: Reservation) => void;
   className?: string;
 }) {
   const [view, setView] = React.useState<CalendarView>("month");
@@ -244,7 +260,7 @@ function MonthView({
   cursor: Date;
   eventsOn: (d: Date) => Reservation[];
   onOpenDay: (d: Date) => void;
-  onOpen: (r: Reservation) => void;
+  onOpen?: (r: Reservation) => void;
 }) {
   const start = startOfWeek(startOfMonth(cursor));
   const days = Array.from({ length: 42 }, (_, i) => addDays(start, i));
@@ -319,7 +335,7 @@ function WeekView({
   cursor: Date;
   eventsOn: (d: Date) => Reservation[];
   onOpenDay: (d: Date) => void;
-  onOpen: (r: Reservation) => void;
+  onOpen?: (r: Reservation) => void;
 }) {
   const start = startOfWeek(cursor);
   const days = Array.from({ length: 7 }, (_, i) => addDays(start, i));
@@ -360,7 +376,7 @@ function WeekView({
                       <Tooltip key={r.id}>
                         <TooltipTrigger asChild>
                           <button
-                            onClick={() => onOpen(r)}
+                            onClick={onOpen ? () => onOpen(r) : undefined}
                             className={cn(
                               "w-full rounded-lg px-2 py-1.5 text-left transition",
                               chipTone[r.status],
@@ -404,7 +420,7 @@ function DayView({
 }: {
   cursor: Date;
   eventsOn: (d: Date) => Reservation[];
-  onOpen: (r: Reservation) => void;
+  onOpen?: (r: Reservation) => void;
 }) {
   const events = eventsOn(cursor);
   if (events.length === 0) {
@@ -424,7 +440,7 @@ function DayView({
         return (
           <li key={r.id}>
             <button
-              onClick={() => onOpen(r)}
+              onClick={onOpen ? () => onOpen(r) : undefined}
               className="flex w-full items-center gap-4 px-5 py-3 text-left transition hover:bg-neutral-50/70"
             >
               <span className="w-32 shrink-0 text-[12.5px] font-medium tabular-nums text-neutral-700">

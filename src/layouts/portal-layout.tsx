@@ -1,5 +1,6 @@
 import { Link, NavLink, Outlet } from "react-router-dom";
 
+import { InstitutionalLabel } from "@/components";
 import { BRAND_LOGO } from "@/lib/brand";
 import { PORTAL_CONTACT, PORTAL_SERVICES } from "@/features/portal/data";
 import { BURGUNDY, BURGUNDY_TINT, GOLD, PAPER, RULE, SERIF } from "@/features/portal/theme";
@@ -27,7 +28,7 @@ export function PortalLayout() {
     >
       <a
         href="#portal-main"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white focus:px-3 focus:py-2 focus:text-[13px] focus:font-medium focus:text-neutral-900 focus:shadow-lg focus:outline-none focus:ring-2"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white focus:px-3 focus:py-2 focus:text-[12.5px] focus:font-medium focus:text-neutral-900 focus:shadow-lg focus:outline-none focus:ring-2"
         style={{ ["--tw-ring-color" as string]: SEAL }}
       >
         Skip to main content
@@ -45,19 +46,15 @@ export function PortalLayout() {
             <span className="flex flex-col leading-tight">
               {/* Split rather than joined by a middot: on a narrow phone the
                   single line broke mid-province, which reads as a typo. */}
-              <span className="text-[9.5px] uppercase tracking-[0.16em] text-neutral-500">
-                Republic of the Philippines
-              </span>
-              <span className="text-[9.5px] uppercase tracking-[0.16em] text-neutral-500">
-                Province of Laguna
-              </span>
+              <InstitutionalLabel as="span">Republic of the Philippines</InstitutionalLabel>
+              <InstitutionalLabel as="span">Province of Laguna</InstitutionalLabel>
               <span
-                className="text-[17px] font-semibold tracking-tight"
+                className="text-[16px] font-semibold tracking-tight"
                 style={{ fontFamily: SERIF, color: SEAL }}
               >
                 Municipality of Alaminos
               </span>
-              <span className="text-[11px] text-neutral-600">General Services Office</span>
+              <span className="text-[10.5px] text-neutral-600">General Services Office</span>
             </span>
           </Link>
         </div>

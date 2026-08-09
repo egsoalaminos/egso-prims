@@ -239,7 +239,7 @@ export function WaterSubmeterDrawer({
                                 {onEditReading && (
                                   <IconButton
                                     aria-label={`Edit reading of ${format(new Date(r.readingDate), "d MMM yyyy")}`}
-                                    variant="ghost"
+                                    variant="danger"
                                     size="icon-sm"
                                     onClick={() => onEditReading(submeter, r)}
                                   >
@@ -248,9 +248,8 @@ export function WaterSubmeterDrawer({
                                 )}
                                 <IconButton
                                   aria-label={`Delete reading of ${format(new Date(r.readingDate), "d MMM yyyy")}`}
-                                  variant="ghost"
+                                  variant="danger"
                                   size="icon-sm"
-                                  className="text-red-500 hover:bg-red-50"
                                   onClick={() => setPendingDelete(r)}
                                 >
                                   <Trash2 />

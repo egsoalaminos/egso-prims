@@ -98,6 +98,22 @@ export const OverlineLabel = createText(
   "OverlineLabel",
 );
 
+/**
+ * The letterhead's micro-caps — wider tracked than `OverlineLabel`.
+ *
+ * Two different labels were being written by hand nine times across the portal,
+ * the letterhead and the login page, in four spellings: 9.5px and 10.5px, with
+ * and without `font-semibold`. They are one thing, and they are *not*
+ * `OverlineLabel`: this is the institutional register — "Republic of the
+ * Philippines", "Reference number" — where the wide tracking is the point.
+ * `OverlineLabel` names a field; this names the office.
+ */
+export const InstitutionalLabel = createText(
+  "div",
+  "text-[10.5px] font-semibold uppercase tracking-[0.16em] text-neutral-500",
+  "InstitutionalLabel",
+);
+
 /** 11.5px muted — meta text, timestamps, helper copy. */
 export const Caption = createText(
   "span",

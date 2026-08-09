@@ -83,7 +83,7 @@ export function StockCardTable({
               <TableCell className={`whitespace-nowrap py-2.5 text-[12.5px] font-medium ${typeTone[e.type]}`}>
                 {e.type}
               </TableCell>
-              <TableCell className="py-2.5 text-right tabular-nums text-emerald-700">
+              <TableCell className="py-2.5 text-right tabular-nums text-(--tone-settled)">
                 {e.quantityIn > 0 ? e.quantityIn : "—"}
               </TableCell>
               <TableCell className="py-2.5 text-right tabular-nums text-red-600">

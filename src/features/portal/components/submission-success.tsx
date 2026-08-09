@@ -4,8 +4,9 @@ import { motion } from "motion/react";
 import { format } from "date-fns";
 import { CheckCircle2 } from "lucide-react";
 
+import { Button, InstitutionalLabel } from "@/components";
 import { BRAND_LOGO } from "@/lib/brand";
-import { BURGUNDY, BURGUNDY_DEEP, GOLD, RULE, SERIF } from "@/features/portal/theme";
+import { BURGUNDY, GOLD, RULE, SEAM_HEIGHT, SERIF } from "@/features/portal/theme";
 
 /**
  * The acknowledgement slip.
@@ -39,35 +40,34 @@ export function SubmissionSuccess({
       className="mx-auto w-full max-w-lg"
     >
       <div className="border bg-white" style={{ borderColor: RULE }}>
-        <div style={{ height: 3, background: GOLD }} />
+        <div style={{ height: SEAM_HEIGHT, background: GOLD }} />
 
         {/* Letterhead of the slip: who received this. */}
         <div className="flex items-center gap-3 border-b px-5 py-3.5" style={{ borderColor: RULE }}>
           <img src={BRAND_LOGO} alt="" className="h-9 w-9 shrink-0 object-contain" />
           <div className="leading-tight">
-            <div className="text-[9px] uppercase tracking-[0.16em] text-neutral-500">
-              Republic of the Philippines
-            </div>
+            <InstitutionalLabel>Republic of the Philippines</InstitutionalLabel>
             <div
               className="text-[12.5px] font-semibold"
               style={{ fontFamily: SERIF, color: BURGUNDY }}
             >
               General Services Office
             </div>
-            <div className="text-[10px] text-neutral-500">Municipality of Alaminos, Laguna</div>
+            <div className="text-[10.5px] text-neutral-500">Municipality of Alaminos, Laguna</div>
           </div>
         </div>
 
         <div className="px-6 py-6 text-center">
-          <span
-            className="mx-auto grid h-9 w-9 place-items-center rounded-full"
-            style={{ background: "#ECF6EF", color: "#2F7D4F" }}
-          >
+          {/* Was a hardcoded #ECF6EF / #2F7D4F — a green that existed nowhere
+              else in the system, on the one screen where "received" is the
+              whole message. It reads the settled status tone now, the same
+              green a table uses for an approved document. */}
+          <span className="mx-auto grid h-9 w-9 place-items-center rounded-full bg-(--tone-settled-tint) text-(--tone-settled)">
             <CheckCircle2 className="h-[18px] w-[18px]" />
           </span>
 
           <h1
-            className="mt-3 text-[19px] font-semibold"
+            className="mt-3 text-[16px] font-semibold"
             style={{ fontFamily: SERIF, color: BURGUNDY }}
           >
             Request received
@@ -78,16 +78,14 @@ export function SubmissionSuccess({
 
           {/* The control number, given the weight of the thing it is. */}
           <div className="mt-5 border-y py-4" style={{ borderColor: RULE }}>
-            <div className="text-[9.5px] font-semibold uppercase tracking-[0.16em] text-neutral-500">
-              Reference number
-            </div>
+            <InstitutionalLabel>Reference number</InstitutionalLabel>
             <div
               className="mt-1 select-all text-[28px] font-semibold tabular-nums tracking-[0.04em] text-neutral-900 sm:text-[32px]"
               style={{ fontFamily: SERIF }}
             >
               {reference}
             </div>
-            <div className="mt-1.5 text-[11px] text-neutral-500">
+            <div className="mt-1.5 text-[10.5px] text-neutral-500">
               Received {format(receivedAt, "d MMMM yyyy")} at {format(receivedAt, "h:mm a")}
             </div>
           </div>
@@ -96,23 +94,27 @@ export function SubmissionSuccess({
             Write this number down. It is the only way to follow this request.
           </p>
 
+          {/* These were two hand-built buttons carrying inline colours and a
+              pair of JS handlers that mutated element.style on hover. The
+              portal sits inside [data-municipal], so the shared Button already
+              resolves to exactly this burgundy and its own deep hover — in CSS,
+              and at the same size as the wizard buttons a filer just used. */}
           <div className="mt-5 flex flex-col items-center gap-2 sm:flex-row sm:justify-center">
-            <button
+            <Button
+              size="lg"
+              className="w-full sm:w-auto"
               onClick={() => navigate(`/portal/track?ref=${encodeURIComponent(reference)}`)}
-              className="inline-flex w-full items-center justify-center px-5 py-2.5 text-[13px] font-semibold text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:w-auto"
-              style={{ background: BURGUNDY, ["--tw-ring-color" as string]: BURGUNDY }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = BURGUNDY_DEEP)}
-              onMouseLeave={(e) => (e.currentTarget.style.background = BURGUNDY)}
             >
               Track this request
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="secondary"
+              size="lg"
+              className="w-full sm:w-auto"
               onClick={() => navigate("/portal")}
-              className="inline-flex w-full items-center justify-center border bg-white px-5 py-2.5 text-[13px] font-semibold text-neutral-700 transition hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:w-auto"
-              style={{ borderColor: RULE, ["--tw-ring-color" as string]: BURGUNDY }}
             >
               Back to services
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -135,12 +137,12 @@ export function PortalPageHeader({
   return (
     <div className="mb-6 border-b pb-4" style={{ borderColor: RULE }}>
       <h1
-        className="text-[24px] leading-tight tracking-tight sm:text-[28px]"
+        className="text-[22px] leading-tight tracking-tight"
         style={{ fontFamily: SERIF, color: BURGUNDY, fontWeight: 600 }}
       >
         {title}
       </h1>
-      <p className="mt-1.5 max-w-[62ch] text-[13px] leading-relaxed text-neutral-600">
+      <p className="mt-1.5 max-w-[62ch] text-[12.5px] leading-relaxed text-neutral-600">
         {description}
       </p>
     </div>

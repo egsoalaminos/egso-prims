@@ -230,7 +230,7 @@ export function ViolationListPage() {
         id: "paid",
         accessorFn: (p) => p.paidCount,
         cell: ({ getValue }) => (
-          <span className="tabular-nums text-emerald-600">{getValue<number>()}</span>
+          <span className="tabular-nums text-(--tone-settled)">{getValue<number>()}</span>
         ),
         meta: { align: "right" },
       },

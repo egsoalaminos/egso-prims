@@ -204,7 +204,7 @@ export function WaterAccountDrawer({
                           (comparison.status === "Increased"
                             ? "text-red-600"
                             : comparison.status === "Decreased"
-                              ? "text-emerald-700"
+                              ? "text-(--tone-settled)"
                               : "text-neutral-500")
                         }
                       >
@@ -369,7 +369,7 @@ export function WaterAccountDrawer({
                                   {onAddSubmeterBill && (
                                     <IconButton
                                       aria-label={`Add bill for ${s.submeterNumber}`}
-                                      variant="ghost"
+                                      variant="danger"
                                       size="icon-sm"
                                       onClick={() => onAddSubmeterBill(account, s)}
                                     >
@@ -516,9 +516,8 @@ export function WaterAccountDrawer({
                                 </IconButton>
                                 <IconButton
                                   aria-label={`Delete ${monthName(b.billingMonth)} ${b.billingYear} bill`}
-                                  variant="ghost"
+                                  variant="danger"
                                   size="icon-sm"
-                                  className="text-red-500 hover:bg-red-50"
                                   onClick={() => setPendingDelete(b)}
                                 >
                                   <Trash2 />

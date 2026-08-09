@@ -6,11 +6,8 @@ import { ContainerCard } from "@/components/cards/container-card";
 export interface SummaryCardProps {
   name: string;
   meta: string;
-  /**
-   * Background classes for the hero panel. Callers passed gradient stops here;
-   * a flat tint class works the same way.
-   */
-  gradient: string;
+  /** Background classes for the hero panel, e.g. "bg-neutral-50". */
+  panel: string;
   icon: React.ComponentType<{ className?: string }>;
   stat: string;
   /** Corner badge over the hero area (defaults to "Live"). Pass null to hide. */
@@ -36,7 +33,7 @@ export interface SummaryCardProps {
 export function SummaryCard({
   name,
   meta,
-  gradient,
+  panel,
   icon: Icon,
   stat,
   badge = "Live",
@@ -52,7 +49,7 @@ export function SummaryCard({
       <div
         className={cn(
           "relative grid h-32 place-items-center overflow-hidden rounded-lg border border-neutral-200",
-          gradient,
+          panel,
         )}
       >
         {badge && (

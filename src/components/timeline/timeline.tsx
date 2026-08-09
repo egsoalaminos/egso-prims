@@ -7,7 +7,7 @@ import { Avatar } from "@/components/utilities/avatar";
 
 export interface ActivityTimelineItem {
   icon: React.ComponentType<{ className?: string }>;
-  /** Tinted icon disc, e.g. "text-emerald-600 bg-emerald-50". */
+  /** Tinted icon disc, e.g. "text-(--tone-settled) bg-(--tone-settled-tint)". */
   tone: string;
   text: React.ReactNode;
   time?: string;
@@ -95,7 +95,7 @@ export interface ApprovalTimelineStep {
 }
 
 const stepIcon: Record<ApprovalStepStatus, { icon: React.ComponentType<{ className?: string }>; tone: string }> = {
-  approved: { icon: CheckCircle2, tone: "text-emerald-600 bg-emerald-50" },
+  approved: { icon: CheckCircle2, tone: "text-(--tone-settled) bg-(--tone-settled-tint)" },
   current: { icon: Clock3, tone: "text-blue-600 bg-blue-50" },
   pending: { icon: Circle, tone: "text-neutral-400 bg-neutral-100" },
   rejected: { icon: XCircle, tone: "text-red-600 bg-red-50" },

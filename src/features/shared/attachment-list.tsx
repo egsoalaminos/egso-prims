@@ -112,7 +112,7 @@ export function AttachmentList({
                   </IconButton>
                   <IconButton
                     aria-label={`Delete ${a.name}`}
-                    className="text-red-500 hover:bg-red-50"
+                    variant="danger"
                     onClick={() => setPendingDelete(a)}
                   >
                     <Trash2 />

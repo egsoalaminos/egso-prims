@@ -324,7 +324,7 @@ export function SmartImportDrawer({
                   className={cn(
                     "rounded-full px-2 py-0.5 text-[10.5px] font-medium uppercase tracking-wider",
                     method === "text"
-                      ? "bg-emerald-50 text-emerald-700"
+                      ? "bg-(--tone-settled-tint) text-(--tone-settled)"
                       : "bg-neutral-100 text-neutral-500",
                   )}
                 >
@@ -441,9 +441,8 @@ export function SmartImportDrawer({
                           <TableCell className="py-1.5 text-right">
                             <IconButton
                               aria-label="Remove row"
-                              variant="ghost"
+                              variant="danger"
                               size="icon-sm"
-                              className="text-red-500 hover:bg-red-50"
                               onClick={() => deleteRow(row.id)}
                             >
                               <Trash2 />

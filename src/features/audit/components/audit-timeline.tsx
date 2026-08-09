@@ -36,7 +36,7 @@ const SEVERITY_TONE: Record<string, string> = {
   Critical: "text-red-600 bg-red-50",
   Error: "text-red-600 bg-red-50",
   Warning: "text-amber-600 bg-amber-50",
-  Success: "text-emerald-600 bg-emerald-50",
+  Success: "text-(--tone-settled) bg-(--tone-settled-tint)",
   Information: "text-blue-600 bg-blue-50",
 };
 

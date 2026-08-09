@@ -392,7 +392,7 @@ function StepSchedule({
             {checking && <Spinner size="sm" className="ml-1" />}
           </div>
           {dayBookings.length === 0 && !checking ? (
-            <p className="mt-1.5 text-[11.5px] text-emerald-700">
+            <p className="mt-1.5 text-[11.5px] text-(--tone-settled)">
               No existing bookings — the whole day is open.
             </p>
           ) : (
@@ -480,8 +480,7 @@ function StepEquipment({ form }: { form: FormApi }) {
               <div className="justify-self-end">
                 <IconButton
                   aria-label={`Remove equipment ${i + 1}`}
-                  variant="ghost"
-                  className="text-red-500 hover:bg-red-50"
+                  variant="danger"
                   onClick={() => remove(i)}
                 >
                   <Trash2 />

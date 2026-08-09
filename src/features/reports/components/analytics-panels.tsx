@@ -494,7 +494,7 @@ export function AnalyticsPanels({
                           </TableCell>
                           <TableCell className="py-2 text-right tabular-nums">
                             {e.quantityIn > 0 ? (
-                              <span className="text-emerald-700">+{e.quantityIn}</span>
+                              <span className="text-(--tone-settled)">+{e.quantityIn}</span>
                             ) : (
                               <span className="text-red-600">−{e.quantityOut}</span>
                             )}

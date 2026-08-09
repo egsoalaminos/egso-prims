@@ -368,7 +368,7 @@ export function WaterDashboardPage() {
             <span
               className={
                 "inline-flex items-center gap-1 whitespace-nowrap tabular-nums font-medium " +
-                (up ? "text-red-600" : "text-emerald-700")
+                (up ? "text-red-600" : "text-(--tone-settled)")
               }
             >
               {up ? (
@@ -486,7 +486,7 @@ export function WaterDashboardPage() {
             ? ""
             : overallUp
               ? "border-red-200 bg-red-50/40"
-              : "border-emerald-200 bg-emerald-50/40")
+              : "border-(--tone-settled)/30 bg-(--tone-settled-tint)")
         }
       >
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -499,7 +499,7 @@ export function WaterDashboardPage() {
                   ? "text-neutral-700"
                   : overallUp
                     ? "text-red-700"
-                    : "text-emerald-700")
+                    : "text-(--tone-settled)")
               }
             >
               {overallLabel(overallAll)}
@@ -521,7 +521,7 @@ export function WaterDashboardPage() {
               </Caption>
             </div>
             <div className="text-center">
-              <div className="text-[16px] font-semibold tabular-nums text-emerald-700">
+              <div className="text-[16px] font-semibold tabular-nums text-(--tone-settled)">
                 {overallAll.decreased}
               </div>
               <Caption as="div" className="text-[10.5px]">

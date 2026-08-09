@@ -223,7 +223,7 @@ export function PaymentForm({
             <div
               className={
                 "text-[22px] font-semibold tabular-nums tracking-tight " +
-                (outstanding === 0 ? "text-emerald-600" : "text-neutral-900")
+                (outstanding === 0 ? "text-(--tone-settled)" : "text-neutral-900")
               }
             >
               {formatPHP(outstanding, { decimals: 2 })}

@@ -4,7 +4,7 @@ export type ProgressTone = "neutral" | "success" | "warning" | "danger";
 
 const toneClasses: Record<ProgressTone, string> = {
   neutral: "bg-neutral-900",
-  success: "bg-emerald-500",
+  success: "bg-(--tone-settled-tint)0",
   warning: "bg-amber-500",
   danger: "bg-red-500",
 };

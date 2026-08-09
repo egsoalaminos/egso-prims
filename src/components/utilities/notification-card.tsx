@@ -5,7 +5,7 @@ export type NotificationTone = "info" | "warning" | "success" | "danger";
 const toneClasses: Record<NotificationTone, string> = {
   info: "text-blue-600 bg-blue-50",
   warning: "text-amber-600 bg-amber-50",
-  success: "text-emerald-600 bg-emerald-50",
+  success: "text-(--tone-settled) bg-(--tone-settled-tint)",
   danger: "text-red-600 bg-red-50",
 };
 

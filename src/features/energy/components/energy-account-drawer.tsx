@@ -202,7 +202,7 @@ export function EnergyAccountDrawer({
                           (comparison.status === "Increased"
                             ? "text-red-600"
                             : comparison.status === "Decreased"
-                              ? "text-emerald-700"
+                              ? "text-(--tone-settled)"
                               : "text-neutral-500")
                         }
                       >
@@ -332,7 +332,7 @@ export function EnergyAccountDrawer({
                                 (c.status === "Increased"
                                   ? "text-red-600"
                                   : c.status === "Decreased"
-                                    ? "text-emerald-700"
+                                    ? "text-(--tone-settled)"
                                     : "text-neutral-300")
                               }
                             >
@@ -358,7 +358,7 @@ export function EnergyAccountDrawer({
                                 {onAddSubmeterBill && (
                                   <IconButton
                                     aria-label={`Record bill for ${c.submeter.submeterNumber}`}
-                                    variant="ghost"
+                                    variant="danger"
                                     size="icon-sm"
                                     onClick={() => onAddSubmeterBill(account, c.submeter)}
                                   >
@@ -501,9 +501,8 @@ export function EnergyAccountDrawer({
                                 </IconButton>
                                 <IconButton
                                   aria-label={`Delete ${monthName(b.billingMonth)} ${b.billingYear} bill`}
-                                  variant="ghost"
+                                  variant="danger"
                                   size="icon-sm"
-                                  className="text-red-500 hover:bg-red-50"
                                   onClick={() => setPendingDelete(b)}
                                 >
                                   <Trash2 />
