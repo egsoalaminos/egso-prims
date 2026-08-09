@@ -166,7 +166,7 @@ export function WaterAccountDrawer({
               {comparison && (
                 <section className="rounded-lg bg-neutral-50/60 p-3.5">
                   <div className="flex items-center justify-between">
-                    <span className="text-[12px] font-semibold text-neutral-900">
+                    <span className="text-[12.5px] font-semibold text-neutral-900">
                       {periodLabel(month, year)} vs. previous month
                     </span>
                     <StatusBadge status={comparison.status} />
@@ -231,7 +231,7 @@ export function WaterAccountDrawer({
                       {rollup.totalConsumption.toLocaleString("en-PH", {
                         maximumFractionDigits: 0,
                       })}
-                      <span className="ml-1 text-[11px] font-normal text-neutral-400">m³</span>
+                      <span className="ml-1 text-[10.5px] font-normal text-neutral-400">m³</span>
                     </div>
                   </div>
                   <div className="rounded-lg border border-neutral-200 p-3">
@@ -248,7 +248,7 @@ export function WaterAccountDrawer({
                     <div className="mt-0.5 text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
                       {rollup.activeSubmeters}
                       {rollup.totalSubmeters !== rollup.activeSubmeters && (
-                        <span className="ml-1 text-[11px] font-normal text-neutral-400">
+                        <span className="ml-1 text-[10.5px] font-normal text-neutral-400">
                           of {rollup.totalSubmeters}
                         </span>
                       )}
@@ -309,7 +309,7 @@ export function WaterAccountDrawer({
                                     <div className="font-medium text-neutral-800 underline decoration-neutral-300 underline-offset-2">
                                       {s.submeterName}
                                     </div>
-                                    <div className="text-[11px] tabular-nums text-neutral-400">
+                                    <div className="text-[10.5px] tabular-nums text-neutral-400">
                                       {s.submeterNumber}
                                     </div>
                                   </button>
@@ -318,7 +318,7 @@ export function WaterAccountDrawer({
                                     <div className="font-medium text-neutral-800">
                                       {s.submeterName}
                                     </div>
-                                    <div className="text-[11px] tabular-nums text-neutral-400">
+                                    <div className="text-[10.5px] tabular-nums text-neutral-400">
                                       {s.submeterNumber}
                                     </div>
                                   </>

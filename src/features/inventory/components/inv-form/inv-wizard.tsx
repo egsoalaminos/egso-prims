@@ -120,7 +120,7 @@ export function InvWizard({ initial, submitting, onSubmit, onCancel }: InvWizard
   });
 
   return (
-    <ContainerCard className="mx-auto w-full max-w-3xl">
+    <ContainerCard seam className="mx-auto w-full max-w-3xl">
       <div className="border-b border-neutral-100 px-5 py-4">
         <Stepper steps={WIZARD_STEPS} current={step} onStepClick={setStep} />
       </div>
@@ -448,7 +448,7 @@ function StepReview({
 function ReviewField({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
+      <div className="text-[10.5px] font-semibold uppercase tracking-wider text-neutral-400">
         {label}
       </div>
       <div className="mt-0.5 text-[12.5px] text-neutral-800">{value}</div>

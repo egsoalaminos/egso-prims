@@ -46,7 +46,7 @@ export function Stepper({ steps, current, onStepClick, className }: StepperProps
             >
               <span
                 className={cn(
-                  "grid h-6 w-6 shrink-0 place-items-center rounded-full text-[11px] font-semibold transition",
+                  "grid h-6 w-6 shrink-0 place-items-center rounded-full text-[10.5px] font-semibold transition",
                   // Accent-driven so the portal can recolour it without this
                   // file changing. The default accent is neutral-900, which
                   // is what this rendered before.

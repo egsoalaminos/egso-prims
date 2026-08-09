@@ -232,12 +232,12 @@ export function DashboardPage() {
    * row means the same thing it means in any table below it.
    */
   const operationalSummary = [
-    { name: "Inventory Summary", meta: "Live stock position", gradient: "bg-neutral-50", icon: Package, stat: `${totalUnits.toLocaleString()} units`, tags: [{ label: "S", color: "bg-(--tone-settled)" }, { label: "M", color: "bg-(--tone-process)" }, { label: "L", color: "bg-(--tone-halted)" }] },
-    { name: "Recent Purchase Orders", meta: "Across all suppliers", gradient: "bg-neutral-50", icon: ShoppingCart, stat: `${data?.poCount ?? 0} orders`, tags: [{ label: "P", color: "bg-(--tone-process)" }, { label: "A", color: "bg-(--tone-settled)" }] },
-    { name: "Recent RIS", meta: "Released & completed", gradient: "bg-neutral-50", icon: ClipboardList, stat: `${data?.risIssued ?? 0} issued`, tags: [{ label: "M", color: "bg-(--tone-process)" }, { label: "E", color: "bg-(--tone-settled)" }] },
-    { name: "Upcoming Reservations", meta: "Pending & approved", gradient: "bg-neutral-50", icon: CalendarDays, stat: `${data?.reservations.filter((r) => ["Pending", "Approved"].includes(r.status)).length ?? 0} scheduled`, tags: [{ label: "H", color: "bg-(--tone-process)" }, { label: "V", color: "bg-(--tone-settled)" }] },
-    { name: "Low Stock Items", meta: "Requires attention", gradient: "bg-neutral-50", icon: AlertTriangle, stat: `${lowStock} items`, tags: [{ label: "!", color: "bg-(--tone-halted)" }, { label: "M", color: "bg-(--tone-process)" }] },
-    { name: "Pending Approvals", meta: "Across departments", gradient: "bg-neutral-50", icon: ClipboardCheck, stat: `${pendingPRs + (data?.poPending ?? 0) + (data?.risPending ?? 0)} pending`, tags: [{ label: "P", color: "bg-(--tone-process)" }, { label: "R", color: "bg-(--tone-inert)" }] },
+    { name: "Inventory Summary", meta: "Live stock position", gradient: "bg-neutral-50", icon: Package, stat: `${totalUnits.toLocaleString()} units` },
+    { name: "Recent Purchase Orders", meta: "Across all suppliers", gradient: "bg-neutral-50", icon: ShoppingCart, stat: `${data?.poCount ?? 0} orders` },
+    { name: "Recent RIS", meta: "Released & completed", gradient: "bg-neutral-50", icon: ClipboardList, stat: `${data?.risIssued ?? 0} issued` },
+    { name: "Upcoming Reservations", meta: "Pending & approved", gradient: "bg-neutral-50", icon: CalendarDays, stat: `${data?.reservations.filter((r) => ["Pending", "Approved"].includes(r.status)).length ?? 0} scheduled` },
+    { name: "Low Stock Items", meta: "Requires attention", gradient: "bg-neutral-50", icon: AlertTriangle, stat: `${lowStock} items` },
+    { name: "Pending Approvals", meta: "Across departments", gradient: "bg-neutral-50", icon: ClipboardCheck, stat: `${pendingPRs + (data?.poPending ?? 0) + (data?.risPending ?? 0)} pending` },
   ];
 
   const inventoryHealth = (data?.items ?? []).slice(0, 5).map((it) => {

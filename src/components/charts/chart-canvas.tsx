@@ -11,8 +11,53 @@ Chart.register(...registerables);
 /* Library-wide Chart.js defaults matched to the design system. */
 Chart.defaults.font.family = '"Inter", ui-sans-serif, system-ui, sans-serif';
 Chart.defaults.font.size = 11;
-Chart.defaults.color = "#737373"; // neutral-500
-Chart.defaults.borderColor = "#f5f5f5"; // neutral-100 gridlines
+
+/**
+ * Axis text and gridlines, read from the live theme.
+ *
+ * These were the literals `#737373` and `#f5f5f5`, set once at module load.
+ * Chart.js takes real colour values rather than CSS variables, so a literal
+ * here never followed the theme: in dark mode the gridlines painted a
+ * near-white `#f5f5f5` across a dark card, and the axis labels sat at roughly
+ * 2:1 against it. They were also the old cold greys, so they were the last
+ * cold thing left inside a chart after the palette was retoned to the seal.
+ *
+ * Reading the computed value of the ramp fixes both at once — the same
+ * variables every other surface resolves against, warm and theme-aware.
+ */
+/** Every mounted canvas, so a theme change can repaint what is already drawn. */
+const liveCharts = new Set<Chart>();
+
+function readThemeDefaults(): void {
+  if (typeof document === "undefined") return;
+  const style = getComputedStyle(document.documentElement);
+  const token = (name: string, fallback: string) =>
+    style.getPropertyValue(name).trim() || fallback;
+
+  Chart.defaults.color = token("--color-neutral-500", "#737373");
+  Chart.defaults.borderColor = token("--color-neutral-200", "#e4e0d7");
+
+  // Defaults are read at draw time, so anything already on screen keeps the
+  // old theme until it is told to redraw.
+  for (const chart of liveCharts) chart.update("none");
+}
+
+readThemeDefaults();
+
+/**
+ * Re-read on every theme change. `applyAppearance` toggles `.dark` on <html>,
+ * and a stored preference of "system" means the OS can flip it with no React
+ * involvement at all, so both routes are watched.
+ */
+if (typeof document !== "undefined") {
+  new MutationObserver(readThemeDefaults).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["class"],
+  });
+  window
+    .matchMedia?.("(prefers-color-scheme: dark)")
+    .addEventListener?.("change", readThemeDefaults);
+}
 
 export interface ChartCanvasProps {
   config: ChartConfiguration<ChartType>;
@@ -31,12 +76,15 @@ export function ChartCanvas({ config, height = 220, className }: ChartCanvasProp
 
   React.useEffect(() => {
     if (!canvasRef.current) return;
-    chartRef.current = new Chart(canvasRef.current, {
+    const chart = new Chart(canvasRef.current, {
       ...config,
       options: { maintainAspectRatio: false, responsive: true, ...config.options },
     });
+    chartRef.current = chart;
+    liveCharts.add(chart);
     return () => {
-      chartRef.current?.destroy();
+      liveCharts.delete(chart);
+      chart.destroy();
       chartRef.current = null;
     };
     // Recreate only when the chart type changes; data updates go through the

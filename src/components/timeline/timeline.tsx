@@ -32,7 +32,7 @@ export function ActivityTimeline({
             </span>
             <div className="min-w-0 flex-1">
               <div className="text-[12.5px] text-neutral-800">{it.text}</div>
-              {it.time && <div className="text-[11px] text-neutral-500">{it.time}</div>}
+              {it.time && <div className="text-[10.5px] text-neutral-500">{it.time}</div>}
             </div>
           </li>
         );
@@ -64,7 +64,7 @@ export function HistoryTimeline({
     <ul className={cn("space-y-3", className)}>
       {items.map((e, i) => (
         <li key={i} className="flex items-start gap-3">
-          <span className="mt-0.5 w-12 shrink-0 text-[12px] font-medium tabular-nums text-neutral-700">
+          <span className="mt-0.5 w-12 shrink-0 text-[12.5px] font-medium tabular-nums text-neutral-700">
             {e.time}
           </span>
           <span className={cn("mt-1 h-2 w-2 shrink-0 rounded-full", e.tone)} />
@@ -137,10 +137,10 @@ export function ApprovalTimeline({
               {step.meta && <div className="text-[11.5px] text-neutral-500">{step.meta}</div>}
               {step.person && (
                 <div className="mt-1.5 flex items-center gap-1.5">
-                  <Avatar size="sm" name={step.person.name} className="h-5 w-5 text-[8px]" />
+                  <Avatar size="sm" name={step.person.name} className="h-5 w-5 text-[10.5px]" />
                   <span className="text-[11.5px] text-neutral-700">{step.person.name}</span>
                   {step.person.office && (
-                    <span className="text-[11px] text-neutral-400">· {step.person.office}</span>
+                    <span className="text-[10.5px] text-neutral-400">· {step.person.office}</span>
                   )}
                 </div>
               )}

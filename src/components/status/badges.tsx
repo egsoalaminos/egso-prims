@@ -263,7 +263,7 @@ export function NotificationBadge({
     <span
       style={toneVars[tone]}
       className={cn(
-        "border border-(--tag-ink)/25 bg-(--tag-tint) px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-(--tag-ink)",
+        "border border-(--tag-ink)/25 bg-(--tag-tint) px-1.5 py-0.5 text-[10.5px] font-semibold tabular-nums text-(--tag-ink)",
         className,
       )}
     >

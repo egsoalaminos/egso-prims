@@ -49,7 +49,7 @@ export function PODetailPanels({
       </section>
 
       <section className="rounded-lg bg-neutral-50/60 p-3.5">
-        <SectionTitle as="h3" className="mb-2 text-[12px]">
+        <SectionTitle as="h3" className="mb-2 text-[12.5px]">
           Financial Summary
         </SectionTitle>
         <dl className="space-y-1.5 text-[12.5px]">

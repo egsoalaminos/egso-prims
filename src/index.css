@@ -64,24 +64,22 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-ring-offset-background: var(--background);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
+  /*
+   * Twelve tokens were removed here: --color-chart-1 through -5 and seven of
+   * the eight --color-sidebar-* entries. Every one was declared three times
+   * (:root, .dark, and this block) and read exactly nowhere — the charts take
+   * their palette from a JS array, and the rail painted bg-white literally.
+   *
+   * --color-sidebar survives because the rail now genuinely has its own ground.
+   */
   --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
   --color-canvas: var(--canvas);
 }
 
 :root {
-  --radius: 0.625rem;
+  /* `--radius` used to sit here at 0.625rem. Every step derived from it was set
+     to a literal 0px when the system went square, so the base was describing a
+     10px corner nothing had. Removed. */
   --background: oklch(1 0 0);
   --foreground: oklch(0.129 0.042 264.695);
   --card: oklch(1 0 0);
@@ -101,19 +99,21 @@
   --border: oklch(0.929 0.013 255.508);
   --input: oklch(0.929 0.013 255.508);
   --ring: oklch(0.704 0.04 256.788);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.984 0.003 247.858);
-  --sidebar-foreground: oklch(0.129 0.042 264.695);
-  --sidebar-primary: oklch(0.208 0.042 265.755);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.968 0.007 247.896);
-  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
-  --sidebar-border: oklch(0.929 0.013 255.508);
-  --sidebar-ring: oklch(0.704 0.04 256.788);
+  /*
+   * The rail's own ground — a shade deeper than the canvas.
+   *
+   * It was white until now, and so is every card, which meant chrome and
+   * content were painted the same value and only the paper gutter between them
+   * said otherwise. A card pushed near the left edge read as an extension of
+   * the rail.
+   *
+   * Three surfaces, three depths: furniture below, desk in the middle, paper on
+   * top. This is the bottom one, so the white card finally means "document".
+   *
+   * Note that neutral-500 only reaches 4.13:1 here — `SidebarGroup` overrides
+   * its label to neutral-600 for that reason.
+   */
+  --sidebar: #f2efe7;
   /*
    * Content canvas behind cards. Was #FAFAFA — the Design Foundation's cold
    * grey, extracted from the SaaS template. It is now the portal's bond paper,
@@ -144,19 +144,9 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.551 0.027 264.364);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.208 0.042 265.755);
-  --sidebar-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.279 0.041 260.031);
-  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.551 0.027 264.364);
+  /* The rail sits *below* the card in dark mode too — darker than the canvas,
+     so the depth order survives the theme rather than inverting. */
+  --sidebar: oklch(0.118 0.004 80);
   /* Matches the dark ramp's page background, warm-tilted like its light twin. */
   --canvas: oklch(0.145 0.004 80);
 }

@@ -205,7 +205,7 @@ export function POWizard({
     })();
 
   return (
-    <ContainerCard className="mx-auto w-full max-w-3xl">
+    <ContainerCard seam className="mx-auto w-full max-w-3xl">
       <div className="border-b border-neutral-100 px-5 py-4">
         <Stepper steps={WIZARD_STEPS} current={step} onStepClick={setStep} />
       </div>
@@ -369,7 +369,7 @@ function StepDetails({
 
       {/* Procurement terms — printed on the order */}
       <div className="space-y-4 rounded-lg border border-neutral-200 bg-neutral-50/60 p-4">
-        <p className="text-[12px] font-semibold text-neutral-900">Procurement Terms</p>
+        <p className="text-[12.5px] font-semibold text-neutral-900">Procurement Terms</p>
         <Field label="Mode of Procurement" error={err.modeOfProcurement?.message}>
           <Input
             placeholder="e.g. Small Value Procurement"
@@ -394,7 +394,7 @@ function StepDetails({
 
       {/* Signatories of the printed order */}
       <div className="space-y-4 rounded-lg border border-neutral-200 bg-neutral-50/60 p-4">
-        <p className="text-[12px] font-semibold text-neutral-900">Signatories</p>
+        <p className="text-[12.5px] font-semibold text-neutral-900">Signatories</p>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Municipal Mayor" error={err.municipalMayor?.message}>
             <Input {...register("municipalMayor")} />
@@ -428,7 +428,7 @@ function StepItems({ form }: { form: FormApi }) {
         {["Description", "Qty", "Unit", "Unit Cost", "Total", ""].map((h) => (
           <span
             key={h}
-            className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400"
+            className="text-[10.5px] font-semibold uppercase tracking-wider text-neutral-400"
           >
             {h}
           </span>
@@ -677,7 +677,7 @@ function StepReview({
 function ReviewField({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
+      <div className="text-[10.5px] font-semibold uppercase tracking-wider text-neutral-400">
         {label}
       </div>
       <div className="mt-0.5 text-[12.5px] text-neutral-800">{value}</div>

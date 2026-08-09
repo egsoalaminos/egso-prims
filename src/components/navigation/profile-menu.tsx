@@ -47,7 +47,7 @@ export function ProfileMenu({ name, detail, initials, items = [], className }: P
       <DropdownMenuContent align="end" className="w-52">
         <DropdownMenuLabel className="text-[12.5px]">
           <div className="font-semibold text-neutral-800">{name}</div>
-          {detail && <div className="text-[11px] font-normal text-neutral-500">{detail}</div>}
+          {detail && <div className="text-[10.5px] font-normal text-neutral-500">{detail}</div>}
         </DropdownMenuLabel>
         {items.length > 0 && <DropdownMenuSeparator />}
         {items.map((item) => {

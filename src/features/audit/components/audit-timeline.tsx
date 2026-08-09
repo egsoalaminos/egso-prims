@@ -132,7 +132,7 @@ export function AuditTimeline({
                 >
                   <span className="font-medium text-neutral-800">{e.user}</span>
                   <span className="text-neutral-500"> · {e.module}</span>
-                  <span className="block text-[12px] text-neutral-700">
+                  <span className="block text-[12.5px] text-neutral-700">
                     {e.action}
                     {e.documentNumber && (
                       <span className="text-neutral-500"> — {e.documentNumber}</span>

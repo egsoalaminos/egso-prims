@@ -65,7 +65,7 @@ function EventPreview({ reservation }: { reservation: Reservation }) {
   return (
     <div className="space-y-1 py-0.5">
       <div className="flex items-center gap-2">
-        <span className="text-[12px] font-semibold text-neutral-900">{reservation.resNumber}</span>
+        <span className="text-[12.5px] font-semibold text-neutral-900">{reservation.resNumber}</span>
         <StatusBadge status={reservation.status} />
       </div>
       <div className="text-[11.5px] text-neutral-700">
@@ -74,7 +74,7 @@ function EventPreview({ reservation }: { reservation: Reservation }) {
       <div className="text-[11.5px] text-neutral-500">
         {reservation.borrower} · {reservation.departmentCode}
       </div>
-      <div className="max-w-[220px] truncate text-[11px] text-neutral-400">{reservation.purpose}</div>
+      <div className="max-w-[220px] truncate text-[10.5px] text-neutral-400">{reservation.purpose}</div>
     </div>
   );
 }
@@ -193,7 +193,7 @@ export function ReservationCalendar({
                   key={v}
                   onClick={() => setView(v)}
                   className={cn(
-                    "rounded-md px-2.5 py-1 text-[12px] font-medium capitalize transition",
+                    "rounded-md px-2.5 py-1 text-[12.5px] font-medium capitalize transition",
                     view === v
                       ? "bg-white text-neutral-900 shadow-sm"
                       : "text-neutral-500 hover:text-neutral-800",
@@ -256,7 +256,7 @@ function MonthView({
           {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
             <div
               key={d}
-              className="px-2 py-2 text-center text-[10px] font-semibold uppercase tracking-wider text-neutral-400"
+              className="px-2 py-2 text-center text-[10.5px] font-semibold uppercase tracking-wider text-neutral-400"
             >
               {d}
             </div>
@@ -278,7 +278,7 @@ function MonthView({
                 <div className="mb-1 flex justify-end">
                   <span
                     className={cn(
-                      "grid h-5 w-5 place-items-center rounded-full text-[11px] tabular-nums",
+                      "grid h-5 w-5 place-items-center rounded-full text-[10.5px] tabular-nums",
                       isToday(d)
                         ? "bg-neutral-900 font-semibold text-white"
                         : inMonth
@@ -294,7 +294,7 @@ function MonthView({
                     <EventChip key={r.id} reservation={r} onOpen={onOpen} />
                   ))}
                   {events.length > 3 && (
-                    <div className="px-1.5 text-[10px] font-medium text-neutral-400">
+                    <div className="px-1.5 text-[10.5px] font-medium text-neutral-400">
                       +{events.length - 3} more
                     </div>
                   )}
@@ -338,7 +338,7 @@ function WeekView({
                   isSameDay(d, cursor) && "bg-neutral-50/70",
                 )}
               >
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
+                <span className="text-[10.5px] font-semibold uppercase tracking-wider text-neutral-400">
                   {format(d, "EEE")}
                 </span>
                 <span
@@ -366,14 +366,14 @@ function WeekView({
                               chipTone[r.status],
                             )}
                           >
-                            <div className="flex items-center gap-1 text-[10px] font-semibold tabular-nums">
+                            <div className="flex items-center gap-1 text-[10.5px] font-semibold tabular-nums">
                               <span className={cn("h-1.5 w-1.5 rounded-full", dotTone[r.status])} />
                               {r.startTime}–{r.endTime}
                             </div>
-                            <div className="mt-0.5 truncate text-[11px] font-medium">
+                            <div className="mt-0.5 truncate text-[10.5px] font-medium">
                               {facility?.shortName}
                             </div>
-                            <div className="truncate text-[10px] opacity-75">{r.departmentCode}</div>
+                            <div className="truncate text-[10.5px] opacity-75">{r.departmentCode}</div>
                           </button>
                         </TooltipTrigger>
                         <TooltipContent
@@ -410,7 +410,7 @@ function DayView({
   if (events.length === 0) {
     return (
       <div className="px-6 py-10 text-center">
-        <div className="text-[13px] font-semibold text-neutral-900">No reservations</div>
+        <div className="text-[12.5px] font-semibold text-neutral-900">No reservations</div>
         <Caption as="p" className="mt-1">
           No facilities are booked on this day.
         </Caption>
@@ -427,7 +427,7 @@ function DayView({
               onClick={() => onOpen(r)}
               className="flex w-full items-center gap-4 px-5 py-3 text-left transition hover:bg-neutral-50/70"
             >
-              <span className="w-32 shrink-0 text-[12px] font-medium tabular-nums text-neutral-700">
+              <span className="w-32 shrink-0 text-[12.5px] font-medium tabular-nums text-neutral-700">
                 {formatTime(r.startTime)} – {formatTime(r.endTime)}
               </span>
               <span className={cn("h-2 w-2 shrink-0 rounded-full", facility?.color)} />

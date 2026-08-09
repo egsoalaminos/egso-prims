@@ -317,9 +317,9 @@ export function WaterDashboardPage() {
               <span className="tabular-nums text-neutral-700">
                 {r.activeSubmeters}
                 {r.totalSubmeters !== r.activeSubmeters && (
-                  <span className="text-[11px] text-neutral-400"> / {r.totalSubmeters}</span>
+                  <span className="text-[10.5px] text-neutral-400"> / {r.totalSubmeters}</span>
                 )}
-                <span className="text-[11px] text-neutral-400"> active</span>
+                <span className="text-[10.5px] text-neutral-400"> active</span>
               </span>
               {(r.totalConsumption > 0 || r.totalAmount > 0) && (
                 <span className="block text-[10.5px] tabular-nums text-neutral-400">
@@ -378,7 +378,7 @@ export function WaterDashboardPage() {
               )}
               ₱{Math.abs(c.difference).toLocaleString("en-PH", { maximumFractionDigits: 2 })}
               {c.percent !== null && (
-                <span className="text-[11px] opacity-70">({Math.abs(c.percent).toFixed(2)}%)</span>
+                <span className="text-[10.5px] opacity-70">({Math.abs(c.percent).toFixed(2)}%)</span>
               )}
             </span>
           );
@@ -453,7 +453,7 @@ export function WaterDashboardPage() {
             <div className="grid h-7 w-7 place-items-center rounded-lg bg-neutral-100 text-neutral-600">
               <TrendingUp className="h-3.5 w-3.5" />
             </div>
-            <span className="text-[12px] text-neutral-500">Highest Consuming</span>
+            <span className="text-[12.5px] text-neutral-500">Highest Consuming</span>
           </div>
           <div className="mt-3 truncate text-[14px] font-semibold tracking-tight text-neutral-900">
             {highest ? accountLabel(highest.account) : "—"}
@@ -467,7 +467,7 @@ export function WaterDashboardPage() {
             <div className="grid h-7 w-7 place-items-center rounded-lg bg-neutral-100 text-neutral-600">
               <ArrowDownRight className="h-3.5 w-3.5" />
             </div>
-            <span className="text-[12px] text-neutral-500">Lowest Consuming</span>
+            <span className="text-[12.5px] text-neutral-500">Lowest Consuming</span>
           </div>
           <div className="mt-3 truncate text-[14px] font-semibold tracking-tight text-neutral-900">
             {lowest ? accountLabel(lowest.account) : "—"}
@@ -494,7 +494,7 @@ export function WaterDashboardPage() {
             <OverlineLabel>Overall Comparison</OverlineLabel>
             <div
               className={
-                "mt-0.5 text-[15px] font-semibold tracking-tight " +
+                "mt-0.5 text-[14px] font-semibold tracking-tight " +
                 (overallAll.status === "No Change"
                   ? "text-neutral-700"
                   : overallUp
@@ -513,7 +513,7 @@ export function WaterDashboardPage() {
           </div>
           <div className="flex shrink-0 items-center gap-4">
             <div className="text-center">
-              <div className="text-[18px] font-semibold tabular-nums text-red-600">
+              <div className="text-[16px] font-semibold tabular-nums text-red-600">
                 {overallAll.increased}
               </div>
               <Caption as="div" className="text-[10.5px]">
@@ -521,7 +521,7 @@ export function WaterDashboardPage() {
               </Caption>
             </div>
             <div className="text-center">
-              <div className="text-[18px] font-semibold tabular-nums text-emerald-700">
+              <div className="text-[16px] font-semibold tabular-nums text-emerald-700">
                 {overallAll.decreased}
               </div>
               <Caption as="div" className="text-[10.5px]">
@@ -529,7 +529,7 @@ export function WaterDashboardPage() {
               </Caption>
             </div>
             <div className="text-center">
-              <div className="text-[18px] font-semibold tabular-nums text-neutral-500">
+              <div className="text-[16px] font-semibold tabular-nums text-neutral-500">
                 {overallAll.unchanged}
               </div>
               <Caption as="div" className="text-[10.5px]">

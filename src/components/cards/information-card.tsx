@@ -28,8 +28,9 @@ export function InformationCard({
   children,
 }: InformationCardProps) {
   return (
-    // Always titled by definition, so it always carries the seam.
-    <ContainerCard seam padded className={className}>
+    // No seam. This card holds statistics, activity feeds and charts — titled,
+    // but never a document, and the seam now means document.
+    <ContainerCard padded className={className}>
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           {Icon && <Icon className="h-4 w-4 text-neutral-600" />}
@@ -38,7 +39,7 @@ export function InformationCard({
         {action && (
           <button
             onClick={action.onClick}
-            className="text-[12px] font-medium text-neutral-500 transition hover:text-neutral-900"
+            className="text-[12.5px] font-medium text-neutral-500 transition hover:text-neutral-900"
           >
             {action.label}
           </button>

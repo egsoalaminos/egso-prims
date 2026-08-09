@@ -25,7 +25,7 @@ function Section({
 }) {
   return (
     <section className="rounded-lg border border-neutral-200 p-3.5">
-      <div className="mb-2.5 flex items-center gap-1.5 text-[12px] font-semibold text-neutral-900">
+      <div className="mb-2.5 flex items-center gap-1.5 text-[12.5px] font-semibold text-neutral-900">
         <Icon className="h-3.5 w-3.5 text-neutral-500" />
         {title}
       </div>

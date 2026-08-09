@@ -80,7 +80,7 @@ export function StockCardTable({
               <TableCell className="whitespace-nowrap py-2.5 font-medium text-neutral-800">
                 {e.documentNumber}
               </TableCell>
-              <TableCell className={`whitespace-nowrap py-2.5 text-[12px] font-medium ${typeTone[e.type]}`}>
+              <TableCell className={`whitespace-nowrap py-2.5 text-[12.5px] font-medium ${typeTone[e.type]}`}>
                 {e.type}
               </TableCell>
               <TableCell className="py-2.5 text-right tabular-nums text-emerald-700">
@@ -95,9 +95,9 @@ export function StockCardTable({
               <TableCell className="py-2.5">
                 <div className="max-w-[220px]">
                   {e.remarks && (
-                    <div className="truncate text-[12px] text-neutral-600">{e.remarks}</div>
+                    <div className="truncate text-[12.5px] text-neutral-600">{e.remarks}</div>
                   )}
-                  <div className="text-[11px] text-neutral-400">{e.user}</div>
+                  <div className="text-[10.5px] text-neutral-400">{e.user}</div>
                 </div>
               </TableCell>
             </TableRow>

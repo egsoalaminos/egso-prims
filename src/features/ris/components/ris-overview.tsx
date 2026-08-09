@@ -41,7 +41,7 @@ export function RISOverview({ ris }: { ris: RequestForIssuance }) {
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <section className="rounded-lg border border-neutral-200 p-3.5">
-          <div className="mb-2 flex items-center gap-1.5 text-[12px] font-semibold text-neutral-900">
+          <div className="mb-2 flex items-center gap-1.5 text-[12.5px] font-semibold text-neutral-900">
             <FileText className="h-3.5 w-3.5 text-neutral-500" />
             Linked Purchase Request
           </div>
@@ -52,7 +52,7 @@ export function RISOverview({ ris }: { ris: RequestForIssuance }) {
           )}
         </section>
         <section className="rounded-lg border border-neutral-200 p-3.5">
-          <div className="mb-2 flex items-center gap-1.5 text-[12px] font-semibold text-neutral-900">
+          <div className="mb-2 flex items-center gap-1.5 text-[12.5px] font-semibold text-neutral-900">
             <ShoppingCart className="h-3.5 w-3.5 text-neutral-500" />
             Linked Purchase Order
           </div>
@@ -66,12 +66,12 @@ export function RISOverview({ ris }: { ris: RequestForIssuance }) {
 
       <div>
         <section className="rounded-lg border border-neutral-200 p-3.5">
-          <div className="mb-1.5 flex items-center gap-1.5 text-[12px] font-semibold text-neutral-900">
+          <div className="mb-1.5 flex items-center gap-1.5 text-[12.5px] font-semibold text-neutral-900">
             <UserRound className="h-3.5 w-3.5 text-neutral-500" />
             Issued By
           </div>
           <div className="text-[12.5px] text-neutral-800">{ris.issuedBy}</div>
-          <div className="text-[11px] text-neutral-500">General Services Office</div>
+          <div className="text-[10.5px] text-neutral-500">General Services Office</div>
         </section>
       </div>
     </div>

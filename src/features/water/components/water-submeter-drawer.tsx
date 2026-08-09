@@ -152,7 +152,7 @@ export function WaterSubmeterDrawer({
                         {totals.consumption.toLocaleString("en-PH", {
                           maximumFractionDigits: 0,
                         })}
-                        <span className="ml-1 text-[11px] font-normal text-neutral-400">m³</span>
+                        <span className="ml-1 text-[10.5px] font-normal text-neutral-400">m³</span>
                       </>
                     )}
                   </div>

@@ -77,7 +77,7 @@ function Computed({
       >
         {value}
       </div>
-      {hint && <p className="mt-0.5 text-[11px] text-neutral-500">{hint}</p>}
+      {hint && <p className="mt-0.5 text-[10.5px] text-neutral-500">{hint}</p>}
     </div>
   );
 }
@@ -364,7 +364,7 @@ export function FuelTripForm({
 
           {/* ---- odometer & fuel ---- */}
           <div className="space-y-4 rounded-lg border border-neutral-200 bg-neutral-50/60 p-4">
-            <p className="text-[12px] font-semibold text-neutral-900">Odometer &amp; Fuel</p>
+            <p className="text-[12.5px] font-semibold text-neutral-900">Odometer &amp; Fuel</p>
             <div className="grid grid-cols-4 gap-4">
               <Field
                 label="Odometer OUT (km)"
@@ -456,7 +456,7 @@ export function FuelTripForm({
             {check.warnings.map((w) => (
               <div
                 key={w}
-                className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-[12px] text-amber-800"
+                className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-[12.5px] text-amber-800"
               >
                 <AlertTriangle className="mt-px size-3.5 shrink-0" />
                 <span>{w}</span>

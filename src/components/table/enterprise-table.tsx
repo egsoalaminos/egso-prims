@@ -316,9 +316,8 @@ export function TableCard({
 }) {
   return (
     <ContainerCard
-      // The seam only appears when there is a title to announce; an untitled
-      // table card is a container, not a document.
-      seam={!!title}
+      // No seam: a register of records is not itself a document. The seam is
+      // reserved for the wizards, which draft one.
       className={cn(fillContainer && "flex h-full min-h-0 flex-col overflow-hidden", className)}
     >
       {title && (

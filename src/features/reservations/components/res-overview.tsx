@@ -29,7 +29,7 @@ function Section({
 }) {
   return (
     <section className="rounded-lg border border-neutral-200 p-3.5">
-      <div className="mb-2 flex items-center gap-1.5 text-[12px] font-semibold text-neutral-900">
+      <div className="mb-2 flex items-center gap-1.5 text-[12.5px] font-semibold text-neutral-900">
         <Icon className="h-3.5 w-3.5 text-neutral-500" />
         {title}
       </div>
@@ -57,7 +57,7 @@ export function ResOverview({ r }: { r: Reservation }) {
 
       <Section icon={CalendarDays} title="Schedule">
         <div className="flex items-center justify-between gap-3">
-          <span className="text-[13px] font-semibold text-neutral-900">{formatDate(r.date)}</span>
+          <span className="text-[12.5px] font-semibold text-neutral-900">{formatDate(r.date)}</span>
           <span className="text-[12.5px] tabular-nums text-neutral-700">
             {formatTime(r.startTime)} – {formatTime(r.endTime)}
           </span>
@@ -75,12 +75,12 @@ export function ResOverview({ r }: { r: Reservation }) {
               {facility?.available ? (
                 <StatusBadge status="Available" />
               ) : (
-                <span className="text-[11px] font-medium text-red-600">Unavailable</span>
+                <span className="text-[10.5px] font-medium text-red-600">Unavailable</span>
               )}
             </span>
           </div>
           {facility?.description && (
-            <p className="mt-1.5 text-[11px] leading-snug text-neutral-400">{facility.description}</p>
+            <p className="mt-1.5 text-[10.5px] leading-snug text-neutral-400">{facility.description}</p>
           )}
         </Section>
         <Section icon={Phone} title="Borrower Contact">

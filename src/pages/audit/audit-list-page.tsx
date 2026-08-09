@@ -212,7 +212,7 @@ export function AuditListPage() {
         cell: ({ row }) => (
           <span className="block whitespace-nowrap">
             <span className="font-medium text-neutral-800">{row.original.user}</span>
-            <span className="block text-[11px] text-neutral-400">{row.original.userRole}</span>
+            <span className="block text-[10.5px] text-neutral-400">{row.original.userRole}</span>
           </span>
         ),
       },
@@ -296,7 +296,7 @@ export function AuditListPage() {
             <div className="grid h-7 w-7 place-items-center rounded-lg bg-neutral-100 text-neutral-600">
               <ServerCog className="h-3.5 w-3.5" />
             </div>
-            <span className="text-[12px] text-neutral-500">Most Active Module</span>
+            <span className="text-[12.5px] text-neutral-500">Most Active Module</span>
           </div>
           <div className="mt-3 truncate text-[14px] font-semibold tracking-tight text-neutral-900">
             {mostActiveModule?.module ?? "—"}
@@ -325,7 +325,7 @@ export function AuditListPage() {
                         key={v}
                         onClick={() => setView(v)}
                         className={
-                          "inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[12px] font-medium capitalize transition " +
+                          "inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[12.5px] font-medium capitalize transition " +
                           (view === v
                             ? "bg-neutral-900 text-white"
                             : "bg-white text-neutral-600 hover:bg-neutral-50")

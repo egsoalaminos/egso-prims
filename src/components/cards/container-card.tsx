@@ -11,15 +11,22 @@ export interface ContainerCardProps extends React.HTMLAttributes<HTMLDivElement>
    * The gold seam along the card's top edge.
    *
    * A municipal form separates its letterhead from its body with a gold rule,
-   * and the portal draws the same seam under its letterhead and across the top
-   * of every service card. Reserved for cards that announce something — a
-   * titled section, a document — so it stays a signal rather than a border on
-   * everything.
+   * and the portal draws the same seam under its letterhead.
+   *
+   * **This marks a document, not a heading.** The first pass gave it to any
+   * titled card, which landed on two surfaces out of forty-three and read as
+   * random. It now means one thing: what is inside this card is a municipal
+   * document — the five wizards that draft one, and the detail sheets that
+   * display one. A panel of statistics is not a document, however titled.
    */
   seam?: boolean;
 }
 
-/** Base surface: white card on the paper canvas, ruled with the portal's #E4E0D7. */
+/**
+ * Base surface: the white card — the top of the three depths. It sits on the
+ * paper canvas, which sits on the rail's ground, and it is ruled with the
+ * portal's #E4E0D7 (which is what `neutral-200` now resolves to).
+ */
 export const ContainerCard = React.forwardRef<HTMLDivElement, ContainerCardProps>(
   ({ hoverable = false, padded = false, seam = false, className, ...props }, ref) => (
     <div

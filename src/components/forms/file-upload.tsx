@@ -27,7 +27,7 @@ function FileList({
         >
           <FileText className="h-3.5 w-3.5 shrink-0 text-neutral-500" />
           <span className="min-w-0 flex-1 truncate text-[12.5px] text-neutral-800">{f.name}</span>
-          <span className="shrink-0 text-[11px] text-neutral-500">{formatSize(f.size)}</span>
+          <span className="shrink-0 text-[10.5px] text-neutral-500">{formatSize(f.size)}</span>
           <button
             aria-label={`Remove ${f.name}`}
             onClick={() => onRemove(i)}

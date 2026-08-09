@@ -181,7 +181,7 @@ export function SettingsPage() {
           <div className="min-w-0">
             <div className="text-[12.5px] font-medium text-neutral-800">{d.label}</div>
             {d.note && (
-              <p className="mt-0.5 text-[11px] leading-relaxed text-neutral-500">{d.note}</p>
+              <p className="mt-0.5 text-[10.5px] leading-relaxed text-neutral-500">{d.note}</p>
             )}
           </div>
           <Switch

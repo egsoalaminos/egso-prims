@@ -4,8 +4,12 @@ import { cn } from "@/lib/utils";
 import { PageTitle, Subtitle } from "@/components/typography/typography";
 
 /**
- * Application frame: sidebar rail + content column on the #FAFAFA canvas
- * (Design Foundation root layout).
+ * Application frame: sidebar rail + content column.
+ *
+ * Three surfaces, three depths — the rail (`--sidebar`) sits below the canvas
+ * (`--canvas`, the portal's bond paper), and the white cards sit above it. The
+ * outer ground matches the rail so the frame holds its material before the
+ * sidebar paints and behind it on overscroll.
  */
 export function AppShell({
   sidebar,
@@ -17,7 +21,7 @@ export function AppShell({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen bg-white font-sans antialiased">
+    <div className="flex min-h-screen bg-sidebar font-sans antialiased">
       {sidebar}
       <div className="flex h-screen min-w-0 flex-1 flex-col bg-canvas">
         {topBar}

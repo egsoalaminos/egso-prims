@@ -198,7 +198,7 @@ export function ResWizard({ initial, submitting, onSubmit, onCancel }: ResWizard
   });
 
   return (
-    <ContainerCard className="mx-auto w-full max-w-3xl">
+    <ContainerCard seam className="mx-auto w-full max-w-3xl">
       <div className="border-b border-neutral-100 px-5 py-4">
         <Stepper steps={WIZARD_STEPS} current={step} onStepClick={setStep} />
       </div>
@@ -386,7 +386,7 @@ function StepSchedule({
       {/* Live availability panel */}
       {facilityId && (
         <div className="rounded-lg border border-neutral-200 p-3">
-          <div className="flex items-center gap-1.5 text-[12px] font-semibold text-neutral-900">
+          <div className="flex items-center gap-1.5 text-[12.5px] font-semibold text-neutral-900">
             <CalendarCheck2 className="h-3.5 w-3.5 text-neutral-500" />
             Bookings on this day
             {checking && <Spinner size="sm" className="ml-1" />}
@@ -443,7 +443,7 @@ function StepEquipment({ form }: { form: FormApi }) {
       {fields.length > 0 && (
         <div className="hidden grid-cols-[1fr_90px_90px_1fr_32px] gap-2 px-1 sm:grid">
           {["Equipment", "Qty", "Available", "Remarks", ""].map((h) => (
-            <span key={h} className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
+            <span key={h} className="text-[10.5px] font-semibold uppercase tracking-wider text-neutral-400">
               {h}
             </span>
           ))}
@@ -621,7 +621,7 @@ function StepReview({
 function ReviewField({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">{label}</div>
+      <div className="text-[10.5px] font-semibold uppercase tracking-wider text-neutral-400">{label}</div>
       <div className="mt-0.5 text-[12.5px] text-neutral-800">{value}</div>
     </div>
   );

@@ -216,13 +216,13 @@ export function PaymentForm({
           <div className="flex items-center justify-between rounded-lg bg-neutral-50 px-3.5 py-3">
             <div>
               <OverlineLabel>Outstanding Balance After Payment</OverlineLabel>
-              <p className="mt-0.5 text-[11px] text-neutral-500">
+              <p className="mt-0.5 text-[10.5px] text-neutral-500">
                 The violation is marked Paid once the full amount is recorded.
               </p>
             </div>
             <div
               className={
-                "text-[20px] font-semibold tabular-nums tracking-tight " +
+                "text-[22px] font-semibold tabular-nums tracking-tight " +
                 (outstanding === 0 ? "text-emerald-600" : "text-neutral-900")
               }
             >

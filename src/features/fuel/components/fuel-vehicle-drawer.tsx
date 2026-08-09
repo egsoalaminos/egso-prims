@@ -187,14 +187,14 @@ export function FuelVehicleDrawer({
                   <OverlineLabel>Tank Capacity</OverlineLabel>
                   <div className="mt-0.5 text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
                     {vehicle.tankCapacity.toLocaleString("en-PH", { maximumFractionDigits: 2 })}
-                    <span className="ml-1 text-[11px] font-normal text-neutral-400">L</span>
+                    <span className="ml-1 text-[10.5px] font-normal text-neutral-400">L</span>
                   </div>
                 </div>
                 <div className="rounded-lg border border-neutral-200 p-3">
                   <OverlineLabel>Rated Efficiency</OverlineLabel>
                   <div className="mt-0.5 text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
                     {vehicle.kmPerLiter.toLocaleString("en-PH", { maximumFractionDigits: 2 })}
-                    <span className="ml-1 text-[11px] font-normal text-neutral-400">km/L</span>
+                    <span className="ml-1 text-[10.5px] font-normal text-neutral-400">km/L</span>
                   </div>
                 </div>
                 <div className="rounded-lg border border-neutral-200 p-3">
@@ -211,7 +211,7 @@ export function FuelVehicleDrawer({
                     {vehicle.currentFuelBalance.toLocaleString("en-PH", {
                       maximumFractionDigits: 2,
                     })}
-                    <span className="ml-1 text-[11px] font-normal text-neutral-400">L</span>
+                    <span className="ml-1 text-[10.5px] font-normal text-neutral-400">L</span>
                   </div>
                 </div>
                 <div className="rounded-lg border border-neutral-200 p-3">
@@ -222,7 +222,7 @@ export function FuelVehicleDrawer({
                           maximumFractionDigits: 0,
                         })
                       : "—"}
-                    <span className="ml-1 text-[11px] font-normal text-neutral-400">km</span>
+                    <span className="ml-1 text-[10.5px] font-normal text-neutral-400">km</span>
                   </div>
                 </div>
               </section>
@@ -231,7 +231,7 @@ export function FuelVehicleDrawer({
               {history && (
                 <section className="rounded-lg bg-neutral-50/60 p-3.5">
                   <div className="flex items-center justify-between">
-                    <span className="text-[12px] font-semibold text-neutral-900">
+                    <span className="text-[12.5px] font-semibold text-neutral-900">
                       Vehicle History
                     </span>
                     {history.lastTrip && (
@@ -254,7 +254,7 @@ export function FuelVehicleDrawer({
                         {history.totalDistance.toLocaleString("en-PH", {
                           maximumFractionDigits: 0,
                         })}
-                        <span className="ml-1 text-[11px] font-normal text-neutral-400">km</span>
+                        <span className="ml-1 text-[10.5px] font-normal text-neutral-400">km</span>
                       </div>
                     </div>
                     <div>
@@ -263,7 +263,7 @@ export function FuelVehicleDrawer({
                         {history.totalFuelUsed.toLocaleString("en-PH", {
                           maximumFractionDigits: 2,
                         })}
-                        <span className="ml-1 text-[11px] font-normal text-neutral-400">L</span>
+                        <span className="ml-1 text-[10.5px] font-normal text-neutral-400">L</span>
                       </div>
                     </div>
                     <div>
@@ -272,7 +272,7 @@ export function FuelVehicleDrawer({
                         {history.totalFuelAdded.toLocaleString("en-PH", {
                           maximumFractionDigits: 2,
                         })}
-                        <span className="ml-1 text-[11px] font-normal text-neutral-400">L</span>
+                        <span className="ml-1 text-[10.5px] font-normal text-neutral-400">L</span>
                       </div>
                     </div>
                     <div>
@@ -433,7 +433,7 @@ export function FuelVehicleDrawer({
               {comparison && (
                 <section className="rounded-lg bg-neutral-50/60 p-3.5">
                   <div className="flex items-center justify-between">
-                    <span className="text-[12px] font-semibold text-neutral-900">
+                    <span className="text-[12.5px] font-semibold text-neutral-900">
                       {periodLabel(month, year)} vs. previous month
                     </span>
                     <StatusBadge status={comparison.status} />
@@ -488,7 +488,7 @@ export function FuelVehicleDrawer({
                         {comparison.currentLiters.toLocaleString("en-PH", {
                           maximumFractionDigits: 2,
                         })}
-                        <span className="ml-1 text-[11px] font-normal text-neutral-400">
+                        <span className="ml-1 text-[10.5px] font-normal text-neutral-400">
                           {comparison.litersDifference === 0
                             ? ""
                             : `(${comparison.litersDifference > 0 ? "+" : "−"}${Math.abs(
@@ -539,7 +539,7 @@ export function FuelVehicleDrawer({
                     <OverlineLabel>Total Distance</OverlineLabel>
                     <div className="mt-0.5 text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
                       {odoTotals.distance.toLocaleString("en-PH", { maximumFractionDigits: 0 })}
-                      <span className="ml-1 text-[11px] font-normal text-neutral-400">km</span>
+                      <span className="ml-1 text-[10.5px] font-normal text-neutral-400">km</span>
                     </div>
                   </div>
                   <div className="rounded-lg border border-neutral-200 p-3">
@@ -555,7 +555,7 @@ export function FuelVehicleDrawer({
                         const e = kmPerLiter(odoTotals.distance, odoTotals.liters);
                         return e === null ? "—" : e.toFixed(2);
                       })()}
-                      <span className="ml-1 text-[11px] font-normal text-neutral-400">km/L</span>
+                      <span className="ml-1 text-[10.5px] font-normal text-neutral-400">km/L</span>
                     </div>
                   </div>
                 </section>

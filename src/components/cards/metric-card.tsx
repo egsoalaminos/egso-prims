@@ -41,7 +41,7 @@ export function MetricCard({
           <div className="grid h-7 w-7 place-items-center rounded-lg bg-neutral-100 text-neutral-600">
             <Icon className="h-3.5 w-3.5" />
           </div>
-          <span className="text-[12px] text-neutral-500">{label}</span>
+          <span className="text-[12.5px] text-neutral-500">{label}</span>
         </div>
         {onOpen && (
           <IconButton

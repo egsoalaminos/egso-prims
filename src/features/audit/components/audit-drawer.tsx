@@ -57,7 +57,7 @@ function ChangeValue({ value, emphasis }: { value?: string; emphasis?: boolean }
 
   if (pretty) {
     return (
-      <pre className="mt-1.5 max-h-56 overflow-auto rounded-md bg-white/70 p-2.5 font-mono text-[11px] leading-relaxed text-neutral-700">
+      <pre className="mt-1.5 max-h-56 overflow-auto rounded-md bg-white/70 p-2.5 font-mono text-[10.5px] leading-relaxed text-neutral-700">
         {pretty}
       </pre>
     );
@@ -165,7 +165,7 @@ export function AuditDrawer({
                 <Field label="Timestamp">{fmt(entry.timestamp)}</Field>
                 <Field label="User">
                   {entry.user}
-                  <span className="block text-[11px] text-neutral-500">{entry.userRole}</span>
+                  <span className="block text-[10.5px] text-neutral-500">{entry.userRole}</span>
                 </Field>
                 <Field label="Email">
                   {entry.email ? (
@@ -215,7 +215,7 @@ export function AuditDrawer({
 
               {/* Client info */}
               <section className="rounded-lg border border-neutral-200 p-3.5">
-                <div className="mb-2.5 flex items-center gap-1.5 text-[12px] font-semibold text-neutral-900">
+                <div className="mb-2.5 flex items-center gap-1.5 text-[12.5px] font-semibold text-neutral-900">
                   <Monitor className="h-3.5 w-3.5 text-neutral-500" />
                   Client Information
                 </div>

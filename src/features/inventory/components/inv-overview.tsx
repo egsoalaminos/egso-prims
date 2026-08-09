@@ -30,7 +30,7 @@ function Section({
 }) {
   return (
     <section className="rounded-lg border border-neutral-200 p-3.5">
-      <div className="mb-2.5 flex items-center gap-1.5 text-[12px] font-semibold text-neutral-900">
+      <div className="mb-2.5 flex items-center gap-1.5 text-[12.5px] font-semibold text-neutral-900">
         <Icon className="h-3.5 w-3.5 text-neutral-500" />
         {title}
       </div>
@@ -78,26 +78,26 @@ export function InvOverview({
       {/* Stock summary */}
       <section className="rounded-lg bg-neutral-50/60 p-3.5">
         <div className="flex items-center justify-between">
-          <span className="text-[12px] font-semibold text-neutral-900">Stock Summary</span>
+          <span className="text-[12.5px] font-semibold text-neutral-900">Stock Summary</span>
           <StatusBadge status={status} />
         </div>
         <div className="mt-2.5 grid grid-cols-3 gap-3">
           <div>
             <OverlineLabel>On Hand</OverlineLabel>
-            <div className="text-[18px] font-semibold tabular-nums tracking-tight text-neutral-900">
+            <div className="text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
               {item.onHand}
-              <span className="ml-1 text-[11px] font-normal text-neutral-500">{item.unit}</span>
+              <span className="ml-1 text-[10.5px] font-normal text-neutral-500">{item.unit}</span>
             </div>
           </div>
           <div>
             <OverlineLabel>Reorder Level</OverlineLabel>
-            <div className="text-[18px] font-semibold tabular-nums tracking-tight text-neutral-700">
+            <div className="text-[16px] font-semibold tabular-nums tracking-tight text-neutral-700">
               {item.reorderLevel}
             </div>
           </div>
           <div>
             <OverlineLabel>Critical Level</OverlineLabel>
-            <div className="text-[18px] font-semibold tabular-nums tracking-tight text-neutral-700">
+            <div className="text-[16px] font-semibold tabular-nums tracking-tight text-neutral-700">
               {item.criticalLevel}
             </div>
           </div>

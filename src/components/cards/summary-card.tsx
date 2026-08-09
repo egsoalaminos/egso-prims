@@ -3,12 +3,6 @@ import { TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ContainerCard } from "@/components/cards/container-card";
 
-export interface SummaryCardTag {
-  label: string;
-  /** Tailwind bg class, e.g. "bg-(--tone-settled)". */
-  color: string;
-}
-
 export interface SummaryCardProps {
   name: string;
   meta: string;
@@ -19,7 +13,6 @@ export interface SummaryCardProps {
   gradient: string;
   icon: React.ComponentType<{ className?: string }>;
   stat: string;
-  tags?: SummaryCardTag[];
   /** Corner badge over the hero area (defaults to "Live"). Pass null to hide. */
   badge?: string | null;
   onClick?: () => void;
@@ -34,6 +27,11 @@ export interface SummaryCardProps {
  * marketing site rather than as an office's morning summary. It is now a flat
  * tint with a ruled edge, and the icon tile that sits on it lost its floating
  * shadow: on paper, nothing hovers.
+ *
+ * A row of coloured keys used to sit opposite the stat, reading "S · M · L" or
+ * "P · A" — single letters that decorated the card rather than reporting
+ * anything, with no legend and no data behind them. They are gone. The stat is
+ * the only number here, and it is a real one.
  */
 export function SummaryCard({
   name,
@@ -41,7 +39,6 @@ export function SummaryCard({
   gradient,
   icon: Icon,
   stat,
-  tags = [],
   badge = "Live",
   onClick,
   className,
@@ -59,7 +56,7 @@ export function SummaryCard({
         )}
       >
         {badge && (
-          <span className="absolute right-2 top-2 border border-(--tone-settled)/25 bg-white px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.06em] text-(--tone-settled)">
+          <span className="absolute right-2 top-2 border border-(--tone-settled)/25 bg-white px-1.5 py-0.5 text-[10.5px] font-semibold uppercase tracking-[0.06em] text-(--tone-settled)">
             {badge}
           </span>
         )}
@@ -68,29 +65,12 @@ export function SummaryCard({
         </div>
       </div>
       <div className="mt-3 px-1">
-        <div className="truncate text-[13px] font-semibold text-neutral-900">{name}</div>
+        <div className="truncate text-[12.5px] font-semibold text-neutral-900">{name}</div>
         <div className="text-[11.5px] text-neutral-500">{meta}</div>
       </div>
-      <div className="mt-3 flex items-center justify-between px-1">
-        {/* Overlapped discs read as a photo stack of people. These are counts
-            of documents, so they sit in a row as square keys instead. */}
-        <div className="flex gap-1">
-          {tags.map((t, idx) => (
-            <div
-              key={idx}
-              className={cn(
-                "grid h-5 w-5 place-items-center text-[9px] font-bold text-white",
-                t.color,
-              )}
-            >
-              {t.label}
-            </div>
-          ))}
-        </div>
-        <div className="flex items-center gap-1 text-[11px] text-neutral-500">
-          <TrendingUp className="h-3 w-3" />
-          {stat}
-        </div>
+      <div className="mt-3 flex items-center gap-1 px-1 text-[11.5px] text-neutral-500">
+        <TrendingUp className="h-3 w-3 shrink-0" />
+        {stat}
       </div>
     </ContainerCard>
   );

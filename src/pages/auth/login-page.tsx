@@ -105,7 +105,14 @@ export function LoginPage() {
           {branding.logo ? (
             <img src={branding.logo} alt="" className="h-16 w-16 object-contain" />
           ) : (
-            <div className="grid h-16 w-16 place-items-center rounded-full bg-neutral-900 text-white">
+            // Was bg-neutral-900. This disc sat directly above a burgundy
+            // "Municipality of Alaminos" and a gold seam, so all three
+            // institutional colours were on screen at once and the seal's own
+            // stand-in was the one wearing the old accent.
+            <div
+              className="grid h-16 w-16 place-items-center rounded-full text-white"
+              style={{ background: BURGUNDY }}
+            >
               <Building2 className="h-7 w-7" />
             </div>
           )}

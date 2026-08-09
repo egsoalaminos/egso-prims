@@ -23,7 +23,10 @@ export function TopBar({
   return (
     <header
       className={cn(
-        "sticky top-0 z-10 flex items-center gap-3 border-b border-neutral-200 bg-white/80 px-5 py-3 backdrop-blur md:px-8",
+        // The rail's tone, not white: the bar and the rail are both chrome and
+        // they meet at the top-left corner, so painting one lighter than the
+        // canvas and the other darker split the frame into two materials.
+        "sticky top-0 z-10 flex items-center gap-3 border-b border-neutral-200 bg-sidebar/85 px-5 py-3 backdrop-blur md:px-8",
         // The gold seam under the bar is the admin's letterhead rule — the same
         // device the portal draws between its letterhead and its service
         // counter. It replaces nothing; it sits below the hairline border, so
@@ -78,7 +81,7 @@ export function NotificationBell({
         (count === undefined ? (
           <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-(--tone-process)" />
         ) : (
-          <span className="absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-(--tone-process) px-1 text-[9.5px] font-semibold tabular-nums text-white">
+          <span className="absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-(--tone-process) px-1 text-[10.5px] font-semibold tabular-nums text-white">
             {count > 99 ? "99+" : count}
           </span>
         ))}

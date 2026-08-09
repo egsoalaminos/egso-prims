@@ -200,12 +200,12 @@ export function NotificationDrawer({
                         </p>
                       )}
                       <div className="mt-1.5 flex items-center gap-2">
-                        <span className="rounded-full bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-neutral-500">
+                        <span className="rounded-full bg-neutral-100 px-1.5 py-0.5 text-[10.5px] font-medium uppercase tracking-wider text-neutral-500">
                           {n.module}
                         </span>
                         {route && (
                           <button
-                            className="inline-flex items-center gap-0.5 text-[11px] font-medium text-neutral-600 transition hover:text-neutral-900"
+                            className="inline-flex items-center gap-0.5 text-[10.5px] font-medium text-neutral-600 transition hover:text-neutral-900"
                             onClick={() => void openRecord(n)}
                           >
                             View Related Record
@@ -214,7 +214,7 @@ export function NotificationDrawer({
                         )}
                         {!n.isRead && (
                           <button
-                            className="ml-auto text-[11px] font-medium text-neutral-500 transition hover:text-neutral-900"
+                            className="ml-auto text-[10.5px] font-medium text-neutral-500 transition hover:text-neutral-900"
                             onClick={async () => {
                               await markNotificationRead(n.id);
                               void refresh();

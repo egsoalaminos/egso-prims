@@ -131,7 +131,7 @@ export function Combobox({
                   <span className="min-w-0">
                     <span className="block truncate">{o.label}</span>
                     {o.description && (
-                      <span className="block text-[11px] text-neutral-500">{o.description}</span>
+                      <span className="block text-[10.5px] text-neutral-500">{o.description}</span>
                     )}
                   </span>
                 </CommandItem>

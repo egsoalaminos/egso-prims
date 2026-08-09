@@ -356,23 +356,23 @@ export function ViolationForm({
           {!isEdit && (
             <div className="rounded-lg bg-neutral-50 px-3.5 py-3">
               <OverlineLabel>On Save</OverlineLabel>
-              <p className="mt-0.5 text-[11px] text-neutral-500">
+              <p className="mt-0.5 text-[10.5px] text-neutral-500">
                 The ticket number is generated automatically and the record opens unsettled.
               </p>
               <div className="mt-2.5 grid grid-cols-3 gap-3">
                 <div>
                   <OverlineLabel>Payment Status</OverlineLabel>
-                  <div className="text-[13px] font-semibold text-amber-600">Pending</div>
+                  <div className="text-[12.5px] font-semibold text-amber-600">Pending</div>
                 </div>
                 <div>
                   <OverlineLabel>Amount Paid</OverlineLabel>
-                  <div className="text-[13px] font-semibold tabular-nums text-neutral-900">
+                  <div className="text-[12.5px] font-semibold tabular-nums text-neutral-900">
                     {formatPHP(0, { decimals: 2 })}
                   </div>
                 </div>
                 <div>
                   <OverlineLabel>Outstanding Balance</OverlineLabel>
-                  <div className="text-[13px] font-semibold tabular-nums text-neutral-900">
+                  <div className="text-[12.5px] font-semibold tabular-nums text-neutral-900">
                     {formatPHP(assessed, { decimals: 2 })}
                   </div>
                 </div>

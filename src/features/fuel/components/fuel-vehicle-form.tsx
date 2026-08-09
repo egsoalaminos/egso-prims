@@ -204,7 +204,7 @@ export function FuelVehicleForm({
 
           {/* Fuel configuration — every trip computation reads these figures. */}
           <div className="space-y-4 rounded-lg border border-neutral-200 bg-neutral-50/60 p-4">
-            <p className="text-[12px] font-semibold text-neutral-900">Fuel Configuration</p>
+            <p className="text-[12.5px] font-semibold text-neutral-900">Fuel Configuration</p>
             <div className="grid grid-cols-2 gap-4">
               <Field label="Tank Capacity (L)" required error={err.tankCapacity?.message}>
                 <Input
