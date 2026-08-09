@@ -30,7 +30,7 @@ export function Stepper({ steps, current, onStepClick, className }: StepperProps
               <span
                 className={cn(
                   "h-px min-w-6 flex-1",
-                  done || active ? "bg-neutral-900" : "bg-neutral-200",
+                  done || active ? "bg-(--accent-solid)" : "bg-neutral-200",
                 )}
               />
             )}
@@ -47,8 +47,10 @@ export function Stepper({ steps, current, onStepClick, className }: StepperProps
               <span
                 className={cn(
                   "grid h-6 w-6 shrink-0 place-items-center rounded-full text-[11px] font-semibold transition",
-                  done && "bg-neutral-900 text-white",
-                  active && "bg-neutral-900 text-white",
+                  // Accent-driven so the portal can recolour it without this
+                  // file changing. The default accent is neutral-900, which
+                  // is what this rendered before.
+                  (done || active) && "bg-(--accent-solid) text-(--accent-contrast)",
                   !done && !active && "border border-neutral-200 bg-white text-neutral-400",
                 )}
               >
