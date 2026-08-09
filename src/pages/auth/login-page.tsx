@@ -11,14 +11,13 @@ import {
   Caption,
   Checkbox,
   ConfirmationModal,
-  ContainerCard,
   Field,
   Input,
   toast,
 } from "@/components";
 import { DEV_CREDENTIALS, useAuth } from "@/features/auth/auth-context";
 import { useBranding } from "@/features/config/use-appearance";
-import { BURGUNDY, GOLD, PAPER, SERIF } from "@/features/portal/theme";
+import { BURGUNDY, GOLD, PAPER, RULE, SERIF } from "@/features/portal/theme";
 
 const loginSchema = z.object({
   email: z.string().min(1, "Enter your email address").email("Enter a valid email address"),
@@ -83,9 +82,8 @@ export function LoginPage() {
 
   return (
     // `data-municipal` is the same hook the portal root carries. It buys the
-    // burgundy accent, the square corners and the table-header treatment from
-    // the stylesheet without editing Button, Input or ContainerCard — all three
-    // are the admin's components too.
+    // burgundy accent and the square corners from the stylesheet without
+    // editing `Button` or `Input` — both are the admin's components too.
     <div
       data-municipal
       className="grid min-h-screen place-items-center px-4 font-sans antialiased"
@@ -131,7 +129,14 @@ export function LoginPage() {
           <span className="mt-4 block h-[2px] w-16" style={{ background: GOLD }} />
         </div>
 
-        <ContainerCard className="p-6">
+        {/*
+         * A plain bordered surface rather than `ContainerCard`. Its
+         * `rounded-xl` compiles to `calc(var(--radius) + 4px)` — the offset is
+         * baked into the utility by `@theme inline`, so zeroing `--radius` in
+         * the municipal scope still leaves 4px. The portal builds its own
+         * surfaces this way for the same reason.
+         */}
+        <div className="border bg-white p-6" style={{ borderColor: RULE }}>
           <form onSubmit={submit} className="space-y-4">
             {authError && (
               <motion.div
@@ -200,7 +205,7 @@ export function LoginPage() {
               Sign In
             </Button>
           </form>
-        </ContainerCard>
+        </div>
 
         {!supabaseActive && (
           <div className="mt-3 rounded-lg border border-dashed border-neutral-300 bg-white/60 px-3 py-2.5 text-center">
