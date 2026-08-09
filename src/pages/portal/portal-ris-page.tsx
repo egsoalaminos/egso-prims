@@ -8,7 +8,6 @@ import {
   PortalPageHeader,
   SubmissionSuccess,
 } from "@/features/portal/components/submission-success";
-import { GOLD, RULE } from "@/features/portal/theme";
 
 /** Public RIS form — the same enterprise wizard, no login. */
 export function PortalRISPage() {
@@ -37,18 +36,13 @@ export function PortalRISPage() {
             title="Request supplies"
             description="Draw available supplies and consumable items from the General Services Office's central stock."
           />
-          <div className="border bg-white" style={{ borderColor: RULE }}>
-            <div style={{ height: 3, background: GOLD }} />
-            <div className="p-5 sm:p-6">
-              {/* The public has no approved PR to point at; they identify themselves. */}
-              <RISWizard
-                showSourcePR={false}
-                submitting={submitting}
-                onSubmit={submit}
-                onCancel={() => navigate("/portal")}
-              />
-            </div>
-          </div>
+          {/* The public has no approved PR to point at; they identify themselves. */}
+          <RISWizard
+            showSourcePR={false}
+            submitting={submitting}
+            onSubmit={submit}
+            onCancel={() => navigate("/portal")}
+          />
         </>
       )}
     </PageTransition>

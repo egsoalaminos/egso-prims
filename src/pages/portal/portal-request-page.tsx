@@ -8,7 +8,6 @@ import {
   PortalPageHeader,
   SubmissionSuccess,
 } from "@/features/portal/components/submission-success";
-import { GOLD, RULE } from "@/features/portal/theme";
 
 /** Public Purchase Request form — the same enterprise wizard, no login. */
 export function PortalRequestPage() {
@@ -37,21 +36,17 @@ export function PortalRequestPage() {
             title="File a purchase request"
             description="Complete the four steps to submit a purchase request for procurement review."
           />
-          {/* The wizard sits on a panel with the same gold head rule as every
-              other surface in the portal, so the form reads as a document on a
-              counter rather than an app screen. Its internals are untouched —
-              the admin create and edit pages render the same component. */}
-          <div className="border bg-white" style={{ borderColor: RULE }}>
-            <div style={{ height: 3, background: GOLD }} />
-            <div className="p-5 sm:p-6">
-              <PRWizard
-                submitLabel="Submit Request"
-                submitting={submitting}
-                onSubmit={submit}
-                onCancel={() => navigate("/portal")}
-              />
-            </div>
-          </div>
+          {/* No panel around the wizard: it already renders its own bordered
+              card, and wrapping it produced a frame inside a frame. It sits on
+              the portal's paper ground exactly as the landing's cards do. Its
+              internals are untouched — the admin create and edit pages render
+              the same component. */}
+          <PRWizard
+            submitLabel="Submit Request"
+            submitting={submitting}
+            onSubmit={submit}
+            onCancel={() => navigate("/portal")}
+          />
         </>
       )}
     </PageTransition>

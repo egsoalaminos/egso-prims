@@ -10,7 +10,6 @@ import {
   PortalPageHeader,
   SubmissionSuccess,
 } from "@/features/portal/components/submission-success";
-import { GOLD, RULE } from "@/features/portal/theme";
 
 /** Public facility reservation form — the same enterprise wizard, no login. */
 export function PortalReservePage() {
@@ -45,22 +44,17 @@ export function PortalReservePage() {
             title="Reserve a facility"
             description="Book municipal facilities and borrow event equipment for official activities. The calendar shows dates already taken."
           />
-          <div className="border bg-white" style={{ borderColor: RULE }}>
-            <div style={{ height: 3, background: GOLD }} />
-            <div className="p-5 sm:p-6">
-              <ReservationCalendar
-                reservations={calendar.data}
-                loading={calendar.loading}
-                onSelectReservation={() => {}}
-                className="mb-6"
-              />
-              <ResWizard
-                submitting={submitting}
-                onSubmit={submit}
-                onCancel={() => navigate("/portal")}
-              />
-            </div>
-          </div>
+          <ReservationCalendar
+            reservations={calendar.data}
+            loading={calendar.loading}
+            onSelectReservation={() => {}}
+            className="mb-6"
+          />
+          <ResWizard
+            submitting={submitting}
+            onSubmit={submit}
+            onCancel={() => navigate("/portal")}
+          />
         </>
       )}
     </PageTransition>
