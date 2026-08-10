@@ -54,7 +54,7 @@ export function SidebarBrand({
   logo?: string;
 }) {
   return (
-    <div className="flex items-center gap-2 px-5 pb-6 pt-5 group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:gap-0 group-data-[collapsed=true]:px-0">
+    <div className="flex items-center gap-2 px-5 pb-brandb pt-brandt group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:gap-0 group-data-[collapsed=true]:px-0">
       {logo ? (
         // Rendered at the mark's exact footprint; object-contain preserves the
         // seal's aspect ratio (never stretched/cropped/recolored).
@@ -77,7 +77,7 @@ export function SidebarBrand({
 
 /** Scrollable middle region of the sidebar. */
 export function SidebarContent({ children }: { children: React.ReactNode }) {
-  return <div className="flex-1 overflow-y-auto px-3 pb-3">{children}</div>;
+  return <div className="flex-1 overflow-y-auto px-railpad pb-3">{children}</div>;
 }
 
 /** Labeled group of navigation items (e.g. "Modules", "Quick Access"). */
@@ -138,13 +138,13 @@ export function SidebarItem({
       aria-current={active ? "page" : undefined}
       aria-label={label}
       className={cn(
-        "flex w-full items-center gap-2.5 rounded-lg px-2 py-nav text-body transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-300 disabled:pointer-events-none disabled:opacity-50 group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:gap-0",
+        "flex w-full items-center gap-navgap rounded-lg px-2 py-nav text-body transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-300 disabled:pointer-events-none disabled:opacity-50 group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:gap-0",
         active
           ? "ui-accent-soft ui-accent-fg font-medium"
           : "text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900",
       )}
     >
-      <Icon className="h-4 w-4 shrink-0" />
+      <Icon className="h-navicon w-navicon shrink-0" />
       <span className="flex-1 truncate text-left group-data-[collapsed=true]:hidden">{label}</span>
       {dot && (
         <NotificationBadge

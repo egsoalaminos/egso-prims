@@ -26,7 +26,7 @@ export function TopBar({
         // The rail's tone, not white: the bar and the rail are both chrome and
         // they meet at the top-left corner, so painting one lighter than the
         // canvas and the other darker split the frame into two materials.
-        "sticky top-0 z-10 flex items-center gap-3 border-b border-neutral-200 bg-sidebar/85 px-5 py-3 backdrop-blur md:px-8",
+        "sticky top-0 z-10 flex items-center gap-3 border-b border-neutral-200 bg-sidebar/85 px-barpx py-barpy backdrop-blur md:px-8",
         // The gold seam under the bar is the admin's letterhead rule — the same
         // device the portal draws between its letterhead and its service
         // counter. It replaces nothing; it sits below the hairline border, so

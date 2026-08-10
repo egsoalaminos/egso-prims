@@ -120,6 +120,13 @@
   --spacing-controlx: var(--control-px);
   --spacing-nav: var(--nav-row-py);
   --spacing-rail: var(--sidebar-w);
+  --spacing-navicon: var(--nav-icon);
+  --spacing-navgap: var(--nav-gap);
+  --spacing-railpad: var(--rail-pad);
+  --spacing-brandt: var(--brand-pt);
+  --spacing-brandb: var(--brand-pb);
+  --spacing-barpy: var(--topbar-py);
+  --spacing-barpx: var(--topbar-px);
 
   --shadow-card: var(--elev-card);
   --shadow-raised: var(--elev-raised);

@@ -75,6 +75,13 @@
   --control-px: 0.625rem;
   --nav-row-py: 0.3125rem;
   --sidebar-w: 208px; /* the reference rail is narrower than Theme 1's 240 */
+  --nav-icon: 0.875rem; /* 14px — the reference's nav glyphs are smaller */
+  --nav-gap: 0.5rem;
+  --rail-pad: 0.5rem;
+  --brand-pt: 0.75rem; /* the reference's workspace switcher is one compact row */
+  --brand-pb: 0.75rem;
+  --topbar-py: 0.5rem;
+  --topbar-px: 1rem;
 
   /* ---- Table treatment -------------------------------------------------
    * Sentence case, no column rules, a hairline under the header. The

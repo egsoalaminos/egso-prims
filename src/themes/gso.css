@@ -74,6 +74,13 @@
   --control-px: 0.75rem; /* button horizontal — was px-3 */
   --nav-row-py: 0.375rem; /* sidebar row vertical — was py-1.5 */
   --sidebar-w: 240px; /* rail width — was w-[240px] */
+  --nav-icon: 1rem; /* sidebar icon — was h-4 w-4 */
+  --nav-gap: 0.625rem; /* icon to label — was gap-2.5 */
+  --rail-pad: 0.75rem; /* rail inner gutter — was px-3 */
+  --brand-pt: 1.25rem; /* brand block top — was pt-5 */
+  --brand-pb: 1.5rem; /* brand block bottom — was pb-6, not the same as the top */
+  --topbar-py: 0.75rem; /* header vertical — was py-3 */
+  --topbar-px: 1.25rem; /* header horizontal — was px-5 */
 
   /* ---- Table treatment -------------------------------------------------
    * A government form rules its columns and sets its headings in small caps.
