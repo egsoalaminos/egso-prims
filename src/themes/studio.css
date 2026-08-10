@@ -60,16 +60,37 @@
   --radius-step-4xl: 20px;
 
   /* ---- Density ---------------------------------------------------------
-   * Declared, but currently inert: no component consumes these yet. Wiring
-   * them is component-level work and is not part of the token phase.
+   * The reference is markedly tighter than Theme 1 — rows sit at roughly two
+   * thirds the height, cards take a 16px inset rather than 20, and controls
+   * are shorter. This is the single biggest thing separating the two themes
+   * once the colour is right.
    */
-  --row-py: 0.5rem;
+  --row-py: 0.4375rem; /* 7px — reference table rows are ~28px tall */
+  --row-px: 0.75rem;
+  --row-px-first: 0.875rem;
+  --head-py: 0.5rem;
   --card-p: 1rem;
+  --card-p-tight: 0.875rem;
   --control-py: 0.3125rem;
+  --control-px: 0.625rem;
+  --nav-row-py: 0.3125rem;
+  --sidebar-w: 208px; /* the reference rail is narrower than Theme 1's 240 */
+
+  /* ---- Table treatment -------------------------------------------------
+   * Sentence case, no column rules, a hairline under the header. The
+   * reference's tables are quiet: the data carries the weight and the header
+   * is a label, not a band.
+   */
+  --thead-transform: none;
+  --thead-tracking: 0em;
+  --thead-weight: 500;
+  --thead-fg: #737373;
+  --thead-divider: transparent;
+  --thead-rule: #e4e4e4;
 
   /* ---- Elevation -------------------------------------------------------
-   * Also inert until consumed. The reference cards sit on a hairline with at
-   * most a whisper of shadow.
+   * A hairline and a whisper. The reference cards are flat enough that the
+   * border does most of the separating.
    */
   --elev-card: 0 1px 2px rgb(0 0 0 / 0.04);
   --elev-raised: 0 2px 8px rgb(0 0 0 / 0.06);

@@ -35,7 +35,7 @@ export function MetricCard({
   const animated = useCountUp(loading ? 0 : value);
 
   return (
-    <ContainerCard hoverable className={cn("group p-4", className)}>
+    <ContainerCard hoverable className={cn("group p-cardt", className)}>
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-2">
           <div className="grid h-7 w-7 place-items-center rounded-lg bg-neutral-100 text-neutral-600">

@@ -49,8 +49,8 @@ const buttonVariants = cva(
          * and that is how a scale acquires a twentieth size.
          */
         lg: "px-5 py-2.5 text-body [&_svg]:h-4 [&_svg]:w-4",
-        md: "px-3 py-1.5 text-body [&_svg]:h-3.5 [&_svg]:w-3.5",
-        sm: "px-2.5 py-1.5 text-body [&_svg]:h-3.5 [&_svg]:w-3.5",
+        md: "px-controlx py-control text-body [&_svg]:h-3.5 [&_svg]:w-3.5",
+        sm: "px-2.5 py-control text-body [&_svg]:h-3.5 [&_svg]:w-3.5",
         xs: "px-2 py-1 text-micro [&_svg]:h-3 [&_svg]:w-3",
         icon: "h-7 w-7 p-0 [&_svg]:h-3.5 [&_svg]:w-3.5",
         "icon-sm": "h-6 w-6 rounded-md p-0 [&_svg]:h-3 [&_svg]:w-3",

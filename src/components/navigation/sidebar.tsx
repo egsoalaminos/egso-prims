@@ -30,7 +30,7 @@ export function Sidebar({
       className={cn(
         // `group` + data-collapsed drives the icon-only state of every child
         // through CSS (no prop-drilling, no child re-renders). Width animates.
-        "group sticky top-0 hidden h-screen w-[240px] shrink-0 flex-col overflow-hidden border-r border-neutral-200 bg-sidebar transition-[width] duration-200 ease-out data-[collapsed=true]:w-[68px] md:flex",
+        "group sticky top-0 hidden h-screen w-rail shrink-0 flex-col overflow-hidden border-r border-neutral-200 bg-sidebar transition-[width] duration-200 ease-out data-[collapsed=true]:w-[68px] md:flex",
         className,
       )}
     >
@@ -138,7 +138,7 @@ export function SidebarItem({
       aria-current={active ? "page" : undefined}
       aria-label={label}
       className={cn(
-        "flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-body transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-300 disabled:pointer-events-none disabled:opacity-50 group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:gap-0",
+        "flex w-full items-center gap-2.5 rounded-lg px-2 py-nav text-body transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-300 disabled:pointer-events-none disabled:opacity-50 group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:gap-0",
         active
           ? "ui-accent-soft ui-accent-fg font-medium"
           : "text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900",

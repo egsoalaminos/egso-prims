@@ -97,6 +97,32 @@
   --text-stat: var(--type-stat);
   --text-title: var(--type-title);
   --text-figure: var(--type-figure);
+
+  /*
+   * Geometry and density.
+   *
+   * Registered as Tailwind spacing keys so a component can write
+   * `py-row` or `p-card` instead of a literal, and a theme decides what those
+   * mean. This is the only way a shared component can look different in two
+   * themes without being edited twice or rendered twice.
+   *
+   * Deliberately a small set. There are 867 hardcoded paddings in this app and
+   * tokenising all of them would be churn; these are the handful that actually
+   * govern how dense the interface reads.
+   */
+  --spacing-row: var(--row-py);
+  --spacing-rowx: var(--row-px);
+  --spacing-rowx-first: var(--row-px-first);
+  --spacing-head: var(--head-py);
+  --spacing-card: var(--card-p);
+  --spacing-cardt: var(--card-p-tight);
+  --spacing-control: var(--control-py);
+  --spacing-controlx: var(--control-px);
+  --spacing-nav: var(--nav-row-py);
+  --spacing-rail: var(--sidebar-w);
+
+  --shadow-card: var(--elev-card);
+  --shadow-raised: var(--elev-raised);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -334,7 +360,7 @@
  * say. The ruled underline is the one part worth keeping everywhere.
  */
 thead {
-  border-bottom: 2px solid color-mix(in oklch, var(--accent-solid) 32%, transparent);
+  border-bottom: 2px solid var(--thead-rule);
 }
 
 /*

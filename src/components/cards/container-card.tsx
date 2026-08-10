@@ -32,14 +32,14 @@ export const ContainerCard = React.forwardRef<HTMLDivElement, ContainerCardProps
     <div
       ref={ref}
       className={cn(
-        "rounded-xl border border-neutral-200 bg-white",
+        "rounded-xl border border-neutral-200 bg-white shadow-card",
         // A pseudo-element rather than a child div: the seam has to sit inside
         // the card's own border box, and every existing caller passes its own
         // children.
         seam &&
           "relative before:absolute before:inset-x-0 before:top-0 before:h-[2px] before:bg-(--rule-gold) before:content-['']",
         hoverable && "transition hover:border-neutral-300",
-        padded && "p-5",
+        padded && "p-card",
         className,
       )}
       {...props}
