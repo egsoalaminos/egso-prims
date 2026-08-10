@@ -1,0 +1,183 @@
+/*
+ * ===========================================================================
+ * Theme 2 — Original
+ *
+ * The design as it was first deployed to Vercel: commit 4e9d2d6, 4 August 2026.
+ * Not a reconstruction from memory — every value below was read out of that
+ * commit with `git show`, and where the two designs disagree the August file
+ * won.
+ *
+ * It is the Design Foundation look the system was built on before the municipal
+ * direction: rounded corners on a cold grey canvas, a near-black accent, and
+ * colour used freely — eight status hues, a seven-colour chart palette,
+ * gradients, and a colour square per office.
+ *
+ * WHAT THIS FILE CAN AND CANNOT RESTORE
+ *
+ * Roughly seventy per cent of that design is reachable from here, because it
+ * lived in values: radius, canvas, surfaces, accent, the table's header
+ * treatment. Those are all below.
+ *
+ * The rest lived in component code that has since been deleted — the eight-hue
+ * rounded pill, the rainbow chart array, the avatar gradient, the office colour
+ * chip. Tokens cannot bring back code that is gone. Those are restored
+ * separately, theme-gated, and until they are this theme is the August
+ * *surface* with the current components on it.
+ *
+ * Everything here is a literal. The August file wrote `--accent-solid:
+ * var(--color-neutral-900)`, which worked only because both sat on :root; the
+ * oklch values are inlined instead so this theme cannot be broken by a change
+ * to the neutral ramp.
+ * ===========================================================================
+ */
+
+[data-theme="original"] {
+  /* ---- Typefaces -------------------------------------------------------
+   * Inter throughout. The serif arrived on 9 August with the institutional
+   * voice; in August the interface had one face. `--type-serif` points at the
+   * sans stack rather than being removed, so `font-serif` keeps resolving.
+   */
+  --type-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --type-serif: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* ---- Type scale ------------------------------------------------------
+   * The same steps Theme 1 carries, because Theme 1's were transcribed from
+   * this design in the first place and never re-chosen.
+   *
+   * One honest loss: August distinguished 10px from 11px labels, and the scale
+   * normalisation collapsed both into a single micro step. The table header
+   * keeps its 11px through `--thead-size` below, since that is where the
+   * difference actually showed; other 10px labels sit at 10.5.
+   */
+  --type-micro: 10.5px;
+  --type-caption: 11.5px;
+  --type-body: 12.5px;
+  --type-section: 14px;
+  --type-stat: 16px;
+  --type-title: 22px;
+  --type-figure: 26px;
+
+  /* ---- Geometry --------------------------------------------------------
+   * `--radius: 0.625rem` with a derived scale. The August file wrote these as
+   * `calc(var(--radius) ± Npx)`; the arithmetic is done here so the steps
+   * cannot drift.
+   */
+  --radius-step-sm: 6px; /* calc(10px - 4px) */
+  --radius-step-md: 8px; /* calc(10px - 2px) */
+  --radius-step-lg: 10px; /* --radius */
+  --radius-step-xl: 14px; /* calc(10px + 4px) */
+  --radius-step-2xl: 18px;
+  --radius-step-3xl: 22px;
+  --radius-step-4xl: 26px;
+
+  /* ---- Density ---------------------------------------------------------
+   * Identical to Theme 1: the density never changed between August and now.
+   * `py-3` cells, `p-5` cards, `py-1.5` controls, a 240px rail.
+   */
+  --row-py: 0.75rem;
+  --row-px: 1rem;
+  --row-px-first: 1.25rem;
+  --head-py: 0.625rem;
+  --card-p: 1.25rem;
+  --card-p-tight: 1rem;
+  --control-py: 0.375rem;
+  --control-px: 0.75rem;
+  --nav-row-py: 0.375rem;
+  --sidebar-w: 240px;
+  --nav-icon: 1rem;
+  --nav-gap: 0.625rem;
+  --rail-pad: 0.75rem;
+  --brand-pt: 1.25rem;
+  --brand-pb: 1.5rem;
+  --topbar-py: 0.75rem;
+  --topbar-px: 1.25rem;
+
+  /* ---- Table treatment -------------------------------------------------
+   * August: `bg-neutral-50 text-[11px] uppercase tracking-wider
+   * text-neutral-400`, header cells at `font-medium`, and **no** column
+   * dividers and **no** rule under the header — both of those arrived with the
+   * municipal direction.
+   */
+  --thead-transform: uppercase;
+  --thead-tracking: 0.05em;
+  --thead-weight: 500; /* font-medium, not the semibold Theme 1 uses */
+  --thead-size: 11px;
+  --thead-fg: oklch(0.708 0 0); /* neutral-400 */
+  --thead-bg: oklch(0.985 0 0); /* neutral-50 */
+  --thead-divider: transparent; /* August ruled no columns */
+  --thead-rule: transparent; /* and drew no line under the header */
+
+  /* ---- Elevation -------------------------------------------------------
+   * Cards were flat then too; only floating layers carried a shadow.
+   */
+  --elev-card: none;
+  --elev-raised: none;
+
+  /* ---- Semantic surfaces ----------------------------------------------- */
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.129 0.042 264.695);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.129 0.042 264.695);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.129 0.042 264.695);
+  --primary: oklch(0.208 0.042 265.755);
+  --primary-foreground: oklch(0.984 0.003 247.858);
+  --secondary: oklch(0.968 0.007 247.896);
+  --secondary-foreground: oklch(0.208 0.042 265.755);
+  --muted: oklch(0.968 0.007 247.896);
+  --muted-foreground: oklch(0.554 0.046 257.417);
+  --accent: oklch(0.968 0.007 247.896);
+  --accent-foreground: oklch(0.208 0.042 265.755);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.984 0.003 247.858);
+  --border: oklch(0.929 0.013 255.508);
+  --input: oklch(0.929 0.013 255.508);
+  --ring: oklch(0.704 0.04 256.788);
+
+  /*
+   * The rail was white in August, and so was the frame behind it. There was no
+   * three-depth order: chrome and card were the same value and only the canvas
+   * sat apart. That is the arrangement the later audit called out, and it is
+   * restored here deliberately — this theme is a record, not an improvement.
+   */
+  --sidebar: oklch(1 0 0);
+  --canvas: oklch(0.9851 0 0); /* #FAFAFA */
+
+  /* ---- The neutral ramp ------------------------------------------------
+   * Tailwind's stock ramp, cold. The warm paper values are Theme 1's.
+   */
+  --color-neutral-50: oklch(0.985 0 0);
+  --color-neutral-100: oklch(0.97 0 0);
+  --color-neutral-200: oklch(0.922 0 0);
+  --color-neutral-300: oklch(0.87 0 0);
+
+  /* No gold seam — it arrived with the letterhead. */
+  --rule-gold: transparent;
+
+  /* ---- Accent ----------------------------------------------------------
+   * Near-black, inherited from the SaaS template the design system was
+   * extracted from. This is the value the later work replaced with the seal
+   * burgundy, and restoring it is most of what makes this theme read as August.
+   */
+  --accent-solid: oklch(0.205 0 0); /* neutral-900 */
+  --accent-solid-hover: oklch(0.269 0 0); /* neutral-800 */
+  --accent-contrast: oklch(1 0 0); /* white */
+  --accent-ring: oklch(0.87 0 0); /* neutral-300 */
+  --accent-subtle: oklch(0.97 0 0); /* neutral-100 */
+  --accent-text: oklch(0.205 0 0); /* neutral-900 */
+
+  /* ---- Status tones ----------------------------------------------------
+   * August spent eight hues here, one per workflow stage. The current
+   * component only has four slots, so these four carry the four it uses; the
+   * other four return with the pill restoration, along with the round shape
+   * and the dot.
+   */
+  --tone-settled: oklch(0.508 0.118 165.6); /* emerald-700 */
+  --tone-settled-tint: oklch(0.979 0.021 166.1); /* emerald-50 */
+  --tone-process: oklch(0.555 0.135 66.4); /* amber-700 */
+  --tone-process-tint: oklch(0.987 0.022 95.3); /* amber-50 */
+  --tone-halted: oklch(0.505 0.213 27.5); /* red-700 */
+  --tone-halted-tint: oklch(0.971 0.013 17.4); /* red-50 */
+  --tone-inert: oklch(0.371 0 0); /* neutral-700 */
+  --tone-inert-tint: oklch(0.97 0 0); /* neutral-100 */
+}

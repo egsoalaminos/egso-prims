@@ -55,7 +55,7 @@ export function TableHeaderRow({
         // Was bg-neutral-50 with neutral-400 labels — the same #FAFAFA as the
         // canvas behind it, so the header band was invisible and the column
         // names were the faintest text on the page.
-        "bg-(--accent-subtle) text-micro",
+        "bg-(--thead-bg) text-thead",
         // Case, tracking, weight and colour are the theme's, not the table's.
         // A municipal form sets its headings in small caps and rules its
         // columns; a console sets them in sentence case and rules nothing. The

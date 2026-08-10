@@ -7,7 +7,7 @@
  * imported first and must stay imported even when another theme is selected.
  */
 @import "./themes/gso.css";
-@import "./themes/studio.css";
+@import "./themes/original.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -127,6 +127,7 @@
   --spacing-brandb: var(--brand-pb);
   --spacing-barpy: var(--topbar-py);
   --spacing-barpx: var(--topbar-px);
+  --text-thead: var(--thead-size);
 
   --shadow-card: var(--elev-card);
   --shadow-raised: var(--elev-raised);

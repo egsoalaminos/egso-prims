@@ -27,6 +27,15 @@ const TYPE_SCALE = [
   "text-stat",
   "text-title",
   "text-figure",
+  // The table header's own step. It is not part of the seven-step scale — it
+  // exists because the original design set its header at 11px while Theme 1
+  // sets it at 10.5, and one token cannot hold both.
+  //
+  // It was left out of this list when it was added, and the symptom was exactly
+  // the one described above: every table header jumped to the browser's 16px
+  // while the build stayed green. The warning was already written here. Read it
+  // next time.
+  "text-thead",
 ];
 
 const twMerge = extendTailwindMerge({
