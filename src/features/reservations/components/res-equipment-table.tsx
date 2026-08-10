@@ -13,7 +13,7 @@ import { equipmentById, type ReservedEquipment } from "@/features/reservations/t
 export function ResEquipmentTable({ equipment }: { equipment: ReservedEquipment[] }) {
   if (equipment.length === 0) {
     return (
-      <p className="rounded-lg bg-neutral-50 px-3 py-2.5 text-[11.5px] text-neutral-500">
+      <p className="rounded-lg bg-neutral-50 px-3 py-2.5 text-caption text-neutral-500">
         No equipment borrowed with this reservation.
       </p>
     );

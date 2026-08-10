@@ -142,20 +142,20 @@ export function WaterAccountDrawer({
               <div className="grid grid-cols-2 gap-x-4 gap-y-3">
                 <div>
                   <OverlineLabel>Account Number</OverlineLabel>
-                  <div className="mt-0.5 text-[12.5px] tabular-nums text-neutral-800">
+                  <div className="mt-0.5 text-body tabular-nums text-neutral-800">
                     {account.accountNumber}
                   </div>
                 </div>
                 <div>
                   <OverlineLabel>Meter Number</OverlineLabel>
-                  <div className="mt-0.5 inline-flex items-center gap-1.5 text-[12.5px] tabular-nums text-neutral-800">
+                  <div className="mt-0.5 inline-flex items-center gap-1.5 text-body tabular-nums text-neutral-800">
                     <Gauge className="h-3 w-3 text-neutral-400" />
                     {account.meterNumber}
                   </div>
                 </div>
                 <div className="col-span-2">
                   <OverlineLabel>Location</OverlineLabel>
-                  <div className="mt-0.5 inline-flex items-center gap-1.5 text-[12.5px] text-neutral-800">
+                  <div className="mt-0.5 inline-flex items-center gap-1.5 text-body text-neutral-800">
                     <MapPin className="h-3 w-3 text-neutral-400" />
                     {account.location}
                   </div>
@@ -166,7 +166,7 @@ export function WaterAccountDrawer({
               {comparison && (
                 <section className="rounded-lg bg-neutral-50/60 p-3.5">
                   <div className="flex items-center justify-between">
-                    <span className="text-[12.5px] font-semibold text-neutral-900">
+                    <span className="text-body font-semibold text-neutral-900">
                       {periodLabel(month, year)} vs. previous month
                     </span>
                     <StatusBadge status={comparison.status} />
@@ -174,24 +174,24 @@ export function WaterAccountDrawer({
                   <div className="mt-2.5 grid grid-cols-3 gap-3">
                     <div>
                       <OverlineLabel>Current</OverlineLabel>
-                      <div className="text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
+                      <div className="text-stat font-semibold tabular-nums tracking-tight text-neutral-900">
                         {comparison.current === null ? (
                           <span className="text-neutral-300">—</span>
                         ) : (
-                          <CurrencyDisplay amount={comparison.current} className="text-[16px]" />
+                          <CurrencyDisplay amount={comparison.current} className="text-stat" />
                         )}
                       </div>
                     </div>
                     <div>
                       <OverlineLabel>Previous</OverlineLabel>
-                      <div className="text-[16px] font-semibold tabular-nums tracking-tight text-neutral-600">
+                      <div className="text-stat font-semibold tabular-nums tracking-tight text-neutral-600">
                         {comparison.previous === null ? (
                           <span className="text-neutral-300">—</span>
                         ) : (
                           <CurrencyDisplay
                             amount={comparison.previous}
                             muted
-                            className="text-[16px]"
+                            className="text-stat"
                           />
                         )}
                       </div>
@@ -200,7 +200,7 @@ export function WaterAccountDrawer({
                       <OverlineLabel>Difference</OverlineLabel>
                       <div
                         className={
-                          "text-[16px] font-semibold tabular-nums tracking-tight " +
+                          "text-stat font-semibold tabular-nums tracking-tight " +
                           (comparison.status === "Increased"
                             ? "text-red-600"
                             : comparison.status === "Decreased"
@@ -216,7 +216,7 @@ export function WaterAccountDrawer({
                       </div>
                     </div>
                   </div>
-                  <p className="mt-2.5 text-[11.5px] text-neutral-600">
+                  <p className="mt-2.5 text-caption text-neutral-600">
                     {comparisonLabel(comparison.status, comparison.difference, comparison.percent)}
                   </p>
                 </section>
@@ -227,11 +227,11 @@ export function WaterAccountDrawer({
                 <section className="grid grid-cols-3 gap-3">
                   <div className="rounded-lg border border-neutral-200 p-3">
                     <OverlineLabel>Total Water Consumption</OverlineLabel>
-                    <div className="mt-0.5 text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
+                    <div className="mt-0.5 text-stat font-semibold tabular-nums tracking-tight text-neutral-900">
                       {rollup.totalConsumption.toLocaleString("en-PH", {
                         maximumFractionDigits: 0,
                       })}
-                      <span className="ml-1 text-[10.5px] font-normal text-neutral-400">m³</span>
+                      <span className="ml-1 text-micro font-normal text-neutral-400">m³</span>
                     </div>
                   </div>
                   <div className="rounded-lg border border-neutral-200 p-3">
@@ -239,16 +239,16 @@ export function WaterAccountDrawer({
                     <div className="mt-0.5">
                       <CurrencyDisplay
                         amount={rollup.totalAmount}
-                        className="text-[16px] font-semibold"
+                        className="text-stat font-semibold"
                       />
                     </div>
                   </div>
                   <div className="rounded-lg border border-neutral-200 p-3">
                     <OverlineLabel>Active Submeters</OverlineLabel>
-                    <div className="mt-0.5 text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
+                    <div className="mt-0.5 text-stat font-semibold tabular-nums tracking-tight text-neutral-900">
                       {rollup.activeSubmeters}
                       {rollup.totalSubmeters !== rollup.activeSubmeters && (
-                        <span className="ml-1 text-[10.5px] font-normal text-neutral-400">
+                        <span className="ml-1 text-micro font-normal text-neutral-400">
                           of {rollup.totalSubmeters}
                         </span>
                       )}
@@ -309,7 +309,7 @@ export function WaterAccountDrawer({
                                     <div className="font-medium text-neutral-800 underline decoration-neutral-300 underline-offset-2">
                                       {s.submeterName}
                                     </div>
-                                    <div className="text-[10.5px] tabular-nums text-neutral-400">
+                                    <div className="text-micro tabular-nums text-neutral-400">
                                       {s.submeterNumber}
                                     </div>
                                   </button>
@@ -318,7 +318,7 @@ export function WaterAccountDrawer({
                                     <div className="font-medium text-neutral-800">
                                       {s.submeterName}
                                     </div>
-                                    <div className="text-[10.5px] tabular-nums text-neutral-400">
+                                    <div className="text-micro tabular-nums text-neutral-400">
                                       {s.submeterNumber}
                                     </div>
                                   </>
@@ -329,7 +329,7 @@ export function WaterAccountDrawer({
                                   {departmentByCode(s.assignedOffice)?.name ?? s.assignedOffice}
                                 </span>
                                 {(s.assignedDepartment || s.assignedFacility) && (
-                                  <span className="block truncate text-[10.5px] text-neutral-400">
+                                  <span className="block truncate text-micro text-neutral-400">
                                     {[s.assignedDepartment, s.assignedFacility]
                                       .filter(Boolean)
                                       .join(" · ")}
@@ -345,7 +345,7 @@ export function WaterAccountDrawer({
                                     {latest.consumption.toLocaleString("en-PH", {
                                       maximumFractionDigits: 2,
                                     })}
-                                    <span className="ml-1 text-[10.5px] text-neutral-400">
+                                    <span className="ml-1 text-micro text-neutral-400">
                                       m³ · {monthName(latest.billingMonth).slice(0, 3)}{" "}
                                       {latest.billingYear}
                                     </span>
@@ -487,7 +487,7 @@ export function WaterAccountDrawer({
                                 {monthName(b.billingMonth)} {b.billingYear}
                               </span>
                               {b.docNumber && (
-                                <span className="block text-[10.5px] tabular-nums text-neutral-400">
+                                <span className="block text-micro tabular-nums text-neutral-400">
                                   {b.docNumber}
                                 </span>
                               )}
@@ -530,7 +530,7 @@ export function WaterAccountDrawer({
                     </Table>
                   </div>
                 )}
-                <Caption as="p" className="mt-2 text-[10.5px]">
+                <Caption as="p" className="mt-2 text-micro">
                   Registered {format(new Date(account.createdAt), "d MMMM yyyy")} · {bills.length}{" "}
                   billing record{bills.length === 1 ? "" : "s"}
                 </Caption>

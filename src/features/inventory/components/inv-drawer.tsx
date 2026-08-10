@@ -91,16 +91,16 @@ export function InvDrawer({
 
               <Tabs defaultValue="stock-card">
                 <TabsList className="w-full justify-start bg-neutral-100">
-                  <TabsTrigger value="stock-card" className="text-[12.5px]">
+                  <TabsTrigger value="stock-card" className="text-body">
                     Stock Card
                   </TabsTrigger>
-                  <TabsTrigger value="attachments" className="text-[12.5px]">
+                  <TabsTrigger value="attachments" className="text-body">
                     Attachments ({item.attachments.length})
                   </TabsTrigger>
-                  <TabsTrigger value="comments" className="text-[12.5px]">
+                  <TabsTrigger value="comments" className="text-body">
                     Comments ({item.comments.length})
                   </TabsTrigger>
-                  <TabsTrigger value="history" className="text-[12.5px]">
+                  <TabsTrigger value="history" className="text-body">
                     History
                   </TabsTrigger>
                 </TabsList>

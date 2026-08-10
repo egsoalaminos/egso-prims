@@ -81,7 +81,7 @@ export function InfoChip({
         // The leading rule matches the status tag's anatomy. Both are chips in
         // the same system and were drawn two different ways; this one stays in
         // the inert tone because it reports a fact, not a state.
-        "flex items-center gap-1.5 border border-l-2 border-neutral-200 border-l-(--tone-inert) bg-white px-2.5 py-1.5 text-[12.5px] text-neutral-700",
+        "flex items-center gap-1.5 border border-l-2 border-neutral-200 border-l-(--tone-inert) bg-white px-2.5 py-1.5 text-body text-neutral-700",
         className,
       )}
     >
@@ -114,7 +114,7 @@ export function DepartmentChip({ code, name, className }: DepartmentChipProps) {
     <span
       title={name}
       className={cn(
-        "inline-flex items-center whitespace-nowrap text-[12.5px] font-medium tracking-[0.02em] text-neutral-600",
+        "inline-flex items-center whitespace-nowrap text-body font-medium tracking-[0.02em] text-neutral-600",
         className,
       )}
     >

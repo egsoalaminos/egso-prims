@@ -104,9 +104,9 @@ function StatTile({
         <div className="grid h-7 w-7 place-items-center rounded-lg bg-neutral-100 text-neutral-600">
           <Icon className="h-3.5 w-3.5" />
         </div>
-        <span className="text-[12.5px] text-neutral-500">{label}</span>
+        <span className="text-body text-neutral-500">{label}</span>
       </div>
-      <div className="mt-3 text-[22px] font-semibold tracking-tight text-neutral-900 tabular-nums">
+      <div className="mt-3 text-title font-semibold tracking-tight text-neutral-900 tabular-nums">
         {children}
       </div>
     </ContainerCard>
@@ -246,25 +246,25 @@ export function AnalyticsPanels({
   return (
     <Tabs defaultValue="overview">
       <TabsList className="bg-neutral-100">
-        <TabsTrigger value="overview" className="text-[12.5px]">
+        <TabsTrigger value="overview" className="text-body">
           Overview
         </TabsTrigger>
-        <TabsTrigger value="procurement" className="text-[12.5px]">
+        <TabsTrigger value="procurement" className="text-body">
           Procurement
         </TabsTrigger>
-        <TabsTrigger value="inventory" className="text-[12.5px]">
+        <TabsTrigger value="inventory" className="text-body">
           Inventory
         </TabsTrigger>
-        <TabsTrigger value="facilities" className="text-[12.5px]">
+        <TabsTrigger value="facilities" className="text-body">
           Facilities
         </TabsTrigger>
-        <TabsTrigger value="energy" className="text-[12.5px]">
+        <TabsTrigger value="energy" className="text-body">
           Energy
         </TabsTrigger>
-        <TabsTrigger value="water" className="text-[12.5px]">
+        <TabsTrigger value="water" className="text-body">
           Water
         </TabsTrigger>
-        <TabsTrigger value="fuel" className="text-[12.5px]">
+        <TabsTrigger value="fuel" className="text-body">
           Fuel
         </TabsTrigger>
       </TabsList>
@@ -366,7 +366,7 @@ export function AnalyticsPanels({
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <StatTile icon={Wallet} label="Procurement This Month">
-              {loading ? <Skeleton className="h-7 w-28" /> : <CurrencyDisplay amount={procurementThisMonth} className="text-[22px] font-semibold" />}
+              {loading ? <Skeleton className="h-7 w-28" /> : <CurrencyDisplay amount={procurementThisMonth} className="text-title font-semibold" />}
             </StatTile>
             <StatTile icon={Clock3} label="Pending Approvals">
               {loading ? <Skeleton className="h-7 w-16" /> : pendingApprovals}
@@ -389,7 +389,7 @@ export function AnalyticsPanels({
             <ContainerCard padded>
               <div className="mb-3 flex items-center gap-2">
                 <Building2 className="h-4 w-4 text-neutral-600" />
-                <h3 className="text-[14px] font-semibold text-neutral-900">Supplier Activity</h3>
+                <h3 className="text-section font-semibold text-neutral-900">Supplier Activity</h3>
               </div>
               {loading ? (
                 <Skeleton className="h-[200px] w-full rounded-lg" />
@@ -427,7 +427,7 @@ export function AnalyticsPanels({
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <StatTile icon={Wallet} label="Inventory Value">
-              {loading ? <Skeleton className="h-7 w-28" /> : <CurrencyDisplay amount={invValue} className="text-[22px] font-semibold" />}
+              {loading ? <Skeleton className="h-7 w-28" /> : <CurrencyDisplay amount={invValue} className="text-title font-semibold" />}
             </StatTile>
             <StatTile icon={Boxes} label="Low Stock Items">
               {loading ? <Skeleton className="h-7 w-16" /> : low.length}
@@ -440,12 +440,12 @@ export function AnalyticsPanels({
             <ContainerCard padded>
               <div className="mb-4 flex items-center gap-2">
                 <Boxes className="h-4 w-4 text-neutral-600" />
-                <h3 className="text-[14px] font-semibold text-neutral-900">Most Requested Items</h3>
+                <h3 className="text-section font-semibold text-neutral-900">Most Requested Items</h3>
               </div>
               <ul className="space-y-3">
                 {mostRequested.map(([name, qty]) => (
                   <li key={name}>
-                    <div className="flex items-center justify-between text-[12.5px]">
+                    <div className="flex items-center justify-between text-body">
                       <span className="text-neutral-700">{name}</span>
                       <span className="tabular-nums text-neutral-500">{qty} issued</span>
                     </div>
@@ -457,7 +457,7 @@ export function AnalyticsPanels({
                 <OverlineLabel>Least Requested</OverlineLabel>
                 <ul className="mt-1.5 space-y-1">
                   {leastRequested.map(([name, qty]) => (
-                    <li key={name} className="flex items-center justify-between text-[11.5px]">
+                    <li key={name} className="flex items-center justify-between text-caption">
                       <span className="text-neutral-600">{name}</span>
                       <span className="tabular-nums text-neutral-400">{qty} issued</span>
                     </li>
@@ -468,7 +468,7 @@ export function AnalyticsPanels({
             <ContainerCard padded>
               <div className="mb-3 flex items-center gap-2">
                 <ArrowLeftRight className="h-4 w-4 text-neutral-600" />
-                <h3 className="text-[14px] font-semibold text-neutral-900">Recent Stock Movements</h3>
+                <h3 className="text-section font-semibold text-neutral-900">Recent Stock Movements</h3>
               </div>
               {loading ? (
                 <Skeleton className="h-[220px] w-full rounded-lg" />
@@ -508,7 +508,7 @@ export function AnalyticsPanels({
                   </Table>
                 </div>
               )}
-              <Caption as="p" className="mt-2 text-[10.5px]">
+              <Caption as="p" className="mt-2 text-micro">
                 Movements from POs, RIS releases, adjustments, returns, and corrections.
               </Caption>
             </ContainerCard>
@@ -522,7 +522,7 @@ export function AnalyticsPanels({
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <StatTile icon={Building2} label="Most Reserved Facility">
               {loading ? <Skeleton className="h-7 w-32" /> : (
-                <span className="text-[16px]">{facCounts[0]?.[0] ?? "—"}</span>
+                <span className="text-stat">{facCounts[0]?.[0] ?? "—"}</span>
               )}
             </StatTile>
             <StatTile icon={CalendarDays} label="Reservation Frequency">
@@ -588,7 +588,7 @@ export function AnalyticsPanels({
               ) : (
                 <CurrencyDisplay
                   amount={energyOverall.currentTotal}
-                  className="text-[22px] font-semibold"
+                  className="text-title font-semibold"
                 />
               )}
             </StatTile>
@@ -603,7 +603,7 @@ export function AnalyticsPanels({
               {loading ? (
                 <Skeleton className="h-7 w-32" />
               ) : (
-                <span className="text-[16px]">
+                <span className="text-stat">
                   {energyRanked[0] ? accountLabel(energyRanked[0].account) : "—"}
                 </span>
               )}
@@ -679,7 +679,7 @@ export function AnalyticsPanels({
               ) : (
                 <CurrencyDisplay
                   amount={waterOverall.currentTotal}
-                  className="text-[22px] font-semibold"
+                  className="text-title font-semibold"
                 />
               )}
             </StatTile>
@@ -694,7 +694,7 @@ export function AnalyticsPanels({
               {loading ? (
                 <Skeleton className="h-7 w-32" />
               ) : (
-                <span className="text-[16px]">
+                <span className="text-stat">
                   {waterRanked[0] ? waterAccountLabel(waterRanked[0].account) : "—"}
                 </span>
               )}
@@ -770,7 +770,7 @@ export function AnalyticsPanels({
               ) : (
                 <CurrencyDisplay
                   amount={fuelOverall.currentTotal}
-                  className="text-[22px] font-semibold"
+                  className="text-title font-semibold"
                 />
               )}
             </StatTile>
@@ -785,7 +785,7 @@ export function AnalyticsPanels({
               {loading ? (
                 <Skeleton className="h-7 w-32" />
               ) : (
-                <span className="text-[16px]">
+                <span className="text-stat">
                   {fuelRanked[0] ? vehicleLabel(fuelRanked[0].vehicle) : "—"}
                 </span>
               )}

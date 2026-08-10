@@ -65,11 +65,11 @@ export function ConfirmationModal({
         >
           <Icon className="h-5 w-5" />
         </span>
-        <DialogTitle className="mt-3 text-[14px] font-semibold text-neutral-900">
+        <DialogTitle className="mt-3 text-section font-semibold text-neutral-900">
           {title}
         </DialogTitle>
         {description && (
-          <DialogDescription className="mt-1 text-[12.5px] leading-relaxed text-neutral-500">
+          <DialogDescription className="mt-1 text-body leading-relaxed text-neutral-500">
             {description}
           </DialogDescription>
         )}

@@ -57,7 +57,7 @@ export function TableHeaderRow({
         // names were the faintest text on the page. The accent tokens give it a
         // tint and a legible label, and they carry a dark-mode value, which a
         // literal colour would not.
-        "bg-(--accent-subtle) text-[10.5px] uppercase tracking-wider text-(--accent-text)",
+        "bg-(--accent-subtle) text-micro uppercase tracking-wider text-(--accent-text)",
         // A government form rules its columns. Without this the headings ran
         // together — "Quantity" and "Unit" separated by nothing but whitespace,
         // which is the one place a reader most needs to know where one field
@@ -94,7 +94,7 @@ export function TableBody({
   className,
   ...props
 }: React.HTMLAttributes<HTMLTableSectionElement>) {
-  return <tbody className={cn("text-[12.5px] text-neutral-700", className)} {...props} />;
+  return <tbody className={cn("text-body text-neutral-700", className)} {...props} />;
 }
 
 export function TableRow({

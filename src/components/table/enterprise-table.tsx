@@ -281,7 +281,7 @@ export function TablePagination({
         className,
       )}
     >
-      <span className="text-[12.5px] text-neutral-500">
+      <span className="text-body text-neutral-500">
         Page {pageIndex + 1} of {pageCount}
       </span>
       <div className="flex items-center gap-1.5">
@@ -326,7 +326,7 @@ export function TableCard({
           {action && (
             <button
               onClick={action.onClick}
-              className="text-[12.5px] font-medium text-neutral-500 transition hover:text-neutral-900"
+              className="text-body font-medium text-neutral-500 transition hover:text-neutral-900"
             >
               {action.label}
             </button>

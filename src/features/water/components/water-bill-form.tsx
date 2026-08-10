@@ -227,7 +227,7 @@ export function WaterBillForm({
             />
           </Field>
           {isEdit && (
-            <p className="rounded-lg bg-neutral-50 px-3 py-2.5 text-[11.5px] leading-relaxed text-neutral-500">
+            <p className="rounded-lg bg-neutral-50 px-3 py-2.5 text-caption leading-relaxed text-neutral-500">
               The billing period cannot be changed. Delete the record and re-enter it if the month
               or year was recorded incorrectly.
             </p>

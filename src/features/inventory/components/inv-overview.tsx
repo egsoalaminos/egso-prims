@@ -14,7 +14,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   return (
     <div>
       <OverlineLabel>{label}</OverlineLabel>
-      <div className="mt-0.5 text-[12.5px] text-neutral-800">{children}</div>
+      <div className="mt-0.5 text-body text-neutral-800">{children}</div>
     </div>
   );
 }
@@ -30,7 +30,7 @@ function Section({
 }) {
   return (
     <section className="rounded-lg border border-neutral-200 p-3.5">
-      <div className="mb-2.5 flex items-center gap-1.5 text-[12.5px] font-semibold text-neutral-900">
+      <div className="mb-2.5 flex items-center gap-1.5 text-body font-semibold text-neutral-900">
         <Icon className="h-3.5 w-3.5 text-neutral-500" />
         {title}
       </div>
@@ -78,26 +78,26 @@ export function InvOverview({
       {/* Stock summary */}
       <section className="rounded-lg bg-neutral-50/60 p-3.5">
         <div className="flex items-center justify-between">
-          <span className="text-[12.5px] font-semibold text-neutral-900">Stock Summary</span>
+          <span className="text-body font-semibold text-neutral-900">Stock Summary</span>
           <StatusBadge status={status} />
         </div>
         <div className="mt-2.5 grid grid-cols-3 gap-3">
           <div>
             <OverlineLabel>On Hand</OverlineLabel>
-            <div className="text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
+            <div className="text-stat font-semibold tabular-nums tracking-tight text-neutral-900">
               {item.onHand}
-              <span className="ml-1 text-[10.5px] font-normal text-neutral-500">{item.unit}</span>
+              <span className="ml-1 text-micro font-normal text-neutral-500">{item.unit}</span>
             </div>
           </div>
           <div>
             <OverlineLabel>Reorder Level</OverlineLabel>
-            <div className="text-[16px] font-semibold tabular-nums tracking-tight text-neutral-700">
+            <div className="text-stat font-semibold tabular-nums tracking-tight text-neutral-700">
               {item.reorderLevel}
             </div>
           </div>
           <div>
             <OverlineLabel>Critical Level</OverlineLabel>
-            <div className="text-[16px] font-semibold tabular-nums tracking-tight text-neutral-700">
+            <div className="text-stat font-semibold tabular-nums tracking-tight text-neutral-700">
               {item.criticalLevel}
             </div>
           </div>
@@ -107,7 +107,7 @@ export function InvOverview({
 
       {/* Pricing */}
       <Section icon={PhilippinePeso} title="Pricing">
-        <dl className="space-y-1.5 text-[12.5px]">
+        <dl className="space-y-1.5 text-body">
           <div className="flex items-center justify-between">
             <dt className="text-neutral-500">Unit price</dt>
             <dd>
@@ -119,7 +119,7 @@ export function InvOverview({
               Item value ({item.onHand} × {item.unitPrice.toLocaleString()})
             </dt>
             <dd>
-              <CurrencyDisplay amount={itemValue(item)} className="text-[14px] font-semibold" />
+              <CurrencyDisplay amount={itemValue(item)} className="text-section font-semibold" />
             </dd>
           </div>
         </dl>
@@ -127,12 +127,12 @@ export function InvOverview({
 
       {/* Supplier */}
       <Section icon={Building2} title="Supplier">
-        <div className="text-[12.5px] font-medium text-neutral-900">{supplier?.name}</div>
+        <div className="text-body font-medium text-neutral-900">{supplier?.name}</div>
         {supplier?.contactPerson && (
-          <div className="mt-0.5 text-[11.5px] text-neutral-600">{supplier.contactPerson}</div>
+          <div className="mt-0.5 text-caption text-neutral-600">{supplier.contactPerson}</div>
         )}
-        <div className="mt-0.5 text-[11.5px] leading-snug text-neutral-500">{supplier?.address}</div>
-        <div className="mt-0.5 text-[11.5px] text-neutral-500">
+        <div className="mt-0.5 text-caption leading-snug text-neutral-500">{supplier?.address}</div>
+        <div className="mt-0.5 text-caption text-neutral-500">
           {supplier?.contact}
           {supplier?.email && <> · {supplier.email}</>}
         </div>
@@ -141,7 +141,7 @@ export function InvOverview({
             <OverlineLabel>Recent Deliveries</OverlineLabel>
             <ul className="mt-1 space-y-1">
               {recentDeliveries.slice(0, 3).map((po) => (
-                <li key={po.id} className="flex items-center justify-between text-[11.5px]">
+                <li key={po.id} className="flex items-center justify-between text-caption">
                   <span className="font-medium text-neutral-700">{po.poNumber}</span>
                   <span className="text-neutral-500">
                     {format(new Date(po.issuedDate), "d MMM yyyy")} · {po.status}
@@ -158,7 +158,7 @@ export function InvOverview({
         <Section icon={Truck} title="Recent Stock Movement">
           <ul className="space-y-1.5">
             {recentMovements.slice(0, 4).map((e) => (
-              <li key={e.id} className="flex items-center justify-between gap-3 text-[11.5px]">
+              <li key={e.id} className="flex items-center justify-between gap-3 text-caption">
                 <span className="min-w-0 truncate text-neutral-600">
                   <span className="font-medium text-neutral-800">{e.documentNumber}</span> · {e.type}
                 </span>

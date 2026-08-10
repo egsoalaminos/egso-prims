@@ -31,8 +31,8 @@ export function ActivityTimeline({
               <Icon className="h-3.5 w-3.5" />
             </span>
             <div className="min-w-0 flex-1">
-              <div className="text-[12.5px] text-neutral-800">{it.text}</div>
-              {it.time && <div className="text-[10.5px] text-neutral-500">{it.time}</div>}
+              <div className="text-body text-neutral-800">{it.text}</div>
+              {it.time && <div className="text-micro text-neutral-500">{it.time}</div>}
             </div>
           </li>
         );
@@ -64,13 +64,13 @@ export function HistoryTimeline({
     <ul className={cn("space-y-3", className)}>
       {items.map((e, i) => (
         <li key={i} className="flex items-start gap-3">
-          <span className="mt-0.5 w-12 shrink-0 text-[12.5px] font-medium tabular-nums text-neutral-700">
+          <span className="mt-0.5 w-12 shrink-0 text-body font-medium tabular-nums text-neutral-700">
             {e.time}
           </span>
           <span className={cn("mt-1 h-2 w-2 shrink-0 rounded-full", e.tone)} />
           <div className="min-w-0 flex-1">
-            <div className="truncate text-[12.5px] font-medium text-neutral-900">{e.title}</div>
-            {e.meta && <div className="text-[11.5px] text-neutral-500">{e.meta}</div>}
+            <div className="truncate text-body font-medium text-neutral-900">{e.title}</div>
+            {e.meta && <div className="text-caption text-neutral-500">{e.meta}</div>}
           </div>
         </li>
       ))}
@@ -126,26 +126,26 @@ export function ApprovalTimeline({
               <div className="flex items-center justify-between gap-2">
                 <span
                   className={cn(
-                    "text-[12.5px] font-medium",
+                    "text-body font-medium",
                     step.status === "pending" ? "text-neutral-500" : "text-neutral-900",
                   )}
                 >
                   {step.label}
                 </span>
-                {step.time && <span className="shrink-0 text-[10.5px] text-neutral-500">{step.time}</span>}
+                {step.time && <span className="shrink-0 text-micro text-neutral-500">{step.time}</span>}
               </div>
-              {step.meta && <div className="text-[11.5px] text-neutral-500">{step.meta}</div>}
+              {step.meta && <div className="text-caption text-neutral-500">{step.meta}</div>}
               {step.person && (
                 <div className="mt-1.5 flex items-center gap-1.5">
-                  <Avatar size="sm" name={step.person.name} className="h-5 w-5 text-[10.5px]" />
-                  <span className="text-[11.5px] text-neutral-700">{step.person.name}</span>
+                  <Avatar size="sm" name={step.person.name} className="h-5 w-5 text-micro" />
+                  <span className="text-caption text-neutral-700">{step.person.name}</span>
                   {step.person.office && (
-                    <span className="text-[10.5px] text-neutral-400">· {step.person.office}</span>
+                    <span className="text-micro text-neutral-400">· {step.person.office}</span>
                   )}
                 </div>
               )}
               {step.remarks && (
-                <p className="mt-1.5 rounded-lg bg-neutral-50 px-2.5 py-1.5 text-[11.5px] leading-snug text-neutral-600">
+                <p className="mt-1.5 rounded-lg bg-neutral-50 px-2.5 py-1.5 text-caption leading-snug text-neutral-600">
                   “{step.remarks}”
                 </p>
               )}

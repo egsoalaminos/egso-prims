@@ -21,7 +21,7 @@ export function OfficeSwitcher({ current, offices = [], onSelect, className }: O
   const trigger = (
     <button
       className={cn(
-        "hidden items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-2.5 py-1.5 text-[12.5px] font-medium text-neutral-700 transition hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-300 md:flex",
+        "hidden items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-2.5 py-1.5 text-body font-medium text-neutral-700 transition hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-300 md:flex",
         className,
       )}
     >
@@ -41,7 +41,7 @@ export function OfficeSwitcher({ current, offices = [], onSelect, className }: O
           <DropdownMenuItem
             key={office}
             onClick={() => onSelect?.(office)}
-            className={cn("text-[12.5px]", office === current && "font-medium")}
+            className={cn("text-body", office === current && "font-medium")}
           >
             {office}
           </DropdownMenuItem>

@@ -64,21 +64,21 @@ function createText<D extends React.ElementType>(
  */
 export const PageTitle = createText(
   "h1",
-  "font-serif text-[22px] font-semibold tracking-tight text-(--accent-text)",
+  "font-serif text-title font-semibold tracking-tight text-(--accent-text)",
   "PageTitle",
 );
 
 /** 14px semibold — card and section headings. */
 export const SectionTitle = createText(
   "h2",
-  "text-[14px] font-semibold text-neutral-900",
+  "text-section font-semibold text-neutral-900",
   "SectionTitle",
 );
 
 /** 12.5px muted — descriptive line under a page title. */
 export const Subtitle = createText(
   "p",
-  "text-[12.5px] text-neutral-500",
+  "text-body text-neutral-500",
   "Subtitle",
 );
 
@@ -94,7 +94,7 @@ export const Subtitle = createText(
  */
 export const OverlineLabel = createText(
   "div",
-  "text-[10.5px] font-semibold uppercase tracking-wider text-neutral-500",
+  "text-micro font-semibold uppercase tracking-wider text-neutral-500",
   "OverlineLabel",
 );
 
@@ -110,20 +110,20 @@ export const OverlineLabel = createText(
  */
 export const InstitutionalLabel = createText(
   "div",
-  "text-[10.5px] font-semibold uppercase tracking-[0.16em] text-neutral-500",
+  "text-micro font-semibold uppercase tracking-[0.16em] text-neutral-500",
   "InstitutionalLabel",
 );
 
 /** 11.5px muted — meta text, timestamps, helper copy. */
 export const Caption = createText(
   "span",
-  "text-[11.5px] text-neutral-500",
+  "text-caption text-neutral-500",
   "Caption",
 );
 
 /** 12.5px default body copy. */
 export const BodyText = createText(
   "p",
-  "text-[12.5px] text-neutral-700",
+  "text-body text-neutral-700",
   "BodyText",
 );

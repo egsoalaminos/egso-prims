@@ -32,7 +32,7 @@ export function DatePicker({
           disabled={disabled}
           aria-invalid={invalid || undefined}
           className={cn(
-            "flex w-full items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-[12.5px] transition focus:outline-none focus:ring-2 focus:ring-neutral-200 disabled:pointer-events-none disabled:opacity-60 aria-invalid:border-red-300",
+            "flex w-full items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-body transition focus:outline-none focus:ring-2 focus:ring-neutral-200 disabled:pointer-events-none disabled:opacity-60 aria-invalid:border-red-300",
             value ? "text-neutral-800" : "text-neutral-400",
             className,
           )}

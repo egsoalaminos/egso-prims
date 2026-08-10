@@ -330,7 +330,7 @@ export function DashboardPage() {
           <ul className="space-y-3">
             {inventoryHealth.map((item) => (
               <li key={item.name}>
-                <div className="flex items-center justify-between text-[12.5px]">
+                <div className="flex items-center justify-between text-body">
                   <span className="text-neutral-700">{item.name}</span>
                   <span className="tabular-nums text-neutral-500">{item.pct}%</span>
                 </div>

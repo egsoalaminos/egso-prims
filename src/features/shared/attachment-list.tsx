@@ -84,7 +84,7 @@ export function AttachmentList({
               {a.kind === "pdf" ? <FileText className="h-4 w-4" /> : <ImageIcon className="h-4 w-4" />}
             </span>
             <div className="min-w-0 flex-1">
-              <div className="truncate text-[12.5px] font-medium text-neutral-900">{a.name}</div>
+              <div className="truncate text-body font-medium text-neutral-900">{a.name}</div>
               <Caption>
                 {formatSize(a.size)} · {a.uploadedBy} · {formatDateTime(a.uploadedAt)}
               </Caption>

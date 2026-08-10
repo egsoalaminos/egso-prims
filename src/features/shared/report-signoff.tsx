@@ -14,7 +14,7 @@ export function ReportSignatures() {
   const [preparedBy, setPreparedBy] = React.useState("");
   const [approver, setApprover] = React.useState("");
   return (
-    <div className="mt-12 flex gap-16 text-[11.5px]">
+    <div className="mt-12 flex gap-16 text-caption">
       <SignatureField
         label="Prepared by:"
         value={preparedBy}
@@ -48,7 +48,7 @@ function SignatureField({
 }) {
   return (
     <div className="flex-1">
-      <div className="text-[10.5px] text-neutral-500">{label}</div>
+      <div className="text-micro text-neutral-500">{label}</div>
       <input
         aria-label={label}
         value={value}
@@ -56,7 +56,7 @@ function SignatureField({
         placeholder={placeholder}
         className="mt-9 w-full appearance-none rounded-none border-0 border-t border-neutral-900 bg-neutral-50/70 p-0 pt-1.5 font-bold text-neutral-900 outline-none placeholder:font-normal placeholder:text-neutral-400 focus:bg-neutral-100 print:bg-transparent print:placeholder:text-transparent"
       />
-      <div className="text-[10.5px] text-neutral-500">{role}</div>
+      <div className="text-micro text-neutral-500">{role}</div>
     </div>
   );
 }

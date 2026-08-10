@@ -140,20 +140,20 @@ export function EnergyAccountDrawer({
               <div className="grid grid-cols-2 gap-x-4 gap-y-3">
                 <div>
                   <OverlineLabel>Account Number</OverlineLabel>
-                  <div className="mt-0.5 text-[12.5px] tabular-nums text-neutral-800">
+                  <div className="mt-0.5 text-body tabular-nums text-neutral-800">
                     {account.accountNumber}
                   </div>
                 </div>
                 <div>
                   <OverlineLabel>Meter Number</OverlineLabel>
-                  <div className="mt-0.5 inline-flex items-center gap-1.5 text-[12.5px] tabular-nums text-neutral-800">
+                  <div className="mt-0.5 inline-flex items-center gap-1.5 text-body tabular-nums text-neutral-800">
                     <Gauge className="h-3 w-3 text-neutral-400" />
                     {account.meterNumber}
                   </div>
                 </div>
                 <div className="col-span-2">
                   <OverlineLabel>Location</OverlineLabel>
-                  <div className="mt-0.5 inline-flex items-center gap-1.5 text-[12.5px] text-neutral-800">
+                  <div className="mt-0.5 inline-flex items-center gap-1.5 text-body text-neutral-800">
                     <MapPin className="h-3 w-3 text-neutral-400" />
                     {account.location}
                   </div>
@@ -164,7 +164,7 @@ export function EnergyAccountDrawer({
               {comparison && (
                 <section className="rounded-lg bg-neutral-50/60 p-3.5">
                   <div className="flex items-center justify-between">
-                    <span className="text-[12.5px] font-semibold text-neutral-900">
+                    <span className="text-body font-semibold text-neutral-900">
                       {periodLabel(month, year)} vs. previous month
                     </span>
                     <StatusBadge status={comparison.status} />
@@ -172,24 +172,24 @@ export function EnergyAccountDrawer({
                   <div className="mt-2.5 grid grid-cols-3 gap-3">
                     <div>
                       <OverlineLabel>Current</OverlineLabel>
-                      <div className="text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
+                      <div className="text-stat font-semibold tabular-nums tracking-tight text-neutral-900">
                         {comparison.current === null ? (
                           <span className="text-neutral-300">—</span>
                         ) : (
-                          <CurrencyDisplay amount={comparison.current} className="text-[16px]" />
+                          <CurrencyDisplay amount={comparison.current} className="text-stat" />
                         )}
                       </div>
                     </div>
                     <div>
                       <OverlineLabel>Previous</OverlineLabel>
-                      <div className="text-[16px] font-semibold tabular-nums tracking-tight text-neutral-600">
+                      <div className="text-stat font-semibold tabular-nums tracking-tight text-neutral-600">
                         {comparison.previous === null ? (
                           <span className="text-neutral-300">—</span>
                         ) : (
                           <CurrencyDisplay
                             amount={comparison.previous}
                             muted
-                            className="text-[16px]"
+                            className="text-stat"
                           />
                         )}
                       </div>
@@ -198,7 +198,7 @@ export function EnergyAccountDrawer({
                       <OverlineLabel>Difference</OverlineLabel>
                       <div
                         className={
-                          "text-[16px] font-semibold tabular-nums tracking-tight " +
+                          "text-stat font-semibold tabular-nums tracking-tight " +
                           (comparison.status === "Increased"
                             ? "text-red-600"
                             : comparison.status === "Decreased"
@@ -214,7 +214,7 @@ export function EnergyAccountDrawer({
                       </div>
                     </div>
                   </div>
-                  <p className="mt-2.5 text-[11.5px] text-neutral-600">
+                  <p className="mt-2.5 text-caption text-neutral-600">
                     {comparisonLabel(comparison.status, comparison.difference, comparison.percent)}
                   </p>
                 </section>
@@ -225,11 +225,11 @@ export function EnergyAccountDrawer({
                 <section className="grid grid-cols-3 gap-3">
                   <div className="rounded-lg border border-neutral-200 p-3">
                     <OverlineLabel>Total Consumption</OverlineLabel>
-                    <div className="mt-0.5 text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
+                    <div className="mt-0.5 text-stat font-semibold tabular-nums tracking-tight text-neutral-900">
                       {rollup.totalConsumption.toLocaleString("en-PH", {
                         maximumFractionDigits: 0,
                       })}
-                      <span className="ml-1 text-[10.5px] font-normal text-neutral-400">KW</span>
+                      <span className="ml-1 text-micro font-normal text-neutral-400">KW</span>
                     </div>
                   </div>
                   <div className="rounded-lg border border-neutral-200 p-3">
@@ -237,16 +237,16 @@ export function EnergyAccountDrawer({
                     <div className="mt-0.5">
                       <CurrencyDisplay
                         amount={rollup.totalAmount}
-                        className="text-[16px] font-semibold"
+                        className="text-stat font-semibold"
                       />
                     </div>
                   </div>
                   <div className="rounded-lg border border-neutral-200 p-3">
                     <OverlineLabel>Active Submeters</OverlineLabel>
-                    <div className="mt-0.5 text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
+                    <div className="mt-0.5 text-stat font-semibold tabular-nums tracking-tight text-neutral-900">
                       {rollup.activeSubmeters}
                       {rollup.totalSubmeters !== rollup.activeSubmeters && (
-                        <span className="ml-1 text-[10.5px] font-normal text-neutral-400">
+                        <span className="ml-1 text-micro font-normal text-neutral-400">
                           of {rollup.totalSubmeters}
                         </span>
                       )}
@@ -301,7 +301,7 @@ export function EnergyAccountDrawer({
                               <div className="truncate font-medium text-neutral-800">
                                 {c.submeter.submeterName}
                               </div>
-                              <div className="text-[10.5px] tabular-nums text-neutral-400">
+                              <div className="text-micro tabular-nums text-neutral-400">
                                 {c.submeter.submeterNumber}
                               </div>
                             </TableCell>
@@ -342,7 +342,7 @@ export function EnergyAccountDrawer({
                                     c.difference,
                                   ).toLocaleString("en-PH", { maximumFractionDigits: 2 })}`}
                               {c.percent !== null && c.status !== "No Change" && (
-                                <span className="ml-1 text-[10.5px] opacity-70">
+                                <span className="ml-1 text-micro opacity-70">
                                   ({Math.abs(c.percent).toFixed(2)}%)
                                 </span>
                               )}
@@ -475,7 +475,7 @@ export function EnergyAccountDrawer({
                                 {monthName(b.billingMonth)} {b.billingYear}
                               </span>
                               {b.docNumber && (
-                                <span className="block text-[10.5px] tabular-nums text-neutral-400">
+                                <span className="block text-micro tabular-nums text-neutral-400">
                                   {b.docNumber}
                                 </span>
                               )}
@@ -515,7 +515,7 @@ export function EnergyAccountDrawer({
                     </Table>
                   </div>
                 )}
-                <Caption as="p" className="mt-2 text-[10.5px]">
+                <Caption as="p" className="mt-2 text-micro">
                   Registered {format(new Date(account.createdAt), "d MMMM yyyy")} ·{" "}
                   {bills.length} billing record{bills.length === 1 ? "" : "s"}
                 </Caption>

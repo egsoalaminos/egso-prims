@@ -48,13 +48,13 @@ export function CommentThread({
               <Avatar size="sm" name={c.author} />
               <div className="min-w-0 flex-1">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-[12.5px] font-semibold text-neutral-900">{c.author}</span>
-                  <Caption className="text-[10.5px]">{c.office}</Caption>
-                  <Caption className="ml-auto shrink-0 text-[10.5px]">
+                  <span className="text-body font-semibold text-neutral-900">{c.author}</span>
+                  <Caption className="text-micro">{c.office}</Caption>
+                  <Caption className="ml-auto shrink-0 text-micro">
                     {format(new Date(c.createdAt), "d MMM yyyy · h:mm a")}
                   </Caption>
                 </div>
-                <div className="mt-1 rounded-lg rounded-tl-sm bg-neutral-50 px-3 py-2 text-[12.5px] leading-relaxed text-neutral-800">
+                <div className="mt-1 rounded-lg rounded-tl-sm bg-neutral-50 px-3 py-2 text-body leading-relaxed text-neutral-800">
                   {c.text}
                 </div>
                 {c.attachments && c.attachments.length > 0 && (
@@ -62,7 +62,7 @@ export function CommentThread({
                     {c.attachments.map((name) => (
                       <span
                         key={name}
-                        className="inline-flex items-center gap-1 rounded-md border border-neutral-200 bg-white px-1.5 py-0.5 text-[10.5px] text-neutral-600"
+                        className="inline-flex items-center gap-1 rounded-md border border-neutral-200 bg-white px-1.5 py-0.5 text-micro text-neutral-600"
                       >
                         <Paperclip className="h-2.5 w-2.5" />
                         {name}

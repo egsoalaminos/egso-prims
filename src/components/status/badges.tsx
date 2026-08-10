@@ -55,7 +55,7 @@ function Tag({
     <span
       style={toneVars[tone]}
       className={cn(
-        "inline-flex items-center whitespace-nowrap border border-l-2 px-2 py-0.5 text-[10.5px] font-semibold uppercase tracking-[0.06em]",
+        "inline-flex items-center whitespace-nowrap border border-l-2 px-2 py-0.5 text-micro font-semibold uppercase tracking-[0.06em]",
         "border-(--tag-ink)/25 border-l-(--tag-ink) bg-(--tag-tint) text-(--tag-ink)",
         className,
       )}
@@ -263,7 +263,7 @@ export function NotificationBadge({
     <span
       style={toneVars[tone]}
       className={cn(
-        "border border-(--tag-ink)/25 bg-(--tag-tint) px-1.5 py-0.5 text-[10.5px] font-semibold tabular-nums text-(--tag-ink)",
+        "border border-(--tag-ink)/25 bg-(--tag-tint) px-1.5 py-0.5 text-micro font-semibold tabular-nums text-(--tag-ink)",
         className,
       )}
     >

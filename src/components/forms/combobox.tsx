@@ -83,7 +83,7 @@ export function Combobox({
           aria-invalid={invalid || undefined}
           disabled={disabled}
           className={cn(
-            "flex w-full items-center justify-between gap-1.5 rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-[12.5px] transition focus:outline-none focus:ring-2 focus:ring-neutral-200 disabled:pointer-events-none disabled:opacity-60 aria-invalid:border-red-300",
+            "flex w-full items-center justify-between gap-1.5 rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-body transition focus:outline-none focus:ring-2 focus:ring-neutral-200 disabled:pointer-events-none disabled:opacity-60 aria-invalid:border-red-300",
             shownLabel ? "text-neutral-800" : "text-neutral-400",
             className,
           )}
@@ -96,17 +96,17 @@ export function Combobox({
         <Command>
           <CommandInput
             placeholder={searchPlaceholder}
-            className="text-[12.5px]"
+            className="text-body"
             value={query}
             onValueChange={setQuery}
           />
           <CommandList>
-            <CommandEmpty className="py-4 text-center text-[12.5px] text-neutral-500">
+            <CommandEmpty className="py-4 text-center text-body text-neutral-500">
               {emptyText}
             </CommandEmpty>
             {offerTyped && (
               <CommandGroup>
-                <CommandItem value={typed} className="text-[12.5px]" onSelect={() => choose(typed)}>
+                <CommandItem value={typed} className="text-body" onSelect={() => choose(typed)}>
                   <Check className="h-3.5 w-3.5 opacity-0" />
                   <span>
                     Use <span className="font-medium text-neutral-900">“{typed}”</span>
@@ -119,7 +119,7 @@ export function Combobox({
                 <CommandItem
                   key={o.value}
                   value={o.label}
-                  className="text-[12.5px]"
+                  className="text-body"
                   onSelect={() => choose(o.value)}
                 >
                   <Check
@@ -131,7 +131,7 @@ export function Combobox({
                   <span className="min-w-0">
                     <span className="block truncate">{o.label}</span>
                     {o.description && (
-                      <span className="block text-[10.5px] text-neutral-500">{o.description}</span>
+                      <span className="block text-micro text-neutral-500">{o.description}</span>
                     )}
                   </span>
                 </CommandItem>

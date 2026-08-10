@@ -13,14 +13,46 @@ export type ThemePreference = (typeof THEMES)[number];
 export const ACCENT_COLORS = ["neutral", "blue", "green", "red", "purple"] as const;
 export type AccentColor = (typeof ACCENT_COLORS)[number];
 
+/**
+ * The visual design themes.
+ *
+ * "Theme" is overloaded in this file and the distinction matters:
+ *
+ *   - `ThemePreference` above is the **mode** — light, dark, or follow the OS.
+ *   - `DesignTheme` here is the **design language** — the whole vocabulary of
+ *     colour, surface, corner, type scale and density.
+ *   - `AccentColor` is a choice *within* a design theme.
+ *
+ * All three are independent. A design theme owns its own dark values, so
+ * switching mode never leaves a theme half-applied.
+ *
+ * Adding one means writing `src/themes/<id>.css` — declaring the same contract
+ * `index.css` registers — importing it there, and adding an entry here. It
+ * never means touching a component or duplicating a page.
+ */
+export const DESIGN_THEMES = ["gso"] as const;
+export type DesignTheme = (typeof DESIGN_THEMES)[number];
+
+export const DESIGN_THEME_INFO: Record<DesignTheme, { name: string; description: string }> = {
+  gso: {
+    name: "Current GSO PRIMS",
+    description:
+      "Municipal paper. Seal palette, letterhead hierarchy, square corners, ruled tables.",
+  },
+};
+
 const THEME_KEY = "gso-prims.theme";
 const ACCENT_KEY = "gso-prims.accent";
+const DESIGN_KEY = "gso-prims.design";
 
 const isTheme = (v: unknown): v is ThemePreference =>
   typeof v === "string" && (THEMES as readonly string[]).includes(v);
 
 const isAccent = (v: unknown): v is AccentColor =>
   typeof v === "string" && (ACCENT_COLORS as readonly string[]).includes(v);
+
+const isDesign = (v: unknown): v is DesignTheme =>
+  typeof v === "string" && (DESIGN_THEMES as readonly string[]).includes(v);
 
 /** Last known preference, for painting before configuration loads. */
 export function cachedTheme(): ThemePreference {
@@ -41,6 +73,15 @@ export function cachedAccent(): AccentColor {
   }
 }
 
+export function cachedDesign(): DesignTheme {
+  try {
+    const v = localStorage.getItem(DESIGN_KEY);
+    return isDesign(v) ? v : "gso";
+  } catch {
+    return "gso";
+  }
+}
+
 /** True when the OS is currently asking for a dark UI. */
 export function systemPrefersDark(): boolean {
   return (
@@ -56,17 +97,36 @@ export function resolveTheme(preference: ThemePreference): "light" | "dark" {
 }
 
 /**
- * Applies the appearance to <html>. `.dark` drives the inverted palette in
- * index.css; `data-accent` selects the accent ramp.
+ * Applies the appearance to <html>.
+ *
+ * Three independent switches, all on the root element:
+ *   - `.dark`        the mode
+ *   - `data-theme`   the design language, resolved by `src/themes/*.css`
+ *   - `data-accent`  the accent ramp within that design
+ *
+ * They sit on <html> rather than on a wrapper for a reason that has cost this
+ * codebase work four times: a custom property whose value is another custom
+ * property resolves where it is *declared*. The contract in index.css reaches
+ * theme values through `var()`, so a theme scoped to a nested element could not
+ * re-point them. On :root it can.
+ *
+ * `design` is optional so the existing two-argument callers keep working; it
+ * falls back to whatever is already stored.
  */
-export function applyAppearance(preference: ThemePreference, accent: AccentColor): void {
+export function applyAppearance(
+  preference: ThemePreference,
+  accent: AccentColor,
+  design: DesignTheme = cachedDesign(),
+): void {
   if (typeof document === "undefined") return;
   const root = document.documentElement;
   root.classList.toggle("dark", resolveTheme(preference) === "dark");
+  root.dataset.theme = design;
   root.dataset.accent = accent;
   try {
     localStorage.setItem(THEME_KEY, preference);
     localStorage.setItem(ACCENT_KEY, accent);
+    localStorage.setItem(DESIGN_KEY, design);
   } catch {
     // Private browsing without storage: the theme still applies for this
     // session, it simply will not survive a reload.
@@ -78,7 +138,7 @@ export function applyAppearance(preference: ThemePreference, accent: AccentColor
  * mounts so there is no flash of the wrong theme.
  */
 export function applyCachedAppearance(): void {
-  applyAppearance(cachedTheme(), cachedAccent());
+  applyAppearance(cachedTheme(), cachedAccent(), cachedDesign());
 }
 
 /**
@@ -95,3 +155,4 @@ export function watchSystemTheme(onChange: () => void): () => void {
 /** Narrows a stored configuration value to a valid preference. */
 export const asTheme = (v: unknown): ThemePreference => (isTheme(v) ? v : "light");
 export const asAccent = (v: unknown): AccentColor => (isAccent(v) ? v : "neutral");
+export const asDesign = (v: unknown): DesignTheme => (isDesign(v) ? v : "gso");

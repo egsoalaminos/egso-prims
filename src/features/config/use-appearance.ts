@@ -5,12 +5,15 @@ import { BRAND_LOGO } from "@/lib/brand";
 import {
   applyAppearance,
   asAccent,
+  asDesign,
   asTheme,
   cachedAccent,
+  cachedDesign,
   cachedTheme,
   resolveTheme,
   watchSystemTheme,
   type AccentColor,
+  type DesignTheme,
   type ThemePreference,
 } from "@/features/config/theme";
 
@@ -23,6 +26,7 @@ import {
 export function useAppearanceSync(): {
   theme: ThemePreference;
   accent: AccentColor;
+  design: DesignTheme;
   resolved: "light" | "dark";
 } {
   const { data, loading, get } = useConfiguration(
@@ -35,22 +39,38 @@ export function useAppearanceSync(): {
     loading && data.length === 0 ? cachedTheme() : asTheme(get("Appearance", "theme"));
   const accent: AccentColor =
     loading && data.length === 0 ? cachedAccent() : asAccent(get("Appearance", "accent_color"));
+  /*
+   * The design language.
+   *
+   * Unlike the mode and the accent, this falls back to the local cache whenever
+   * configuration does not carry a value — not merely while loading. There is
+   * no `design_theme` row in `system_configuration` and this phase does not add
+   * one, so without that fallback a loaded config would resolve to the default
+   * and silently overwrite a chosen theme one tick after the page settled.
+   *
+   * If a row is ever added, it wins. Until then the choice lives in
+   * localStorage, which is enough for comparing themes.
+   */
+  const configuredDesign = get("Appearance", "design_theme");
+  const design: DesignTheme = configuredDesign
+    ? asDesign(configuredDesign)
+    : cachedDesign();
 
   React.useEffect(() => {
-    applyAppearance(theme, accent);
-  }, [theme, accent]);
+    applyAppearance(theme, accent, design);
+  }, [theme, accent, design]);
 
   // "System" must track the OS while the app is open.
   const [, force] = React.useReducer((n: number) => n + 1, 0);
   React.useEffect(() => {
     if (theme !== "system") return;
     return watchSystemTheme(() => {
-      applyAppearance("system", accent);
+      applyAppearance("system", accent, design);
       force();
     });
-  }, [theme, accent]);
+  }, [theme, accent, design]);
 
-  return { theme, accent, resolved: resolveTheme(theme) };
+  return { theme, accent, design, resolved: resolveTheme(theme) };
 }
 
 /**

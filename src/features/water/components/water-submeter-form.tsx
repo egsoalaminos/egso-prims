@@ -210,7 +210,7 @@ export function WaterSubmeterForm({
             />
           </Field>
           {isEdit && submeter?.status === "Archived" && (
-            <p className="rounded-lg bg-neutral-50 px-3 py-2.5 text-[11.5px] leading-relaxed text-neutral-500">
+            <p className="rounded-lg bg-neutral-50 px-3 py-2.5 text-caption leading-relaxed text-neutral-500">
               This submeter is archived. Its billing history is preserved and still appears in
               reports, but it no longer counts toward the account's live totals.
             </p>

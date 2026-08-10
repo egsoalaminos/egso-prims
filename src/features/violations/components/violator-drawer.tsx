@@ -64,7 +64,7 @@ function Summary({
   return (
     <div className="rounded-lg border border-neutral-200 p-3">
       <OverlineLabel>{label}</OverlineLabel>
-      <div className={`mt-0.5 text-[16px] font-semibold tabular-nums tracking-tight ${toneClass}`}>
+      <div className={`mt-0.5 text-stat font-semibold tabular-nums tracking-tight ${toneClass}`}>
         {value}
       </div>
     </div>
@@ -165,27 +165,27 @@ export function ViolatorDrawer({
                 <div className="grid grid-cols-3 gap-x-4 gap-y-3">
                   <div>
                     <OverlineLabel>Full Name</OverlineLabel>
-                    <div className="mt-0.5 text-[12.5px] text-neutral-800">
+                    <div className="mt-0.5 text-body text-neutral-800">
                       {profile.violator.fullName}
                     </div>
                   </div>
                   <div>
                     <OverlineLabel>Contact Number</OverlineLabel>
-                    <div className="mt-0.5 inline-flex items-center gap-1.5 text-[12.5px] text-neutral-800">
+                    <div className="mt-0.5 inline-flex items-center gap-1.5 text-body text-neutral-800">
                       <Phone className="h-3 w-3 text-neutral-400" />
                       {orDash(profile.violator.contactNumber)}
                     </div>
                   </div>
                   <div>
                     <OverlineLabel>Email Address</OverlineLabel>
-                    <div className="mt-0.5 inline-flex items-center gap-1.5 text-[12.5px] text-neutral-800">
+                    <div className="mt-0.5 inline-flex items-center gap-1.5 text-body text-neutral-800">
                       <Mail className="h-3 w-3 text-neutral-400" />
                       {orDash(profile.violator.email)}
                     </div>
                   </div>
                   <div className="col-span-3">
                     <OverlineLabel>Address</OverlineLabel>
-                    <div className="mt-0.5 inline-flex items-center gap-1.5 text-[12.5px] text-neutral-800">
+                    <div className="mt-0.5 inline-flex items-center gap-1.5 text-body text-neutral-800">
                       <MapPin className="h-3 w-3 text-neutral-400" />
                       {orDash(profile.violator.address)}
                     </div>
@@ -261,7 +261,7 @@ export function ViolatorDrawer({
                                 {/* The paper serial identifies the same ticket,
                                     so it sits with the system's number. */}
                                 {v.citationNo && (
-                                  <span className="mt-0.5 block text-[11.5px] font-normal tabular-nums text-neutral-500">
+                                  <span className="mt-0.5 block text-caption font-normal tabular-nums text-neutral-500">
                                     {v.citationNo}
                                   </span>
                                 )}
@@ -271,7 +271,7 @@ export function ViolatorDrawer({
                                   {v.violationType}
                                 </span>
                                 {v.description && (
-                                  <span className="mt-0.5 block max-w-[200px] truncate text-[11.5px] text-neutral-500">
+                                  <span className="mt-0.5 block max-w-[200px] truncate text-caption text-neutral-500">
                                     {v.description}
                                   </span>
                                 )}

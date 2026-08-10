@@ -209,7 +209,7 @@ export function ViolationListPage() {
               {row.original.violator.fullName}
             </span>
             {row.original.violator.contactNumber && (
-              <span className="mt-0.5 block truncate text-[11.5px] text-neutral-500">
+              <span className="mt-0.5 block truncate text-caption text-neutral-500">
                 {row.original.violator.contactNumber}
               </span>
             )}

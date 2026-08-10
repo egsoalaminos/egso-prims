@@ -290,10 +290,10 @@ export function EnergyDashboardPage() {
             <span className="whitespace-nowrap tabular-nums text-neutral-700">
               {r.activeSubmeters}
               {r.totalSubmeters !== r.activeSubmeters && (
-                <span className="text-[10.5px] text-neutral-400"> / {r.totalSubmeters}</span>
+                <span className="text-micro text-neutral-400"> / {r.totalSubmeters}</span>
               )}
               {r.totalConsumption > 0 && (
-                <span className="ml-1 text-[10.5px] text-neutral-400">
+                <span className="ml-1 text-micro text-neutral-400">
                   · {r.totalConsumption.toLocaleString("en-PH", { maximumFractionDigits: 0 })} KW
                 </span>
               )}
@@ -348,7 +348,7 @@ export function EnergyDashboardPage() {
               )}
               ₱{Math.abs(c.difference).toLocaleString("en-PH", { maximumFractionDigits: 2 })}
               {c.percent !== null && (
-                <span className="text-[10.5px] opacity-70">
+                <span className="text-micro opacity-70">
                   ({Math.abs(c.percent).toFixed(2)}%)
                 </span>
               )}
@@ -427,13 +427,13 @@ export function EnergyDashboardPage() {
             <div className="grid h-7 w-7 place-items-center rounded-lg bg-neutral-100 text-neutral-600">
               <TrendingUp className="h-3.5 w-3.5" />
             </div>
-            <span className="text-[12.5px] text-neutral-500">Highest Consuming</span>
+            <span className="text-body text-neutral-500">Highest Consuming</span>
           </div>
-          <div className="mt-3 truncate text-[14px] font-semibold tracking-tight text-neutral-900">
+          <div className="mt-3 truncate text-section font-semibold tracking-tight text-neutral-900">
             {highest ? accountLabel(highest.account) : "—"}
           </div>
           {highest?.current != null && (
-            <CurrencyDisplay amount={highest.current} className="mt-0.5 text-[12.5px]" />
+            <CurrencyDisplay amount={highest.current} className="mt-0.5 text-body" />
           )}
         </ContainerCard>
         <ContainerCard hoverable className="p-4">
@@ -441,13 +441,13 @@ export function EnergyDashboardPage() {
             <div className="grid h-7 w-7 place-items-center rounded-lg bg-neutral-100 text-neutral-600">
               <ArrowDownRight className="h-3.5 w-3.5" />
             </div>
-            <span className="text-[12.5px] text-neutral-500">Lowest Consuming</span>
+            <span className="text-body text-neutral-500">Lowest Consuming</span>
           </div>
-          <div className="mt-3 truncate text-[14px] font-semibold tracking-tight text-neutral-900">
+          <div className="mt-3 truncate text-section font-semibold tracking-tight text-neutral-900">
             {lowest ? accountLabel(lowest.account) : "—"}
           </div>
           {lowest?.current != null && (
-            <CurrencyDisplay amount={lowest.current} className="mt-0.5 text-[12.5px]" />
+            <CurrencyDisplay amount={lowest.current} className="mt-0.5 text-body" />
           )}
         </ContainerCard>
       </div>
@@ -468,7 +468,7 @@ export function EnergyDashboardPage() {
             <OverlineLabel>Overall Comparison</OverlineLabel>
             <div
               className={
-                "mt-0.5 text-[14px] font-semibold tracking-tight " +
+                "mt-0.5 text-section font-semibold tracking-tight " +
                 (overallAll.status === "No Change"
                   ? "text-neutral-700"
                   : overallUp
@@ -478,7 +478,7 @@ export function EnergyDashboardPage() {
             >
               {overallLabel(overallAll)}
             </div>
-            <p className="mt-0.5 text-[11.5px] text-neutral-500">
+            <p className="mt-0.5 text-caption text-neutral-500">
               {periodLabel(month, year)} total{" "}
               <CurrencyDisplay amount={overallAll.currentTotal} muted /> vs. previous month{" "}
               <CurrencyDisplay amount={overallAll.previousTotal} muted /> across{" "}
@@ -487,22 +487,22 @@ export function EnergyDashboardPage() {
           </div>
           <div className="flex shrink-0 items-center gap-4">
             <div className="text-center">
-              <div className="text-[16px] font-semibold tabular-nums text-red-600">
+              <div className="text-stat font-semibold tabular-nums text-red-600">
                 {overallAll.increased}
               </div>
-              <Caption as="div" className="text-[10.5px]">Increased</Caption>
+              <Caption as="div" className="text-micro">Increased</Caption>
             </div>
             <div className="text-center">
-              <div className="text-[16px] font-semibold tabular-nums text-(--tone-settled)">
+              <div className="text-stat font-semibold tabular-nums text-(--tone-settled)">
                 {overallAll.decreased}
               </div>
-              <Caption as="div" className="text-[10.5px]">Decreased</Caption>
+              <Caption as="div" className="text-micro">Decreased</Caption>
             </div>
             <div className="text-center">
-              <div className="text-[16px] font-semibold tabular-nums text-neutral-500">
+              <div className="text-stat font-semibold tabular-nums text-neutral-500">
                 {overallAll.unchanged}
               </div>
-              <Caption as="div" className="text-[10.5px]">No Change</Caption>
+              <Caption as="div" className="text-micro">No Change</Caption>
             </div>
           </div>
         </div>

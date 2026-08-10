@@ -138,19 +138,19 @@ export function PaymentForm({
             <div className="grid grid-cols-3 gap-3 rounded-lg bg-neutral-50 px-3.5 py-3">
               <div>
                 <OverlineLabel>Violation</OverlineLabel>
-                <div className="mt-0.5 text-[12.5px] text-neutral-800">
+                <div className="mt-0.5 text-body text-neutral-800">
                   {violation.violationType}
                 </div>
               </div>
               <div>
                 <OverlineLabel>Date Issued</OverlineLabel>
-                <div className="mt-0.5 text-[12.5px] text-neutral-800">
+                <div className="mt-0.5 text-body text-neutral-800">
                   {formatDate(violation.dateIssued)}
                 </div>
               </div>
               <div>
                 <OverlineLabel>Assessed Amount</OverlineLabel>
-                <div className="mt-0.5 text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
+                <div className="mt-0.5 text-stat font-semibold tabular-nums tracking-tight text-neutral-900">
                   {formatPHP(assessed, { decimals: 2 })}
                 </div>
               </div>
@@ -216,13 +216,13 @@ export function PaymentForm({
           <div className="flex items-center justify-between rounded-lg bg-neutral-50 px-3.5 py-3">
             <div>
               <OverlineLabel>Outstanding Balance After Payment</OverlineLabel>
-              <p className="mt-0.5 text-[10.5px] text-neutral-500">
+              <p className="mt-0.5 text-micro text-neutral-500">
                 The violation is marked Paid once the full amount is recorded.
               </p>
             </div>
             <div
               className={
-                "text-[22px] font-semibold tabular-nums tracking-tight " +
+                "text-title font-semibold tabular-nums tracking-tight " +
                 (outstanding === 0 ? "text-(--tone-settled)" : "text-neutral-900")
               }
             >

@@ -53,7 +53,7 @@ export function SummaryCard({
         )}
       >
         {badge && (
-          <span className="absolute right-2 top-2 border border-(--tone-settled)/25 bg-white px-1.5 py-0.5 text-[10.5px] font-semibold uppercase tracking-[0.06em] text-(--tone-settled)">
+          <span className="absolute right-2 top-2 border border-(--tone-settled)/25 bg-white px-1.5 py-0.5 text-micro font-semibold uppercase tracking-[0.06em] text-(--tone-settled)">
             {badge}
           </span>
         )}
@@ -62,10 +62,10 @@ export function SummaryCard({
         </div>
       </div>
       <div className="mt-3 px-1">
-        <div className="truncate text-[12.5px] font-semibold text-neutral-900">{name}</div>
-        <div className="text-[11.5px] text-neutral-500">{meta}</div>
+        <div className="truncate text-body font-semibold text-neutral-900">{name}</div>
+        <div className="text-caption text-neutral-500">{meta}</div>
       </div>
-      <div className="mt-3 flex items-center gap-1 px-1 text-[11.5px] text-neutral-500">
+      <div className="mt-3 flex items-center gap-1 px-1 text-caption text-neutral-500">
         <TrendingUp className="h-3 w-3 shrink-0" />
         {stat}
       </div>

@@ -24,7 +24,7 @@ export function Spinner({
       role="status"
     >
       <Loader2 className={cn("animate-spin", sizes[size])} aria-hidden />
-      {label ? <span className="text-[12.5px]">{label}</span> : <span className="sr-only">Loading</span>}
+      {label ? <span className="text-body">{label}</span> : <span className="sr-only">Loading</span>}
     </span>
   );
 }

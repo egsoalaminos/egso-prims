@@ -30,9 +30,9 @@ function StateBase({
           <Icon className="h-5 w-5" />
         </span>
       )}
-      <div className="mt-3 text-[12.5px] font-semibold text-neutral-900">{title}</div>
+      <div className="mt-3 text-body font-semibold text-neutral-900">{title}</div>
       {description && (
-        <p className="mt-1 max-w-sm text-[12.5px] text-neutral-500">{description}</p>
+        <p className="mt-1 max-w-sm text-body text-neutral-500">{description}</p>
       )}
       {action && (
         <Button variant={actionVariant} className="mt-4" onClick={action.onClick}>

@@ -1,0 +1,64 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - link "Skip to main content" [ref=e4] [cursor=pointer]:
+      - /url: "#portal-main"
+    - banner [ref=e5]:
+      - link "Republic of the Philippines Province of Laguna Municipality of Alaminos General Services Office" [ref=e7] [cursor=pointer]:
+        - /url: /portal
+        - generic [ref=e8]:
+          - generic [ref=e9]: Republic of the Philippines
+          - generic [ref=e10]: Province of Laguna
+          - generic [ref=e11]: Municipality of Alaminos
+          - generic [ref=e12]: General Services Office
+      - navigation "Portal services" [ref=e14]:
+        - list [ref=e15]:
+          - listitem [ref=e16]:
+            - link "Purchase Request" [ref=e17] [cursor=pointer]:
+              - /url: /portal/request
+          - listitem [ref=e18]:
+            - link "Requisition" [ref=e19] [cursor=pointer]:
+              - /url: /portal/ris
+          - listitem [ref=e20]:
+            - link "Reservation" [ref=e21] [cursor=pointer]:
+              - /url: /portal/reserve
+          - listitem [ref=e22]:
+            - link "Track" [ref=e23] [cursor=pointer]:
+              - /url: /portal/track
+    - main [ref=e24]:
+      - generic [ref=e25]:
+        - generic [ref=e27]:
+          - heading "General Services Office" [level=1] [ref=e28]
+          - paragraph [ref=e29]: File requests and reserve municipal facilities without visiting the Municipal Hall. Every submission is issued a reference number.
+        - region "Services you can file" [ref=e31]:
+          - list [ref=e32]:
+            - listitem [ref=e33]:
+              - link "Purchase Request Ask the General Services Office to procure supplies, equipment, or services for your office. File a request" [ref=e34] [cursor=pointer]:
+                - /url: /portal/request
+                - generic [ref=e36]:
+                  - generic [ref=e37]: Purchase Request
+                  - generic [ref=e43]: Ask the General Services Office to procure supplies, equipment, or services for your office.
+                  - generic [ref=e44]: File a request
+            - listitem [ref=e47]:
+              - link "Requisition and Issue Slip Draw items your office needs from stock the General Services Office already holds. Request supplies" [ref=e48] [cursor=pointer]:
+                - /url: /portal/ris
+                - generic [ref=e50]:
+                  - generic [ref=e51]: Requisition and Issue Slip
+                  - generic [ref=e57]: Draw items your office needs from stock the General Services Office already holds.
+                  - generic [ref=e58]: Request supplies
+            - listitem [ref=e61]:
+              - link "Facility Reservation Book a municipal hall, court, or vehicle, and borrow equipment for an official activity. Reserve a facility" [ref=e62] [cursor=pointer]:
+                - /url: /portal/reserve
+                - generic [ref=e64]:
+                  - generic [ref=e65]: Facility Reservation
+                  - generic [ref=e70]: Book a municipal hall, court, or vehicle, and borrow equipment for an official activity.
+                  - generic [ref=e71]: Reserve a facility
+        - region [ref=e74]:
+          - generic [ref=e76]:
+            - heading "Already filed something? Enter its reference number" [level=2] [ref=e77]
+            - generic [ref=e78]:
+              - textbox "Reference number from your receipt" [ref=e79]:
+                - /placeholder: PR-2026-000214
+              - button "Track" [ref=e80]
+    - contentinfo [ref=e85]:
+      - generic [ref=e86]: Daniel Fandiño Street, Poblacion III, Alaminos, Laguna 4001, Philippines
+  - region "Notifications alt+T"

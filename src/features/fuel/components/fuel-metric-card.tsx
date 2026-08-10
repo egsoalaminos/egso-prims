@@ -35,7 +35,7 @@ export function FuelMetricCard({
         <div className="grid h-7 w-7 place-items-center rounded-lg bg-neutral-100 text-neutral-600">
           <Icon className="h-3.5 w-3.5" />
         </div>
-        <span className="text-[12.5px] text-neutral-500">{label}</span>
+        <span className="text-body text-neutral-500">{label}</span>
       </div>
       {loading ? (
         <>
@@ -44,14 +44,14 @@ export function FuelMetricCard({
         </>
       ) : (
         <>
-          <div className="mt-4 text-[26px] font-semibold tabular-nums tracking-tight text-neutral-900">
+          <div className="mt-4 text-figure font-semibold tabular-nums tracking-tight text-neutral-900">
             {animated.toLocaleString("en-PH", {
               minimumFractionDigits: decimals,
               maximumFractionDigits: decimals,
             })}
-            {unit && <span className="ml-1 text-[14px] font-medium text-neutral-500">{unit}</span>}
+            {unit && <span className="ml-1 text-section font-medium text-neutral-500">{unit}</span>}
           </div>
-          {hint && <p className="mt-1.5 text-[11.5px] text-neutral-500">{hint}</p>}
+          {hint && <p className="mt-1.5 text-caption text-neutral-500">{hint}</p>}
         </>
       )}
     </ContainerCard>

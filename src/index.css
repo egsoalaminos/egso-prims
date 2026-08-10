@@ -1,49 +1,101 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/*
+ * Themes. Each file declares the contract below; none of them touch a
+ * component. `gso.css` is Theme 1 and doubles as the default, so it must be
+ * imported first and must stay imported even when another theme is selected.
+ */
+@import "./themes/gso.css";
+
 @custom-variant dark (&:is(.dark *));
 
 /*
- * General Services Office design system — ported verbatim from the Design Foundation
- * (design-reference/styles-reference.css). Do not modify values without a
- * design-change instruction.
+ * General Services Office design system.
  *
- * The @theme inline block maps CSS custom properties to Tailwind utility
- * classes (e.g. --color-primary -> bg-primary, text-primary).
+ * This file owns the *structure* of the design system, not its values:
  *
- * The :root and .dark blocks define the actual color values using oklch.
- * All colors MUST use oklch format.
+ *   - `@theme inline` registers the token names Tailwind turns into utilities.
+ *   - `.dark` mirrors the ramp for dark mode — a mode within a theme.
+ *   - `[data-accent="…"]` swaps the accent within a theme.
+ *   - `[data-municipal]` scopes the portal and the login page.
+ *   - the base layer, the utilities, and the print rules.
  *
- * To add a new semantic color:
- * 1. Add the variable to :root (light value) and .dark (dark value)
- * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ * The values live in `src/themes/*.css`, selected by `data-theme` on <html>.
+ * To add a colour: name it in `@theme inline`, then give it a value in every
+ * theme file. Never give it a value here.
  */
 
+/*
+ * ===========================================================================
+ * THE THEME CONTRACT
+ *
+ * This block registers the names. It does not choose the values — a theme file
+ * in src/themes/ does that, and every entry here points at a variable a theme
+ * declares.
+ *
+ * Adding a theme means writing one file that declares this same set. It never
+ * means editing a component, and it never means a second copy of a page.
+ *
+ * The rule a theme file must follow, written here because this codebase has
+ * been bitten by it four times: **declare literal values, never
+ * `var(--another-token)`.** A custom property whose value is another custom
+ * property resolves where it is *declared*, not where it is used, so a nested
+ * scope cannot re-point it.
+ * ===========================================================================
+ */
 @theme inline {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--type-sans);
   /* The institutional voice: page titles and anything that names the office or
      one of its documents. Inter carries the interface; this carries the name. */
-  --font-serif: "Source Serif 4", Georgia, serif;
+  --font-serif: var(--type-serif);
+
   /*
-   * Square, everywhere. Government paper has no rounded corners, and the
-   * portal has been square since it was rebuilt — leaving the admin rounded
-   * meant one system with two geometries.
+   * Corner radius.
    *
-   * Set to literal zero rather than derived from `--radius`, because the scale
-   * was relative: `--radius-xl` was `calc(var(--radius) + 4px)`, so zeroing
-   * `--radius` alone still left four pixels of curve on every card. That is
-   * exactly the bug the login page hit.
+   * These were literal `0px` — correct for the municipal direction, which has
+   * no rounded corners, but it meant the geometry was welded into the contract
+   * rather than owned by the theme. They point at theme variables now, and the
+   * GSO theme sets every one of them to 0, so nothing moves.
    *
-   * `rounded-full` resolves independently of this scale, so status pills,
-   * avatars and the seal stay round.
+   * The scale is flat rather than derived: it used to be relative
+   * (`--radius-xl` = `calc(var(--radius) + 4px)`), so zeroing a base still left
+   * four pixels of curve on every card. That is the bug the login page hit.
+   *
+   * `rounded-full` resolves independently of this scale, so dots, avatars and
+   * the seal stay round in any theme.
    */
-  --radius-sm: 0px;
-  --radius-md: 0px;
-  --radius-lg: 0px;
-  --radius-xl: 0px;
-  --radius-2xl: 0px;
-  --radius-3xl: 0px;
-  --radius-4xl: 0px;
+  --radius-sm: var(--radius-step-sm);
+  --radius-md: var(--radius-step-md);
+  --radius-lg: var(--radius-step-lg);
+  --radius-xl: var(--radius-step-xl);
+  --radius-2xl: var(--radius-step-2xl);
+  --radius-3xl: var(--radius-step-3xl);
+  --radius-4xl: var(--radius-step-4xl);
+
+  /*
+   * The type scale, by role rather than by pixel.
+   *
+   * 707 hardcoded `text-[Npx]` used to make the scale unthemeable: an attribute
+   * on <html> can repaint a colour but it cannot reach a literal baked into a
+   * class name. The admin was normalised onto seven steps earlier, which is
+   * what makes this a clean one-to-one rename rather than a redesign.
+   *
+   * Size only — no paired line-height. `text-[12.5px]` set no line-height, so
+   * pairing one here would change the render of all 499 sites at once, which is
+   * exactly what this phase must not do.
+   *
+   * The public portal, the login page and the official print forms keep their
+   * literal sizes. Their steps are approved separately or ruled to fit A4, and
+   * the print-fidelity rule governs them rather than any theme.
+   */
+  --text-micro: var(--type-micro);
+  --text-caption: var(--type-caption);
+  --text-body: var(--type-body);
+  --text-section: var(--type-section);
+  --text-stat: var(--type-stat);
+  --text-title: var(--type-title);
+  --text-figure: var(--type-figure);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -76,53 +128,6 @@
   --color-canvas: var(--canvas);
 }
 
-:root {
-  /* `--radius` used to sit here at 0.625rem. Every step derived from it was set
-     to a literal 0px when the system went square, so the base was describing a
-     10px corner nothing had. Removed. */
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
-  /*
-   * The rail's own ground — a shade deeper than the canvas.
-   *
-   * It was white until now, and so is every card, which meant chrome and
-   * content were painted the same value and only the paper gutter between them
-   * said otherwise. A card pushed near the left edge read as an extension of
-   * the rail.
-   *
-   * Three surfaces, three depths: furniture below, desk in the middle, paper on
-   * top. This is the bottom one, so the white card finally means "document".
-   *
-   * Note that neutral-500 only reaches 4.13:1 here — `SidebarGroup` overrides
-   * its label to neutral-600 for that reason.
-   */
-  --sidebar: #f2efe7;
-  /*
-   * Content canvas behind cards. Was #FAFAFA — the Design Foundation's cold
-   * grey, extracted from the SaaS template. It is now the portal's bond paper,
-   * so a clerk moving from the public counter to the back office is standing on
-   * the same ground. Cards stay white; that contrast is what gives both halves
-   * their depth.
-   */
-  --canvas: #fbfaf7;
-}
 
 .dark {
   --background: oklch(0.129 0.042 264.695);
@@ -151,38 +156,6 @@
   --canvas: oklch(0.145 0.004 80);
 }
 
-/*
- * ---------------------------------------------------------------------------
- * Paper
- *
- * The admin was built on Tailwind's neutral ramp — `border-neutral-200` alone
- * appears in 241 places — and that ramp is cold grey. The portal is warm bond
- * paper with a #E4E0D7 rule. Side by side they read as two products.
- *
- * Rather than edit 241 call sites, the ramp itself is re-pointed. Tailwind v4
- * compiles `border-neutral-200` to `var(--color-neutral-200)`, so warming the
- * variable re-materialises every screen at once — the same mechanism the dark
- * block below already relies on.
- *
- * Only the surface end of the ramp moves. 400 and up are text, and warming ink
- * makes it look faded rather than institutional, so they are left alone.
- *
- * --color-white is deliberately untouched: cards stay white on warm ground,
- * which is exactly the relationship the portal already draws.
- */
-:root {
-  --color-neutral-50: #f7f5f0; /* row hover, zebra, header bands */
-  --color-neutral-100: #efece4; /* faint rule, inner dividers */
-  --color-neutral-200: #e4e0d7; /* the portal's rule — card and table borders */
-  --color-neutral-300: #d3cec2; /* hover borders, focus rings */
-
-  /*
-   * The seam. A municipal form separates its letterhead from its body with a
-   * gold rule, and so does the portal (portal-layout.tsx). Never a fill: a
-   * broad field of this reads as a certificate border.
-   */
-  --rule-gold: #a9822f;
-}
 
 @layer base {
   * {
@@ -261,31 +234,6 @@
   color-scheme: dark;
 }
 
-/*
- * ---------------------------------------------------------------------------
- * Accent colour
- *
- * `data-accent` on <html> selects the accent ramp. Components read the
- * --accent-* variables, so adding a colour here needs no component change.
- *
- * The default is the burgundy taken from the municipal seal — the same value
- * the portal and the login page carry. It used to be near-black, inherited
- * from the SaaS template the design system was extracted from, which is what
- * made signing in feel like crossing into a different product.
- *
- * Literal values, not `var(--color-neutral-900)` style indirection: a custom
- * property whose value is another custom property is substituted where it is
- * declared, so the old form could not be re-pointed from a nested scope. The
- * `[data-municipal]` block below relies on that being fixed here too.
- */
-:root {
-  --accent-solid: #7a1d2b;
-  --accent-solid-hover: #5e1621;
-  --accent-contrast: #ffffff;
-  --accent-ring: #c08a93;
-  --accent-subtle: #f8f0f0;
-  --accent-text: #7a1d2b;
-}
 
 /*
  * Dark mode raises the same hue until it can carry white text on a dark
@@ -363,30 +311,6 @@
   --accent-text: #7a1d2b;
 }
 
-/*
- * ---------------------------------------------------------------------------
- * Status tones
- *
- * Four, not eight. The old palette spent a distinct hue on every workflow stage
- * — "BAC Review" violet, "Budget Review" sky — which encoded a stage in a colour
- * no clerk could read a meaning out of. These four carry meaning instead, and
- * all three coloured ones are drawn off the municipal seal rather than picked
- * from a framework's ramp.
- *
- * theme.ts warns that burgundy, gold and green together stop looking like a
- * municipality. That warning is about a broad field of green; a 2px rule on a
- * 60px tag is not a field.
- */
-:root {
-  --tone-settled: #1f5c3a; /* approved, completed, released, paid */
-  --tone-settled-tint: #eef3ef;
-  --tone-process: #8a6a26; /* pending and every review stage */
-  --tone-process-tint: #faf4e8;
-  --tone-halted: #7a1d2b; /* rejected, failed, out of stock */
-  --tone-halted-tint: #f8f0f0;
-  --tone-inert: #6b6660; /* draft, cancelled, archived, no record */
-  --tone-inert-tint: #f4f2ed;
-}
 
 /* Lifted until each still carries its own text on a dark card, with the tints
    rebuilt as translucent washes so they sit on whatever surface is behind. */

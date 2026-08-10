@@ -33,16 +33,16 @@ export function PRDetailPanels({
 
       <Tabs defaultValue="timeline">
         <TabsList className="w-full justify-start bg-neutral-100">
-          <TabsTrigger value="timeline" className="text-[12.5px]">
+          <TabsTrigger value="timeline" className="text-body">
             Timeline
           </TabsTrigger>
-          <TabsTrigger value="attachments" className="text-[12.5px]">
+          <TabsTrigger value="attachments" className="text-body">
             Attachments ({pr.attachments.length})
           </TabsTrigger>
-          <TabsTrigger value="comments" className="text-[12.5px]">
+          <TabsTrigger value="comments" className="text-body">
             Comments ({pr.comments.length})
           </TabsTrigger>
-          <TabsTrigger value="history" className="text-[12.5px]">
+          <TabsTrigger value="history" className="text-body">
             History
           </TabsTrigger>
         </TabsList>

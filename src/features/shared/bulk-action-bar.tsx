@@ -28,7 +28,7 @@ export function BulkActionBar({
           className="fixed bottom-6 left-1/2 z-40 -translate-x-1/2"
         >
           <div className="flex items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3 py-2 shadow-lg">
-            <span className="px-1 text-[12.5px] font-medium text-neutral-800">
+            <span className="px-1 text-body font-medium text-neutral-800">
               {count} selected
             </span>
             <span className="h-5 w-px bg-neutral-200" />

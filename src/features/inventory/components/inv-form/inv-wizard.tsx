@@ -283,7 +283,7 @@ function StepInventory({ form, isEdit }: { form: FormApi; isEdit: boolean }) {
       </Field>
       {(beginning ?? 0) > 0 && (price ?? 0) > 0 && (
         <div className="sm:col-span-2">
-          <p className="rounded-lg bg-neutral-50 px-3 py-2 text-[11.5px] text-neutral-600">
+          <p className="rounded-lg bg-neutral-50 px-3 py-2 text-caption text-neutral-600">
             Projected item value:{" "}
             <CurrencyDisplay amount={(beginning || 0) * (price || 0)} className="font-semibold" />{" "}
             ({beginning} × ₱{(price || 0).toLocaleString()})
@@ -328,7 +328,7 @@ function StepAttachments({
 
       <div className="flex items-start gap-2 rounded-lg bg-blue-50/60 px-3 py-2.5">
         <ScanText className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-600" />
-        <p className="text-[11.5px] leading-snug text-blue-700">
+        <p className="text-caption leading-snug text-blue-700">
           OCR-ready — uploaded PDFs and images will be parsed automatically for specifications and
           pricing once document intelligence is enabled.
         </p>
@@ -355,7 +355,7 @@ function StepAttachments({
                   >
                     <X className="h-3 w-3" />
                   </button>
-                  <div className="truncate bg-white px-2 py-1 text-[10.5px] text-neutral-600">
+                  <div className="truncate bg-white px-2 py-1 text-micro text-neutral-600">
                     {p.file.name}
                   </div>
                 </div>
@@ -376,10 +376,10 @@ function StepAttachments({
                 className="flex items-center gap-2.5 rounded-lg border border-neutral-200 bg-neutral-50/60 px-3 py-2"
               >
                 <FileText className="h-3.5 w-3.5 shrink-0 text-neutral-500" />
-                <span className="min-w-0 flex-1 truncate text-[12.5px] text-neutral-700">
+                <span className="min-w-0 flex-1 truncate text-body text-neutral-700">
                   {a.name}
                 </span>
-                <Caption className="shrink-0 text-[10.5px]">kept on save</Caption>
+                <Caption className="shrink-0 text-micro">kept on save</Caption>
               </li>
             ))}
           </ul>
@@ -437,7 +437,7 @@ function StepReview({
         )}
       </div>
 
-      <p className="rounded-lg bg-neutral-50 px-3 py-2.5 text-[11.5px] leading-relaxed text-neutral-500">
+      <p className="rounded-lg bg-neutral-50 px-3 py-2.5 text-caption leading-relaxed text-neutral-500">
         Saving registers the item in the inventory register. Stock changes after this point flow
         through purchase orders, issuance slips, and adjustments — all recorded on the stock card.
       </p>
@@ -448,10 +448,10 @@ function StepReview({
 function ReviewField({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div className="text-[10.5px] font-semibold uppercase tracking-wider text-neutral-400">
+      <div className="text-micro font-semibold uppercase tracking-wider text-neutral-400">
         {label}
       </div>
-      <div className="mt-0.5 text-[12.5px] text-neutral-800">{value}</div>
+      <div className="mt-0.5 text-body text-neutral-800">{value}</div>
     </div>
   );
 }
