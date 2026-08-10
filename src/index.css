@@ -7,6 +7,7 @@
  * imported first and must stay imported even when another theme is selected.
  */
 @import "./themes/gso.css";
+@import "./themes/studio.css";
 
 @custom-variant dark (&:is(.dark *));
 

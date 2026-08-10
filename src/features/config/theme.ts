@@ -30,14 +30,19 @@ export type AccentColor = (typeof ACCENT_COLORS)[number];
  * `index.css` registers — importing it there, and adding an entry here. It
  * never means touching a component or duplicating a page.
  */
-export const DESIGN_THEMES = ["gso"] as const;
+export const DESIGN_THEMES = ["gso", "studio"] as const;
 export type DesignTheme = (typeof DESIGN_THEMES)[number];
 
 export const DESIGN_THEME_INFO: Record<DesignTheme, { name: string; description: string }> = {
   gso: {
-    name: "Current GSO PRIMS",
+    name: "Theme 1 — Current GSO PRIMS",
     description:
       "Municipal paper. Seal palette, letterhead hierarchy, square corners, ruled tables.",
+  },
+  studio: {
+    name: "Theme 2 — Studio",
+    description:
+      "Grey ground, white rounded cards, near-black actions, one sans face. The data leads and the chrome recedes.",
   },
 };
 
