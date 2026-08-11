@@ -32,28 +32,24 @@ export function PortalReservePage() {
   };
 
   return (
-    <PageTransition className="mx-auto w-full max-w-3xl px-5 py-10">
+    <PageTransition className="mx-auto max-w-6xl px-5 py-10">
       {reference ? (
         <SubmissionSuccess
           reference={reference}
-          message="Your facility reservation has been received. The General Services Office will confirm the schedule after review."
+          message="Your facility reservation has been received. The GSO will confirm the schedule after review."
         />
       ) : (
         <>
           <PortalPageHeader
-            title="Reserve a facility"
-            description="Book municipal facilities and borrow event equipment for official activities. The calendar shows dates already taken."
+            title="Reserve a Facility"
+            description="Book municipal facilities and borrow event equipment for official activities."
           />
           <ReservationCalendar
             reservations={calendar.data}
             loading={calendar.loading}
             className="mb-6"
           />
-          <ResWizard
-            submitting={submitting}
-            onSubmit={submit}
-            onCancel={() => navigate("/portal")}
-          />
+          <ResWizard submitting={submitting} onSubmit={submit} onCancel={() => navigate("/portal")} />
         </>
       )}
     </PageTransition>

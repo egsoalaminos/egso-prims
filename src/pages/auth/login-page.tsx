@@ -11,14 +11,13 @@ import {
   Caption,
   Checkbox,
   ConfirmationModal,
+  ContainerCard,
   Field,
-  InstitutionalLabel,
   Input,
   toast,
 } from "@/components";
 import { DEV_CREDENTIALS, useAuth } from "@/features/auth/auth-context";
 import { useBranding } from "@/features/config/use-appearance";
-import { BURGUNDY, GOLD, PAPER, RULE, SERIF } from "@/features/portal/theme";
 
 const loginSchema = z.object({
   email: z.string().min(1, "Enter your email address").email("Enter a valid email address"),
@@ -82,65 +81,36 @@ export function LoginPage() {
   };
 
   return (
-    // `data-municipal` is the same hook the portal root carries. It buys the
-    // burgundy accent and the square corners from the stylesheet without
-    // editing `Button` or `Input` — both are the admin's components too.
-    <div
-      data-municipal
-      className="grid min-h-screen place-items-center px-4 font-sans antialiased"
-      style={{ background: PAPER }}
-    >
+    <div className="grid min-h-screen place-items-center bg-canvas px-4 font-sans antialiased">
       <motion.div
         initial={{ opacity: 0, y: 14, scale: 0.985 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.28, ease: "easeOut" }}
         className="w-full max-w-sm"
       >
-        {/*
-         * The same letterhead the portal opens with, centred for a login card:
-         * Republic, province, municipality, office. The seal is shown bare —
-         * it was previously clipped into a rounded square and given a drop
-         * shadow, which turns a coat of arms into an app icon.
-         */}
+        {/* Brand */}
         <div className="mb-6 flex flex-col items-center text-center">
           {branding.logo ? (
-            <img src={branding.logo} alt="" className="h-16 w-16 object-contain" />
+            <img
+              src={branding.logo}
+              alt="General Services Office"
+              className="h-12 w-12 rounded-xl object-contain shadow-sm"
+            />
           ) : (
-            // Was bg-neutral-900. This disc sat directly above a burgundy
-            // "Municipality of Alaminos" and a gold seam, so all three
-            // institutional colours were on screen at once and the seal's own
-            // stand-in was the one wearing the old accent.
-            <div
-              className="grid h-16 w-16 place-items-center rounded-full text-white"
-              style={{ background: BURGUNDY }}
-            >
-              <Building2 className="h-7 w-7" />
+            <div className="grid h-12 w-12 place-items-center rounded-xl bg-neutral-900 text-white shadow-sm">
+              <Building2 className="h-6 w-6" />
             </div>
           )}
-          <InstitutionalLabel className="mt-3">Republic of the Philippines</InstitutionalLabel>
-          <InstitutionalLabel>Province of Laguna</InstitutionalLabel>
-          <h1
-            className="mt-1 text-[21px] leading-tight tracking-tight"
-            style={{ fontFamily: SERIF, color: BURGUNDY, fontWeight: 600 }}
-          >
-            Municipality of Alaminos
+          <h1 className="mt-3 text-[20px] font-semibold tracking-tight text-neutral-900">
+            General Services Office
           </h1>
-          <p className="mt-0.5 text-[12.5px] font-medium text-neutral-700">
-            {branding.officeName}
+          <p className="mt-0.5 text-[12.5px] text-neutral-500">
+            Purchase Request &amp; Inventory Management System
           </p>
-
-          {/* The seam every other municipal surface uses. */}
-          <span className="mt-4 block h-[2px] w-16" style={{ background: GOLD }} />
+          <p className="text-[11px] text-neutral-400">{branding.organizationName}</p>
         </div>
 
-        {/*
-         * A plain bordered surface rather than `ContainerCard`. Its
-         * `rounded-xl` compiles to `calc(var(--radius) + 4px)` — the offset is
-         * baked into the utility by `@theme inline`, so zeroing `--radius` in
-         * the municipal scope still leaves 4px. The portal builds its own
-         * surfaces this way for the same reason.
-         */}
-        <div className="border bg-white p-6" style={{ borderColor: RULE }}>
+        <ContainerCard className="p-6">
           <form onSubmit={submit} className="space-y-4">
             {authError && (
               <motion.div
@@ -209,7 +179,7 @@ export function LoginPage() {
               Sign In
             </Button>
           </form>
-        </div>
+        </ContainerCard>
 
         {!supabaseActive && (
           <div className="mt-3 rounded-lg border border-dashed border-neutral-300 bg-white/60 px-3 py-2.5 text-center">

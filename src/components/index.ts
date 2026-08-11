@@ -13,7 +13,6 @@ export {
   SectionTitle,
   Subtitle,
   OverlineLabel,
-  InstitutionalLabel,
   Caption,
   BodyText,
 } from "@/components/typography/typography";

@@ -20,11 +20,9 @@ import { cn } from "@/lib/utils";
  *   22    page title
  *   26    the single large figure on a metric card
  *
- * Three surfaces are deliberately off this scale and must stay off it: the
- * public portal and the login page, which carry the municipal display sizes
- * approved separately, and the official print forms and summary sheets, whose
- * 8.5–19px steps are ruled to fit A4 and are governed by the print-fidelity
- * rule rather than by this file.
+ * The official print forms and the fuel/water/energy summary sheets are
+ * deliberately off this scale: their 8.5–19px steps are ruled to fit A4 and are
+ * governed by the print-fidelity rule rather than by this file.
  */
 
 type TextProps<T extends React.ElementType> = {
@@ -55,16 +53,10 @@ function createText<D extends React.ElementType>(
   return Text;
 }
 
-/**
- * Page titles carry the institutional voice: the serif, in the accent colour.
- * They name a module of a municipal office — "Purchase Requests", "Requisition
- * and Issue Slips" — and naming is the one place the office should sound like
- * itself rather than like an application. Body copy and data stay in Inter and
- * in ink; this is the exception, not a new default.
- */
+/** 20px semibold — one per page. */
 export const PageTitle = createText(
   "h1",
-  "font-serif text-title font-semibold tracking-tight text-(--accent-text)",
+  "text-title font-semibold tracking-tight text-neutral-900",
   "PageTitle",
 );
 
@@ -85,33 +77,14 @@ export const Subtitle = createText(
 /**
  * 10.5px uppercase micro-label — sidebar groups, drawer sections, fieldsets.
  *
- * Was `text-neutral-400`, which computes to **2.42:1** on the paper ground
- * against a 4.5:1 requirement for text this small — a failure repeated across
- * 98 call sites. neutral-500 reaches 4.54:1 on paper.
- *
- * The sidebar overrides this to neutral-600 (`SidebarGroup`), because the rail
- * is a shade deeper than the canvas and neutral-500 only reaches 4.13:1 there.
+ * Was `text-neutral-400`, which computes to 2.42:1 against the canvas — under
+ * the 4.5:1 a label this small needs, across 98 call sites. neutral-500 reaches
+ * 4.74:1 on white.
  */
 export const OverlineLabel = createText(
   "div",
   "text-micro font-semibold uppercase tracking-wider text-neutral-500",
   "OverlineLabel",
-);
-
-/**
- * The letterhead's micro-caps — wider tracked than `OverlineLabel`.
- *
- * Two different labels were being written by hand nine times across the portal,
- * the letterhead and the login page, in four spellings: 9.5px and 10.5px, with
- * and without `font-semibold`. They are one thing, and they are *not*
- * `OverlineLabel`: this is the institutional register — "Republic of the
- * Philippines", "Reference number" — where the wide tracking is the point.
- * `OverlineLabel` names a field; this names the office.
- */
-export const InstitutionalLabel = createText(
-  "div",
-  "text-micro font-semibold uppercase tracking-[0.16em] text-neutral-500",
-  "InstitutionalLabel",
 );
 
 /** 11.5px muted — meta text, timestamps, helper copy. */

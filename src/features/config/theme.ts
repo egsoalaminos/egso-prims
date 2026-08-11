@@ -38,10 +38,6 @@ export function cachedAccent(): AccentColor {
  * property whose value is another custom property resolves where it is
  * *declared*. On :root the cascade settles the accent first and the tokens
  * substitute the winner. Anywhere else they could not.
- *
- * `[data-municipal]` is the deliberate exception. It redeclares the accent as
- * literals for the public portal and the login page, which is why the municipal
- * identity survives whatever the admin does.
  */
 export function applyAppearance(accent: AccentColor): void {
   if (typeof document === "undefined") return;

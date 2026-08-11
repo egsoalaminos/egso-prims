@@ -24,7 +24,7 @@ export function PortalRequestPage() {
   };
 
   return (
-    <PageTransition className="mx-auto w-full max-w-3xl px-5 py-10">
+    <PageTransition className="mx-auto max-w-6xl px-5 py-10">
       {reference ? (
         <SubmissionSuccess
           reference={reference}
@@ -33,14 +33,9 @@ export function PortalRequestPage() {
       ) : (
         <>
           <PortalPageHeader
-            title="File a purchase request"
+            title="Create Purchase Request"
             description="Complete the four steps to submit a purchase request for procurement review."
           />
-          {/* No panel around the wizard: it already renders its own bordered
-              card, and wrapping it produced a frame inside a frame. It sits on
-              the portal's paper ground exactly as the landing's cards do. Its
-              internals are untouched — the admin create and edit pages render
-              the same component. */}
           <PRWizard
             submitLabel="Submit Request"
             submitting={submitting}

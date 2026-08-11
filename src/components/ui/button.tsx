@@ -13,9 +13,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // The office's own colour. Under [data-municipal] this resolves to the
-        // seal burgundy, which is why the portal can use this component
-        // unchanged rather than hand-painting its own button.
+        // Accent-driven, so the portal and the admin share one button.
         primary: "ui-accent ui-accent-hover",
         secondary:
           "border border-neutral-200 bg-white text-neutral-800 hover:bg-neutral-50",

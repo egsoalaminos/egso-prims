@@ -16,10 +16,6 @@
  *
  * `[data-accent]` survives: it was in the August design too, and it changes the
  * accent within the design rather than replacing it.
- *
- * `[data-municipal]` also survives, and matters more than ever. It is what the
- * public portal and the login page carry, and it pins their palette as literals
- * so the municipal identity is unaffected by anything in this file.
  */
 
 /*
@@ -324,30 +320,6 @@
   --accent-text: oklch(0.541 0.211 295.4);
 }
 
-/*
- * The municipal surfaces — the public portal and the login page.
- *
- * This block is nearly empty now, and that is the point: the burgundy is the
- * application's default accent and the corners are square everywhere, so the
- * portal no longer needs its own copy of either. What remains is the anchor
- * the two pages pin their palette to, so a future accent change in Settings
- * recolours the admin without repainting the office's own front door.
- *
- * The values are literals for a reason worth keeping written down: a custom
- * property whose value is another custom property is substituted where it is
- * *declared*, not where it is used. `--accent-solid: var(--color-neutral-900)`
- * at :root baked in the root's colour and inherited downward as that literal,
- * so re-pointing it from a nested scope changed nothing. An earlier attempt at
- * theming this portal died on exactly that.
- */
-[data-municipal] {
-  --accent-solid: #7a1d2b;
-  --accent-solid-hover: #5e1621;
-  --accent-contrast: #ffffff;
-  --accent-ring: #c08a93;
-  --accent-subtle: #f8f0f0;
-  --accent-text: #7a1d2b;
-}
 
 
 

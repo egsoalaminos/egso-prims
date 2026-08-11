@@ -24,17 +24,17 @@ export function PortalRISPage() {
   };
 
   return (
-    <PageTransition className="mx-auto w-full max-w-3xl px-5 py-10">
+    <PageTransition className="mx-auto max-w-6xl px-5 py-10">
       {reference ? (
         <SubmissionSuccess
           reference={reference}
-          message="Your Requisition and Issue Slip has been received and routed to the General Services Office for approval."
+          message="Your Request for Issuance Slip has been received and routed to the General Services Office for approval."
         />
       ) : (
         <>
           <PortalPageHeader
-            title="Request supplies"
-            description="Draw available supplies and consumable items from the General Services Office's central stock."
+            title="Create Request for Issuance Slip"
+            description="Request available supplies and consumable items from central stock."
           />
           {/* The public has no approved PR to point at; they identify themselves. */}
           <RISWizard
