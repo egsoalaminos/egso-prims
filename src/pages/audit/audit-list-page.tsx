@@ -221,7 +221,7 @@ export function AuditListPage() {
         accessorKey: "departmentCode",
         cell: ({ getValue }) => {
           const dept = departmentByCode(getValue<string>());
-          return <DepartmentChip code={dept.code} name={dept.name} />;
+          return <DepartmentChip code={dept.code} name={dept.name} color={dept.color} />;
         },
       },
       {

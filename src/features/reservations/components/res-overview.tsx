@@ -47,7 +47,7 @@ export function ResOverview({ r }: { r: Reservation }) {
     <div className="space-y-3">
       <div className="grid grid-cols-2 gap-x-4 gap-y-3">
         <Field label="Requesting Office">
-          <DepartmentChip code={dept.name} className="text-neutral-800" />
+          <DepartmentChip code={dept.name} color={dept.color} className="text-neutral-800" />
         </Field>
         <Field label="Borrower">{r.borrower}</Field>
         <div className="col-span-2">

@@ -22,7 +22,7 @@ export function RISOverview({ ris }: { ris: RequestForIssuance }) {
       <div className="grid grid-cols-2 gap-x-4 gap-y-3">
         <Field label="Requested By">{ris.requester}</Field>
         <Field label="Office">
-          <DepartmentChip code={dept.name} className="text-neutral-800" />
+          <DepartmentChip code={dept.name} color={dept.color} className="text-neutral-800" />
         </Field>
         <Field label="Issue Date">{formatDate(ris.issueDate)}</Field>
         <Field label="Total Quantity Issued">{risTotalIssued(ris)}</Field>

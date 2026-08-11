@@ -23,7 +23,7 @@ export function PROverview({ pr }: { pr: PurchaseRequest }) {
   return (
     <div className="grid grid-cols-2 gap-x-4 gap-y-3">
       <OverviewField label="Office">
-        <DepartmentChip code={dept.name} className="text-neutral-800" />
+        <DepartmentChip code={dept.name} color={dept.color} className="text-neutral-800" />
       </OverviewField>
       <OverviewField label="Requester">{pr.requester}</OverviewField>
       <OverviewField label="Funding Source">{pr.fundingSource}</OverviewField>

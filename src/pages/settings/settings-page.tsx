@@ -25,7 +25,6 @@ import {
   Textarea,
   toast,
 } from "@/components";
-import { ThemePicker } from "@/features/config/theme-picker";
 import { setConfigValues } from "@/features/config/api";
 import { useConfiguration } from "@/features/config/hooks";
 import {
@@ -319,9 +318,6 @@ export function SettingsPage() {
         title="Settings"
         description="System configuration for the modules used by the General Services Office."
       />
-
-      {/* Renders nothing while only one theme exists. */}
-      <ThemePicker />
 
       <div className="space-y-4">{MODULE_SECTIONS.map(renderSection)}</div>
 

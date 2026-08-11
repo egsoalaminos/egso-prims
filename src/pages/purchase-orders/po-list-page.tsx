@@ -113,7 +113,10 @@ export function POListPage() {
         header: "PO Number",
         accessorKey: "poNumber",
         cell: ({ row }) => (
-          <DocumentNumber value={row.original.poNumber} />
+          <DocumentNumber
+            value={row.original.poNumber}
+            chipColor={departmentByCode(row.original.departmentCode).color}
+          />
         ),
       },
       {
@@ -140,7 +143,7 @@ export function POListPage() {
         accessorKey: "departmentCode",
         cell: ({ getValue }) => {
           const dept = departmentByCode(getValue<string>());
-          return <DepartmentChip code={dept.code} name={dept.name} />;
+          return <DepartmentChip code={dept.code} name={dept.name} color={dept.color} />;
         },
       },
       {

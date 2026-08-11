@@ -47,6 +47,7 @@ export interface FlatRow {
   drawerModule: "pr" | "po" | "ris" | "inv" | "res" | null;
   drawerId: string | null;
   values: Record<string, string | number>;
+  chipColor?: string;
 }
 
 export interface ReportColumn {

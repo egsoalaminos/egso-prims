@@ -305,6 +305,7 @@ function StepDetails({
             </Caption>
             <DepartmentChip
               code={departmentByCode(departmentCode).name}
+              color={departmentByCode(departmentCode).color}
               className="text-body text-neutral-800"
             />
           </div>

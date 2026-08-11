@@ -95,7 +95,10 @@ export function PRListPage() {
         header: "PR Number",
         accessorKey: "prNumber",
         cell: ({ row }) => (
-          <DocumentNumber value={row.original.prNumber} />
+          <DocumentNumber
+            value={row.original.prNumber}
+            chipColor={departmentByCode(row.original.departmentCode).color}
+          />
         ),
       },
       {
@@ -103,7 +106,7 @@ export function PRListPage() {
         accessorKey: "departmentCode",
         cell: ({ row }) => {
           const dept = departmentByCode(row.original.departmentCode);
-          return <DepartmentChip code={dept.code} name={dept.name} />;
+          return <DepartmentChip code={dept.code} name={dept.name} color={dept.color} />;
         },
       },
       {

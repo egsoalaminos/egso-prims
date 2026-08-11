@@ -32,33 +32,17 @@ export function CurrencyDisplay({
 export interface DocumentNumberProps {
   /** e.g. "PR-2026-0184" */
   value: string;
+  /** Tailwind bg class for the identity chip, e.g. "bg-blue-500". */
+  chipColor?: string;
   className?: string;
 }
 
-/**
- * Document identity: office chip + control number.
- *
- * The number is set in the serif with tabular figures, the same way the portal
- * draws a reference on its lookup and its acknowledgement slip. It is the same
- * artifact in both places — the thing a person quotes over the phone — and it
- * was reading as two different objects. Tabular figures also make a column of
- * them line up digit for digit, which a proportional face does not.
- *
- * A 24px solid colour square used to sit to the left of it, one hue per office,
- * ten hues in all. It encoded the department — which every one of these lists
- * already spells out in its own Office column, one cell to the right. An
- * arbitrary colour restating the neighbouring word is not identity, and a row
- * of them turned a register of control numbers into a chart legend.
- */
-export function DocumentNumber({ value, className }: DocumentNumberProps) {
+/** Document identity: colored chip + medium-weight number (PR table anatomy). */
+export function DocumentNumber({ value, chipColor, className }: DocumentNumberProps) {
   return (
-    <span
-      className={cn(
-        "whitespace-nowrap font-serif font-semibold tabular-nums tracking-[0.01em] text-neutral-900",
-        className,
-      )}
-    >
-      {value}
+    <span className={cn("flex items-center gap-2.5", className)}>
+      {chipColor && <span className={cn("h-6 w-6 shrink-0 rounded-md", chipColor)} />}
+      <span className="whitespace-nowrap font-medium text-neutral-900">{value}</span>
     </span>
   );
 }
@@ -78,10 +62,7 @@ export function InfoChip({
   return (
     <div
       className={cn(
-        // The leading rule matches the status tag's anatomy. Both are chips in
-        // the same system and were drawn two different ways; this one stays in
-        // the inert tone because it reports a fact, not a state.
-        "flex items-center gap-1.5 border border-l-2 border-neutral-200 border-l-(--tone-inert) bg-white px-2.5 py-1.5 text-body text-neutral-700",
+        "flex items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-2.5 py-1.5 text-[12.5px] text-neutral-700",
         className,
       )}
     >
@@ -98,26 +79,19 @@ export interface DepartmentChipProps {
   code: string;
   /** Optional full name shown as tooltip. */
   name?: string;
+  /** Tailwind bg class for the identity square. */
+  color?: string;
   className?: string;
 }
 
-/**
- * Department code.
- *
- * Carried a small colour square until now, from the same ten-hue office palette
- * the document chip used. An office is identified by its code — "MSWDO" is what
- * appears on the paper and what a clerk says out loud — and the square only
- * asked the reader to learn a second, private encoding of it.
- */
-export function DepartmentChip({ code, name, className }: DepartmentChipProps) {
+/** Small identity square + department code. */
+export function DepartmentChip({ code, name, color, className }: DepartmentChipProps) {
   return (
     <span
       title={name}
-      className={cn(
-        "inline-flex items-center whitespace-nowrap text-body font-medium tracking-[0.02em] text-neutral-600",
-        className,
-      )}
+      className={cn("inline-flex items-center gap-2 text-[12.5px] text-neutral-600", className)}
     >
+      {color && <span className={cn("h-2.5 w-2.5 shrink-0 rounded-sm", color)} />}
       {code}
     </span>
   );

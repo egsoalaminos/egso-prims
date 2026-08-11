@@ -36,6 +36,7 @@ import { useInventoryItems, useStockCard } from "@/features/inventory/hooks";
 import {
   ITEM_CATEGORIES,
   STOCK_STATUSES,
+  categoryColor,
   itemValue,
   stockStatusOf,
   type InventoryItem,
@@ -121,7 +122,10 @@ export function InventoryListPage() {
         header: "Item Code",
         accessorKey: "itemCode",
         cell: ({ row }) => (
-          <DocumentNumber value={row.original.itemCode} />
+          <DocumentNumber
+            value={row.original.itemCode}
+            chipColor={categoryColor(row.original.category)}
+          />
         ),
       },
       {

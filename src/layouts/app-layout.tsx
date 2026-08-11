@@ -19,7 +19,6 @@ import {
   Settings,
   ShieldAlert,
   ShoppingCart,
-  Sun,
   Zap,
 } from "lucide-react";
 
@@ -211,7 +210,6 @@ function CollapsibleNavGroup({
 const systemNav: (ModuleNavItem & { trailing?: React.ReactNode })[] = [
   { icon: History, label: "Audit Trail", to: "/audit" },
   { icon: Settings, label: "Settings", to: "/settings" },
-  { icon: Sun, label: "Appearance", trailing: <Sun className="h-4 w-4 text-neutral-400" /> },
 ];
 
 function isActive(pathname: string, to?: string) {

@@ -22,8 +22,8 @@ Chart.defaults.font.size = 11;
  * 2:1 against it. They were also the old cold greys, so they were the last
  * cold thing left inside a chart after the palette was retoned to the seal.
  *
- * Reading the computed value of the ramp fixes both at once — the same
- * variables every other surface resolves against, warm and theme-aware.
+ * Read once at module load. With the theme system and dark mode gone the ramp
+ * no longer changes underneath a mounted chart, so there is nothing to watch.
  */
 /** Every mounted canvas, so a theme change can repaint what is already drawn. */
 const liveCharts = new Set<Chart>();
@@ -37,27 +37,10 @@ function readThemeDefaults(): void {
   Chart.defaults.color = token("--color-neutral-500", "#737373");
   Chart.defaults.borderColor = token("--color-neutral-200", "#e4e0d7");
 
-  // Defaults are read at draw time, so anything already on screen keeps the
-  // old theme until it is told to redraw.
-  for (const chart of liveCharts) chart.update("none");
 }
 
 readThemeDefaults();
 
-/**
- * Re-read on every theme change. `applyAppearance` toggles `.dark` on <html>,
- * and a stored preference of "system" means the OS can flip it with no React
- * involvement at all, so both routes are watched.
- */
-if (typeof document !== "undefined") {
-  new MutationObserver(readThemeDefaults).observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ["class"],
-  });
-  window
-    .matchMedia?.("(prefers-color-scheme: dark)")
-    .addEventListener?.("change", readThemeDefaults);
-}
 
 export interface ChartCanvasProps {
   config: ChartConfiguration<ChartType>;

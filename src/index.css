@@ -2,29 +2,24 @@
 @import "tw-animate-css";
 
 /*
- * Themes. Each file declares the contract below; none of them touch a
- * component. `gso.css` is Theme 1 and doubles as the default, so it must be
- * imported first and must stay imported even when another theme is selected.
- */
-@import "./themes/gso.css";
-@import "./themes/original.css";
-
-@custom-variant dark (&:is(.dark *));
-
-/*
- * General Services Office design system.
+ * General Services Office design system — the admin's single design.
  *
- * This file owns the *structure* of the design system, not its values:
+ * This was briefly a two-theme system with a `data-theme` switch and a dark
+ * mode. Both are gone: the admin has one look again, and it is the one that
+ * first went to Vercel on 4 August 2026 (commit 4e9d2d6). Every value below was
+ * read out of that commit rather than remembered.
  *
- *   - `@theme inline` registers the token names Tailwind turns into utilities.
- *   - `.dark` mirrors the ramp for dark mode — a mode within a theme.
- *   - `[data-accent="…"]` swaps the accent within a theme.
- *   - `[data-municipal]` scopes the portal and the login page.
- *   - the base layer, the utilities, and the print rules.
+ * The token layer built for the theme system is kept, because it is better than
+ * what preceded it — a component asks for `py-row` or `p-card` and the answer
+ * lives here, in one place, instead of being a literal repeated across files.
+ * There is simply only one set of answers now.
  *
- * The values live in `src/themes/*.css`, selected by `data-theme` on <html>.
- * To add a colour: name it in `@theme inline`, then give it a value in every
- * theme file. Never give it a value here.
+ * `[data-accent]` survives: it was in the August design too, and it changes the
+ * accent within the design rather than replacing it.
+ *
+ * `[data-municipal]` also survives, and matters more than ever. It is what the
+ * public portal and the login page carry, and it pins their palette as literals
+ * so the municipal identity is unaffected by anything in this file.
  */
 
 /*
@@ -52,19 +47,8 @@
   --font-serif: var(--type-serif);
 
   /*
-   * Corner radius.
-   *
-   * These were literal `0px` — correct for the municipal direction, which has
-   * no rounded corners, but it meant the geometry was welded into the contract
-   * rather than owned by the theme. They point at theme variables now, and the
-   * GSO theme sets every one of them to 0, so nothing moves.
-   *
-   * The scale is flat rather than derived: it used to be relative
-   * (`--radius-xl` = `calc(var(--radius) + 4px)`), so zeroing a base still left
-   * four pixels of curve on every card. That is the bug the login page hit.
-   *
-   * `rounded-full` resolves independently of this scale, so dots, avatars and
-   * the seal stay round in any theme.
+   * Corner radius. August's `--radius: 0.625rem` with its derived scale, the
+   * arithmetic done once here so the steps cannot drift.
    */
   --radius-sm: var(--radius-step-sm);
   --radius-md: var(--radius-step-md);
@@ -75,20 +59,15 @@
   --radius-4xl: var(--radius-step-4xl);
 
   /*
-   * The type scale, by role rather than by pixel.
+   * The type scale, by role rather than by pixel. Seven steps; 707 hardcoded
+   * `text-[Npx]` were folded onto them.
    *
-   * 707 hardcoded `text-[Npx]` used to make the scale unthemeable: an attribute
-   * on <html> can repaint a colour but it cannot reach a literal baked into a
-   * class name. The admin was normalised onto seven steps earlier, which is
-   * what makes this a clean one-to-one rename rather than a redesign.
-   *
-   * Size only — no paired line-height. `text-[12.5px]` set no line-height, so
-   * pairing one here would change the render of all 499 sites at once, which is
-   * exactly what this phase must not do.
+   * Size only — no paired line-height, because the literals it replaced set
+   * none.
    *
    * The public portal, the login page and the official print forms keep their
-   * literal sizes. Their steps are approved separately or ruled to fit A4, and
-   * the print-fidelity rule governs them rather than any theme.
+   * literal sizes: theirs are ruled to fit A4 or approved separately, and the
+   * print-fidelity rule governs them rather than this scale.
    */
   --text-micro: var(--type-micro);
   --text-caption: var(--type-caption);
@@ -99,15 +78,11 @@
   --text-figure: var(--type-figure);
 
   /*
-   * Geometry and density.
+   * Geometry and density. Registered as spacing keys so a component writes
+   * `py-row` or `p-card` and the value lives here.
    *
-   * Registered as Tailwind spacing keys so a component can write
-   * `py-row` or `p-card` instead of a literal, and a theme decides what those
-   * mean. This is the only way a shared component can look different in two
-   * themes without being edited twice or rendered twice.
-   *
-   * Deliberately a small set. There are 867 hardcoded paddings in this app and
-   * tokenising all of them would be churn; these are the handful that actually
+   * Deliberately a small set: there are 867 hardcoded paddings in this app and
+   * tokenising all of them would be churn. These are the handful that actually
    * govern how dense the interface reads.
    */
   --spacing-row: var(--row-py);
@@ -151,46 +126,147 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-ring-offset-background: var(--background);
-  /*
-   * Twelve tokens were removed here: --color-chart-1 through -5 and seven of
-   * the eight --color-sidebar-* entries. Every one was declared three times
-   * (:root, .dark, and this block) and read exactly nowhere — the charts take
-   * their palette from a JS array, and the rail painted bg-white literally.
-   *
-   * --color-sidebar survives because the rail now genuinely has its own ground.
-   */
+  /* --color-sidebar drives the rail; the twelve chart and sidebar-* tokens that
+     once sat here were declared three times and read nowhere. */
   --color-sidebar: var(--sidebar);
   --color-canvas: var(--canvas);
 }
 
+/*
+ * ===========================================================================
+ * THE DESIGN
+ *
+ * The values the contract above points at. Read out of commit 4e9d2d6 —
+ * 4 August 2026, the state first deployed to Vercel — with `git show`, not
+ * remembered.
+ *
+ * Written as literals. The August file had `--accent-solid:
+ * var(--color-neutral-900)`, which worked only because both sat on :root; the
+ * oklch values are inlined so a change to the neutral ramp cannot silently move
+ * the accent.
+ * ===========================================================================
+ */
+:root {
+  /* ---- Typefaces ------------------------------------------------------- */
+  --type-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --type-serif: "Inter", ui-sans-serif, system-ui, sans-serif;
 
-.dark {
-  --background: oklch(0.129 0.042 264.695);
-  --foreground: oklch(0.984 0.003 247.858);
-  --card: oklch(0.208 0.042 265.755);
-  --card-foreground: oklch(0.984 0.003 247.858);
-  --popover: oklch(0.208 0.042 265.755);
-  --popover-foreground: oklch(0.984 0.003 247.858);
-  --primary: oklch(0.929 0.013 255.508);
-  --primary-foreground: oklch(0.208 0.042 265.755);
-  --secondary: oklch(0.279 0.041 260.031);
-  --secondary-foreground: oklch(0.984 0.003 247.858);
-  --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: oklch(0.704 0.04 256.788);
-  --accent: oklch(0.279 0.041 260.031);
-  --accent-foreground: oklch(0.984 0.003 247.858);
-  --destructive: oklch(0.704 0.191 22.216);
+  /* ---- Type scale ------------------------------------------------------ */
+  --type-micro: 10.5px;
+  --type-caption: 11.5px;
+  --type-body: 12.5px;
+  --type-section: 14px;
+  --type-stat: 16px;
+  --type-title: 22px;
+  --type-figure: 26px;
+
+  /* ---- Geometry: --radius 0.625rem and its derived steps --------------- */
+  --radius-step-sm: 6px;
+  --radius-step-md: 8px;
+  --radius-step-lg: 10px;
+  --radius-step-xl: 14px;
+  --radius-step-2xl: 18px;
+  --radius-step-3xl: 22px;
+  --radius-step-4xl: 26px;
+
+  /* ---- Density --------------------------------------------------------- */
+  --row-py: 0.75rem;
+  --row-px: 1rem;
+  --row-px-first: 1.25rem;
+  --head-py: 0.625rem;
+  --card-p: 1.25rem;
+  --card-p-tight: 1rem;
+  --control-py: 0.375rem;
+  --control-px: 0.75rem;
+  --nav-row-py: 0.375rem;
+  --sidebar-w: 240px;
+  --nav-icon: 1rem;
+  --nav-gap: 0.625rem;
+  --rail-pad: 0.75rem;
+  --brand-pt: 1.25rem;
+  --brand-pb: 1.5rem;
+  --topbar-py: 0.75rem;
+  --topbar-px: 1.25rem;
+
+  /* ---- Table treatment -------------------------------------------------
+   * August: an 11px `font-medium` label in neutral-400 on a neutral-50 band,
+   * with no column dividers and no rule beneath. Both of those arrived later
+   * with the municipal direction and are gone again.
+   */
+  --thead-transform: uppercase;
+  --thead-tracking: 0.05em;
+  --thead-weight: 500;
+  --thead-size: 11px;
+  --thead-fg: oklch(0.708 0 0);
+  --thead-bg: oklch(0.985 0 0);
+  --thead-divider: transparent;
+  --thead-rule: transparent;
+
+  /* ---- Elevation: cards are flat; only floating layers cast ------------- */
+  --elev-card: none;
+  --elev-raised: none;
+
+  /* ---- Semantic surfaces ----------------------------------------------- */
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.129 0.042 264.695);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.129 0.042 264.695);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.129 0.042 264.695);
+  --primary: oklch(0.208 0.042 265.755);
+  --primary-foreground: oklch(0.984 0.003 247.858);
+  --secondary: oklch(0.968 0.007 247.896);
+  --secondary-foreground: oklch(0.208 0.042 265.755);
+  --muted: oklch(0.968 0.007 247.896);
+  --muted-foreground: oklch(0.554 0.046 257.417);
+  --accent: oklch(0.968 0.007 247.896);
+  --accent-foreground: oklch(0.208 0.042 265.755);
+  --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.551 0.027 264.364);
-  /* The rail sits *below* the card in dark mode too — darker than the canvas,
-     so the depth order survives the theme rather than inverting. */
-  --sidebar: oklch(0.118 0.004 80);
-  /* Matches the dark ramp's page background, warm-tilted like its light twin. */
-  --canvas: oklch(0.145 0.004 80);
-}
+  --border: oklch(0.929 0.013 255.508);
+  --input: oklch(0.929 0.013 255.508);
+  --ring: oklch(0.704 0.04 256.788);
 
+  /* The rail was white in August, and so was the frame behind it: chrome and
+     card shared a value and only the canvas sat apart. */
+  --sidebar: oklch(1 0 0);
+  --canvas: oklch(0.9851 0 0);
+
+  /* ---- The neutral ramp: Tailwind's stock, cold ------------------------ */
+  --color-neutral-50: oklch(0.985 0 0);
+  --color-neutral-100: oklch(0.97 0 0);
+  --color-neutral-200: oklch(0.922 0 0);
+  --color-neutral-300: oklch(0.87 0 0);
+
+  /* No gold seam — it arrived with the letterhead and left with it. */
+  --rule-gold: transparent;
+
+  /* ---- Accent: near-black, from the template this was extracted from --- */
+  --accent-solid: oklch(0.205 0 0);
+  --accent-solid-hover: oklch(0.269 0 0);
+  --accent-contrast: oklch(1 0 0);
+  --accent-ring: oklch(0.87 0 0);
+  --accent-subtle: oklch(0.97 0 0);
+  --accent-text: oklch(0.205 0 0);
+
+  /* ---- Status tones ----------------------------------------------------
+   * The four slots the timeline, calendar, notification card and consumption
+   * deltas read. August drew those in Tailwind's own ramp; these are the same
+   * colours, named once so the twenty-odd call sites that were converted to
+   * tokens keep rendering exactly what they rendered before.
+   *
+   * The status *badge* does not read these — it went back to August's eight
+   * hues, which live in the component because that is where August kept them.
+   */
+  --tone-settled: oklch(0.508 0.118 165.6);
+  --tone-settled-tint: oklch(0.979 0.021 166.1);
+  --tone-process: oklch(0.555 0.135 66.4);
+  --tone-process-tint: oklch(0.987 0.022 95.3);
+  --tone-halted: oklch(0.505 0.213 27.5);
+  --tone-halted-tint: oklch(0.971 0.013 17.4);
+  --tone-inert: oklch(0.371 0 0);
+  --tone-inert-tint: oklch(0.97 0 0);
+}
 
 @layer base {
   * {
@@ -211,79 +287,8 @@
   }
 }
 
-/*
- * ---------------------------------------------------------------------------
- * Dark theme
- *
- * The application was built on Tailwind's neutral ramp (text-neutral-800,
- * bg-white, border-neutral-200 …) rather than semantic tokens. Tailwind v4
- * compiles every one of those utilities to a CSS variable lookup —
- * `.text-neutral-800 { color: var(--color-neutral-800) }` — so inverting the
- * ramp here re-themes every screen at once, with no component changes and no
- * redesign.
- *
- * The ramp is mirrored, not recoloured: 50 becomes the darkest surface and 950
- * the lightest text, so every existing contrast pairing keeps its relationship.
- */
-.dark {
-  --color-white: oklch(0.181 0.004 285.9); /* card / raised surface */
-  --color-black: oklch(0.985 0 0);
-
-  /*
-   * The surface end carries the same warm tilt as the light ramp above — hue
-   * swung from 285.9 (blue-violet) to 80 (the paper's own hue) at the same
-   * lightness, so every contrast pairing keeps its relationship and only the
-   * temperature changes. Without this, switching to dark switched products.
-   */
-  --color-neutral-50: oklch(0.145 0.004 80); /* page background */
-  --color-neutral-100: oklch(0.205 0.005 80);
-  --color-neutral-200: oklch(0.269 0.006 80); /* borders */
-  --color-neutral-300: oklch(0.335 0.007 80);
-  --color-neutral-400: oklch(0.478 0.008 286.0);
-  --color-neutral-500: oklch(0.596 0.009 286.1); /* muted text */
-  --color-neutral-600: oklch(0.708 0.010 286.2);
-  --color-neutral-700: oklch(0.808 0.008 286.3);
-  --color-neutral-800: oklch(0.885 0.006 286.3); /* body text */
-  --color-neutral-900: oklch(0.945 0.004 286.3); /* headings */
-  --color-neutral-950: oklch(0.985 0.002 286.3);
-
-  /* Status tints are lifted so coloured text stays legible on dark surfaces. */
-  --color-red-50: oklch(0.258 0.062 25.3);
-  --color-red-100: oklch(0.312 0.078 25.3);
-  --color-emerald-50: oklch(0.248 0.055 165.4);
-  --color-emerald-100: oklch(0.300 0.070 165.4);
-  --color-amber-50: oklch(0.268 0.055 85.0);
-  --color-amber-100: oklch(0.322 0.070 85.0);
-  --color-blue-50: oklch(0.258 0.060 255.0);
-  --color-blue-100: oklch(0.312 0.075 255.0);
-  --color-violet-50: oklch(0.262 0.062 295.0);
-  --color-violet-100: oklch(0.316 0.078 295.0);
-  --color-sky-50: oklch(0.256 0.058 240.0);
-  --color-orange-50: oklch(0.266 0.060 60.0);
-  --color-rose-50: oklch(0.258 0.062 15.0);
-
-  /* The seal's gold is nearly invisible against a dark card; lifted until the
-     seam still reads as a seam. */
-  --rule-gold: #c29a45;
-
-  color-scheme: dark;
-}
 
 
-/*
- * Dark mode raises the same hue until it can carry white text on a dark
- * surface — #7A1D2B is nearly black against a dark card. This block matters
- * more than it looks: the stored theme is `system`, so anyone whose machine is
- * in dark mode sees this ramp rather than the one above.
- */
-.dark {
-  --accent-solid: #a83249;
-  --accent-solid-hover: #bd4059;
-  --accent-contrast: #ffffff;
-  --accent-ring: #8e2b3e;
-  --accent-subtle: color-mix(in oklch, #a83249 18%, transparent);
-  --accent-text: #e39aa8;
-}
 
 [data-accent="blue"] {
   --accent-solid: oklch(0.546 0.198 259.8);
@@ -347,18 +352,6 @@
 }
 
 
-/* Lifted until each still carries its own text on a dark card, with the tints
-   rebuilt as translucent washes so they sit on whatever surface is behind. */
-.dark {
-  --tone-settled: #6bbd8e;
-  --tone-settled-tint: color-mix(in oklch, #6bbd8e 16%, transparent);
-  --tone-process: #d3a852;
-  --tone-process-tint: color-mix(in oklch, #d3a852 16%, transparent);
-  --tone-halted: #e39aa8;
-  --tone-halted-tint: color-mix(in oklch, #e39aa8 16%, transparent);
-  --tone-inert: #a9a49c;
-  --tone-inert-tint: color-mix(in oklch, #a9a49c 14%, transparent);
-}
 
 /*
  * Table headers used to be corrected here for the portal alone, because
@@ -464,12 +457,11 @@ thead {
 
   /*
    * Printed reports are always the light document, whatever theme is active
-   * on screen. Restoring the stock ramp here reverses the .dark overrides for
+   * on screen. Restoring the stock ramp here keeps the printed sheet on the
    * print only, so no report layout or component needs a print-specific
    * variant.
    */
-  :root,
-  .dark {
+  :root {
     --color-white: #fff;
     --color-black: #000;
     --color-neutral-50: oklch(0.985 0 0);

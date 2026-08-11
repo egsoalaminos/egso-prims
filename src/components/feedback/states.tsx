@@ -55,33 +55,12 @@ export function EmptyState({ icon = Inbox, ...props }: StateProps) {
   );
 }
 
-/**
- * Something went wrong — offers a retry action.
- *
- * Stays red rather than moving to the halted status tone. The halted tone is
- * the seal burgundy, which is also the default accent, so an error panel in it
- * would be the same colour as the primary action offered to dismiss it. Red is
- * the one hue in this system deliberately kept off the seal.
- */
+/** Something went wrong — offers a retry action. */
 export function ErrorState({ icon = AlertTriangle, ...props }: StateProps) {
   return <StateBase icon={icon} iconTone="bg-red-50 text-red-600" {...props} />;
 }
 
-/**
- * Operation completed successfully.
- *
- * Was `emerald-600` on `emerald-50`, which made this the fourth green in the
- * system: the settled status tone, the reservation calendar's approved chip,
- * a hardcoded `#2F7D4F` on the portal's acknowledgement slip, and this. They
- * all mean the same thing and none of them matched. This one now reads the
- * settled tone, and the slip was pointed at it too.
- */
+/** Operation completed successfully. */
 export function SuccessState({ icon = CheckCircle2, ...props }: StateProps) {
-  return (
-    <StateBase
-      icon={icon}
-      iconTone="bg-(--tone-settled-tint) text-(--tone-settled)"
-      {...props}
-    />
-  );
+  return <StateBase icon={icon} iconTone="bg-emerald-50 text-emerald-600" {...props} />;
 }

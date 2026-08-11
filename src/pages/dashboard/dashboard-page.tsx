@@ -121,25 +121,15 @@ function useDashboardData() {
 /* ---------------- presentation mappers ---------------- */
 
 
-/*
- * Eight modules, and until now eight different hues behind their icons —
- * emerald, blue, violet, amber, sky, orange. The colour said nothing: it did
- * not mean urgency, or state, or anything a reader could act on, and no legend
- * anywhere taught it. The icon already names the module, and the row spells it
- * out in words beside it, so the tile carries the office's own tint and the
- * eight rows finally read as one register.
- */
-const MODULE_TILE = "bg-(--accent-subtle) text-(--accent-text)";
-
 const moduleActivity: Record<string, { icon: React.ComponentType<{ className?: string }>; tone: string }> = {
-  "Purchase Requests": { icon: FileText, tone: MODULE_TILE },
-  "Purchase Orders": { icon: ShoppingCart, tone: MODULE_TILE },
-  RIS: { icon: ClipboardList, tone: MODULE_TILE },
-  Inventory: { icon: Boxes, tone: MODULE_TILE },
-  Reservations: { icon: CalendarDays, tone: MODULE_TILE },
-  Authentication: { icon: History, tone: MODULE_TILE },
-  Reports: { icon: Activity, tone: MODULE_TILE },
-  System: { icon: Workflow, tone: MODULE_TILE },
+  "Purchase Requests": { icon: FileText, tone: "text-emerald-600 bg-emerald-50" },
+  "Purchase Orders": { icon: ShoppingCart, tone: "text-blue-600 bg-blue-50" },
+  RIS: { icon: ClipboardList, tone: "text-violet-600 bg-violet-50" },
+  Inventory: { icon: Boxes, tone: "text-amber-600 bg-amber-50" },
+  Reservations: { icon: CalendarDays, tone: "text-sky-600 bg-sky-50" },
+  Authentication: { icon: History, tone: "text-neutral-600 bg-neutral-100" },
+  Reports: { icon: Activity, tone: "text-blue-600 bg-blue-50" },
+  System: { icon: Workflow, tone: "text-orange-600 bg-orange-50" },
 };
 
 /** How many notifications the dashboard panel shows before deferring to the drawer. */
@@ -186,7 +176,10 @@ export function DashboardPage() {
         header: "PR Number",
         accessorKey: "prNumber",
         cell: ({ row }) => (
-          <DocumentNumber value={row.original.prNumber} />
+          <DocumentNumber
+            value={row.original.prNumber}
+            chipColor={departmentByCode(row.original.departmentCode).color}
+          />
         ),
       },
       { header: "Department", accessorKey: "departmentCode", meta: { className: "text-neutral-600" } },
@@ -224,20 +217,13 @@ export function DashboardPage() {
     [],
   );
 
-  /*
-   * Six cards, previously six different two-stop gradients — blue→cyan,
-   * violet→fuchsia, emerald→lime — which made one row of the dashboard look
-   * like six unrelated products. The hero panel is now a flat paper tint on all
-   * six, and the key squares carry the four status tones, so a colour on this
-   * row means the same thing it means in any table below it.
-   */
   const operationalSummary = [
-    { name: "Inventory Summary", meta: "Live stock position", panel: "bg-neutral-50", icon: Package, stat: `${totalUnits.toLocaleString()} units` },
-    { name: "Recent Purchase Orders", meta: "Across all suppliers", panel: "bg-neutral-50", icon: ShoppingCart, stat: `${data?.poCount ?? 0} orders` },
-    { name: "Recent RIS", meta: "Released & completed", panel: "bg-neutral-50", icon: ClipboardList, stat: `${data?.risIssued ?? 0} issued` },
-    { name: "Upcoming Reservations", meta: "Pending & approved", panel: "bg-neutral-50", icon: CalendarDays, stat: `${data?.reservations.filter((r) => ["Pending", "Approved"].includes(r.status)).length ?? 0} scheduled` },
-    { name: "Low Stock Items", meta: "Requires attention", panel: "bg-neutral-50", icon: AlertTriangle, stat: `${lowStock} items` },
-    { name: "Pending Approvals", meta: "Across departments", panel: "bg-neutral-50", icon: ClipboardCheck, stat: `${pendingPRs + (data?.poPending ?? 0) + (data?.risPending ?? 0)} pending` },
+    { name: "Inventory Summary", meta: "Live stock position", gradient: "from-blue-100 to-cyan-100", icon: Package, stat: `${totalUnits.toLocaleString()} units`, tags: [{ label: "S", color: "bg-emerald-500" }, { label: "M", color: "bg-amber-500" }, { label: "L", color: "bg-red-500" }] },
+    { name: "Recent Purchase Orders", meta: "Across all suppliers", gradient: "from-violet-100 to-fuchsia-100", icon: ShoppingCart, stat: `${data?.poCount ?? 0} orders`, tags: [{ label: "P", color: "bg-blue-500" }, { label: "A", color: "bg-emerald-500" }] },
+    { name: "Recent RIS", meta: "Released & completed", gradient: "from-emerald-100 to-lime-100", icon: ClipboardList, stat: `${data?.risIssued ?? 0} issued`, tags: [{ label: "M", color: "bg-red-500" }, { label: "E", color: "bg-neutral-800" }] },
+    { name: "Upcoming Reservations", meta: "Pending & approved", gradient: "from-sky-100 to-indigo-100", icon: CalendarDays, stat: `${data?.reservations.filter((r) => ["Pending", "Approved"].includes(r.status)).length ?? 0} scheduled`, tags: [{ label: "H", color: "bg-violet-500" }, { label: "V", color: "bg-blue-500" }] },
+    { name: "Low Stock Items", meta: "Requires attention", gradient: "from-rose-100 to-orange-100", icon: AlertTriangle, stat: `${lowStock} items`, tags: [{ label: "!", color: "bg-red-500" }, { label: "M", color: "bg-amber-500" }] },
+    { name: "Pending Approvals", meta: "Across departments", gradient: "from-amber-100 to-yellow-100", icon: ClipboardCheck, stat: `${pendingPRs + (data?.poPending ?? 0) + (data?.risPending ?? 0)} pending`, tags: [{ label: "P", color: "bg-amber-500" }, { label: "R", color: "bg-blue-500" }] },
   ];
 
   const inventoryHealth = (data?.items ?? []).slice(0, 5).map((it) => {
@@ -291,11 +277,6 @@ export function DashboardPage() {
         }
       />
 
-      {/* No `onOpen` on these. It was `() => {}`, which drew a corner arrow on
-          all four metric cards that did nothing when clicked — the same defect
-          the portal's calendar had. `MetricCard` renders the arrow only when a
-          handler exists, so dropping it removes the affordance rather than
-          leaving a dead one on the first screen of the day. */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((s) => (
           <MetricCard key={s.label} {...s} loading={loading} />

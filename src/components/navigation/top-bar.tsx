@@ -74,14 +74,11 @@ export function NotificationBell({
       )}
     >
       <Bell className="h-4 w-4" />
-      {/* Was a raw red-500. Unread mail is something waiting on a desk, not an
-          error, so it carries the "in process" tone the status tags use. The
-          count keeps its round shape: at 16px a square reads as a glitch. */}
       {unread &&
         (count === undefined ? (
-          <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-(--tone-process)" />
+          <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-red-500" />
         ) : (
-          <span className="absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-(--tone-process) px-1 text-micro font-semibold tabular-nums text-white">
+          <span className="absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-red-500 px-1 text-micro font-semibold tabular-nums text-white">
             {count > 99 ? "99+" : count}
           </span>
         ))}

@@ -13,20 +13,13 @@ import {
 } from "@/components";
 import type { StockCardEntry, StockTransactionType } from "@/features/inventory/types";
 
-/*
- * A stock card is a ledger, and a ledger is written in one ink. These six
- * transaction types were emerald, blue, amber, violet and orange, which made a
- * column of plain words look like a legend — and the words already say which
- * kind of movement each row is. What matters numerically is the in/out column
- * beside them, and that keeps its colour.
- */
 const typeTone: Record<StockTransactionType, string> = {
   "Beginning Balance": "text-neutral-600",
-  "Purchase Order": "text-neutral-700",
-  "RIS Release": "text-neutral-700",
-  "Manual Adjustment": "text-neutral-700",
-  Return: "text-neutral-700",
-  Correction: "text-neutral-700",
+  "Purchase Order": "text-emerald-700",
+  "RIS Release": "text-blue-700",
+  "Manual Adjustment": "text-amber-700",
+  Return: "text-violet-700",
+  Correction: "text-orange-700",
 };
 
 /** Per-item stock-card ledger table. */
@@ -80,10 +73,10 @@ export function StockCardTable({
               <TableCell className="whitespace-nowrap py-2.5 font-medium text-neutral-800">
                 {e.documentNumber}
               </TableCell>
-              <TableCell className={`whitespace-nowrap py-2.5 text-body font-medium ${typeTone[e.type]}`}>
+              <TableCell className={`whitespace-nowrap py-2.5 text-[12px] font-medium ${typeTone[e.type]}`}>
                 {e.type}
               </TableCell>
-              <TableCell className="py-2.5 text-right tabular-nums text-(--tone-settled)">
+              <TableCell className="py-2.5 text-right tabular-nums text-emerald-700">
                 {e.quantityIn > 0 ? e.quantityIn : "—"}
               </TableCell>
               <TableCell className="py-2.5 text-right tabular-nums text-red-600">
@@ -95,9 +88,9 @@ export function StockCardTable({
               <TableCell className="py-2.5">
                 <div className="max-w-[220px]">
                   {e.remarks && (
-                    <div className="truncate text-body text-neutral-600">{e.remarks}</div>
+                    <div className="truncate text-[12px] text-neutral-600">{e.remarks}</div>
                   )}
-                  <div className="text-micro text-neutral-400">{e.user}</div>
+                  <div className="text-[11px] text-neutral-400">{e.user}</div>
                 </div>
               </TableCell>
             </TableRow>
