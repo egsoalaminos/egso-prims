@@ -1,3 +1,17 @@
+> **Superseded — this design was reverted on 11 August 2026.**
+>
+> Everything below shipped and was then replaced: the admin now runs the design
+> that first went to Vercel on 4 August (commit `4e9d2d6`), with no theme system
+> and no dark mode. See `docs/design/admin-design.md`.
+>
+> Kept as a record of what was decided and why, not as a description of the
+> code. The municipal design itself is recoverable at tag
+> `design-option-a-frozen` (commit `4bcc32c`).
+>
+> One part of it did survive the revert and still governs: the **public portal**
+> keeps its letterhead hierarchy, seal palette and serif, insulated by
+> `[data-municipal]`.
+
 # Admin redesign: one system with the portal
 
 **Date:** 2026-08-10
