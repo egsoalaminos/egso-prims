@@ -39,7 +39,7 @@ export function InformationCard({
         {action && (
           <button
             onClick={action.onClick}
-            className="text-body font-medium text-neutral-500 transition hover:text-neutral-900"
+            className="text-[12px] font-medium text-neutral-500 transition hover:text-neutral-900"
           >
             {action.label}
           </button>

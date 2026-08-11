@@ -227,7 +227,7 @@ function StepItems({ form }: { form: FormApi }) {
         {["Description", "Qty", "Unit", "Est. Cost", "Subtotal", ""].map((h) => (
           <span
             key={h}
-            className="text-micro font-semibold uppercase tracking-wider text-neutral-400"
+            className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400"
           >
             {h}
           </span>
@@ -295,7 +295,7 @@ function StepItems({ form }: { form: FormApi }) {
       })}
 
       {typeof itemsError?.message === "string" && (
-        <p className="text-caption text-red-600">{itemsError.message}</p>
+        <p className="text-[11.5px] text-red-600">{itemsError.message}</p>
       )}
 
       <div className="flex items-center justify-between border-t border-neutral-100 pt-3">
@@ -303,9 +303,9 @@ function StepItems({ form }: { form: FormApi }) {
           <Plus />
           Add Item
         </Button>
-        <div className="text-body text-neutral-500">
+        <div className="text-[12.5px] text-neutral-500">
           Running total:{" "}
-          <CurrencyDisplay amount={total} className="ml-1 text-section font-semibold" />
+          <CurrencyDisplay amount={total} className="ml-1 text-[14px] font-semibold" />
         </div>
       </div>
     </div>
@@ -365,7 +365,7 @@ function StepAttachments({
                   >
                     <X className="h-3 w-3" />
                   </button>
-                  <div className="truncate bg-white px-2 py-1 text-micro text-neutral-600">
+                  <div className="truncate bg-white px-2 py-1 text-[10.5px] text-neutral-600">
                     {p.file.name}
                   </div>
                 </div>
@@ -386,10 +386,10 @@ function StepAttachments({
                 className="flex items-center gap-2.5 rounded-lg border border-neutral-200 bg-neutral-50/60 px-3 py-2"
               >
                 <FileText className="h-3.5 w-3.5 shrink-0 text-neutral-500" />
-                <span className="min-w-0 flex-1 truncate text-body text-neutral-700">
+                <span className="min-w-0 flex-1 truncate text-[12.5px] text-neutral-700">
                   {a.name}
                 </span>
-                <Caption className="shrink-0 text-micro">kept on save</Caption>
+                <Caption className="shrink-0 text-[10.5px]">kept on save</Caption>
               </li>
             ))}
           </ul>
@@ -439,7 +439,7 @@ function StepReview({
         <PRItemsTable items={reviewItems} />
       </section>
 
-      <p className="rounded-lg bg-neutral-50 px-3 py-2.5 text-caption leading-relaxed text-neutral-500">
+      <p className="rounded-lg bg-neutral-50 px-3 py-2.5 text-[11.5px] leading-relaxed text-neutral-500">
         Submitting will route this request to the General Services Office for review. You can
         still edit the request while it is in Draft or Submitted status.
       </p>
@@ -450,10 +450,10 @@ function StepReview({
 function ReviewField({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div className="text-micro font-semibold uppercase tracking-wider text-neutral-400">
+      <div className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
         {label}
       </div>
-      <div className="mt-0.5 text-body text-neutral-800">{value}</div>
+      <div className="mt-0.5 text-[12.5px] text-neutral-800">{value}</div>
     </div>
   );
 }

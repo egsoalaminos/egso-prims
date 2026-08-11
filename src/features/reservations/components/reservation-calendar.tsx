@@ -56,16 +56,16 @@ function EventPreview({ reservation }: { reservation: Reservation }) {
   return (
     <div className="space-y-1 py-0.5">
       <div className="flex items-center gap-2">
-        <span className="text-body font-semibold text-neutral-900">{reservation.resNumber}</span>
+        <span className="text-[12px] font-semibold text-neutral-900">{reservation.resNumber}</span>
         <StatusBadge status={reservation.status} />
       </div>
-      <div className="text-caption text-neutral-700">
+      <div className="text-[11.5px] text-neutral-700">
         {facility?.name} · {formatTime(reservation.startTime)} – {formatTime(reservation.endTime)}
       </div>
-      <div className="text-caption text-neutral-500">
+      <div className="text-[11.5px] text-neutral-500">
         {reservation.borrower} · {reservation.departmentCode}
       </div>
-      <div className="max-w-[220px] truncate text-micro text-neutral-400">{reservation.purpose}</div>
+      <div className="max-w-[220px] truncate text-[11px] text-neutral-400">{reservation.purpose}</div>
     </div>
   );
 }
@@ -96,7 +96,7 @@ function EventChip({
               : undefined
           }
           className={cn(
-            "flex w-full items-center gap-1 truncate rounded-md px-1.5 py-0.5 text-left text-micro font-medium transition",
+            "flex w-full items-center gap-1 truncate rounded-md px-1.5 py-0.5 text-left text-[10.5px] font-medium transition",
             chipTone[reservation.status],
             !onOpen && "cursor-default",
           )}
@@ -183,7 +183,7 @@ export function ReservationCalendar({
               <IconButton aria-label="Previous" onClick={() => step(-1)}>
                 <ChevronLeft />
               </IconButton>
-              <span className="min-w-[150px] text-center text-body font-medium text-neutral-800">
+              <span className="min-w-[150px] text-center text-[12.5px] font-medium text-neutral-800">
                 {title}
               </span>
               <IconButton aria-label="Next" onClick={() => step(1)}>
@@ -200,7 +200,7 @@ export function ReservationCalendar({
                   key={v}
                   onClick={() => setView(v)}
                   className={cn(
-                    "rounded-md px-2.5 py-1 text-body font-medium capitalize transition",
+                    "rounded-md px-2.5 py-1 text-[12px] font-medium capitalize transition",
                     view === v
                       ? "bg-white text-neutral-900 shadow-sm"
                       : "text-neutral-500 hover:text-neutral-800",
@@ -263,7 +263,7 @@ function MonthView({
           {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
             <div
               key={d}
-              className="px-2 py-2 text-center text-micro font-semibold uppercase tracking-wider text-neutral-400"
+              className="px-2 py-2 text-center text-[10px] font-semibold uppercase tracking-wider text-neutral-400"
             >
               {d}
             </div>
@@ -285,7 +285,7 @@ function MonthView({
                 <div className="mb-1 flex justify-end">
                   <span
                     className={cn(
-                      "grid h-5 w-5 place-items-center rounded-full text-micro tabular-nums",
+                      "grid h-5 w-5 place-items-center rounded-full text-[11px] tabular-nums",
                       isToday(d)
                         ? "bg-neutral-900 font-semibold text-white"
                         : inMonth
@@ -301,7 +301,7 @@ function MonthView({
                     <EventChip key={r.id} reservation={r} onOpen={onOpen} />
                   ))}
                   {events.length > 3 && (
-                    <div className="px-1.5 text-micro font-medium text-neutral-400">
+                    <div className="px-1.5 text-[10px] font-medium text-neutral-400">
                       +{events.length - 3} more
                     </div>
                   )}
@@ -345,12 +345,12 @@ function WeekView({
                   isSameDay(d, cursor) && "bg-neutral-50/70",
                 )}
               >
-                <span className="text-micro font-semibold uppercase tracking-wider text-neutral-400">
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
                   {format(d, "EEE")}
                 </span>
                 <span
                   className={cn(
-                    "grid h-5 w-5 place-items-center rounded-full text-caption tabular-nums",
+                    "grid h-5 w-5 place-items-center rounded-full text-[11.5px] tabular-nums",
                     isToday(d) ? "bg-neutral-900 font-semibold text-white" : "text-neutral-800",
                   )}
                 >
@@ -359,7 +359,7 @@ function WeekView({
               </button>
               <div className="space-y-1 p-1.5">
                 {events.length === 0 ? (
-                  <div className="py-4 text-center text-micro text-neutral-300">—</div>
+                  <div className="py-4 text-center text-[10.5px] text-neutral-300">—</div>
                 ) : (
                   events.map((r) => {
                     const facility = facilityById(r.facilityId);
@@ -373,14 +373,14 @@ function WeekView({
                               chipTone[r.status],
                             )}
                           >
-                            <div className="flex items-center gap-1 text-micro font-semibold tabular-nums">
+                            <div className="flex items-center gap-1 text-[10px] font-semibold tabular-nums">
                               <span className={cn("h-1.5 w-1.5 rounded-full", dotTone[r.status])} />
                               {r.startTime}–{r.endTime}
                             </div>
-                            <div className="mt-0.5 truncate text-micro font-medium">
+                            <div className="mt-0.5 truncate text-[11px] font-medium">
                               {facility?.shortName}
                             </div>
-                            <div className="truncate text-micro opacity-75">{r.departmentCode}</div>
+                            <div className="truncate text-[10px] opacity-75">{r.departmentCode}</div>
                           </button>
                         </TooltipTrigger>
                         <TooltipContent
@@ -417,7 +417,7 @@ function DayView({
   if (events.length === 0) {
     return (
       <div className="px-6 py-10 text-center">
-        <div className="text-body font-semibold text-neutral-900">No reservations</div>
+        <div className="text-[13px] font-semibold text-neutral-900">No reservations</div>
         <Caption as="p" className="mt-1">
           No facilities are booked on this day.
         </Caption>
@@ -434,15 +434,15 @@ function DayView({
               onClick={onOpen ? () => onOpen(r) : undefined}
               className="flex w-full items-center gap-4 px-5 py-3 text-left transition hover:bg-neutral-50/70"
             >
-              <span className="w-32 shrink-0 text-body font-medium tabular-nums text-neutral-700">
+              <span className="w-32 shrink-0 text-[12px] font-medium tabular-nums text-neutral-700">
                 {formatTime(r.startTime)} – {formatTime(r.endTime)}
               </span>
               <span className={cn("h-2 w-2 shrink-0 rounded-full", facility?.color)} />
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-body font-medium text-neutral-900">
+                <span className="block truncate text-[12.5px] font-medium text-neutral-900">
                   {facility?.name} — {r.purpose}
                 </span>
-                <span className="block text-caption text-neutral-500">
+                <span className="block text-[11.5px] text-neutral-500">
                   {r.resNumber} · {r.borrower} · {r.departmentCode}
                 </span>
               </span>

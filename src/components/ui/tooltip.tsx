@@ -46,10 +46,7 @@ function TooltipContent({
         {...props}
       >
         {children}
-        {/* rounded-[2px] was an arbitrary value, so zeroing the radius scale
-            never reached it — every tooltip arrow in the system kept a corner
-            nothing else has. */}
-        <TooltipPrimitive.Arrow className="z-50 size-2.5 translate-y-[calc(-50%_-_2px)] rotate-45 bg-foreground fill-foreground" />
+        <TooltipPrimitive.Arrow className="z-50 size-2.5 translate-y-[calc(-50%_-_2px)] rotate-45 rounded-[2px] bg-foreground fill-foreground" />
       </TooltipPrimitive.Content>
     </TooltipPrimitive.Portal>
   )

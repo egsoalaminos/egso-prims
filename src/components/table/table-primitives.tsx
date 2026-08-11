@@ -43,21 +43,13 @@ export function TableHeaderRow({
   return (
     <tr
       className={cn(
-        // Was bg-neutral-50 with neutral-400 labels — the same #FAFAFA as the
-        // canvas behind it, so the header band was invisible and the column
-        // names were the faintest text on the page.
-        "bg-(--thead-bg) text-thead",
-        // Case, tracking, weight and colour are the theme's, not the table's.
-        // A municipal form sets its headings in small caps and rules its
-        // columns; a console sets them in sentence case and rules nothing. The
-        // component holds neither opinion — it reads whichever the active theme
-        // declares.
+        // Band, case, tracking and colour come from tokens rather than from
+        // literals here, so the header can be restyled in one place. They
+        // resolve to the values this table has always used: a neutral-50 band
+        // with uppercase, wide-tracked neutral-400 labels.
+        "bg-(--thead-bg) text-[11px]",
         "[text-transform:var(--thead-transform)] tracking-(--thead-tracking)",
         "text-(--thead-fg)",
-        // The column divider. In Theme 1 this is what stops "Quantity" and
-        // "Unit" running together; in Theme 2 the token is transparent and the
-        // rule simply is not drawn, without the class changing.
-        "[&>th+th]:border-l [&>th+th]:border-(--thead-divider)",
         className,
       )}
       {...props}
@@ -89,7 +81,7 @@ export function TableBody({
   className,
   ...props
 }: React.HTMLAttributes<HTMLTableSectionElement>) {
-  return <tbody className={cn("text-body text-neutral-700", className)} {...props} />;
+  return <tbody className={cn("text-[13px] text-neutral-700", className)} {...props} />;
 }
 
 export function TableRow({

@@ -36,7 +36,7 @@ export function DropdownFilter({
       <SelectTrigger
         size="sm"
         className={cn(
-          "h-auto gap-1.5 rounded-lg border-neutral-200 bg-white px-2.5 py-1.5 text-body font-medium text-neutral-700 shadow-none transition hover:bg-neutral-50 focus-visible:ring-2 focus-visible:ring-neutral-300 data-[placeholder]:text-neutral-700",
+          "h-auto gap-1.5 rounded-lg border-neutral-200 bg-white px-2.5 py-1.5 text-[12.5px] font-medium text-neutral-700 shadow-none transition hover:bg-neutral-50 focus-visible:ring-2 focus-visible:ring-neutral-300 data-[placeholder]:text-neutral-700",
           className,
         )}
       >
@@ -44,7 +44,7 @@ export function DropdownFilter({
       </SelectTrigger>
       <SelectContent>
         {options.map((o) => (
-          <SelectItem key={o.value} value={o.value} className="text-body">
+          <SelectItem key={o.value} value={o.value} className="text-[12.5px]">
             {o.label}
           </SelectItem>
         ))}

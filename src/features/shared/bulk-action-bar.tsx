@@ -28,7 +28,7 @@ export function BulkActionBar({
           className="fixed bottom-6 left-1/2 z-40 -translate-x-1/2"
         >
           <div className="flex items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3 py-2 shadow-lg">
-            <span className="px-1 text-body font-medium text-neutral-800">
+            <span className="px-1 text-[12.5px] font-medium text-neutral-800">
               {count} selected
             </span>
             <span className="h-5 w-px bg-neutral-200" />
@@ -40,7 +40,13 @@ export function BulkActionBar({
               <Printer />
               Print
             </Button>
-            <Button variant="danger" onClick={onDelete}>
+            {/* A shade darker than the variant's default: this one carries a
+                word, not just an icon, so it sits at red-600. */}
+            <Button
+              variant="danger"
+              className="text-red-600 hover:text-red-700"
+              onClick={onDelete}
+            >
               <Trash2 />
               Delete
             </Button>

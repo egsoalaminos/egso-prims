@@ -53,11 +53,11 @@ function ChangeValue({ value, emphasis }: { value?: string; emphasis?: boolean }
     }
   }, [value]);
 
-  if (!value) return <div className="mt-1 text-body text-neutral-400">—</div>;
+  if (!value) return <div className="mt-1 text-[12.5px] text-neutral-400">—</div>;
 
   if (pretty) {
     return (
-      <pre className="mt-1.5 max-h-56 overflow-auto rounded-md bg-white/70 p-2.5 font-mono text-micro leading-relaxed text-neutral-700">
+      <pre className="mt-1.5 max-h-56 overflow-auto rounded-md bg-white/70 p-2.5 font-mono text-[11px] leading-relaxed text-neutral-700">
         {pretty}
       </pre>
     );
@@ -66,7 +66,7 @@ function ChangeValue({ value, emphasis }: { value?: string; emphasis?: boolean }
   return (
     <div
       className={
-        "mt-1 text-body " +
+        "mt-1 text-[12.5px] " +
         (emphasis ? "font-medium text-neutral-900" : "text-neutral-600")
       }
     >
@@ -79,7 +79,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   return (
     <div>
       <OverlineLabel>{label}</OverlineLabel>
-      <div className="mt-0.5 text-body text-neutral-800">{children}</div>
+      <div className="mt-0.5 text-[12.5px] text-neutral-800">{children}</div>
     </div>
   );
 }
@@ -165,7 +165,7 @@ export function AuditDrawer({
                 <Field label="Timestamp">{fmt(entry.timestamp)}</Field>
                 <Field label="User">
                   {entry.user}
-                  <span className="block text-micro text-neutral-500">{entry.userRole}</span>
+                  <span className="block text-[11px] text-neutral-500">{entry.userRole}</span>
                 </Field>
                 <Field label="Email">
                   {entry.email ? (
@@ -185,7 +185,7 @@ export function AuditDrawer({
                   )}
                 </Field>
                 <Field label="Record ID">
-                  <span className="break-all font-mono text-caption text-neutral-600">
+                  <span className="break-all font-mono text-[11.5px] text-neutral-600">
                     {entry.id}
                   </span>
                 </Field>
@@ -215,7 +215,7 @@ export function AuditDrawer({
 
               {/* Client info */}
               <section className="rounded-lg border border-neutral-200 p-3.5">
-                <div className="mb-2.5 flex items-center gap-1.5 text-body font-semibold text-neutral-900">
+                <div className="mb-2.5 flex items-center gap-1.5 text-[12px] font-semibold text-neutral-900">
                   <Monitor className="h-3.5 w-3.5 text-neutral-500" />
                   Client Information
                 </div>
@@ -237,13 +237,13 @@ export function AuditDrawer({
               {/* Tabs */}
               <Tabs defaultValue="timeline">
                 <TabsList className="w-full justify-start bg-neutral-100">
-                  <TabsTrigger value="timeline" className="text-body">
+                  <TabsTrigger value="timeline" className="text-[12.5px]">
                     Timeline
                   </TabsTrigger>
-                  <TabsTrigger value="comments" className="text-body">
+                  <TabsTrigger value="comments" className="text-[12.5px]">
                     Comments ({entry.comments.length})
                   </TabsTrigger>
-                  <TabsTrigger value="history" className="text-body">
+                  <TabsTrigger value="history" className="text-[12.5px]">
                     Session History
                   </TabsTrigger>
                 </TabsList>
@@ -256,7 +256,7 @@ export function AuditDrawer({
                       <ApprovalTimeline steps={timeline} />
                     </>
                   ) : (
-                    <p className="rounded-lg bg-neutral-50 px-3 py-2.5 text-caption text-neutral-500">
+                    <p className="rounded-lg bg-neutral-50 px-3 py-2.5 text-[11.5px] text-neutral-500">
                       This event is not linked to a document record.
                     </p>
                   )}

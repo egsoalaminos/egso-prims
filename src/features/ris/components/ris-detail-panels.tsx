@@ -36,16 +36,16 @@ export function RISDetailPanels({
 
       <Tabs defaultValue="timeline">
         <TabsList className="w-full justify-start bg-neutral-100">
-          <TabsTrigger value="timeline" className="text-body">
+          <TabsTrigger value="timeline" className="text-[12.5px]">
             Timeline
           </TabsTrigger>
-          <TabsTrigger value="attachments" className="text-body">
+          <TabsTrigger value="attachments" className="text-[12.5px]">
             Attachments ({ris.attachments.length})
           </TabsTrigger>
-          <TabsTrigger value="comments" className="text-body">
+          <TabsTrigger value="comments" className="text-[12.5px]">
             Comments ({ris.comments.length})
           </TabsTrigger>
-          <TabsTrigger value="history" className="text-body">
+          <TabsTrigger value="history" className="text-[12.5px]">
             History
           </TabsTrigger>
         </TabsList>

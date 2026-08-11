@@ -330,7 +330,7 @@ function StepSchedule({
       </Field>
 
       {facility && (
-        <p className="rounded-lg bg-neutral-50 px-3 py-2 text-caption leading-snug text-neutral-500">
+        <p className="rounded-lg bg-neutral-50 px-3 py-2 text-[11.5px] leading-snug text-neutral-500">
           {facility.description}
         </p>
       )}
@@ -386,19 +386,19 @@ function StepSchedule({
       {/* Live availability panel */}
       {facilityId && (
         <div className="rounded-lg border border-neutral-200 p-3">
-          <div className="flex items-center gap-1.5 text-body font-semibold text-neutral-900">
+          <div className="flex items-center gap-1.5 text-[12px] font-semibold text-neutral-900">
             <CalendarCheck2 className="h-3.5 w-3.5 text-neutral-500" />
             Bookings on this day
             {checking && <Spinner size="sm" className="ml-1" />}
           </div>
           {dayBookings.length === 0 && !checking ? (
-            <p className="mt-1.5 text-caption text-(--tone-settled)">
+            <p className="mt-1.5 text-[11.5px] text-(--tone-settled)">
               No existing bookings — the whole day is open.
             </p>
           ) : (
             <ul className="mt-1.5 space-y-1">
               {dayBookings.map((b) => (
-                <li key={b.id} className="flex items-center justify-between text-caption">
+                <li key={b.id} className="flex items-center justify-between text-[11.5px]">
                   <span className="text-neutral-600">
                     {formatTime(b.startTime)} – {formatTime(b.endTime)} · {b.resNumber}
                   </span>
@@ -413,7 +413,7 @@ function StepSchedule({
       {conflicts.length > 0 && (
         <div className="flex items-start gap-2 rounded-lg bg-red-50 px-3 py-2.5">
           <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-red-600" />
-          <p className="text-caption leading-snug text-red-700">
+          <p className="text-[11.5px] leading-snug text-red-700">
             The selected time overlaps {conflicts.map((c) => c.resNumber).join(", ")}. Approved and
             pending reservations block the slot — choose a different time or facility.
           </p>
@@ -434,7 +434,7 @@ function StepEquipment({ form }: { form: FormApi }) {
   return (
     <div className="space-y-3">
       {fields.length === 0 && (
-        <p className="rounded-lg bg-neutral-50 px-3 py-2.5 text-caption text-neutral-500">
+        <p className="rounded-lg bg-neutral-50 px-3 py-2.5 text-[11.5px] text-neutral-500">
           No equipment requested. Add items below if the activity needs chairs, tables, sound
           system, or other GSO equipment.
         </p>
@@ -443,7 +443,7 @@ function StepEquipment({ form }: { form: FormApi }) {
       {fields.length > 0 && (
         <div className="hidden grid-cols-[1fr_90px_90px_1fr_32px] gap-2 px-1 sm:grid">
           {["Equipment", "Qty", "Available", "Remarks", ""].map((h) => (
-            <span key={h} className="text-micro font-semibold uppercase tracking-wider text-neutral-400">
+            <span key={h} className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
               {h}
             </span>
           ))}
@@ -473,7 +473,7 @@ function StepEquipment({ form }: { form: FormApi }) {
                 invalid={!!rowErr?.quantity}
                 {...register(`equipment.${i}.quantity`, { valueAsNumber: true })}
               />
-              <div className="text-body tabular-nums text-neutral-600">
+              <div className="text-[12.5px] tabular-nums text-neutral-600">
                 {eq ? eq.available : "—"}
               </div>
               <Input placeholder="Remarks (optional)" {...register(`equipment.${i}.remarks`)} />
@@ -488,7 +488,7 @@ function StepEquipment({ form }: { form: FormApi }) {
               </div>
             </div>
             {rowErr?.quantity?.message && (
-              <p className="mt-1 px-1 text-caption text-red-600">{rowErr.quantity.message}</p>
+              <p className="mt-1 px-1 text-[11.5px] text-red-600">{rowErr.quantity.message}</p>
             )}
           </div>
         );
@@ -609,7 +609,7 @@ function StepReview({
         )}
       </section>
 
-      <p className="rounded-lg bg-neutral-50 px-3 py-2.5 text-caption leading-relaxed text-neutral-500">
+      <p className="rounded-lg bg-neutral-50 px-3 py-2.5 text-[11.5px] leading-relaxed text-neutral-500">
         Submitting routes the reservation to the GSO for approval. Approved reservations
         automatically block the facility's time slot.
       </p>
@@ -620,8 +620,8 @@ function StepReview({
 function ReviewField({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div className="text-micro font-semibold uppercase tracking-wider text-neutral-400">{label}</div>
-      <div className="mt-0.5 text-body text-neutral-800">{value}</div>
+      <div className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">{label}</div>
+      <div className="mt-0.5 text-[12.5px] text-neutral-800">{value}</div>
     </div>
   );
 }

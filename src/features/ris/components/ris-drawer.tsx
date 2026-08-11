@@ -209,7 +209,7 @@ export function RISDrawer({
                       return (
                         <li
                           key={it.id}
-                          className="flex items-center justify-between gap-3 text-caption"
+                          className="flex items-center justify-between gap-3 text-[11.5px]"
                         >
                           <span className="min-w-0 truncate text-neutral-700">{it.name}</span>
                           <span
@@ -226,7 +226,7 @@ export function RISDrawer({
                   </ul>
                 )}
                 {insufficient.length > 0 && (
-                  <p className="mt-2 text-caption font-medium text-red-600">
+                  <p className="mt-2 text-[11.5px] font-medium text-red-600">
                     Insufficient stock for {insufficient.length} item
                     {insufficient.length === 1 ? "" : "s"} — adjust the slip before releasing.
                   </p>

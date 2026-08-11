@@ -9,7 +9,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   return (
     <div>
       <OverlineLabel>{label}</OverlineLabel>
-      <div className="mt-0.5 text-body text-neutral-800">{children}</div>
+      <div className="mt-0.5 text-[12.5px] text-neutral-800">{children}</div>
     </div>
   );
 }
@@ -41,37 +41,37 @@ export function RISOverview({ ris }: { ris: RequestForIssuance }) {
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <section className="rounded-lg border border-neutral-200 p-3.5">
-          <div className="mb-2 flex items-center gap-1.5 text-body font-semibold text-neutral-900">
+          <div className="mb-2 flex items-center gap-1.5 text-[12px] font-semibold text-neutral-900">
             <FileText className="h-3.5 w-3.5 text-neutral-500" />
             Linked Purchase Request
           </div>
           {ris.prNumber ? (
             <DocumentNumber value={ris.prNumber} />
           ) : (
-            <span className="text-body text-neutral-400">Raised directly — no source request</span>
+            <span className="text-[12.5px] text-neutral-400">Raised directly — no source request</span>
           )}
         </section>
         <section className="rounded-lg border border-neutral-200 p-3.5">
-          <div className="mb-2 flex items-center gap-1.5 text-body font-semibold text-neutral-900">
+          <div className="mb-2 flex items-center gap-1.5 text-[12px] font-semibold text-neutral-900">
             <ShoppingCart className="h-3.5 w-3.5 text-neutral-500" />
             Linked Purchase Order
           </div>
           {ris.poNumber ? (
             <DocumentNumber value={ris.poNumber} />
           ) : (
-            <span className="text-body text-neutral-400">Issued from central stock</span>
+            <span className="text-[12.5px] text-neutral-400">Issued from central stock</span>
           )}
         </section>
       </div>
 
       <div>
         <section className="rounded-lg border border-neutral-200 p-3.5">
-          <div className="mb-1.5 flex items-center gap-1.5 text-body font-semibold text-neutral-900">
+          <div className="mb-1.5 flex items-center gap-1.5 text-[12px] font-semibold text-neutral-900">
             <UserRound className="h-3.5 w-3.5 text-neutral-500" />
             Issued By
           </div>
-          <div className="text-body text-neutral-800">{ris.issuedBy}</div>
-          <div className="text-micro text-neutral-500">General Services Office</div>
+          <div className="text-[12.5px] text-neutral-800">{ris.issuedBy}</div>
+          <div className="text-[11px] text-neutral-500">General Services Office</div>
         </section>
       </div>
     </div>

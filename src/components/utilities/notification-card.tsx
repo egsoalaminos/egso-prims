@@ -52,15 +52,15 @@ export function NotificationCard({
         <div className="flex items-center justify-between gap-2">
           <div
             className={cn(
-              "truncate text-body font-medium text-neutral-900",
+              "truncate text-[12.5px] font-medium text-neutral-900",
               unread && "font-semibold",
             )}
           >
             {title}
           </div>
-          {time && <span className="shrink-0 text-micro text-neutral-500">{time}</span>}
+          {time && <span className="shrink-0 text-[10.5px] text-neutral-500">{time}</span>}
         </div>
-        {body && <div className="line-clamp-2 text-caption text-neutral-500">{body}</div>}
+        {body && <div className="line-clamp-2 text-[11.5px] text-neutral-500">{body}</div>}
       </div>
     </div>
   );

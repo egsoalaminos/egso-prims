@@ -5,11 +5,10 @@ import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  // The focus ring follows the accent rather than sitting at neutral-300. The
-  // portal's hand-built buttons already set a burgundy ring by hand; routing it
-  // through the token means one rule serves both surfaces and the ring keeps
-  // matching if the accent is ever changed in Settings.
-  "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-lg font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring) focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-50 [&_svg]:shrink-0",
+  // The focus ring reads from the accent token, which resolves to the same
+  // neutral-300 this has always used. Routing it through the token means one
+  // rule serves both surfaces if the accent is ever changed in Settings.
+  "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-lg font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring) disabled:pointer-events-none disabled:opacity-50 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -21,35 +20,19 @@ const buttonVariants = cva(
           "border border-neutral-200 bg-transparent text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900",
         ghost: "text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900",
         /*
-         * Destructive.
-         *
-         * Was `bg-red-600 text-white` and was used exactly nowhere — dead since
-         * it was written. Meanwhile nine real destructive controls were drawn by
-         * hand as ghost buttons in three different reds (red-500, red-600,
-         * red-700). This variant is now what those nine already were, so they
-         * can converge on it.
-         *
-         * It stays red rather than moving to the halted status tone, and that is
-         * deliberate: the halted tone *is* the seal burgundy, which is also the
-         * default accent. A burgundy delete button would be indistinguishable
-         * from a primary action, and a burgundy invalid field would read as a
-         * focused one. Red has to stay off the accent to keep working as a
-         * warning.
+         * Destructive. The solid `bg-red-600 text-white` this slot once held was
+         * used exactly nowhere, while the real destructive controls were drawn
+         * by hand as ghost buttons — thirteen of them at `text-red-500
+         * hover:bg-red-50`. This variant is that majority spelling, so those
+         * sites keep rendering exactly as they did while sharing one definition.
+         * The one site that used red-600 keeps its own className.
          */
-        danger: "text-red-600 hover:bg-red-50 hover:text-red-700",
+        danger: "text-red-500 hover:bg-red-50",
       },
       size: {
-        /*
-         * `lg` is the page-level call to action — the portal's Track and Submit
-         * buttons, which sit alone on a page rather than inside a card. It buys
-         * presence with padding, not with type: the font stays on the 12.5px
-         * body step, because the portal used to reach for a 13px one-off here
-         * and that is how a scale acquires a twentieth size.
-         */
-        lg: "px-5 py-2.5 text-body [&_svg]:h-4 [&_svg]:w-4",
-        md: "px-controlx py-control text-body [&_svg]:h-3.5 [&_svg]:w-3.5",
-        sm: "px-2.5 py-control text-body [&_svg]:h-3.5 [&_svg]:w-3.5",
-        xs: "px-2 py-1 text-micro [&_svg]:h-3 [&_svg]:w-3",
+        md: "px-controlx py-control text-[12.5px] [&_svg]:h-3.5 [&_svg]:w-3.5",
+        sm: "px-2.5 py-control text-[12.5px] [&_svg]:h-3.5 [&_svg]:w-3.5",
+        xs: "px-2 py-1 text-[11px] [&_svg]:h-3 [&_svg]:w-3",
         icon: "h-7 w-7 p-0 [&_svg]:h-3.5 [&_svg]:w-3.5",
         "icon-sm": "h-6 w-6 rounded-md p-0 [&_svg]:h-3 [&_svg]:w-3",
       },

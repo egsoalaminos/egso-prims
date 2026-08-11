@@ -68,8 +68,8 @@ export function SidebarBrand({
         </div>
       )}
       <div className="flex flex-col leading-tight group-data-[collapsed=true]:hidden">
-        <span className="text-body font-semibold tracking-tight text-neutral-900">{title}</span>
-        {subtitle && <span className="text-micro text-neutral-500">{subtitle}</span>}
+        <span className="text-[13px] font-semibold tracking-tight text-neutral-900">{title}</span>
+        {subtitle && <span className="text-[10px] text-neutral-500">{subtitle}</span>}
       </div>
     </div>
   );
@@ -95,7 +95,7 @@ export function SidebarGroup({
       {label && (
         // neutral-600, not the component's neutral-500: the rail is a shade
         // deeper than the canvas, and 500 only reaches 4.13:1 against it.
-        <OverlineLabel className="px-2 pb-2 pt-1 text-neutral-600 group-data-[collapsed=true]:hidden">
+        <OverlineLabel className="px-2 pb-2 pt-1 group-data-[collapsed=true]:hidden">
           {label}
         </OverlineLabel>
       )}
@@ -107,7 +107,7 @@ export function SidebarGroup({
 export function SidebarDivider() {
   // neutral-200, not 100: on the rail's deeper ground the faint rule was within
   // a hair of the surface it was meant to divide.
-  return <div className="my-4 border-t border-neutral-200" />;
+  return <div className="my-4 border-t border-neutral-100" />;
 }
 
 export interface SidebarItemProps {
@@ -138,7 +138,7 @@ export function SidebarItem({
       aria-current={active ? "page" : undefined}
       aria-label={label}
       className={cn(
-        "flex w-full items-center gap-navgap rounded-lg px-2 py-nav text-body transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-300 disabled:pointer-events-none disabled:opacity-50 group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:gap-0",
+        "flex w-full items-center gap-navgap rounded-lg px-2 py-nav text-[13px] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-300 disabled:pointer-events-none disabled:opacity-50 group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:gap-0",
         active
           ? "ui-accent-soft ui-accent-fg font-medium"
           : "text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900",
@@ -166,5 +166,5 @@ export function SidebarItem({
 
 /** Bottom-pinned region (user block). */
 export function SidebarFooter({ children }: { children: React.ReactNode }) {
-  return <div className="border-t border-neutral-200 p-3">{children}</div>;
+  return <div className="border-t border-neutral-100 p-3">{children}</div>;
 }

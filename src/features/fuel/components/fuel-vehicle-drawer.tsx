@@ -157,24 +157,24 @@ export function FuelVehicleDrawer({
               <div className="grid grid-cols-2 gap-x-4 gap-y-3">
                 <div>
                   <OverlineLabel>Plate Number</OverlineLabel>
-                  <div className="mt-0.5 text-body tabular-nums text-neutral-800">
+                  <div className="mt-0.5 text-[12.5px] tabular-nums text-neutral-800">
                     {vehicle.plateNumber}
                   </div>
                 </div>
                 <div>
                   <OverlineLabel>Fuel Type</OverlineLabel>
-                  <div className="mt-0.5 inline-flex items-center gap-1.5 text-body text-neutral-800">
+                  <div className="mt-0.5 inline-flex items-center gap-1.5 text-[12.5px] text-neutral-800">
                     <Fuel className="h-3 w-3 text-neutral-400" />
                     {vehicle.fuelType}
                   </div>
                 </div>
                 <div>
                   <OverlineLabel>Vehicle Type</OverlineLabel>
-                  <div className="mt-0.5 text-body text-neutral-800">{vehicle.vehicleType}</div>
+                  <div className="mt-0.5 text-[12.5px] text-neutral-800">{vehicle.vehicleType}</div>
                 </div>
                 <div>
                   <OverlineLabel>Assigned Office</OverlineLabel>
-                  <div className="mt-0.5 inline-flex items-center gap-1.5 text-body text-neutral-800">
+                  <div className="mt-0.5 inline-flex items-center gap-1.5 text-[12.5px] text-neutral-800">
                     <Building2 className="h-3 w-3 text-neutral-400" />
                     {departmentByCode(vehicle.officeCode)?.name ?? vehicle.officeCode}
                   </div>
@@ -185,23 +185,23 @@ export function FuelVehicleDrawer({
               <section className="grid grid-cols-4 gap-3">
                 <div className="rounded-lg border border-neutral-200 p-3">
                   <OverlineLabel>Tank Capacity</OverlineLabel>
-                  <div className="mt-0.5 text-stat font-semibold tabular-nums tracking-tight text-neutral-900">
+                  <div className="mt-0.5 text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
                     {vehicle.tankCapacity.toLocaleString("en-PH", { maximumFractionDigits: 2 })}
-                    <span className="ml-1 text-micro font-normal text-neutral-400">L</span>
+                    <span className="ml-1 text-[11px] font-normal text-neutral-400">L</span>
                   </div>
                 </div>
                 <div className="rounded-lg border border-neutral-200 p-3">
                   <OverlineLabel>Rated Efficiency</OverlineLabel>
-                  <div className="mt-0.5 text-stat font-semibold tabular-nums tracking-tight text-neutral-900">
+                  <div className="mt-0.5 text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
                     {vehicle.kmPerLiter.toLocaleString("en-PH", { maximumFractionDigits: 2 })}
-                    <span className="ml-1 text-micro font-normal text-neutral-400">km/L</span>
+                    <span className="ml-1 text-[11px] font-normal text-neutral-400">km/L</span>
                   </div>
                 </div>
                 <div className="rounded-lg border border-neutral-200 p-3">
                   <OverlineLabel>Current Fuel Balance</OverlineLabel>
                   <div
                     className={
-                      "mt-0.5 text-stat font-semibold tabular-nums tracking-tight " +
+                      "mt-0.5 text-[16px] font-semibold tabular-nums tracking-tight " +
                       (vehicle.tankCapacity > 0 &&
                       vehicle.currentFuelBalance < vehicle.tankCapacity * 0.25
                         ? "text-amber-600"
@@ -211,18 +211,18 @@ export function FuelVehicleDrawer({
                     {vehicle.currentFuelBalance.toLocaleString("en-PH", {
                       maximumFractionDigits: 2,
                     })}
-                    <span className="ml-1 text-micro font-normal text-neutral-400">L</span>
+                    <span className="ml-1 text-[11px] font-normal text-neutral-400">L</span>
                   </div>
                 </div>
                 <div className="rounded-lg border border-neutral-200 p-3">
                   <OverlineLabel>Current Odometer</OverlineLabel>
-                  <div className="mt-0.5 text-stat font-semibold tabular-nums tracking-tight text-neutral-900">
+                  <div className="mt-0.5 text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
                     {history?.lastTrip
                       ? history.lastTrip.endingOdometer.toLocaleString("en-PH", {
                           maximumFractionDigits: 0,
                         })
                       : "—"}
-                    <span className="ml-1 text-micro font-normal text-neutral-400">km</span>
+                    <span className="ml-1 text-[11px] font-normal text-neutral-400">km</span>
                   </div>
                 </div>
               </section>
@@ -231,11 +231,11 @@ export function FuelVehicleDrawer({
               {history && (
                 <section className="rounded-lg bg-neutral-50/60 p-3.5">
                   <div className="flex items-center justify-between">
-                    <span className="text-body font-semibold text-neutral-900">
+                    <span className="text-[12px] font-semibold text-neutral-900">
                       Vehicle History
                     </span>
                     {history.lastTrip && (
-                      <span className="text-caption text-neutral-500">
+                      <span className="text-[11.5px] text-neutral-500">
                         Last trip {format(new Date(history.lastTrip.tripDate), "d MMM yyyy")} ·{" "}
                         {history.lastTrip.controlNo}
                       </span>
@@ -244,40 +244,40 @@ export function FuelVehicleDrawer({
                   <div className="mt-2.5 grid grid-cols-5 gap-3">
                     <div>
                       <OverlineLabel>Total Trips</OverlineLabel>
-                      <div className="text-stat font-semibold tabular-nums tracking-tight text-neutral-900">
+                      <div className="text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
                         {history.totalTrips.toLocaleString("en-PH")}
                       </div>
                     </div>
                     <div>
                       <OverlineLabel>Total Distance</OverlineLabel>
-                      <div className="text-stat font-semibold tabular-nums tracking-tight text-neutral-900">
+                      <div className="text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
                         {history.totalDistance.toLocaleString("en-PH", {
                           maximumFractionDigits: 0,
                         })}
-                        <span className="ml-1 text-micro font-normal text-neutral-400">km</span>
+                        <span className="ml-1 text-[11px] font-normal text-neutral-400">km</span>
                       </div>
                     </div>
                     <div>
                       <OverlineLabel>Fuel Used</OverlineLabel>
-                      <div className="text-stat font-semibold tabular-nums tracking-tight text-neutral-900">
+                      <div className="text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
                         {history.totalFuelUsed.toLocaleString("en-PH", {
                           maximumFractionDigits: 2,
                         })}
-                        <span className="ml-1 text-micro font-normal text-neutral-400">L</span>
+                        <span className="ml-1 text-[11px] font-normal text-neutral-400">L</span>
                       </div>
                     </div>
                     <div>
                       <OverlineLabel>Fuel Added</OverlineLabel>
-                      <div className="text-stat font-semibold tabular-nums tracking-tight text-neutral-700">
+                      <div className="text-[16px] font-semibold tabular-nums tracking-tight text-neutral-700">
                         {history.totalFuelAdded.toLocaleString("en-PH", {
                           maximumFractionDigits: 2,
                         })}
-                        <span className="ml-1 text-micro font-normal text-neutral-400">L</span>
+                        <span className="ml-1 text-[11px] font-normal text-neutral-400">L</span>
                       </div>
                     </div>
                     <div>
                       <OverlineLabel>Average KM/L</OverlineLabel>
-                      <div className="text-stat font-semibold tabular-nums tracking-tight text-neutral-900">
+                      <div className="text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
                         {history.averageKmPerLiter === null
                           ? "—"
                           : history.averageKmPerLiter.toFixed(2)}
@@ -432,7 +432,7 @@ export function FuelVehicleDrawer({
               {comparison && (
                 <section className="rounded-lg bg-neutral-50/60 p-3.5">
                   <div className="flex items-center justify-between">
-                    <span className="text-body font-semibold text-neutral-900">
+                    <span className="text-[12px] font-semibold text-neutral-900">
                       {periodLabel(month, year)} vs. previous month
                     </span>
                     <StatusBadge status={comparison.status} />
@@ -440,24 +440,24 @@ export function FuelVehicleDrawer({
                   <div className="mt-2.5 grid grid-cols-4 gap-3">
                     <div>
                       <OverlineLabel>Current</OverlineLabel>
-                      <div className="text-stat font-semibold tabular-nums tracking-tight text-neutral-900">
+                      <div className="text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
                         {comparison.current === null ? (
                           <span className="text-neutral-300">—</span>
                         ) : (
-                          <CurrencyDisplay amount={comparison.current} className="text-stat" />
+                          <CurrencyDisplay amount={comparison.current} className="text-[16px]" />
                         )}
                       </div>
                     </div>
                     <div>
                       <OverlineLabel>Previous</OverlineLabel>
-                      <div className="text-stat font-semibold tabular-nums tracking-tight text-neutral-600">
+                      <div className="text-[16px] font-semibold tabular-nums tracking-tight text-neutral-600">
                         {comparison.previous === null ? (
                           <span className="text-neutral-300">—</span>
                         ) : (
                           <CurrencyDisplay
                             amount={comparison.previous}
                             muted
-                            className="text-stat"
+                            className="text-[16px]"
                           />
                         )}
                       </div>
@@ -466,7 +466,7 @@ export function FuelVehicleDrawer({
                       <OverlineLabel>Difference</OverlineLabel>
                       <div
                         className={
-                          "text-stat font-semibold tabular-nums tracking-tight " +
+                          "text-[16px] font-semibold tabular-nums tracking-tight " +
                           (comparison.status === "Increased"
                             ? "text-red-600"
                             : comparison.status === "Decreased"
@@ -483,11 +483,11 @@ export function FuelVehicleDrawer({
                     </div>
                     <div>
                       <OverlineLabel>Liters</OverlineLabel>
-                      <div className="text-stat font-semibold tabular-nums tracking-tight text-neutral-700">
+                      <div className="text-[16px] font-semibold tabular-nums tracking-tight text-neutral-700">
                         {comparison.currentLiters.toLocaleString("en-PH", {
                           maximumFractionDigits: 2,
                         })}
-                        <span className="ml-1 text-micro font-normal text-neutral-400">
+                        <span className="ml-1 text-[11px] font-normal text-neutral-400">
                           {comparison.litersDifference === 0
                             ? ""
                             : `(${comparison.litersDifference > 0 ? "+" : "−"}${Math.abs(
@@ -497,7 +497,7 @@ export function FuelVehicleDrawer({
                       </div>
                     </div>
                   </div>
-                  <p className="mt-2.5 text-caption text-neutral-600">
+                  <p className="mt-2.5 text-[11.5px] text-neutral-600">
                     {comparisonLabel(comparison.status, comparison.difference, comparison.percent)}
                   </p>
                 </section>
@@ -536,25 +536,25 @@ export function FuelVehicleDrawer({
                 <section className="grid grid-cols-3 gap-3">
                   <div className="rounded-lg border border-neutral-200 p-3">
                     <OverlineLabel>Total Distance</OverlineLabel>
-                    <div className="mt-0.5 text-stat font-semibold tabular-nums tracking-tight text-neutral-900">
+                    <div className="mt-0.5 text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
                       {odoTotals.distance.toLocaleString("en-PH", { maximumFractionDigits: 0 })}
-                      <span className="ml-1 text-micro font-normal text-neutral-400">km</span>
+                      <span className="ml-1 text-[11px] font-normal text-neutral-400">km</span>
                     </div>
                   </div>
                   <div className="rounded-lg border border-neutral-200 p-3">
                     <OverlineLabel>Total Liters</OverlineLabel>
-                    <div className="mt-0.5 text-stat font-semibold tabular-nums tracking-tight text-neutral-900">
+                    <div className="mt-0.5 text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
                       {odoTotals.liters.toLocaleString("en-PH", { maximumFractionDigits: 0 })}
                     </div>
                   </div>
                   <div className="rounded-lg border border-neutral-200 p-3">
                     <OverlineLabel>Fuel Efficiency</OverlineLabel>
-                    <div className="mt-0.5 text-stat font-semibold tabular-nums tracking-tight text-neutral-900">
+                    <div className="mt-0.5 text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
                       {(() => {
                         const e = kmPerLiter(odoTotals.distance, odoTotals.liters);
                         return e === null ? "—" : e.toFixed(2);
                       })()}
-                      <span className="ml-1 text-micro font-normal text-neutral-400">km/L</span>
+                      <span className="ml-1 text-[11px] font-normal text-neutral-400">km/L</span>
                     </div>
                   </div>
                 </section>
@@ -620,7 +620,7 @@ export function FuelVehicleDrawer({
                             </TableCell>
                             <TableCell className="py-2.5 text-right tabular-nums font-medium text-neutral-900">
                               {r.distance.toLocaleString("en-PH", { maximumFractionDigits: 0 })}
-                              <span className="ml-1 text-micro font-normal text-neutral-400">
+                              <span className="ml-1 text-[10.5px] font-normal text-neutral-400">
                                 km
                               </span>
                             </TableCell>
@@ -706,7 +706,7 @@ export function FuelVehicleDrawer({
                                 {format(new Date(t.txnDate), "d MMM yyyy")}
                               </span>
                               {t.docNumber && (
-                                <span className="block text-micro tabular-nums text-neutral-400">
+                                <span className="block text-[10.5px] tabular-nums text-neutral-400">
                                   {t.docNumber}
                                 </span>
                               )}
@@ -759,7 +759,7 @@ export function FuelVehicleDrawer({
                     </Table>
                   </div>
                 )}
-                <Caption as="p" className="mt-2 text-micro">
+                <Caption as="p" className="mt-2 text-[10.5px]">
                   Registered {format(new Date(vehicle.createdAt), "d MMMM yyyy")} ·{" "}
                   {transactions.length} transaction{transactions.length === 1 ? "" : "s"}
                 </Caption>

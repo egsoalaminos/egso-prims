@@ -49,10 +49,10 @@ export function PODetailPanels({
       </section>
 
       <section className="rounded-lg bg-neutral-50/60 p-3.5">
-        <SectionTitle as="h3" className="mb-2 text-body">
+        <SectionTitle as="h3" className="mb-2 text-[12px]">
           Financial Summary
         </SectionTitle>
-        <dl className="space-y-1.5 text-body">
+        <dl className="space-y-1.5 text-[12.5px]">
           <div className="flex items-center justify-between">
             <dt className="text-neutral-500">Subtotal ({po.items.length} items)</dt>
             <dd>
@@ -66,7 +66,7 @@ export function PODetailPanels({
           <div className="flex items-center justify-between border-t border-neutral-200 pt-1.5">
             <dt className="font-medium text-neutral-900">Total Order Amount</dt>
             <dd>
-              <CurrencyDisplay amount={subtotal} className="text-section font-semibold" />
+              <CurrencyDisplay amount={subtotal} className="text-[14px] font-semibold" />
             </dd>
           </div>
         </dl>
@@ -74,16 +74,16 @@ export function PODetailPanels({
 
       <Tabs defaultValue="timeline">
         <TabsList className="w-full justify-start bg-neutral-100">
-          <TabsTrigger value="timeline" className="text-body">
+          <TabsTrigger value="timeline" className="text-[12.5px]">
             Timeline
           </TabsTrigger>
-          <TabsTrigger value="attachments" className="text-body">
+          <TabsTrigger value="attachments" className="text-[12.5px]">
             Attachments ({po.attachments.length})
           </TabsTrigger>
-          <TabsTrigger value="comments" className="text-body">
+          <TabsTrigger value="comments" className="text-[12.5px]">
             Comments ({po.comments.length})
           </TabsTrigger>
-          <TabsTrigger value="history" className="text-body">
+          <TabsTrigger value="history" className="text-[12.5px]">
             History
           </TabsTrigger>
         </TabsList>

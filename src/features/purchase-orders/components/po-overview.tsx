@@ -9,7 +9,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   return (
     <div>
       <OverlineLabel>{label}</OverlineLabel>
-      <div className="mt-0.5 text-body text-neutral-800">{children}</div>
+      <div className="mt-0.5 text-[12.5px] text-neutral-800">{children}</div>
     </div>
   );
 }
@@ -25,7 +25,7 @@ function Section({
 }) {
   return (
     <section className="rounded-lg border border-neutral-200 p-3.5">
-      <div className="mb-2.5 flex items-center gap-1.5 text-body font-semibold text-neutral-900">
+      <div className="mb-2.5 flex items-center gap-1.5 text-[12px] font-semibold text-neutral-900">
         <Icon className="h-3.5 w-3.5 text-neutral-500" />
         {title}
       </div>
@@ -56,7 +56,7 @@ export function POOverview({ po }: { po: PurchaseOrder }) {
       <Section icon={FileText} title="Linked Purchase Request">
         <div className="flex items-center justify-between gap-3">
           <DocumentNumber value={po.prNumber} />
-          <span className="min-w-0 flex-1 truncate text-right text-caption text-neutral-500">
+          <span className="min-w-0 flex-1 truncate text-right text-[11.5px] text-neutral-500">
             {po.purpose}
           </span>
         </div>
@@ -64,32 +64,32 @@ export function POOverview({ po }: { po: PurchaseOrder }) {
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Section icon={Building2} title="Supplier">
-          <div className="text-body font-medium text-neutral-900">{poSupplierName(po)}</div>
+          <div className="text-[12.5px] font-medium text-neutral-900">{poSupplierName(po)}</div>
           {registered?.address && (
-            <div className="mt-0.5 text-caption leading-snug text-neutral-500">
+            <div className="mt-0.5 text-[11.5px] leading-snug text-neutral-500">
               {registered.address}
             </div>
           )}
           {po.supplierTin && (
-            <div className="mt-0.5 text-caption text-neutral-500">TIN {po.supplierTin}</div>
+            <div className="mt-0.5 text-[11.5px] text-neutral-500">TIN {po.supplierTin}</div>
           )}
-          <div className="mt-0.5 text-caption text-neutral-500">
+          <div className="mt-0.5 text-[11.5px] text-neutral-500">
             {po.supplierContact ?? registered?.contact ?? "—"}
           </div>
         </Section>
         <Section icon={Truck} title="Delivery">
           <div className="flex items-start gap-1.5">
             <MapPin className="mt-0.5 h-3 w-3 shrink-0 text-neutral-400" />
-            <span className="text-caption leading-snug text-neutral-600">
+            <span className="text-[11.5px] leading-snug text-neutral-600">
               {po.deliveryAddress}
             </span>
           </div>
-          <div className="mt-1.5 text-caption text-neutral-500">
+          <div className="mt-1.5 text-[11.5px] text-neutral-500">
             Expected by{" "}
             <span className="font-medium text-neutral-800">{formatDate(po.expectedDelivery)}</span>
           </div>
           {po.deliveryTerm && (
-            <div className="mt-0.5 text-caption text-neutral-500">{po.deliveryTerm}</div>
+            <div className="mt-0.5 text-[11.5px] text-neutral-500">{po.deliveryTerm}</div>
           )}
         </Section>
       </div>

@@ -12,8 +12,8 @@ export function Toaster() {
         classNames: {
           toast:
             "rounded-xl border border-neutral-200 bg-white text-neutral-800 shadow-lg",
-          title: "text-body font-medium",
-          description: "text-caption text-neutral-500",
+          title: "text-[12.5px] font-medium",
+          description: "text-[11.5px] text-neutral-500",
         },
       }}
     />

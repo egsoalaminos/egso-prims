@@ -26,16 +26,16 @@ export function Field({
   return (
     <div className={cn("space-y-1.5", className)}>
       {label && (
-        <label htmlFor={htmlFor} className="block text-body font-medium text-neutral-700">
+        <label htmlFor={htmlFor} className="block text-[12.5px] font-medium text-neutral-700">
           {label}
           {required && <span className="ml-0.5 text-red-500">*</span>}
         </label>
       )}
       {children}
       {error ? (
-        <p className="text-caption text-red-600">{error}</p>
+        <p className="text-[11.5px] text-red-600">{error}</p>
       ) : helper ? (
-        <p className="text-caption text-neutral-500">{helper}</p>
+        <p className="text-[11.5px] text-neutral-500">{helper}</p>
       ) : null}
     </div>
   );

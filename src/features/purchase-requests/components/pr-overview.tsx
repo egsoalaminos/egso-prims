@@ -9,10 +9,10 @@ import {
 function OverviewField({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <div className="text-micro font-semibold uppercase tracking-wider text-neutral-400">
+      <div className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
         {label}
       </div>
-      <div className="mt-0.5 text-body text-neutral-800">{children}</div>
+      <div className="mt-0.5 text-[12.5px] text-neutral-800">{children}</div>
     </div>
   );
 }

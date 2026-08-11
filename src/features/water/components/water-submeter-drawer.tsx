@@ -101,27 +101,27 @@ export function WaterSubmeterDrawer({
               <div className="grid grid-cols-2 gap-x-4 gap-y-3">
                 <div>
                   <OverlineLabel>Assigned Office</OverlineLabel>
-                  <div className="mt-0.5 inline-flex items-center gap-1.5 text-body text-neutral-800">
+                  <div className="mt-0.5 inline-flex items-center gap-1.5 text-[12.5px] text-neutral-800">
                     <Building2 className="h-3 w-3 text-neutral-400" />
                     {departmentByCode(submeter.assignedOffice)?.name ?? submeter.assignedOffice}
                   </div>
                 </div>
                 <div>
                   <OverlineLabel>Assigned User</OverlineLabel>
-                  <div className="mt-0.5 inline-flex items-center gap-1.5 text-body text-neutral-800">
+                  <div className="mt-0.5 inline-flex items-center gap-1.5 text-[12.5px] text-neutral-800">
                     <User className="h-3 w-3 text-neutral-400" />
                     {submeter.assignedUser ?? "—"}
                   </div>
                 </div>
                 <div>
                   <OverlineLabel>Department</OverlineLabel>
-                  <div className="mt-0.5 text-body text-neutral-800">
+                  <div className="mt-0.5 text-[12.5px] text-neutral-800">
                     {submeter.assignedDepartment ?? "—"}
                   </div>
                 </div>
                 <div>
                   <OverlineLabel>Facility</OverlineLabel>
-                  <div className="mt-0.5 inline-flex items-center gap-1.5 text-body text-neutral-800">
+                  <div className="mt-0.5 inline-flex items-center gap-1.5 text-[12.5px] text-neutral-800">
                     <MapPin className="h-3 w-3 text-neutral-400" />
                     {submeter.assignedFacility ?? "—"}
                   </div>
@@ -129,7 +129,7 @@ export function WaterSubmeterDrawer({
                 {submeter.remarks && (
                   <div className="col-span-2">
                     <OverlineLabel>Remarks</OverlineLabel>
-                    <div className="mt-0.5 text-body text-neutral-600">{submeter.remarks}</div>
+                    <div className="mt-0.5 text-[12.5px] text-neutral-600">{submeter.remarks}</div>
                   </div>
                 )}
               </div>
@@ -138,13 +138,13 @@ export function WaterSubmeterDrawer({
               <section className="grid grid-cols-3 gap-3">
                 <div className="rounded-lg border border-neutral-200 p-3">
                   <OverlineLabel>Recorded Readings</OverlineLabel>
-                  <div className="mt-0.5 text-stat font-semibold tabular-nums tracking-tight text-neutral-900">
+                  <div className="mt-0.5 text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
                     {loading ? <Skeleton className="h-5 w-10" /> : readings.length}
                   </div>
                 </div>
                 <div className="rounded-lg border border-neutral-200 p-3">
                   <OverlineLabel>Total Consumption</OverlineLabel>
-                  <div className="mt-0.5 text-stat font-semibold tabular-nums tracking-tight text-neutral-900">
+                  <div className="mt-0.5 text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
                     {loading ? (
                       <Skeleton className="h-5 w-16" />
                     ) : (
@@ -152,7 +152,7 @@ export function WaterSubmeterDrawer({
                         {totals.consumption.toLocaleString("en-PH", {
                           maximumFractionDigits: 0,
                         })}
-                        <span className="ml-1 text-micro font-normal text-neutral-400">m³</span>
+                        <span className="ml-1 text-[11px] font-normal text-neutral-400">m³</span>
                       </>
                     )}
                   </div>
@@ -165,7 +165,7 @@ export function WaterSubmeterDrawer({
                     ) : (
                       <CurrencyDisplay
                         amount={totals.amount}
-                        className="text-stat font-semibold"
+                        className="text-[16px] font-semibold"
                       />
                     )}
                   </div>
@@ -262,7 +262,7 @@ export function WaterSubmeterDrawer({
                     </Table>
                   </div>
                 )}
-                <Caption as="p" className="mt-2 text-micro">
+                <Caption as="p" className="mt-2 text-[10.5px]">
                   Registered {format(new Date(submeter.createdAt), "d MMMM yyyy")} ·{" "}
                   {readings.length} reading{readings.length === 1 ? "" : "s"}
                 </Caption>

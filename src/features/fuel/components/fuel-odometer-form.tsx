@@ -183,18 +183,18 @@ export function FuelOdometerForm({
           <div className="flex items-center justify-between rounded-lg bg-neutral-50 px-3.5 py-3">
             <div>
               <OverlineLabel>Distance Travelled</OverlineLabel>
-              <p className="mt-0.5 text-micro text-neutral-500">
+              <p className="mt-0.5 text-[11px] text-neutral-500">
                 Current Odometer − Previous Odometer, computed automatically.
               </p>
             </div>
             <div
               className={
-                "text-title font-semibold tabular-nums tracking-tight " +
+                "text-[20px] font-semibold tabular-nums tracking-tight " +
                 (distance < 0 ? "text-red-600" : "text-neutral-900")
               }
             >
               {num(distance)}
-              <span className="ml-1 text-body font-normal text-neutral-400">km</span>
+              <span className="ml-1 text-[12px] font-normal text-neutral-400">km</span>
             </div>
           </div>
 
@@ -221,7 +221,7 @@ export function FuelOdometerForm({
             </Field>
           </div>
           {efficiency !== null && (
-            <p className="-mt-2 text-micro text-neutral-500">
+            <p className="-mt-2 text-[11px] text-neutral-500">
               Fuel efficiency {efficiency.toFixed(2)} km per litre
               {form.watch("fuelCost") > 0 && distance > 0 && (
                 <> · {formatPHP(form.watch("fuelCost") / distance, { decimals: 2 })} per km</>

@@ -46,7 +46,7 @@ export function Stepper({ steps, current, onStepClick, className }: StepperProps
             >
               <span
                 className={cn(
-                  "grid h-6 w-6 shrink-0 place-items-center rounded-full text-micro font-semibold transition",
+                  "grid h-6 w-6 shrink-0 place-items-center rounded-full text-[11px] font-semibold transition",
                   // Accent-driven so the portal can recolour it without this
                   // file changing. The default accent is neutral-900, which
                   // is what this rendered before.
@@ -59,14 +59,14 @@ export function Stepper({ steps, current, onStepClick, className }: StepperProps
               <span className="hidden text-left sm:block">
                 <span
                   className={cn(
-                    "block text-body font-medium leading-tight",
+                    "block text-[12.5px] font-medium leading-tight",
                     active || done ? "text-neutral-900" : "text-neutral-400",
                   )}
                 >
                   {step.label}
                 </span>
                 {step.description && (
-                  <span className="block text-micro text-neutral-400">{step.description}</span>
+                  <span className="block text-[10.5px] text-neutral-400">{step.description}</span>
                 )}
               </span>
             </button>

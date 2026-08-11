@@ -102,7 +102,7 @@ export function NotificationDrawer({
                 key={f}
                 onClick={() => setFilter(f)}
                 className={cn(
-                  "rounded-full border px-2.5 py-1 text-caption font-medium transition",
+                  "rounded-full border px-2.5 py-1 text-[11.5px] font-medium transition",
                   active
                     ? "border-neutral-900 bg-neutral-900 text-white"
                     : "border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50",
@@ -182,7 +182,7 @@ export function NotificationDrawer({
                       <div className="flex items-start justify-between gap-2">
                         <span
                           className={cn(
-                            "text-body leading-snug",
+                            "text-[12.5px] leading-snug",
                             n.isRead
                               ? "font-medium text-neutral-700"
                               : "font-semibold text-neutral-900",
@@ -190,22 +190,22 @@ export function NotificationDrawer({
                         >
                           {n.title}
                         </span>
-                        <span className="shrink-0 whitespace-nowrap text-micro text-neutral-400">
+                        <span className="shrink-0 whitespace-nowrap text-[10.5px] text-neutral-400">
                           {formatDistanceToNow(new Date(n.createdAt), { addSuffix: true })}
                         </span>
                       </div>
                       {n.description && (
-                        <p className="mt-0.5 line-clamp-2 text-caption leading-relaxed text-neutral-500">
+                        <p className="mt-0.5 line-clamp-2 text-[11.5px] leading-relaxed text-neutral-500">
                           {n.description}
                         </p>
                       )}
                       <div className="mt-1.5 flex items-center gap-2">
-                        <span className="rounded-full bg-neutral-100 px-1.5 py-0.5 text-micro font-medium uppercase tracking-wider text-neutral-500">
+                        <span className="rounded-full bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-neutral-500">
                           {n.module}
                         </span>
                         {route && (
                           <button
-                            className="inline-flex items-center gap-0.5 text-micro font-medium text-neutral-600 transition hover:text-neutral-900"
+                            className="inline-flex items-center gap-0.5 text-[11px] font-medium text-neutral-600 transition hover:text-neutral-900"
                             onClick={() => void openRecord(n)}
                           >
                             View Related Record
@@ -214,7 +214,7 @@ export function NotificationDrawer({
                         )}
                         {!n.isRead && (
                           <button
-                            className="ml-auto text-micro font-medium text-neutral-500 transition hover:text-neutral-900"
+                            className="ml-auto text-[11px] font-medium text-neutral-500 transition hover:text-neutral-900"
                             onClick={async () => {
                               await markNotificationRead(n.id);
                               void refresh();

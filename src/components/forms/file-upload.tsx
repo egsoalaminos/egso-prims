@@ -26,8 +26,8 @@ function FileList({
           className="flex items-center gap-2.5 rounded-lg border border-neutral-200 bg-white px-3 py-2"
         >
           <FileText className="h-3.5 w-3.5 shrink-0 text-neutral-500" />
-          <span className="min-w-0 flex-1 truncate text-body text-neutral-800">{f.name}</span>
-          <span className="shrink-0 text-micro text-neutral-500">{formatSize(f.size)}</span>
+          <span className="min-w-0 flex-1 truncate text-[12.5px] text-neutral-800">{f.name}</span>
+          <span className="shrink-0 text-[11px] text-neutral-500">{formatSize(f.size)}</span>
           <button
             aria-label={`Remove ${f.name}`}
             onClick={() => onRemove(i)}
@@ -158,10 +158,10 @@ export function DragDropUpload({
         <span className="grid h-10 w-10 place-items-center rounded-full bg-neutral-100 text-neutral-500">
           <UploadCloud className="h-5 w-5" />
         </span>
-        <div className="mt-3 text-body font-medium text-neutral-800">
+        <div className="mt-3 text-[12.5px] font-medium text-neutral-800">
           Drag & drop files here, or <span className="underline">browse</span>
         </div>
-        {hint && <div className="mt-1 text-caption text-neutral-500">{hint}</div>}
+        {hint && <div className="mt-1 text-[11.5px] text-neutral-500">{hint}</div>}
       </div>
       <FileList files={files} onRemove={(i) => update(files.filter((_, idx) => idx !== i))} />
     </div>

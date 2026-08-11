@@ -41,7 +41,7 @@ export function MetricCard({
           <div className="grid h-7 w-7 place-items-center rounded-lg bg-neutral-100 text-neutral-600">
             <Icon className="h-3.5 w-3.5" />
           </div>
-          <span className="text-body text-neutral-500">{label}</span>
+          <span className="text-[12px] text-neutral-500">{label}</span>
         </div>
         {onOpen && (
           <IconButton
@@ -61,11 +61,11 @@ export function MetricCard({
         </>
       ) : (
         <>
-          <div className="mt-4 text-figure font-semibold tracking-tight text-neutral-900 tabular-nums">
+          <div className="mt-4 text-[26px] font-semibold tracking-tight text-neutral-900 tabular-nums">
             {formatCount(animated, kind)}
           </div>
           {trend && (
-            <div className="mt-1.5 flex items-center gap-1.5 text-caption">
+            <div className="mt-1.5 flex items-center gap-1.5 text-[11.5px]">
               <span
                 className={cn(
                   "h-1.5 w-1.5 rounded-full",

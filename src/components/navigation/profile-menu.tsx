@@ -35,7 +35,7 @@ export function ProfileMenu({ name, detail, initials, items = [], className }: P
       <DropdownMenuTrigger asChild>
         <button
           className={cn(
-            "flex items-center gap-2 rounded-lg border border-neutral-200 bg-white py-1 pl-1 pr-2 text-body font-medium text-neutral-700 transition hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-300",
+            "flex items-center gap-2 rounded-lg border border-neutral-200 bg-white py-1 pl-1 pr-2 text-[12.5px] font-medium text-neutral-700 transition hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-300",
             className,
           )}
         >
@@ -45,9 +45,9 @@ export function ProfileMenu({ name, detail, initials, items = [], className }: P
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-52">
-        <DropdownMenuLabel className="text-body">
+        <DropdownMenuLabel className="text-[12.5px]">
           <div className="font-semibold text-neutral-800">{name}</div>
-          {detail && <div className="text-micro font-normal text-neutral-500">{detail}</div>}
+          {detail && <div className="text-[11px] font-normal text-neutral-500">{detail}</div>}
         </DropdownMenuLabel>
         {items.length > 0 && <DropdownMenuSeparator />}
         {items.map((item) => {
@@ -57,7 +57,7 @@ export function ProfileMenu({ name, detail, initials, items = [], className }: P
               key={item.label}
               onClick={item.onClick}
               className={cn(
-                "text-body",
+                "text-[12.5px]",
                 item.destructive && "text-red-600 focus:text-red-600",
               )}
             >

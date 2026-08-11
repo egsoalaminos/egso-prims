@@ -177,18 +177,18 @@ export function WaterReadingForm({
           <div className="flex items-center justify-between rounded-lg bg-neutral-50 px-3.5 py-3">
             <div>
               <OverlineLabel>Consumption</OverlineLabel>
-              <p className="mt-0.5 text-micro text-neutral-500">
+              <p className="mt-0.5 text-[11px] text-neutral-500">
                 Current Reading − Previous Reading, computed automatically.
               </p>
             </div>
             <div
               className={
-                "text-title font-semibold tabular-nums tracking-tight " +
+                "text-[20px] font-semibold tabular-nums tracking-tight " +
                 (consumption < 0 ? "text-red-600" : "text-neutral-900")
               }
             >
               {num(consumption)}
-              <span className="ml-1 text-body font-normal text-neutral-400">m³</span>
+              <span className="ml-1 text-[12px] font-normal text-neutral-400">m³</span>
             </div>
           </div>
 
@@ -203,7 +203,7 @@ export function WaterReadingForm({
             />
           </Field>
           {form.watch("amount") > 0 && consumption > 0 && (
-            <p className="-mt-2 text-micro text-neutral-500">
+            <p className="-mt-2 text-[11px] text-neutral-500">
               Effective rate {formatPHP(form.watch("amount") / consumption, { decimals: 2 })} per m³.
             </p>
           )}

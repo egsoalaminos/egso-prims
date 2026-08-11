@@ -73,7 +73,7 @@ function Cell({
       placeholder={placeholder}
       onChange={(e) => onChange(e.target.value)}
       className={cn(
-        "h-8 text-body",
+        "h-8 text-[12px]",
         uncertain && "border-amber-300 bg-amber-50/60 focus-visible:ring-amber-200",
         className,
       )}
@@ -271,11 +271,11 @@ export function SmartImportDrawer({
               hint="JPG, PNG, WEBP or PDF · multi-page PDFs supported"
             />
             <div className="rounded-lg border border-neutral-200 bg-neutral-50/60 p-3.5">
-              <div className="flex items-center gap-1.5 text-body font-semibold text-neutral-800">
+              <div className="flex items-center gap-1.5 text-[12px] font-semibold text-neutral-800">
                 <FileScan className="h-3.5 w-3.5 text-neutral-500" />
                 Works with
               </div>
-              <p className="mt-1 text-caption leading-relaxed text-neutral-500">
+              <p className="mt-1 text-[11.5px] leading-relaxed text-neutral-500">
                 Supply lists, delivery receipts, purchase orders, RIS, warehouse inventory sheets,
                 Excel printouts saved as PDF, and screenshots of inventory tables. Nothing is saved
                 until you review and confirm.
@@ -292,7 +292,7 @@ export function SmartImportDrawer({
             </span>
             <div className="w-full max-w-sm">
               <ProgressBar value={progress} />
-              <p className="mt-2 text-body text-neutral-600">{progressNote}</p>
+              <p className="mt-2 text-[12px] text-neutral-600">{progressNote}</p>
               <Caption as="p" className="mt-1">
                 Reading happens in your browser — the first run downloads the recognition model, so
                 it may take a moment.
@@ -305,7 +305,7 @@ export function SmartImportDrawer({
         {stage === "preview" && (
           <div className="space-y-3">
             {lowConfidence && rows.length > 0 && (
-              <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-body text-amber-800">
+              <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-[12px] text-amber-800">
                 <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                 <div>
                   <span className="font-semibold">Some items require manual verification.</span>{" "}
@@ -322,7 +322,7 @@ export function SmartImportDrawer({
                 </Caption>
                 <span
                   className={cn(
-                    "rounded-full px-2 py-0.5 text-micro font-medium uppercase tracking-wider",
+                    "rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider",
                     method === "text"
                       ? "bg-(--tone-settled-tint) text-(--tone-settled)"
                       : "bg-neutral-100 text-neutral-500",
@@ -406,7 +406,7 @@ export function SmartImportDrawer({
                               placeholder="—"
                               options={ITEM_CATEGORIES.map((c) => ({ value: c, label: c }))}
                               className={cn(
-                                "h-8 w-36 text-body",
+                                "h-8 w-36 text-[12px]",
                                 row.uncertain.category && "border-amber-300 bg-amber-50/60",
                               )}
                             />
@@ -465,7 +465,7 @@ export function SmartImportDrawer({
         {/* ---------- duplicate resolution ---------- */}
         {stage === "duplicates" && (
           <div className="space-y-3">
-            <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-body text-amber-800">
+            <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-[12px] text-amber-800">
               <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
               <div>
                 <span className="font-semibold">Duplicate Found.</span> These items already exist in
@@ -479,10 +479,10 @@ export function SmartImportDrawer({
                   className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-neutral-200 p-3"
                 >
                   <div className="min-w-0">
-                    <div className="truncate text-body font-medium text-neutral-900">
+                    <div className="truncate text-[12.5px] font-medium text-neutral-900">
                       {d.itemName}
                     </div>
-                    <div className="text-micro text-neutral-500">
+                    <div className="text-[11px] text-neutral-500">
                       Matches existing {d.existingCode}
                     </div>
                   </div>
@@ -498,7 +498,7 @@ export function SmartImportDrawer({
                         key={val}
                         onClick={() => setResolution(d.rowId, val)}
                         className={cn(
-                          "px-2.5 py-1.5 text-caption font-medium transition",
+                          "px-2.5 py-1.5 text-[11.5px] font-medium transition",
                           d.resolution === val
                             ? "bg-neutral-900 text-white"
                             : "bg-white text-neutral-600 hover:bg-neutral-50",

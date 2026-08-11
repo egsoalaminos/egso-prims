@@ -4,8 +4,8 @@
 /*
  * General Services Office design system — the admin's single design.
  *
- * This was briefly a two-theme system with a `data-theme` switch and a dark
- * mode. Both are gone: the admin has one look again, and it is the one that
+ * This was briefly a two-theme system with a switchable second design and a
+ * dark mode. Both are gone: the admin has one look again, and it is the one that
  * first went to Vercel on 4 August 2026 (commit 4e9d2d6). Every value below was
  * read out of that commit rather than remembered.
  *
@@ -20,27 +20,26 @@
 
 /*
  * ===========================================================================
- * THE THEME CONTRACT
+ * THE TOKEN CONTRACT
  *
- * This block registers the names. It does not choose the values — a theme file
- * in src/themes/ does that, and every entry here points at a variable a theme
- * declares.
+ * This block registers the names Tailwind can build utilities from. It does not
+ * choose the values — the `:root` block below does, and every entry here points
+ * at one of its variables.
  *
- * Adding a theme means writing one file that declares this same set. It never
- * means editing a component, and it never means a second copy of a page.
+ * Changing how the interface reads means editing a value there. It never means
+ * editing a component, and it never means a second copy of a page.
  *
- * The rule a theme file must follow, written here because this codebase has
+ * The rule those values must follow, written here because this codebase has
  * been bitten by it four times: **declare literal values, never
  * `var(--another-token)`.** A custom property whose value is another custom
  * property resolves where it is *declared*, not where it is used, so a nested
- * scope cannot re-point it.
+ * scope cannot re-point it. That is why `:root` is the only place they are set.
  * ===========================================================================
  */
 @theme inline {
-  --font-sans: var(--type-sans);
-  /* The institutional voice: page titles and anything that names the office or
-     one of its documents. Inter carries the interface; this carries the name. */
-  --font-serif: var(--type-serif);
+  /* One face. The `--font-serif` that briefly sat here belonged to the
+     municipal direction and no component ever asked for it. */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 
   /*
    * Corner radius. August's `--radius: 0.625rem` with its derived scale, the
@@ -54,24 +53,6 @@
   --radius-3xl: var(--radius-step-3xl);
   --radius-4xl: var(--radius-step-4xl);
 
-  /*
-   * The type scale, by role rather than by pixel. Seven steps; 707 hardcoded
-   * `text-[Npx]` were folded onto them.
-   *
-   * Size only — no paired line-height, because the literals it replaced set
-   * none.
-   *
-   * The public portal, the login page and the official print forms keep their
-   * literal sizes: theirs are ruled to fit A4 or approved separately, and the
-   * print-fidelity rule governs them rather than this scale.
-   */
-  --text-micro: var(--type-micro);
-  --text-caption: var(--type-caption);
-  --text-body: var(--type-body);
-  --text-section: var(--type-section);
-  --text-stat: var(--type-stat);
-  --text-title: var(--type-title);
-  --text-figure: var(--type-figure);
 
   /*
    * Geometry and density. Registered as spacing keys so a component writes
@@ -98,10 +79,8 @@
   --spacing-brandb: var(--brand-pb);
   --spacing-barpy: var(--topbar-py);
   --spacing-barpx: var(--topbar-px);
-  --text-thead: var(--thead-size);
 
   --shadow-card: var(--elev-card);
-  --shadow-raised: var(--elev-raised);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -143,19 +122,6 @@
  * ===========================================================================
  */
 :root {
-  /* ---- Typefaces ------------------------------------------------------- */
-  --type-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --type-serif: "Inter", ui-sans-serif, system-ui, sans-serif;
-
-  /* ---- Type scale ------------------------------------------------------ */
-  --type-micro: 10.5px;
-  --type-caption: 11.5px;
-  --type-body: 12.5px;
-  --type-section: 14px;
-  --type-stat: 16px;
-  --type-title: 20px;
-  --type-figure: 26px;
-
   /* ---- Geometry: --radius 0.625rem and its derived steps --------------- */
   --radius-step-sm: 6px;
   --radius-step-md: 8px;
@@ -192,15 +158,11 @@
   --thead-transform: uppercase;
   --thead-tracking: 0.05em;
   --thead-weight: 500;
-  --thead-size: 11px;
   --thead-fg: oklch(0.708 0 0);
   --thead-bg: oklch(0.985 0 0);
-  --thead-divider: transparent;
-  --thead-rule: transparent;
 
-  /* ---- Elevation: cards are flat; only floating layers cast ------------- */
+  /* ---- Elevation: cards are flat ---------------------------------------- */
   --elev-card: none;
-  --elev-raised: none;
 
   /* ---- Semantic surfaces ----------------------------------------------- */
   --background: oklch(1 0 0);
@@ -324,25 +286,10 @@
 
 
 /*
- * Table headers used to be corrected here for the portal alone, because
- * `TableHeaderRow` painted #FAFAFA on the portal's #FBFAF7 paper and vanished.
- * The component now reads `--accent-subtle` and `--accent-text` directly, so
- * the admin gets the same legible band and this override has nothing left to
- * say. The ruled underline is the one part worth keeping everywhere.
- */
-thead {
-  border-bottom: 2px solid var(--thead-rule);
-}
-
-/*
- * The column divider used to live here as `--rule-head: var(--accent-solid)`,
- * which is the trap this file warns about three times over: a custom property
- * whose value is another custom property resolves where it is *declared*. Set
- * at :root it baked in the admin's accent and inherited that literal into the
- * portal, so changing the accent in Settings would have repainted the portal's
- * table rules too. `TableHeaderRow` now carries the color-mix as a real border
- * colour, which resolves against whichever accent scope the table is sitting
- * in.
+ * There is deliberately no `thead` rule here. The municipal direction gave the
+ * header band a 2px underline and a divider between every column; both are gone
+ * with it, and a transparent border is not the way to remove one — it still
+ * occupies its pixel and shifts every column that follows.
  */
 
 /* Accent-driven utilities. Components opt in; nothing else changes. */
@@ -472,17 +419,9 @@ thead {
     --border: oklch(0.929 0.013 255.508);
     --input: oklch(0.929 0.013 255.508);
 
-    /* Status tones too. The dark ramp lifts these into pastels so they can hold
-       a dark card; on paper those wash out to nothing, so the ink values are
-       restored for print regardless of the theme on screen. */
-    --tone-settled: #1f5c3a;
-    --tone-settled-tint: #eef3ef;
-    --tone-process: #8a6a26;
-    --tone-process-tint: #faf4e8;
-    --tone-halted: #7a1d2b;
-    --tone-halted-tint: #f8f0f0;
-    --tone-inert: #6b6660;
-    --tone-inert-tint: #f4f2ed;
+    /* The status tones are deliberately not overridden here. They were, while a
+       dark ramp existed to undo and the tones were seal colours; both are gone,
+       and the screen values are already ink-dark enough to print. */
 
     color-scheme: light;
   }

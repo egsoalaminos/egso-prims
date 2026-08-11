@@ -3,7 +3,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 export const inputClasses =
-  "w-full rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-body text-neutral-800 transition placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-200 disabled:pointer-events-none disabled:bg-neutral-50 disabled:opacity-60 aria-invalid:border-red-300 aria-invalid:focus:ring-red-100";
+  "w-full rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-[12.5px] text-neutral-800 transition placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-200 disabled:pointer-events-none disabled:bg-neutral-50 disabled:opacity-60 aria-invalid:border-red-300 aria-invalid:focus:ring-red-100";
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   invalid?: boolean;

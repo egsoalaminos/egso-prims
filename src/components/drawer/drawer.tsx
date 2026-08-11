@@ -60,7 +60,7 @@ export function DrawerHeader({
     <div className="border-b border-neutral-100 px-5 py-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <DialogTitle className="text-section font-semibold text-neutral-900">
+          <DialogTitle className="text-[14px] font-semibold text-neutral-900">
             {title}
           </DialogTitle>
           {description && <Caption as="p" className="mt-0.5">{description}</Caption>}

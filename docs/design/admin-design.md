@@ -34,27 +34,33 @@ govern how dense the interface reads.
 
 ## The trap
 
+Type sizes are written as literals — `text-[12.5px]`, not `text-body`. That is
+not an oversight, and it should not be "improved".
+
 `text-*` is ambiguous in Tailwind — size, colour, alignment — and tailwind-merge
-resolves it from its own table of known keys. A custom key is not in that table,
-so `cn("text-body text-neutral-700")` renders as `"text-neutral-700"`: the size
-vanishes and the element falls back to the browser's 16px.
+resolves it from its own table of known keys. A **custom** key is not in that
+table, so `cn("text-body text-neutral-700")` renders as `"text-neutral-700"`:
+the size vanishes and the element falls back to the browser's 16px.
 
 **The build passes. The emitted CSS is correct. Only the class attribute is
 wrong.**
 
-Every custom size must be listed in `TYPE_SCALE` in `src/lib/utils.ts`. This has
-bitten twice — once across 282 call sites, and once on `text-thead` a single
-phase after the warning was written into that very file.
+A semantic scale did exist briefly, and this bit twice — once across 282 call
+sites, once on `text-thead` a single phase after the warning was written into
+the very file that dropped it. Introducing one again means teaching
+tailwind-merge the keys via `extendTailwindMerge` in `src/lib/utils.ts` *in the
+same commit*, or it will silently happen a third time.
 
-## The portal is not governed by this file
+## The portal shares this design
 
-`src/features/portal/theme.ts` pins the municipal palette as literals, and the
-portal root and the login page carry `[data-municipal]`, which redeclares the
-accent for their own subtree. Nothing done to the admin's design reaches them.
+It did not always. A municipal direction gave the portal its own palette in
+`src/features/portal/theme.ts` behind a `[data-municipal]` scope; both are gone
+with that direction, and the portal now reads the same tokens as the admin.
 
-That is deliberate and should stay: the portal keeps the letterhead hierarchy,
-the seal burgundy, the gold rule and the serif regardless of what the admin
-looks like.
+So a change to `:root` reaches `/portal` as well. That is a feature — one system,
+one look — but it means portal pages must be checked after a token change, not
+assumed insulated. The portal's audience is staff, not residents, so the
+government vocabulary in its copy stays regardless.
 
 ## The official print forms are not governed by this file either
 
@@ -82,6 +88,24 @@ to the build: a tailwind-merge class silently dropped, a table header weight
 that inheritance could not out-rank against the UA stylesheet, and an
 unterminated CSS comment that swallowed an entire token block while remaining
 syntactically valid.
+
+A fourth came from removing dark mode with a regex. Stripping `dark:` by pattern
+rather than by splitting the class string on whitespace glued the fragments
+together across six shadcn primitives — `data-[state=unchecked]:bg-input` became
+`bg-input=unchecked]:bg-input/80`, destroying a valid class as well as leaving
+an invalid one. Tailwind simply does not emit an unknown class, so the switch
+track lost its background and nothing failed.
+
+Two cheap checks catch that whole family, and both are worth re-running after any
+bulk class edit:
+
+- every whitespace-separated class token has balanced `[` and `]`
+- a component's classes still match its last-known-good commit, compared as a
+  multiset of tokens rather than as source lines
+
+Removing a rule also means removing it, not making it transparent: a
+`border-l` in `transparent` still occupies its pixel and shifts every column
+after it.
 
 Watch for false positives from content that changes on its own — a date rolling
 over from the 10th to the 11th showed up as a 3px width shift.

@@ -179,9 +179,9 @@ export function SettingsPage() {
           className="flex items-start justify-between gap-4 rounded-lg border border-neutral-200 p-3.5"
         >
           <div className="min-w-0">
-            <div className="text-body font-medium text-neutral-800">{d.label}</div>
+            <div className="text-[12.5px] font-medium text-neutral-800">{d.label}</div>
             {d.note && (
-              <p className="mt-0.5 text-micro leading-relaxed text-neutral-500">{d.note}</p>
+              <p className="mt-0.5 text-[11px] leading-relaxed text-neutral-500">{d.note}</p>
             )}
           </div>
           <Switch
@@ -265,7 +265,7 @@ export function SettingsPage() {
             </span>
             <div className="min-w-0">
               <SectionTitle as="h3">{category}</SectionTitle>
-              <p className="mt-0.5 max-w-2xl text-caption leading-relaxed text-neutral-500">
+              <p className="mt-0.5 max-w-2xl text-[11.5px] leading-relaxed text-neutral-500">
                 {description}
               </p>
             </div>
@@ -324,7 +324,7 @@ export function SettingsPage() {
       <div className="space-y-4 border-t border-neutral-200 pt-4">
         <div>
           <SectionTitle as="h2">Office &amp; Documents</SectionTitle>
-          <p className="mt-0.5 text-caption text-neutral-500">
+          <p className="mt-0.5 text-[11.5px] text-neutral-500">
             Shared by all four modules: the letterhead their printed output carries, and the
             numbering their records are issued under.
           </p>

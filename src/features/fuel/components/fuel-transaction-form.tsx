@@ -226,11 +226,11 @@ export function FuelTransactionForm({
           <div className="flex items-center justify-between rounded-lg bg-neutral-50 px-3.5 py-3">
             <div>
               <OverlineLabel>Total Amount</OverlineLabel>
-              <p className="mt-0.5 text-micro text-neutral-500">
+              <p className="mt-0.5 text-[11px] text-neutral-500">
                 Liters × Price Per Liter, computed automatically.
               </p>
             </div>
-            <div className="text-title font-semibold tabular-nums tracking-tight text-neutral-900">
+            <div className="text-[20px] font-semibold tabular-nums tracking-tight text-neutral-900">
               {formatPHP(total, { decimals: 2 })}
             </div>
           </div>

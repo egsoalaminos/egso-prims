@@ -340,33 +340,33 @@ function StepDetails({
       {showSourcePR && prNumber && (
         <div className="grid grid-cols-2 gap-x-4 gap-y-2 rounded-lg bg-neutral-50/60 p-3">
           <div>
-            <Caption as="div" className="text-micro">
+            <Caption as="div" className="text-[10.5px]">
               Requesting Office
             </Caption>
             <DepartmentChip
               code={departmentByCode(departmentCode).name}
               color={departmentByCode(departmentCode).color}
-              className="text-body text-neutral-800"
+              className="text-[12.5px] text-neutral-800"
             />
           </div>
           <div>
-            <Caption as="div" className="text-micro">
+            <Caption as="div" className="text-[10.5px]">
               Requester
             </Caption>
-            <span className="text-body text-neutral-800">{requester}</span>
+            <span className="text-[12.5px] text-neutral-800">{requester}</span>
           </div>
           <div className="col-span-2">
-            <Caption as="div" className="text-micro">
+            <Caption as="div" className="text-[10.5px]">
               Purpose
             </Caption>
-            <span className="text-body text-neutral-800">{purpose}</span>
+            <span className="text-[12.5px] text-neutral-800">{purpose}</span>
           </div>
           {poNumber && (
             <div className="col-span-2">
-              <Caption as="div" className="text-micro">
+              <Caption as="div" className="text-[10.5px]">
                 Related Purchase Order
               </Caption>
-              <span className="text-body font-medium text-neutral-800">{poNumber}</span>
+              <span className="text-[12.5px] font-medium text-neutral-800">{poNumber}</span>
             </div>
           )}
         </div>
@@ -435,7 +435,7 @@ function StepItems({ form, inventory }: { form: FormApi; inventory: InventoryIte
         {["Item", "Available", "Requested", "Issue Qty", "Remaining", ""].map((h) => (
           <span
             key={h}
-            className="text-micro font-semibold uppercase tracking-wider text-neutral-400"
+            className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400"
           >
             {h}
           </span>
@@ -481,7 +481,7 @@ function StepItems({ form, inventory }: { form: FormApi; inventory: InventoryIte
                   )}
                 />
               </div>
-              <div className="text-body tabular-nums text-neutral-600 sm:text-left">
+              <div className="text-[12.5px] tabular-nums text-neutral-600 sm:text-left">
                 {inv ? `${inv.onHand} ${inv.unit}` : "—"}
               </div>
               <Input
@@ -501,7 +501,7 @@ function StepItems({ form, inventory }: { form: FormApi; inventory: InventoryIte
               />
               <div
                 className={
-                  "text-body tabular-nums " +
+                  "text-[12.5px] tabular-nums " +
                   (short ? "font-medium text-red-600" : "text-neutral-600")
                 }
               >
@@ -519,10 +519,10 @@ function StepItems({ form, inventory }: { form: FormApi; inventory: InventoryIte
               </div>
             </div>
             {rowErr?.name?.message && (
-              <p className="mt-1 px-1 text-caption text-red-600">{rowErr.name.message}</p>
+              <p className="mt-1 px-1 text-[11.5px] text-red-600">{rowErr.name.message}</p>
             )}
             {(rowErr?.issuedQty?.message || short) && (
-              <p className="mt-1 px-1 text-caption text-red-600">
+              <p className="mt-1 px-1 text-[11.5px] text-red-600">
                 {rowErr?.issuedQty?.message ??
                   `Only ${inv?.onHand} ${inv?.unit} available — cannot issue more than stock on hand.`}
               </p>
@@ -532,7 +532,7 @@ function StepItems({ form, inventory }: { form: FormApi; inventory: InventoryIte
       })}
 
       {typeof itemsError?.message === "string" && (
-        <p className="text-caption text-red-600">{itemsError.message}</p>
+        <p className="text-[11.5px] text-red-600">{itemsError.message}</p>
       )}
 
       <div className="flex items-center justify-between border-t border-neutral-100 pt-3">
@@ -540,9 +540,9 @@ function StepItems({ form, inventory }: { form: FormApi; inventory: InventoryIte
           <Plus />
           Add Item
         </Button>
-        <span className="text-body text-neutral-500">
+        <span className="text-[12.5px] text-neutral-500">
           Total to issue:{" "}
-          <span className="ml-1 text-section font-semibold tabular-nums text-neutral-900">
+          <span className="ml-1 text-[14px] font-semibold tabular-nums text-neutral-900">
             {totalIssued}
           </span>
         </span>
@@ -585,7 +585,7 @@ function StepAttachments({
 
       <div className="flex items-start gap-2 rounded-lg bg-blue-50/60 px-3 py-2.5">
         <ScanText className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-600" />
-        <p className="text-caption leading-snug text-blue-700">
+        <p className="text-[11.5px] leading-snug text-blue-700">
           OCR-ready — uploaded PDFs and images will be parsed automatically for item and quantity
           extraction once document intelligence is enabled.
         </p>
@@ -612,7 +612,7 @@ function StepAttachments({
                   >
                     <X className="h-3 w-3" />
                   </button>
-                  <div className="truncate bg-white px-2 py-1 text-micro text-neutral-600">
+                  <div className="truncate bg-white px-2 py-1 text-[10.5px] text-neutral-600">
                     {p.file.name}
                   </div>
                 </div>
@@ -633,10 +633,10 @@ function StepAttachments({
                 className="flex items-center gap-2.5 rounded-lg border border-neutral-200 bg-neutral-50/60 px-3 py-2"
               >
                 <FileText className="h-3.5 w-3.5 shrink-0 text-neutral-500" />
-                <span className="min-w-0 flex-1 truncate text-body text-neutral-700">
+                <span className="min-w-0 flex-1 truncate text-[12.5px] text-neutral-700">
                   {a.name}
                 </span>
-                <Caption className="shrink-0 text-micro">kept on save</Caption>
+                <Caption className="shrink-0 text-[10.5px]">kept on save</Caption>
               </li>
             ))}
           </ul>
@@ -705,7 +705,7 @@ function StepReview({
         <RISItemsTable items={reviewItems} />
       </section>
 
-      <p className="rounded-lg bg-neutral-50 px-3 py-2.5 text-caption leading-relaxed text-neutral-500">
+      <p className="rounded-lg bg-neutral-50 px-3 py-2.5 text-[11.5px] leading-relaxed text-neutral-500">
         Submitting will route this slip for approval. Inventory is deducted only when the slip is
         released; stock card transactions are written automatically at that point.
       </p>
@@ -716,10 +716,10 @@ function StepReview({
 function ReviewField({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div className="text-micro font-semibold uppercase tracking-wider text-neutral-400">
+      <div className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
         {label}
       </div>
-      <div className="mt-0.5 text-body text-neutral-800">{value}</div>
+      <div className="mt-0.5 text-[12.5px] text-neutral-800">{value}</div>
     </div>
   );
 }
