@@ -11,24 +11,15 @@ import { cn } from "@/lib/utils";
 export function Table({
   className,
   minWidth = 900,
-  ruled = false,
   ...props
 }: React.TableHTMLAttributes<HTMLTableElement> & {
   minWidth?: number;
-  /**
-   * Rules the body columns as well as the header, giving the full grid of a
-   * printed form. For the line-item tables inside a document (PR, RIS,
-   * reservation equipment) — the ones that actually reach paper. A list of two
-   * hundred rows is left unruled; there the vertical lines are just noise.
-   */
-  ruled?: boolean;
 }) {
   return (
     <div className="overflow-x-auto">
       <table
         className={cn(
           "w-full text-left",
-          ruled && "[&_tbody_td+td]:border-l [&_tbody_td+td]:border-neutral-100",
           className,
         )}
         style={{ minWidth }}

@@ -120,7 +120,7 @@ export function PRWizard({ initial, submitLabel, submitting, onSubmit, onCancel 
   });
 
   return (
-    <ContainerCard seam className="mx-auto w-full max-w-3xl">
+    <ContainerCard className="mx-auto w-full max-w-3xl">
       <div className="border-b border-neutral-100 px-5 py-4">
         <Stepper steps={WIZARD_STEPS} current={step} onStepClick={setStep} />
       </div>

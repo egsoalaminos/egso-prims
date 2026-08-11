@@ -22,7 +22,7 @@ export function PRItemsTable({
   const total = items.reduce((sum, it) => sum + it.quantity * it.estimatedCost, 0);
   return (
     <div className="overflow-hidden rounded-lg border border-neutral-200">
-      <Table ruled minWidth={0} className="min-w-full">
+      <Table minWidth={0} className="min-w-full">
         <TableHeader>
           <TableHeaderRow>
             <TableHead first>Description</TableHead>

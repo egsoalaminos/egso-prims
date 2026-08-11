@@ -20,7 +20,7 @@ export function ResEquipmentTable({ equipment }: { equipment: ReservedEquipment[
   }
   return (
     <div className="overflow-hidden rounded-lg border border-neutral-200">
-      <Table ruled minWidth={0} className="min-w-full">
+      <Table minWidth={0} className="min-w-full">
         <TableHeader>
           <TableHeaderRow>
             <TableHead first>Equipment</TableHead>

@@ -157,7 +157,7 @@
   --type-body: 12.5px;
   --type-section: 14px;
   --type-stat: 16px;
-  --type-title: 22px;
+  --type-title: 20px;
   --type-figure: 26px;
 
   /* ---- Geometry: --radius 0.625rem and its derived steps --------------- */
@@ -238,8 +238,6 @@
   --color-neutral-200: oklch(0.922 0 0);
   --color-neutral-300: oklch(0.87 0 0);
 
-  /* No gold seam — it arrived with the letterhead and left with it. */
-  --rule-gold: transparent;
 
   /* ---- Accent: near-black, from the template this was extracted from --- */
   --accent-solid: oklch(0.205 0 0);
@@ -513,7 +511,6 @@ thead {
     --tone-halted-tint: #f8f0f0;
     --tone-inert: #6b6660;
     --tone-inert-tint: #f4f2ed;
-    --rule-gold: #a9822f;
 
     color-scheme: light;
   }

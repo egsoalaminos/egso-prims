@@ -27,11 +27,6 @@ export function TopBar({
         // they meet at the top-left corner, so painting one lighter than the
         // canvas and the other darker split the frame into two materials.
         "sticky top-0 z-10 flex items-center gap-3 border-b border-neutral-200 bg-sidebar/85 px-barpx py-barpy backdrop-blur md:px-8",
-        // The gold seam under the bar is the admin's letterhead rule — the same
-        // device the portal draws between its letterhead and its service
-        // counter. It replaces nothing; it sits below the hairline border, so
-        // the bar reads as the head of a document rather than as a toolbar.
-        "after:absolute after:inset-x-0 after:-bottom-[2px] after:h-[2px] after:bg-(--rule-gold) after:content-['']",
         className,
       )}
     >

@@ -14,7 +14,7 @@ export function RISItemsTable({ items }: { items: RISItem[] }) {
   const totalIssued = items.reduce((sum, it) => sum + it.issuedQty, 0);
   return (
     <div className="overflow-hidden rounded-lg border border-neutral-200">
-      <Table ruled minWidth={0} className="min-w-full">
+      <Table minWidth={0} className="min-w-full">
         <TableHeader>
           <TableHeaderRow>
             <TableHead first>Item</TableHead>

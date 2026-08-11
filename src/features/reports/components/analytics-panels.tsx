@@ -106,7 +106,7 @@ function StatTile({
         </div>
         <span className="text-body text-neutral-500">{label}</span>
       </div>
-      <div className="mt-3 text-title font-semibold tracking-tight text-neutral-900 tabular-nums">
+      <div className="mt-3 text-[22px] font-semibold tracking-tight text-neutral-900 tabular-nums">
         {children}
       </div>
     </ContainerCard>
@@ -366,7 +366,7 @@ export function AnalyticsPanels({
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <StatTile icon={Wallet} label="Procurement This Month">
-              {loading ? <Skeleton className="h-7 w-28" /> : <CurrencyDisplay amount={procurementThisMonth} className="text-title font-semibold" />}
+              {loading ? <Skeleton className="h-7 w-28" /> : <CurrencyDisplay amount={procurementThisMonth} className="text-[22px] font-semibold" />}
             </StatTile>
             <StatTile icon={Clock3} label="Pending Approvals">
               {loading ? <Skeleton className="h-7 w-16" /> : pendingApprovals}
@@ -427,7 +427,7 @@ export function AnalyticsPanels({
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <StatTile icon={Wallet} label="Inventory Value">
-              {loading ? <Skeleton className="h-7 w-28" /> : <CurrencyDisplay amount={invValue} className="text-title font-semibold" />}
+              {loading ? <Skeleton className="h-7 w-28" /> : <CurrencyDisplay amount={invValue} className="text-[22px] font-semibold" />}
             </StatTile>
             <StatTile icon={Boxes} label="Low Stock Items">
               {loading ? <Skeleton className="h-7 w-16" /> : low.length}
@@ -588,7 +588,7 @@ export function AnalyticsPanels({
               ) : (
                 <CurrencyDisplay
                   amount={energyOverall.currentTotal}
-                  className="text-title font-semibold"
+                  className="text-[22px] font-semibold"
                 />
               )}
             </StatTile>
@@ -679,7 +679,7 @@ export function AnalyticsPanels({
               ) : (
                 <CurrencyDisplay
                   amount={waterOverall.currentTotal}
-                  className="text-title font-semibold"
+                  className="text-[22px] font-semibold"
                 />
               )}
             </StatTile>
@@ -770,7 +770,7 @@ export function AnalyticsPanels({
               ) : (
                 <CurrencyDisplay
                   amount={fuelOverall.currentTotal}
-                  className="text-title font-semibold"
+                  className="text-[22px] font-semibold"
                 />
               )}
             </StatTile>
