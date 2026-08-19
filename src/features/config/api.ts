@@ -1,4 +1,4 @@
-import { requireDb, unwrap } from "@/lib/db";
+import { fetchAll, requireDb, unwrap } from "@/lib/db";
 import {
   configDefinition,
   type ConfigCategory,
@@ -37,7 +37,7 @@ export async function listConfiguration(filters: ConfigFilters = {}): Promise<Co
   const db = requireDb();
   let q = db.from(TABLE).select("*").order("category").order("key");
   if (filters.category) q = q.eq("category", filters.category);
-  return unwrap(await q).map(rowToEntry);
+  return (await fetchAll((from, to) => q.range(from, to))).map(rowToEntry);
 }
 
 /** Raw value for one setting, or the registry fallback when unset. */

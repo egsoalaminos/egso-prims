@@ -1,4 +1,4 @@
-import { requireDb, searchOr, unwrap } from "@/lib/db";
+import { fetchAll, requireDb, searchOr, unwrap } from "@/lib/db";
 import { nextDocumentNumber } from "@/features/shared/doc-numbers";
 import { formatDate, normalizeName, orDash } from "@/features/violations/lib";
 import type {
@@ -66,7 +66,7 @@ export async function listViolators(search?: string): Promise<Violator[]> {
   const db = requireDb();
   let q = db.from(VIOLATORS).select("*").order("full_name", { ascending: true });
   if (search?.trim()) q = q.or(searchOr(["full_name", "contact_number", "address"], search));
-  return unwrap(await q).map(rowToViolator);
+  return (await fetchAll((from, to) => q.range(from, to))).map(rowToViolator);
 }
 
 export async function getViolator(id: string): Promise<Violator | null> {
@@ -206,7 +206,7 @@ export async function listViolations(violatorId?: string): Promise<Violation[]> 
   const db = requireDb();
   let q = db.from(VIOLATIONS).select("*").order("date_issued", { ascending: false });
   if (violatorId) q = q.eq("violator_id", violatorId);
-  return unwrap(await q).map(rowToViolation);
+  return (await fetchAll((from, to) => q.range(from, to))).map(rowToViolation);
 }
 
 export interface ViolationInput {

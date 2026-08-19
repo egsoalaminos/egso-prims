@@ -1,4 +1,4 @@
-import { requireDb, searchOr, unwrap } from "@/lib/db";
+import { fetchAll, requireDb, searchOr, unwrap } from "@/lib/db";
 import { nextDocumentNumber } from "@/features/shared/doc-numbers";
 import type {
   FuelOdometerReading,
@@ -107,7 +107,7 @@ export async function listFuelVehicles(
   if (filters.search?.trim()) {
     q = q.or(searchOr(["vehicle_name", "plate_number", "vehicle_type", "fuel_type"], filters.search));
   }
-  return unwrap(await q).map(rowToVehicle);
+  return (await fetchAll((from, to) => q.range(from, to))).map(rowToVehicle);
 }
 
 export async function getFuelVehicle(id: string): Promise<FuelVehicle | null> {
@@ -222,7 +222,7 @@ export async function listFuelTrips(filters: FuelTripFilters = {}): Promise<Fuel
       searchOr(["control_no", "purpose", "origin", "destination", "driver", "passengers"], filters.search),
     );
   }
-  const rows = unwrap(await q).map(rowToTrip);
+  const rows = (await fetchAll((from, to) => q.range(from, to))).map(rowToTrip);
 
   // Month/year narrowing is applied in memory so callers can combine it
   // freely with the date-range bounds above.
@@ -364,7 +364,7 @@ export async function listFuelTransactions(
   if (filters.vehicleId) q = q.eq("vehicle_id", filters.vehicleId);
   if (filters.dateFrom) q = q.gte("txn_date", filters.dateFrom);
   if (filters.dateTo) q = q.lte("txn_date", filters.dateTo);
-  const rows = unwrap(await q).map(rowToTransaction);
+  const rows = (await fetchAll((from, to) => q.range(from, to))).map(rowToTransaction);
 
   // Month/year narrowing is applied in memory so callers can combine it
   // freely with the date-range bounds above.
@@ -461,7 +461,7 @@ export async function listFuelOdometerReadings(
   const db = requireDb();
   let q = db.from(ODOMETER).select("*").order("reading_date", { ascending: false });
   if (filters.vehicleId) q = q.eq("vehicle_id", filters.vehicleId);
-  return unwrap(await q).map(rowToOdometer);
+  return (await fetchAll((from, to) => q.range(from, to))).map(rowToOdometer);
 }
 
 export interface OdometerReadingDraftInput {

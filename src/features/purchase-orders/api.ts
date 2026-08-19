@@ -1,4 +1,4 @@
-import { dateOnly, requireDb, searchOr, unwrap } from "@/lib/db";
+import { dateOnly, fetchAll, requireDb, searchOr, unwrap } from "@/lib/db";
 import { uploadAttachmentInputs } from "@/lib/storage";
 import { nextDocumentNumber } from "@/features/shared/doc-numbers";
 import {
@@ -77,7 +77,7 @@ export async function listPurchaseOrders(filters: POListFilters = {}): Promise<P
       searchOr(["po_number", "pr_number", "requester", "purpose", "department_code"], filters.search),
     );
   }
-  return unwrap(await q).map(rowToPO);
+  return (await fetchAll((from, to) => q.range(from, to))).map(rowToPO);
 }
 
 export async function getPurchaseOrder(id: string): Promise<PurchaseOrder | null> {

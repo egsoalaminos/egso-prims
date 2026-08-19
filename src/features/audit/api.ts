@@ -1,4 +1,4 @@
-import { isoDate, requireDb, searchOr, unwrap } from "@/lib/db";
+import { fetchAll, isoDate, requireDb, searchOr, unwrap } from "@/lib/db";
 import type { AuditEntry, AuditListFilters } from "@/features/audit/types";
 
 /**
@@ -66,7 +66,7 @@ export async function listAuditEntries(filters: AuditListFilters = {}): Promise<
       ),
     );
   }
-  return unwrap(await q).map(rowToEntry);
+  return (await fetchAll((from, to) => q.range(from, to))).map(rowToEntry);
 }
 
 export async function getAuditEntry(id: string): Promise<AuditEntry | null> {

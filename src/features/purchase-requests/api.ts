@@ -1,4 +1,4 @@
-import { dateOnly, requireDb, searchOr, unwrap } from "@/lib/db";
+import { dateOnly, fetchAll, requireDb, searchOr, unwrap } from "@/lib/db";
 import { uploadAttachmentInputs } from "@/lib/storage";
 import { nextDocumentNumber } from "@/features/shared/doc-numbers";
 import {
@@ -58,7 +58,7 @@ export async function listPurchaseRequests(
   if (filters.search?.trim()) {
     q = q.or(searchOr(["pr_number", "requester", "purpose", "department_code"], filters.search));
   }
-  return unwrap(await q).map(rowToPR);
+  return (await fetchAll((from, to) => q.range(from, to))).map(rowToPR);
 }
 
 export async function getPurchaseRequest(id: string): Promise<PurchaseRequest | null> {

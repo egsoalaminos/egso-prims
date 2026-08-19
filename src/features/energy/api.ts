@@ -1,4 +1,4 @@
-import { requireDb, searchOr, unwrap } from "@/lib/db";
+import { fetchAll, requireDb, searchOr, unwrap } from "@/lib/db";
 import { nextDocumentNumber } from "@/features/shared/doc-numbers";
 import type {
   EnergyAccount,
@@ -65,7 +65,7 @@ export async function listEnergyAccounts(
       searchOr(["account_number", "account_name", "location", "meter_number"], filters.search),
     );
   }
-  return unwrap(await q).map(rowToAccount);
+  return (await fetchAll((from, to) => q.range(from, to))).map(rowToAccount);
 }
 
 export async function getEnergyAccount(id: string): Promise<EnergyAccount | null> {
@@ -130,7 +130,7 @@ export async function listEnergyBills(filters: EnergyBillFilters = {}): Promise<
   if (filters.accountId) q = q.eq("account_id", filters.accountId);
   if (filters.year) q = q.eq("billing_year", filters.year);
   if (filters.month) q = q.eq("billing_month", filters.month);
-  const rows = unwrap(await q).map(rowToBill);
+  const rows = (await fetchAll((from, to) => q.range(from, to))).map(rowToBill);
 
   // Period-range filtering is ordinal (year*12+month), applied in memory so
   // the range can straddle a year boundary.
@@ -241,7 +241,7 @@ export async function listEnergySubmeters(
   if (filters.accountId) q = q.eq("account_id", filters.accountId);
   if (filters.officeCode) q = q.eq("office_code", filters.officeCode);
   if (filters.status) q = q.eq("status", filters.status);
-  return unwrap(await q).map(rowToSubmeter);
+  return (await fetchAll((from, to) => q.range(from, to))).map(rowToSubmeter);
 }
 
 export interface SubmeterDraftInput {
@@ -343,7 +343,7 @@ export async function listEnergySubmeterBills(
   if (filters.submeterId) q = q.eq("submeter_id", filters.submeterId);
   if (filters.year) q = q.eq("billing_year", filters.year);
   if (filters.month) q = q.eq("billing_month", filters.month);
-  return unwrap(await q).map(rowToSubmeterBill);
+  return (await fetchAll((from, to) => q.range(from, to))).map(rowToSubmeterBill);
 }
 
 export interface SubmeterBillDraftInput {

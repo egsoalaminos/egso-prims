@@ -1,4 +1,4 @@
-import { dateOnly, requireDb, searchOr, unwrap } from "@/lib/db";
+import { dateOnly, fetchAll, requireDb, searchOr, unwrap } from "@/lib/db";
 import { uploadAttachmentInputs } from "@/lib/storage";
 import { nextDocumentNumber } from "@/features/shared/doc-numbers";
 import { deductStock } from "@/features/inventory/api";
@@ -69,7 +69,7 @@ export async function listRequests(filters: RISListFilters = {}): Promise<Reques
       ),
     );
   }
-  return unwrap(await q).map(rowToRIS);
+  return (await fetchAll((from, to) => q.range(from, to))).map(rowToRIS);
 }
 
 export async function getRequest(id: string): Promise<RequestForIssuance | null> {

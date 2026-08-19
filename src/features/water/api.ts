@@ -1,4 +1,4 @@
-import { requireDb, searchOr, unwrap } from "@/lib/db";
+import { fetchAll, requireDb, searchOr, unwrap } from "@/lib/db";
 import { nextDocumentNumber } from "@/features/shared/doc-numbers";
 import type {
   SubmeterStatus,
@@ -67,7 +67,7 @@ export async function listWaterAccounts(
       searchOr(["account_number", "account_name", "location", "meter_number"], filters.search),
     );
   }
-  return unwrap(await q).map(rowToAccount);
+  return (await fetchAll((from, to) => q.range(from, to))).map(rowToAccount);
 }
 
 export async function getWaterAccount(id: string): Promise<WaterAccount | null> {
@@ -132,7 +132,7 @@ export async function listWaterBills(filters: WaterBillFilters = {}): Promise<Wa
   if (filters.accountId) q = q.eq("account_id", filters.accountId);
   if (filters.year) q = q.eq("billing_year", filters.year);
   if (filters.month) q = q.eq("billing_month", filters.month);
-  const rows = unwrap(await q).map(rowToBill);
+  const rows = (await fetchAll((from, to) => q.range(from, to))).map(rowToBill);
 
   // Period-range filtering is ordinal (year*12+month), applied in memory so
   // the range can straddle a year boundary.
@@ -246,7 +246,7 @@ export async function listWaterSubmeters(
   if (filters.accountId) q = q.eq("account_id", filters.accountId);
   if (filters.assignedOffice) q = q.eq("assigned_office", filters.assignedOffice);
   if (filters.status) q = q.eq("status", filters.status);
-  return unwrap(await q).map(rowToSubmeter);
+  return (await fetchAll((from, to) => q.range(from, to))).map(rowToSubmeter);
 }
 
 export interface SubmeterDraftInput {
@@ -382,7 +382,7 @@ export async function listWaterSubmeterBills(
   if (filters.submeterId) q = q.eq("submeter_id", filters.submeterId);
   if (filters.year) q = q.eq("billing_year", filters.year);
   if (filters.month) q = q.eq("billing_month", filters.month);
-  return unwrap(await q).map(rowToSubmeterBill);
+  return (await fetchAll((from, to) => q.range(from, to))).map(rowToSubmeterBill);
 }
 
 export interface SubmeterBillDraftInput {
@@ -466,7 +466,7 @@ export async function listWaterMeterReadings(
   const db = requireDb();
   let q = db.from(READINGS).select("*").order("reading_date", { ascending: false });
   if (filters.submeterId) q = q.eq("submeter_id", filters.submeterId);
-  return unwrap(await q).map(rowToReading);
+  return (await fetchAll((from, to) => q.range(from, to))).map(rowToReading);
 }
 
 export interface MeterReadingDraftInput {

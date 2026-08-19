@@ -1,4 +1,4 @@
-import { isoDate, requireDb, searchOr, unwrap } from "@/lib/db";
+import { fetchAll, isoDate, requireDb, searchOr, unwrap } from "@/lib/db";
 import { uploadAttachmentInputs } from "@/lib/storage";
 import { getConfigNumber, getConfigString } from "@/features/config/api";
 import {
@@ -108,7 +108,7 @@ export async function listInventoryItems(
   if (filters.search?.trim()) {
     q = q.or(searchOr(["item_code", "name", "category", "location"], filters.search));
   }
-  let items = unwrap(await q).map(rowToItem);
+  let items = (await fetchAll((from, to) => q.range(from, to))).map(rowToItem);
   // Stock status derives from thresholds — filtered client-side.
   if (filters.stockStatus) {
     items = items.filter((it) => stockStatusOf(it) === filters.stockStatus);
@@ -429,7 +429,7 @@ export async function listStockCard(itemId?: string): Promise<StockCardEntry[]> 
   const db = requireDb();
   let q = db.from(LEDGER).select("*").order("date", { ascending: false });
   if (itemId) q = q.eq("item_id", itemId);
-  return unwrap(await q).map(rowToEntry);
+  return (await fetchAll((from, to) => q.range(from, to))).map(rowToEntry);
 }
 
 export function exportInventoryCsv(rows: InventoryItem[]): string {

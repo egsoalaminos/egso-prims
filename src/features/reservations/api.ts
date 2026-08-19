@@ -1,4 +1,4 @@
-import { dateOnly, requireDb, searchOr, unwrap } from "@/lib/db";
+import { dateOnly, fetchAll, requireDb, searchOr, unwrap } from "@/lib/db";
 import { uploadAttachmentInputs } from "@/lib/storage";
 import { nextDocumentNumber } from "@/features/shared/doc-numbers";
 import {
@@ -60,7 +60,7 @@ export async function listReservations(
       searchOr(["res_number", "borrower", "purpose", "department_code"], filters.search),
     );
   }
-  return unwrap(await q).map(rowToRes);
+  return (await fetchAll((from, to) => q.range(from, to))).map(rowToRes);
 }
 
 export async function getReservation(id: string): Promise<Reservation | null> {

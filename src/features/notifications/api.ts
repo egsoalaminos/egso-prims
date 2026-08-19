@@ -35,6 +35,9 @@ export async function listNotifications(
   let q = db.from(TABLE).select("*").order("created_at", { ascending: false });
   if (filters.module) q = q.eq("module", filters.module);
   if (filters.unreadOnly) q = q.eq("is_read", false);
+  // Deliberately capped rather than paged: the drawer shows a recent feed, and
+  // 200 is already more than anyone scrolls. Every other list pages to
+  // completion via fetchAll.
   q = q.limit(filters.limit ?? 200);
   return unwrap(await q).map(rowToNotification);
 }
