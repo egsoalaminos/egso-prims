@@ -4,7 +4,7 @@ import { ArrowRight, CheckCircle2, FileText, ScanLine } from "lucide-react";
 
 import { Button, ContainerCard } from "@/components";
 import { BRAND_LOGO } from "@/lib/brand";
-import { PORTAL_SERVICES, SERVICE_KIND_TINT } from "@/features/portal/data";
+import { PORTAL_SERVICES } from "@/features/portal/data";
 
 /** Entrance transition shared by the hero elements — staggered rise + fade. */
 const rise = (delay: number) => ({
@@ -104,7 +104,7 @@ export function PortalHome() {
                       className="flex h-full flex-col p-3 transition group-hover:-translate-y-1 group-hover:shadow-lg group-hover:shadow-neutral-200/60"
                     >
                       <div
-                        className={`grid h-24 place-items-center rounded-lg bg-gradient-to-br ${SERVICE_KIND_TINT[s.kind]}`}
+                        className={`grid h-24 place-items-center rounded-lg bg-gradient-to-br ${s.gradient}`}
                       >
                         <div className="grid h-12 w-12 place-items-center rounded-2xl border border-white bg-white shadow-sm transition group-hover:scale-105">
                           <Icon className="h-6 w-6 text-neutral-800" />
