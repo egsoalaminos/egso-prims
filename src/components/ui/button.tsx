@@ -5,9 +5,11 @@ import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  // The focus ring reads from the accent token, which resolves to the same
-  // neutral-300 this has always used. Routing it through the token means one
-  // rule serves both surfaces if the accent is ever changed in Settings.
+  // The focus ring reads from the accent token, so one rule serves every
+  // surface and every accent. It is no longer the neutral-300 August used:
+  // that measured 1.48:1 against a white card, and a focus indicator needs 3:1
+  // to satisfy WCAG 1.4.11. Each accent's ring is solved for the lightest
+  // value that clears it.
   "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-lg font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring) disabled:pointer-events-none disabled:opacity-50 [&_svg]:shrink-0",
   {
     variants: {

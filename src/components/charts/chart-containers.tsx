@@ -58,16 +58,20 @@ export function DonutChartContainer({
   options,
   height = 220,
   className,
+  summary,
 }: {
   data: ChartData<"doughnut">;
   options?: ChartOptions<"doughnut">;
   height?: number;
   className?: string;
+  /** Sentence describing what the chart shows, for assistive technology. */
+  summary?: string;
 }) {
   return (
     <ChartCanvas
       height={height}
       className={className}
+      summary={summary}
       config={{
         type: "doughnut",
         data,
@@ -86,16 +90,20 @@ export function BarChartContainer({
   options,
   height = 220,
   className,
+  summary,
 }: {
   data: ChartData<"bar">;
   options?: ChartOptions<"bar">;
   height?: number;
   className?: string;
+  /** Sentence describing what the chart shows, for assistive technology. */
+  summary?: string;
 }) {
   return (
     <ChartCanvas
       height={height}
       className={className}
+      summary={summary}
       config={{
         type: "bar",
         data,
@@ -117,16 +125,20 @@ export function LineChartContainer({
   options,
   height = 220,
   className,
+  summary,
 }: {
   data: ChartData<"line">;
   options?: ChartOptions<"line">;
   height?: number;
   className?: string;
+  /** Sentence describing what the chart shows, for assistive technology. */
+  summary?: string;
 }) {
   return (
     <ChartCanvas
       height={height}
       className={className}
+      summary={summary}
       config={{
         type: "line",
         data,

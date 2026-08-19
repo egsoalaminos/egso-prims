@@ -154,11 +154,17 @@
    * August: an 11px `font-medium` label in neutral-400 on a neutral-50 band,
    * with no column dividers and no rule beneath. Both of those arrived later
    * with the municipal direction and are gone again.
+   *
+   * One value has moved since: `--thead-fg` was August's neutral-400, which
+   * measures 2.48:1 against the neutral-50 band and fails WCAG 1.4.3 for the
+   * column header of every list in the system. It is neutral-500 now — 4.53:1
+   * on the same band, the same cold grey one step down. The band, case,
+   * tracking and weight are untouched, so the table still reads quiet.
    */
   --thead-transform: uppercase;
   --thead-tracking: 0.05em;
   --thead-weight: 500;
-  --thead-fg: oklch(0.708 0 0);
+  --thead-fg: oklch(0.556 0 0);
   --thead-bg: oklch(0.985 0 0);
 
   /* ---- Elevation: cards are flat ---------------------------------------- */
@@ -197,11 +203,20 @@
   --color-neutral-300: oklch(0.87 0 0);
 
 
-  /* ---- Accent: near-black, from the template this was extracted from --- */
+  /* ---- Accent: near-black, from the template this was extracted from ---
+   *
+   * `--accent-ring` is the one value here that is not August's. It was
+   * neutral-300, which measures 1.48:1 against a white card — a focus ring a
+   * keyboard user cannot see, and a WCAG 1.4.11 failure (non-text indicators
+   * need 3:1). Every accent's ring below was re-solved for the lightest oklch
+   * L that clears 3:1 against *both* the white card and the neutral-50 band,
+   * so the ring stays as light as it can while remaining visible. The hue and
+   * chroma of each accent are unchanged; only L moved.
+   */
   --accent-solid: oklch(0.205 0 0);
   --accent-solid-hover: oklch(0.269 0 0);
   --accent-contrast: oklch(1 0 0);
-  --accent-ring: oklch(0.87 0 0);
+  --accent-ring: oklch(0.654 0 0);
   --accent-subtle: oklch(0.97 0 0);
   --accent-text: oklch(0.205 0 0);
 
@@ -250,7 +265,7 @@
   --accent-solid: oklch(0.546 0.198 259.8);
   --accent-solid-hover: oklch(0.488 0.198 259.8);
   --accent-contrast: oklch(0.985 0 0);
-  --accent-ring: oklch(0.707 0.146 259.8);
+  --accent-ring: oklch(0.656 0.146 259.8);
   --accent-subtle: color-mix(in oklch, oklch(0.546 0.198 259.8) 12%, transparent);
   --accent-text: oklch(0.546 0.198 259.8);
 }
@@ -259,7 +274,7 @@
   --accent-solid: oklch(0.527 0.142 160.2);
   --accent-solid-hover: oklch(0.470 0.142 160.2);
   --accent-contrast: oklch(0.985 0 0);
-  --accent-ring: oklch(0.696 0.130 160.2);
+  --accent-ring: oklch(0.638 0.130 160.2);
   --accent-subtle: color-mix(in oklch, oklch(0.527 0.142 160.2) 12%, transparent);
   --accent-text: oklch(0.527 0.142 160.2);
 }
@@ -268,7 +283,7 @@
   --accent-solid: oklch(0.577 0.213 27.3);
   --accent-solid-hover: oklch(0.517 0.213 27.3);
   --accent-contrast: oklch(0.985 0 0);
-  --accent-ring: oklch(0.712 0.170 27.3);
+  --accent-ring: oklch(0.673 0.170 27.3);
   --accent-subtle: color-mix(in oklch, oklch(0.577 0.213 27.3) 12%, transparent);
   --accent-text: oklch(0.577 0.213 27.3);
 }
@@ -277,7 +292,7 @@
   --accent-solid: oklch(0.541 0.211 295.4);
   --accent-solid-hover: oklch(0.487 0.211 295.4);
   --accent-contrast: oklch(0.985 0 0);
-  --accent-ring: oklch(0.702 0.165 295.4);
+  --accent-ring: oklch(0.669 0.165 295.4);
   --accent-subtle: color-mix(in oklch, oklch(0.541 0.211 295.4) 12%, transparent);
   --accent-text: oklch(0.541 0.211 295.4);
 }
@@ -321,9 +336,9 @@
 
 /*
  * A sticky header cell paints over the rows scrolling beneath it, so it needs
- * an opaque ground — and `--accent-subtle` is a translucent wash in dark mode.
- * The card surface is laid down as the colour, the accent tint as an image on
- * top of it, so one class works in both themes.
+ * an opaque ground — and `--accent-subtle` is a translucent wash under the
+ * coloured accents. White is laid down as the colour and the accent tint as an
+ * image on top of it, so the band stays opaque whichever accent is selected.
  */
 @utility table-head-band {
   background-color: var(--color-white);

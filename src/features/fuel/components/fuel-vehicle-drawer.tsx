@@ -182,7 +182,7 @@ export function FuelVehicleDrawer({
               </div>
 
               {/* Fuel configuration — the figures every trip computation reads */}
-              <section className="grid grid-cols-4 gap-3">
+              <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                 <div className="rounded-lg border border-neutral-200 p-3">
                   <OverlineLabel>Tank Capacity</OverlineLabel>
                   <div className="mt-0.5 text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
@@ -437,7 +437,7 @@ export function FuelVehicleDrawer({
                     </span>
                     <StatusBadge status={comparison.status} />
                   </div>
-                  <div className="mt-2.5 grid grid-cols-4 gap-3">
+                  <div className="mt-2.5 grid grid-cols-2 gap-3 sm:grid-cols-4">
                     <div>
                       <OverlineLabel>Current</OverlineLabel>
                       <div className="text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
@@ -533,7 +533,7 @@ export function FuelVehicleDrawer({
 
               {/* Odometer totals */}
               {readings.length > 0 && (
-                <section className="grid grid-cols-3 gap-3">
+                <section className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                   <div className="rounded-lg border border-neutral-200 p-3">
                     <OverlineLabel>Total Distance</OverlineLabel>
                     <div className="mt-0.5 text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">

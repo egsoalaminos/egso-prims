@@ -135,7 +135,7 @@ export function WaterSubmeterDrawer({
               </div>
 
               {/* Reading totals */}
-              <section className="grid grid-cols-3 gap-3">
+              <section className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                 <div className="rounded-lg border border-neutral-200 p-3">
                   <OverlineLabel>Recorded Readings</OverlineLabel>
                   <div className="mt-0.5 text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">

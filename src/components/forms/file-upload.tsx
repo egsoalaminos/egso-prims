@@ -148,7 +148,7 @@ export function DragDropUpload({
           if (!disabled) addFiles(Array.from(e.dataTransfer.files));
         }}
         className={cn(
-          "flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed px-6 py-8 text-center transition focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-300",
+          "flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed px-6 py-8 text-center transition focus:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring)",
           dragging
             ? "border-neutral-400 bg-neutral-50"
             : "border-neutral-300 bg-neutral-50/60 hover:bg-neutral-50",

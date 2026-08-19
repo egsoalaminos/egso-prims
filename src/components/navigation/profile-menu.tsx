@@ -35,7 +35,7 @@ export function ProfileMenu({ name, detail, initials, items = [], className }: P
       <DropdownMenuTrigger asChild>
         <button
           className={cn(
-            "flex items-center gap-2 rounded-lg border border-neutral-200 bg-white py-1 pl-1 pr-2 text-[12.5px] font-medium text-neutral-700 transition hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-300",
+            "flex items-center gap-2 rounded-lg border border-neutral-200 bg-white py-1 pl-1 pr-2 text-[12.5px] font-medium text-neutral-700 transition hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring)",
             className,
           )}
         >

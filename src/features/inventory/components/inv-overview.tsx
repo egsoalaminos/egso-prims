@@ -81,7 +81,7 @@ export function InvOverview({
           <span className="text-[12px] font-semibold text-neutral-900">Stock Summary</span>
           <StatusBadge status={status} />
         </div>
-        <div className="mt-2.5 grid grid-cols-3 gap-3">
+        <div className="mt-2.5 grid grid-cols-2 gap-3 sm:grid-cols-3">
           <div>
             <OverlineLabel>On Hand</OverlineLabel>
             <div className="text-[18px] font-semibold tabular-nums tracking-tight text-neutral-900">

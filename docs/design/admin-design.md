@@ -17,9 +17,34 @@ of that commit with `git show` rather than remembered.
 - **Colour used freely.** Eight status hues as rounded pills with dots, a
   seven-colour chart palette, gradients on the avatar and the summary cards, and
   a colour square per office beside every control number.
-- **Quiet tables.** An 11px `font-medium` header in neutral-400 on a neutral-50
-  band, no column rules, no line beneath.
+- **Quiet tables.** An 11px `font-medium` header in neutral-500 on a neutral-50
+  band, no column rules, no line beneath. August drew that label in neutral-400;
+  see *What has moved since* below.
 - **One face.** Inter throughout.
+
+## What has moved since, and why
+
+Three values in `:root` are no longer August's. All three were measured
+failures against WCAG, not preferences, and each was solved rather than
+guessed — the oklch values were converted to sRGB and the contrast computed.
+
+| Token / role | August | Now | Why |
+|---|---|---|---|
+| `--accent-ring` (all 5 accents) | neutral-300 · 1.48:1 | solved per accent · ≥3.05:1 | 1.4.11 asks 3:1 of a focus indicator. At 1.48:1 a keyboard user could not see where they were. Each accent keeps its hue and chroma; only lightness moved. |
+| `--thead-fg` | neutral-400 · 2.48:1 | neutral-500 · 4.53:1 | The column header of every list in the system, at 11px. |
+| `OverlineLabel` | neutral-400 · 2.59:1 | neutral-500 · 4.73:1 | Same colour, same reason, at 10px. |
+
+The band, the case, the tracking, the weight and every other value are
+untouched, so the tables still read as quiet as they did.
+
+Two related sweeps went with them. Every focus ring in the app now reads
+`--accent-ring` — there were fifteen different spellings, several of which
+(neutral-200, neutral-300, amber-200) could not be seen at all. And the invalid
+state moved from `border-red-300` / `ring-red-100` to `border-red-400` /
+`ring-red-500`, since a 1.22:1 error ring is not an error ring.
+
+The script that computes these lives outside the repo; re-derive rather than
+trust a remembered number.
 
 ## The token layer
 
@@ -50,6 +75,22 @@ sites, once on `text-thead` a single phase after the warning was written into
 the very file that dropped it. Introducing one again means teaching
 tailwind-merge the keys via `extendTailwindMerge` in `src/lib/utils.ts` *in the
 same commit*, or it will silently happen a third time.
+
+## Labels are bound through context, not props
+
+`Field` generates an id, renders `<label htmlFor>`, and publishes the id plus
+the helper/error ids through `FieldContext`. `Input`, `Textarea`, `Combobox`,
+`SelectField` and `DatePicker` read it with `useFieldBinding` and fill any gap
+their own props leave.
+
+It works that way because most controls sit inside a React Hook Form
+`Controller`, two or three levels below the `Field` that owns the label — a
+prop would have meant editing all 170 call sites and every `Controller` render
+function. None of them were touched.
+
+Do not "simplify" this back into a prop, and when adding a new control, call
+`useFieldBinding` in it. Without that the label is decorative text: clicking it
+focuses nothing and a screen reader announces the field as unlabelled.
 
 ## The portal shares this design
 

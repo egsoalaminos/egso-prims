@@ -162,7 +162,7 @@ export function ViolatorDrawer({
             <DrawerBody>
               <div className="space-y-5">
                 {/* Who they are */}
-                <div className="grid grid-cols-3 gap-x-4 gap-y-3">
+                <div className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-3">
                   <div>
                     <OverlineLabel>Full Name</OverlineLabel>
                     <div className="mt-0.5 text-[12.5px] text-neutral-800">

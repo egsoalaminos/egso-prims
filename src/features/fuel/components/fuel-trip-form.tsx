@@ -288,7 +288,7 @@ export function FuelTripForm({
       <DrawerBody>
         <div className="space-y-5">
           {/* ---- trip details ---- */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             {needsPicker ? (
               <Field label="Vehicle" required error={err.vehicleId?.message}>
                 <Controller
@@ -365,7 +365,7 @@ export function FuelTripForm({
           {/* ---- odometer & fuel ---- */}
           <div className="space-y-4 rounded-lg border border-neutral-200 bg-neutral-50/60 p-4">
             <p className="text-[12px] font-semibold text-neutral-900">Odometer &amp; Fuel</p>
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
               <Field
                 label="Odometer OUT (km)"
                 required
@@ -426,7 +426,7 @@ export function FuelTripForm({
             </div>
 
             {/* Computed figures — read-only by design */}
-            <div className="grid grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               <Computed
                 label="Total KM Travelled"
                 value={`${computed.distance.toFixed(2)} km`}

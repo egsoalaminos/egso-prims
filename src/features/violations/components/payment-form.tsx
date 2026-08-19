@@ -135,7 +135,7 @@ export function PaymentForm({
         <div className="space-y-4">
           {/* What is owed — the figure the payment must match. */}
           {violation && (
-            <div className="grid grid-cols-3 gap-3 rounded-lg bg-neutral-50 px-3.5 py-3">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 rounded-lg bg-neutral-50 px-3.5 py-3">
               <div>
                 <OverlineLabel>Violation</OverlineLabel>
                 <div className="mt-0.5 text-[12.5px] text-neutral-800">

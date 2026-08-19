@@ -2,6 +2,7 @@ import * as React from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { useFieldBinding } from "@/components/forms/field-context";
 import {
   Command,
   CommandEmpty,
@@ -35,6 +36,8 @@ export interface ComboboxProps {
    * value — used where the list is a suggestion rather than a constraint.
    */
   allowCustomValue?: boolean;
+  /** Falls back to the enclosing Field's generated id. */
+  id?: string;
 }
 
 /** Searchable select (Popover + Command) for long option lists. */
@@ -49,7 +52,9 @@ export function Combobox({
   invalid,
   className,
   allowCustomValue = false,
+  id,
 }: ComboboxProps) {
+  const a11y = useFieldBinding({ id, invalid });
   const [open, setOpen] = React.useState(false);
   const [query, setQuery] = React.useState("");
   const selected = options.find((o) => o.value === value);
@@ -78,12 +83,13 @@ export function Combobox({
     >
       <PopoverTrigger asChild>
         <button
+          type="button"
           role="combobox"
           aria-expanded={open}
-          aria-invalid={invalid || undefined}
+          {...a11y}
           disabled={disabled}
           className={cn(
-            "flex w-full items-center justify-between gap-1.5 rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-[12.5px] transition focus:outline-none focus:ring-2 focus:ring-neutral-200 disabled:pointer-events-none disabled:opacity-60 aria-invalid:border-red-300",
+            "flex w-full items-center justify-between gap-1.5 rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-[12.5px] transition focus:outline-none focus:ring-2 focus:ring-(--accent-ring) disabled:pointer-events-none disabled:opacity-60 aria-invalid:border-red-400",
             shownLabel ? "text-neutral-800" : "text-neutral-400",
             className,
           )}

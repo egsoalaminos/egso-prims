@@ -171,7 +171,7 @@ export function WaterAccountDrawer({
                     </span>
                     <StatusBadge status={comparison.status} />
                   </div>
-                  <div className="mt-2.5 grid grid-cols-3 gap-3">
+                  <div className="mt-2.5 grid grid-cols-2 gap-3 sm:grid-cols-3">
                     <div>
                       <OverlineLabel>Current</OverlineLabel>
                       <div className="text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">
@@ -224,7 +224,7 @@ export function WaterAccountDrawer({
 
               {/* Account totals rolled up from submeters */}
               {rollup && rollup.totalSubmeters > 0 && (
-                <section className="grid grid-cols-3 gap-3">
+                <section className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                   <div className="rounded-lg border border-neutral-200 p-3">
                     <OverlineLabel>Total Water Consumption</OverlineLabel>
                     <div className="mt-0.5 text-[16px] font-semibold tabular-nums tracking-tight text-neutral-900">

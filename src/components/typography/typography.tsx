@@ -56,10 +56,17 @@ export const Subtitle = createText(
   "Subtitle",
 );
 
-/** 10px uppercase micro-label — sidebar groups, table headers. */
+/**
+ * 10px uppercase micro-label — sidebar groups, table headers.
+ *
+ * neutral-500, not the neutral-400 this used to be: at 10px, uppercase and
+ * wide-tracked, neutral-400 measured 2.59:1 against a white card and 2.48:1 on
+ * the neutral-50 band, well under the 4.5:1 WCAG asks of body-size text. One
+ * step down the same cold ramp reaches 4.73:1 and reads almost identically.
+ */
 export const OverlineLabel = createText(
   "div",
-  "text-[10px] font-semibold uppercase tracking-wider text-neutral-400",
+  "text-[10px] font-semibold uppercase tracking-wider text-neutral-500",
   "OverlineLabel",
 );
 

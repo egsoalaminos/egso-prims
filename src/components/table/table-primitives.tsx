@@ -84,18 +84,50 @@ export function TableBody({
   return <tbody className={cn("text-[13px] text-neutral-700", className)} {...props} />;
 }
 
+/**
+ * A row that opens a record is a control, not decoration.
+ *
+ * `interactive` used to add nothing but `cursor-pointer`, which left the main
+ * verb of every list page — open this document — reachable by mouse only. The
+ * row now takes focus, responds to Enter and Space, and shows the same accent
+ * ring every other control uses. Space is prevented on keydown so the page
+ * does not scroll under the activation.
+ *
+ * Deliberately **not** `role="button"`. Putting a button role on a `<tr>`
+ * removes it from the table's own semantics, so a screen reader loses the
+ * row/column structure that makes a data grid readable in the first place —
+ * a worse trade than the one it fixes. The row keeps its native role; the
+ * fully correct treatment is a real link on the document number in the first
+ * cell, which is a per-page change rather than one this primitive can make.
+ */
 export function TableRow({
   className,
   interactive = false,
+  onClick,
+  onKeyDown,
   ...props
 }: React.HTMLAttributes<HTMLTableRowElement> & { interactive?: boolean }) {
+  const activate = (e: React.KeyboardEvent<HTMLTableRowElement>) => {
+    onKeyDown?.(e);
+    if (e.defaultPrevented || !onClick) return;
+    if (e.key !== "Enter" && e.key !== " ") return;
+    // Let a control inside the row keep its own keyboard behaviour.
+    if (e.target !== e.currentTarget) return;
+    e.preventDefault();
+    onClick(e as unknown as React.MouseEvent<HTMLTableRowElement>);
+  };
+
   return (
     <tr
       className={cn(
         "border-t border-neutral-100 transition hover:bg-neutral-50/70",
-        interactive && "cursor-pointer",
+        interactive &&
+          "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring) focus-visible:ring-inset",
         className,
       )}
+      onClick={onClick}
+      onKeyDown={interactive ? activate : onKeyDown}
+      {...(interactive ? { tabIndex: 0 } : null)}
       {...props}
     />
   );

@@ -1,10 +1,10 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import { ArrowRight, CheckCircle2, FileText, ScanLine } from "lucide-react";
 
 import { Button, ContainerCard } from "@/components";
 import { BRAND_LOGO } from "@/lib/brand";
-import { PORTAL_SERVICES } from "@/features/portal/data";
+import { PORTAL_SERVICES, SERVICE_KIND_TINT } from "@/features/portal/data";
 
 /** Entrance transition shared by the hero elements — staggered rise + fade. */
 const rise = (delay: number) => ({
@@ -88,29 +88,40 @@ export function PortalHome() {
               const Icon = s.icon;
               return (
                 <motion.div key={s.title} {...rise(0.34 + i * 0.07)} className="min-w-0">
-                  <ContainerCard
-                    hoverable
-                    className="group flex h-full cursor-pointer flex-col p-3 transition hover:-translate-y-1 hover:shadow-lg hover:shadow-neutral-200/60"
-                    onClick={() => navigate(s.to)}
+                  {/*
+                   * One interactive element per card, and it is a real link.
+                   * The card used to be a div with an onClick and a button
+                   * inside it: unreachable by keyboard, and a nested control
+                   * even for a mouse. The CTA is now the link's own last line
+                   * rather than a second thing to press.
+                   */}
+                  <Link
+                    to={s.to}
+                    className="group block h-full rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring) focus-visible:ring-offset-2"
                   >
-                    <div
-                      className={`grid h-24 place-items-center rounded-lg bg-gradient-to-br ${s.gradient}`}
+                    <ContainerCard
+                      hoverable
+                      className="flex h-full flex-col p-3 transition group-hover:-translate-y-1 group-hover:shadow-lg group-hover:shadow-neutral-200/60"
                     >
-                      <div className="grid h-12 w-12 place-items-center rounded-2xl border border-white bg-white shadow-sm transition group-hover:scale-105">
-                        <Icon className="h-6 w-6 text-neutral-800" />
+                      <div
+                        className={`grid h-24 place-items-center rounded-lg bg-gradient-to-br ${SERVICE_KIND_TINT[s.kind]}`}
+                      >
+                        <div className="grid h-12 w-12 place-items-center rounded-2xl border border-white bg-white shadow-sm transition group-hover:scale-105">
+                          <Icon className="h-6 w-6 text-neutral-800" />
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex flex-1 flex-col px-1 pt-3">
-                      <div className="text-[13.5px] font-semibold text-neutral-900">{s.title}</div>
-                      <p className="mt-1 flex-1 text-[12px] leading-snug text-neutral-500">
-                        {s.description}
-                      </p>
-                      <Button variant="secondary" className="mt-3 w-full justify-between">
-                        {s.cta}
-                        <ArrowRight className="text-neutral-400 transition group-hover:translate-x-0.5" />
-                      </Button>
-                    </div>
-                  </ContainerCard>
+                      <div className="flex flex-1 flex-col px-1 pt-3">
+                        <div className="text-[13.5px] font-semibold text-neutral-900">{s.title}</div>
+                        <p className="mt-1 flex-1 text-[12px] leading-snug text-neutral-500">
+                          {s.description}
+                        </p>
+                        <span className="mt-3 flex w-full items-center justify-between rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-[12.5px] font-medium text-neutral-800 transition group-hover:bg-neutral-50">
+                          {s.cta}
+                          <ArrowRight className="h-4 w-4 text-neutral-400 transition group-hover:translate-x-0.5" />
+                        </span>
+                      </div>
+                    </ContainerCard>
+                  </Link>
                 </motion.div>
               );
             })}

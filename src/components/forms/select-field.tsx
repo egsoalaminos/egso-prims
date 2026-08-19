@@ -6,6 +6,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { useFieldBinding } from "@/components/forms/field-context";
 
 export interface SelectFieldOption {
   value: string;
@@ -21,6 +22,8 @@ export interface SelectFieldProps {
   disabled?: boolean;
   invalid?: boolean;
   className?: string;
+  /** Falls back to the enclosing Field's generated id. */
+  id?: string;
 }
 
 /** Single-value select styled to match form inputs. */
@@ -32,13 +35,15 @@ export function SelectField({
   disabled,
   invalid,
   className,
+  id,
 }: SelectFieldProps) {
+  const a11y = useFieldBinding({ id, invalid });
   return (
     <Select value={value} onValueChange={onChange} disabled={disabled}>
       <SelectTrigger
-        aria-invalid={invalid || undefined}
+        {...a11y}
         className={cn(
-          "h-auto w-full rounded-lg border-neutral-200 bg-white px-3 py-1.5 text-[12.5px] text-neutral-800 shadow-none transition focus-visible:ring-2 focus-visible:ring-neutral-200 data-[placeholder]:text-neutral-500 aria-invalid:border-red-300",
+          "h-auto w-full rounded-lg border-neutral-200 bg-white px-3 py-1.5 text-[12.5px] text-neutral-800 shadow-none transition focus-visible:ring-2 focus-visible:ring-(--accent-ring) data-[placeholder]:text-neutral-500 aria-invalid:border-red-400",
           className,
         )}
       >

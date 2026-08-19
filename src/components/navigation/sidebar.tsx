@@ -138,7 +138,7 @@ export function SidebarItem({
       aria-current={active ? "page" : undefined}
       aria-label={label}
       className={cn(
-        "flex w-full items-center gap-navgap rounded-lg px-2 py-nav text-[13px] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-300 disabled:pointer-events-none disabled:opacity-50 group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:gap-0",
+        "flex w-full items-center gap-navgap rounded-lg px-2 py-nav text-[13px] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring) disabled:pointer-events-none disabled:opacity-50 group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:gap-0",
         active
           ? "ui-accent-soft ui-accent-fg font-medium"
           : "text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900",

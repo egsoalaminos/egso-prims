@@ -22,10 +22,27 @@ export function AppShell({
 }) {
   return (
     <div className="flex min-h-screen bg-sidebar font-sans antialiased">
+      {/*
+       * First stop in the tab order. The rail carries ~15 nav items and the
+       * top bar another four controls, so without this a keyboard user walks
+       * all of them again on every route change.
+       */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-neutral-900 focus:px-4 focus:py-2 focus:text-[12.5px] focus:font-medium focus:text-white focus:outline-none focus:ring-2 focus:ring-(--accent-ring)"
+      >
+        Skip to content
+      </a>
       {sidebar}
       <div className="flex h-screen min-w-0 flex-1 flex-col bg-canvas">
         {topBar}
-        <main className="flex-1 space-y-6 overflow-y-auto px-5 py-6 md:px-8">{children}</main>
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className="flex-1 space-y-6 overflow-y-auto px-5 py-6 focus-visible:outline-none md:px-8"
+        >
+          {children}
+        </main>
       </div>
     </div>
   );

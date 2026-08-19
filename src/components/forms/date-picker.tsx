@@ -3,6 +3,7 @@ import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { useFieldBinding } from "@/components/forms/field-context";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
@@ -13,6 +14,8 @@ export interface DatePickerProps {
   disabled?: boolean;
   invalid?: boolean;
   className?: string;
+  /** Falls back to the enclosing Field's generated id. */
+  id?: string;
 }
 
 /** Single-date form input opening a calendar popover. */
@@ -23,16 +26,19 @@ export function DatePicker({
   disabled,
   invalid,
   className,
+  id,
 }: DatePickerProps) {
+  const a11y = useFieldBinding({ id, invalid });
   const [open, setOpen] = React.useState(false);
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button
+          type="button"
           disabled={disabled}
-          aria-invalid={invalid || undefined}
+          {...a11y}
           className={cn(
-            "flex w-full items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-[12.5px] transition focus:outline-none focus:ring-2 focus:ring-neutral-200 disabled:pointer-events-none disabled:opacity-60 aria-invalid:border-red-300",
+            "flex w-full items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-[12.5px] transition focus:outline-none focus:ring-2 focus:ring-(--accent-ring) disabled:pointer-events-none disabled:opacity-60 aria-invalid:border-red-400",
             value ? "text-neutral-800" : "text-neutral-400",
             className,
           )}

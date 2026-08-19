@@ -74,7 +74,7 @@ function Cell({
       onChange={(e) => onChange(e.target.value)}
       className={cn(
         "h-8 text-[12px]",
-        uncertain && "border-amber-300 bg-amber-50/60 focus-visible:ring-amber-200",
+        uncertain && "border-amber-300 bg-amber-50/60 focus-visible:ring-(--accent-ring)",
         className,
       )}
     />

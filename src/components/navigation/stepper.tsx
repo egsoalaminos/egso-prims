@@ -39,7 +39,7 @@ export function Stepper({ steps, current, onStepClick, className }: StepperProps
               disabled={!clickable}
               onClick={clickable ? () => onStepClick(i) : undefined}
               className={cn(
-                "flex shrink-0 items-center gap-2 rounded-lg px-1.5 py-1 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-300",
+                "flex shrink-0 items-center gap-2 rounded-lg px-1.5 py-1 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring)",
                 clickable && "hover:bg-neutral-50",
                 !clickable && "cursor-default",
               )}

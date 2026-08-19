@@ -359,7 +359,7 @@ export function ViolationForm({
               <p className="mt-0.5 text-[11px] text-neutral-500">
                 The ticket number is generated automatically and the record opens unsettled.
               </p>
-              <div className="mt-2.5 grid grid-cols-3 gap-3">
+              <div className="mt-2.5 grid grid-cols-2 gap-3 sm:grid-cols-3">
                 <div>
                   <OverlineLabel>Payment Status</OverlineLabel>
                   <div className="text-[13px] font-semibold text-amber-600">Pending</div>
