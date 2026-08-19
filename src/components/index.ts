@@ -126,6 +126,8 @@ export {
 // Feedback
 export { Toaster, toast } from "@/components/feedback/toaster";
 export { Spinner } from "@/components/feedback/spinner";
+export { PageFallback } from "@/components/feedback/page-fallback";
+export { RouteError } from "@/components/feedback/route-error";
 export { Skeleton, SkeletonText } from "@/components/feedback/skeleton";
 export { ProgressBar } from "@/components/feedback/progress-bar";
 export { EmptyState, ErrorState, SuccessState } from "@/components/feedback/states";

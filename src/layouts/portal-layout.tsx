@@ -1,4 +1,6 @@
+import * as React from "react";
 import { Link, NavLink, Outlet } from "react-router-dom";
+import { PageFallback } from "@/components/feedback/page-fallback";
 import { BRAND_LOGO } from "@/lib/brand";
 import { PORTAL_SERVICES } from "@/features/portal/data";
 
@@ -6,9 +8,26 @@ import { PORTAL_SERVICES } from "@/features/portal/data";
  * Public portal frame: government letterhead top bar + minimal footer, no
  * sidebar, no authentication. Shares the design tokens with the admin system.
  */
+/**
+ * First thing in the tab order: a way past the letterhead and the service nav.
+ * Without it a keyboard user traverses the whole header on every page.
+ */
+function SkipLink() {
+  return (
+    <a
+      href="#portal-content"
+      className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-neutral-900 focus:px-4 focus:py-2 focus:text-[12.5px] focus:font-medium focus:text-white focus:outline-none focus:ring-2 focus:ring-(--accent-ring)"
+    >
+      Skip to content
+    </a>
+  );
+}
+
 export function PortalLayout() {
   return (
     <div className="min-h-screen bg-canvas font-sans antialiased">
+      <SkipLink />
+
       {/* Government letterhead */}
       <header className="sticky top-0 z-20 border-b border-neutral-200 bg-white/85 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center gap-3 px-5 py-3">
@@ -40,7 +59,7 @@ export function PortalLayout() {
               <li key={s.to}>
                 <NavLink
                   to={s.to}
-                  className="block whitespace-nowrap rounded-md px-2.5 py-1.5 text-neutral-600 transition hover:bg-neutral-100 hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-300 aria-[current=page]:bg-neutral-100 aria-[current=page]:font-semibold aria-[current=page]:text-neutral-900"
+                  className="block whitespace-nowrap rounded-md px-2.5 py-1.5 text-neutral-600 transition hover:bg-neutral-100 hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring) aria-[current=page]:bg-neutral-100 aria-[current=page]:font-semibold aria-[current=page]:text-neutral-900"
                 >
                   {s.navLabel}
                 </NavLink>
@@ -50,7 +69,12 @@ export function PortalLayout() {
         </nav>
       </header>
 
-      <Outlet />
+      {/* The portal's pages are code-split like the admin's. */}
+      <main id="portal-content" tabIndex={-1} className="focus-visible:outline-none">
+        <React.Suspense fallback={<PageFallback />}>
+          <Outlet />
+        </React.Suspense>
+      </main>
 
       {/* Minimal footer */}
       <footer className="border-t border-neutral-200 bg-white">

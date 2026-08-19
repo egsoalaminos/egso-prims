@@ -22,14 +22,16 @@ import {
   Zap,
 } from "lucide-react";
 
+// By path rather than through the barrel — see main.tsx. The app shell is on
+// every authenticated route, so whatever it reaches is in the entry chunk.
+import { AppShell } from "@/components/layout/app-shell";
+import { PageFallback } from "@/components/feedback/page-fallback";
+import { Breadcrumb, type BreadcrumbItem } from "@/components/navigation/breadcrumb";
+import { OfficeSwitcher } from "@/components/navigation/office-switcher";
+import { ProfileMenu } from "@/components/navigation/profile-menu";
+import { SidebarUser } from "@/components/navigation/sidebar-user";
+import { NotificationBell, TopBar } from "@/components/navigation/top-bar";
 import {
-  AppShell,
-  Breadcrumb,
-  ConfirmationModal,
-  NotificationBell,
-  OfficeSwitcher,
-  ProfileMenu,
-  SearchBar,
   Sidebar,
   SidebarBrand,
   SidebarContent,
@@ -37,11 +39,10 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarItem,
-  SidebarUser,
-  toast,
-  TopBar,
-  type BreadcrumbItem,
-} from "@/components";
+} from "@/components/navigation/sidebar";
+import { ConfirmationModal } from "@/components/modal/modals";
+import { SearchBar } from "@/components/toolbar/search-bar";
+import { toast } from "@/components/feedback/toaster";
 import { useAuth } from "@/features/auth/auth-context";
 import { useNotifications } from "@/features/notifications/hooks";
 import { NotificationDrawer } from "@/features/notifications/components/notification-drawer";
@@ -499,9 +500,13 @@ export function AppLayout() {
         {/* Cross-fades between routes so opening a create/edit form from a list
             transitions smoothly instead of snapping. AnimatePresence renders no
             DOM node, so the fill-height page layouts are unaffected. */}
-        <AnimatePresence mode="wait" initial={false}>
-          <Outlet key={location.pathname} />
-        </AnimatePresence>
+        {/* Suspense sits outside AnimatePresence so a route's chunk can load
+            without tearing down the exit animation of the page it replaces. */}
+        <React.Suspense fallback={<PageFallback />}>
+          <AnimatePresence mode="wait" initial={false}>
+            <Outlet key={location.pathname} />
+          </AnimatePresence>
+        </React.Suspense>
       </AppShell>
 
       {/* Below 768px the rail is display:none, so this drawer is the only way

@@ -1,7 +1,7 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { Building2 } from "lucide-react";
 
-import { Spinner } from "@/components";
+import { Spinner } from "@/components/feedback/spinner";
 import { useAuth } from "@/features/auth/auth-context";
 import { can, type Permission, type Role } from "@/features/auth/types";
 
