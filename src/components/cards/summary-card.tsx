@@ -3,12 +3,6 @@ import { TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ContainerCard } from "@/components/cards/container-card";
 
-export interface SummaryCardTag {
-  label: string;
-  /** Tailwind bg class, e.g. "bg-emerald-500". */
-  color: string;
-}
-
 export interface SummaryCardProps {
   name: string;
   meta: string;
@@ -16,7 +10,6 @@ export interface SummaryCardProps {
   gradient: string;
   icon: React.ComponentType<{ className?: string }>;
   stat: string;
-  tags?: SummaryCardTag[];
   /** Corner badge over the hero area (defaults to "Live"). Pass null to hide. */
   badge?: string | null;
   onClick?: () => void;
@@ -30,7 +23,6 @@ export function SummaryCard({
   gradient,
   icon: Icon,
   stat,
-  tags = [],
   badge = "Live",
   onClick,
   className,
@@ -60,24 +52,16 @@ export function SummaryCard({
         <div className="truncate text-[13px] font-semibold text-neutral-900">{name}</div>
         <div className="text-[11.5px] text-neutral-500">{meta}</div>
       </div>
-      <div className="mt-3 flex items-center justify-between px-1">
-        <div className="flex -space-x-1.5">
-          {tags.map((t, idx) => (
-            <div
-              key={idx}
-              className={cn(
-                "grid h-5 w-5 place-items-center rounded-full border-2 border-white text-[9px] font-bold text-white",
-                t.color,
-              )}
-            >
-              {t.label}
-            </div>
-          ))}
-        </div>
-        <div className="flex items-center gap-1 text-[11px] text-neutral-500">
-          <TrendingUp className="h-3 w-3" />
-          {stat}
-        </div>
+      {/*
+       * An avatar stack used to sit opposite the stat, holding one letter per
+       * circle — S/M/L, P/A, M/E. They were not initials, a legend or a
+       * status: they were shaped like people and meant nothing. Removed, and
+       * the stat moves to the left edge so it lines up with the name and meta
+       * above it rather than floating against a gap where the stack was.
+       */}
+      <div className="mt-3 flex items-center gap-1 px-1 text-[11px] text-neutral-500">
+        <TrendingUp className="h-3 w-3" />
+        {stat}
       </div>
     </ContainerCard>
   );

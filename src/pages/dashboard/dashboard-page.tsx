@@ -25,6 +25,7 @@ import {
   ActivityTimeline,
   Button,
   CardCarousel,
+  Caption,
   CurrencyDisplay,
   DocumentNumber,
   EmptyState,
@@ -54,6 +55,7 @@ import { listPurchaseOrders } from "@/features/purchase-orders/api";
 import { listRequests } from "@/features/ris/api";
 import { listInventoryItems } from "@/features/inventory/api";
 import { stockStatusOf, type InventoryItem } from "@/features/inventory/types";
+import { useAuth } from "@/features/auth/auth-context";
 import { useNotifications } from "@/features/notifications/hooks";
 import { markAllNotificationsRead } from "@/features/notifications/api";
 import { notificationRoute } from "@/features/notifications/types";
@@ -139,6 +141,7 @@ const DASHBOARD_NOTIFICATION_LIMIT = 5;
 
 export function DashboardPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { data, loading } = useDashboardData();
   const today = format(new Date(), "yyyy-MM-dd");
 
@@ -218,19 +221,32 @@ export function DashboardPage() {
   );
 
   const operationalSummary = [
-    { name: "Inventory Summary", meta: "Live stock position", gradient: "from-blue-100 to-cyan-100", icon: Package, stat: `${totalUnits.toLocaleString()} units`, tags: [{ label: "S", color: "bg-emerald-500" }, { label: "M", color: "bg-amber-500" }, { label: "L", color: "bg-red-500" }] },
-    { name: "Recent Purchase Orders", meta: "Across all suppliers", gradient: "from-violet-100 to-fuchsia-100", icon: ShoppingCart, stat: `${data?.poCount ?? 0} orders`, tags: [{ label: "P", color: "bg-blue-500" }, { label: "A", color: "bg-emerald-500" }] },
-    { name: "Recent RIS", meta: "Released & completed", gradient: "from-emerald-100 to-lime-100", icon: ClipboardList, stat: `${data?.risIssued ?? 0} issued`, tags: [{ label: "M", color: "bg-red-500" }, { label: "E", color: "bg-neutral-800" }] },
-    { name: "Upcoming Reservations", meta: "Pending & approved", gradient: "from-sky-100 to-indigo-100", icon: CalendarDays, stat: `${data?.reservations.filter((r) => ["Pending", "Approved"].includes(r.status)).length ?? 0} scheduled`, tags: [{ label: "H", color: "bg-violet-500" }, { label: "V", color: "bg-blue-500" }] },
-    { name: "Low Stock Items", meta: "Requires attention", gradient: "from-rose-100 to-orange-100", icon: AlertTriangle, stat: `${lowStock} items`, tags: [{ label: "!", color: "bg-red-500" }, { label: "M", color: "bg-amber-500" }] },
-    { name: "Pending Approvals", meta: "Across departments", gradient: "from-amber-100 to-yellow-100", icon: ClipboardCheck, stat: `${pendingPRs + (data?.poPending ?? 0) + (data?.risPending ?? 0)} pending`, tags: [{ label: "P", color: "bg-amber-500" }, { label: "R", color: "bg-blue-500" }] },
+    { name: "Inventory Summary", meta: "Live stock position", gradient: "from-blue-100 to-cyan-100", icon: Package, stat: `${totalUnits.toLocaleString()} units` },
+    { name: "Recent Purchase Orders", meta: "Across all suppliers", gradient: "from-violet-100 to-fuchsia-100", icon: ShoppingCart, stat: `${data?.poCount ?? 0} orders` },
+    { name: "Recent RIS", meta: "Released & completed", gradient: "from-emerald-100 to-lime-100", icon: ClipboardList, stat: `${data?.risIssued ?? 0} issued` },
+    { name: "Upcoming Reservations", meta: "Pending & approved", gradient: "from-sky-100 to-indigo-100", icon: CalendarDays, stat: `${data?.reservations.filter((r) => ["Pending", "Approved"].includes(r.status)).length ?? 0} scheduled` },
+    { name: "Low Stock Items", meta: "Requires attention", gradient: "from-rose-100 to-orange-100", icon: AlertTriangle, stat: `${lowStock} items` },
+    { name: "Pending Approvals", meta: "Across departments", gradient: "from-amber-100 to-yellow-100", icon: ClipboardCheck, stat: `${pendingPRs + (data?.poPending ?? 0) + (data?.risPending ?? 0)} pending` },
   ];
 
+  /**
+   * Stock on hand measured against the point the office reorders at.
+   *
+   * The bar used to fill against `reorderLevel * 3`. There is no capacity or
+   * maximum-stock column in the schema, so that ×3 was not a figure the office
+   * keeps — it was picked to make a bar move, and it rendered as a percentage
+   * of nothing. `reorderLevel` is a real number a supply officer sets and can
+   * state, so the bar now fills towards it and the caption says so. Full means
+   * "at or above the reorder point", not "as much as we could hold".
+   */
   const inventoryHealth = (data?.items ?? []).slice(0, 5).map((it) => {
     const status = stockStatusOf(it);
     return {
       name: it.name,
-      pct: Math.min(100, Math.round((it.onHand / Math.max(1, it.reorderLevel * 3)) * 100)),
+      onHand: it.onHand,
+      reorderLevel: it.reorderLevel,
+      unit: it.unit,
+      pct: Math.min(100, Math.round((it.onHand / Math.max(1, it.reorderLevel)) * 100)),
       tone: status === "Available" ? ("success" as const) : status === "Low Stock" ? ("warning" as const) : ("danger" as const),
     };
   });
@@ -262,7 +278,7 @@ export function DashboardPage() {
   return (
     <PageTransition className="space-y-6">
       <PageHeader
-        title="Welcome back, Administrator"
+        title={`Welcome back, ${user?.name ?? "Administrator"}`}
         description="Monitor procurement requests, inventory, issuances, and facility reservations across all municipal departments."
         actions={
           <>
@@ -308,12 +324,15 @@ export function DashboardPage() {
           title="Inventory Health"
           action={{ label: "View", onClick: () => navigate("/inventory") }}
         >
+          <Caption className="mb-3 block">On hand against reorder point</Caption>
           <ul className="space-y-3">
             {inventoryHealth.map((item) => (
               <li key={item.name}>
-                <div className="flex items-center justify-between text-[12.5px]">
-                  <span className="text-neutral-700">{item.name}</span>
-                  <span className="tabular-nums text-neutral-500">{item.pct}%</span>
+                <div className="flex items-center justify-between gap-3 text-[12.5px]">
+                  <span className="truncate text-neutral-700">{item.name}</span>
+                  <span className="shrink-0 tabular-nums text-neutral-500">
+                    {item.onHand.toLocaleString()} / {item.reorderLevel.toLocaleString()} {item.unit}
+                  </span>
                 </div>
                 <ProgressBar value={item.pct} tone={item.tone} className="mt-1.5" />
               </li>

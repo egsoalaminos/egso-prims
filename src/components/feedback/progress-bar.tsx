@@ -2,9 +2,19 @@ import { cn } from "@/lib/utils";
 
 export type ProgressTone = "neutral" | "success" | "warning" | "danger";
 
+// `success` was emerald-500 until the greens were unified in 4bcc32c. That
+// pass left two faults in this one line: it reached for the tint half of the
+// token pair — the pale wash meant for backgrounds, not the ink — and it left
+// the tail of the old "500" attached to the end of the class. A class with
+// that stray digit matches no rule Tailwind emits, so the fill had no colour
+// at all and every success bar in the app rendered as an empty track. Both
+// halves are fixed here.
+//
+// Class strings are deliberately not quoted in this comment: Tailwind scans
+// raw source text, so a class-shaped string in a comment is a build input.
 const toneClasses: Record<ProgressTone, string> = {
   neutral: "bg-neutral-900",
-  success: "bg-(--tone-settled-tint)0",
+  success: "bg-(--tone-settled)",
   warning: "bg-amber-500",
   danger: "bg-red-500",
 };

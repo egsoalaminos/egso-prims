@@ -16,6 +16,12 @@ export type AuthStatus = "loading" | "authenticated" | "unauthenticated";
 
 export interface SignInResult {
   error?: string;
+  /**
+   * The user that was signed in. Both branches below already build it; it is
+   * returned so the caller can greet the person by name without waiting for
+   * the context state it just set to propagate.
+   */
+  user?: AuthUser;
 }
 
 interface AuthContextValue {
@@ -153,15 +159,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const { data, error } = await supabase.auth.signInWithPassword({ email, password });
           if (error) return { error: friendlyAuthError(error.message) };
           if (data.session) {
-            setUser(userFromSession(data.session));
+            const signedIn = userFromSession(data.session);
+            setUser(signedIn);
             setStatus("authenticated");
+            return { user: signedIn };
           }
           return {};
         }
         const devUser = await devDriver.signIn(email, password, remember);
         setUser(devUser);
         setStatus("authenticated");
-        return {};
+        return { user: devUser };
       } catch (e) {
         return { error: friendlyAuthError(e instanceof Error ? e.message : String(e)) };
       }

@@ -61,7 +61,7 @@ export function LoginPage() {
     if (result.error) {
       setAuthError(result.error);
     } else {
-      toast.success("Welcome back, Administrator");
+      toast.success(`Welcome back, ${result.user?.name ?? "Administrator"}`);
     }
   });
 
