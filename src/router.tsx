@@ -115,6 +115,22 @@ const FuelSummaryPage = lazyPage(
   () => import("@/pages/fuel/fuel-summary-page"),
   "FuelSummaryPage",
 );
+const RecordsListPage = lazyPage(
+  () => import("@/pages/records/records-list-page"),
+  "RecordsListPage",
+);
+const RecordsCreatePage = lazyPage(
+  () => import("@/pages/records/records-create-page"),
+  "RecordsCreatePage",
+);
+const RecordsDetailPage = lazyPage(
+  () => import("@/pages/records/records-detail-page"),
+  "RecordsDetailPage",
+);
+const RecordsEditPage = lazyPage(
+  () => import("@/pages/records/records-edit-page"),
+  "RecordsEditPage",
+);
 
 export const router = createBrowserRouter([
   { path: "login", element: <LoginPage />, errorElement: <RouteError /> },
@@ -164,6 +180,10 @@ export const router = createBrowserRouter([
           { path: "water/summary", element: <WaterSummaryPage /> },
           { path: "fuel", element: <FuelDashboardPage /> },
           { path: "fuel/summary", element: <FuelSummaryPage /> },
+          { path: "records", element: <RecordsListPage /> },
+          { path: "records/new", element: <RecordsCreatePage /> },
+          { path: "records/:id", element: <RecordsDetailPage /> },
+          { path: "records/:id/edit", element: <RecordsEditPage /> },
           { path: "reports", element: <ReportsPage /> },
           { path: "audit", element: <AuditListPage /> },
           { path: "settings", element: <SettingsPage /> },

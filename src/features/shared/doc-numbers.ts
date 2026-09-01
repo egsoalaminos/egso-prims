@@ -29,6 +29,7 @@ export const DOCUMENT_TYPES = {
   WC: "Water Consumption",
   FC: "Fuel Consumption",
   VT: "Violation Ticket",
+  RDS: "Records Disposition Schedule",
 } as const;
 
 export type DocumentType = keyof typeof DOCUMENT_TYPES;

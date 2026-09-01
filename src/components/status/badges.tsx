@@ -85,7 +85,8 @@ export type DocumentStatus =
   | "Inactive"
   | "Archived"
   | "Paid"
-  | "No Record";
+  | "No Record"
+  | "Returned";
 
 const statusTone: Record<DocumentStatus, Tone> = {
   Pending: "amber",
@@ -122,6 +123,10 @@ const statusTone: Record<DocumentStatus, Tone> = {
   // settled nor outstanding, so it reads neutral rather than green.
   Paid: "emerald",
   "No Record": "neutral",
+  // A disposition schedule the National Archives sent back for correction.
+  // Not "Rejected" — the filing stands and is amended, so it reads as work
+  // to redo rather than a refusal.
+  Returned: "orange",
 };
 
 export function StatusBadge({

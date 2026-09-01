@@ -2,6 +2,7 @@ import * as React from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
+  Archive,
   BarChart3,
   Building2,
   CalendarDays,
@@ -87,6 +88,11 @@ const violationItem: ModuleNavItem = {
   icon: ShieldAlert,
   label: "Violation Management",
   to: "/violations",
+};
+const recordsItem: ModuleNavItem = {
+  icon: Archive,
+  label: "Records Management",
+  to: "/records",
 };
 const reportsItem: ModuleNavItem = { icon: BarChart3, label: "Reports", to: "/reports" };
 
@@ -317,6 +323,7 @@ function AppSidebar({
           >
             {utilitiesChildren.map(renderItem)}
           </CollapsibleNavGroup>
+          {renderItem(recordsItem)}
           {renderItem(reportsItem)}
         </SidebarGroup>
         <SidebarDivider />
@@ -366,6 +373,7 @@ function useBreadcrumbs(): BreadcrumbItem[] {
     { prefix: "/energy", label: "Energy Consumption", newLabel: "" },
     { prefix: "/water", label: "Water Consumption", newLabel: "" },
     { prefix: "/fuel", label: "Fuel Consumption", newLabel: "" },
+    { prefix: "/records", label: "Records Management", newLabel: "New Schedule" },
     { prefix: "/reports", label: "Reports & Analytics", newLabel: "" },
     { prefix: "/audit", label: "Audit Trail", newLabel: "" },
     { prefix: "/settings", label: "Settings", newLabel: "" },
