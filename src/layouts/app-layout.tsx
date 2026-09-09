@@ -17,6 +17,7 @@ import {
   LayoutDashboard,
   LogOut,
   Package,
+  ScrollText,
   Settings,
   ShieldAlert,
   ShoppingCart,
@@ -89,11 +90,6 @@ const violationItem: ModuleNavItem = {
   label: "Violation Management",
   to: "/violations",
 };
-const recordsItem: ModuleNavItem = {
-  icon: Archive,
-  label: "Records Management",
-  to: "/records",
-};
 const reportsItem: ModuleNavItem = { icon: BarChart3, label: "Reports", to: "/reports" };
 
 // The two collapsible groups. Children keep their existing icons/badges/dots.
@@ -119,10 +115,16 @@ const utilitiesChildren: ModuleNavItem[] = [
   { icon: Droplets, label: "Water Consumption", to: "/water" },
   { icon: Fuel, label: "Fuel Consumption", to: "/fuel" },
 ];
+// A group of one for now. The office files more than one kind of records
+// document with the National Archives, so the schedule is named for what it
+// is rather than standing in for the whole module.
+const recordsChildren: ModuleNavItem[] = [
+  { icon: ScrollText, label: "Records Disposition Schedule", to: "/records" },
+];
 
 /* ---- Collapsible group state (persisted; default expanded) ---- */
 
-type GroupKey = "procurement" | "utilities";
+type GroupKey = "procurement" | "utilities" | "records";
 const GROUPS_KEY = "gso-prims.sidebar-groups";
 const SIDEBAR_COLLAPSED_KEY = "gso-prims.sidebar-collapsed";
 
@@ -136,7 +138,7 @@ function readSidebarCollapsed(): boolean {
 }
 
 function readGroups(): Record<GroupKey, boolean> {
-  const fallback = { procurement: true, utilities: true };
+  const fallback = { procurement: true, utilities: true, records: true };
   try {
     const raw = localStorage.getItem(GROUPS_KEY);
     return raw ? { ...fallback, ...(JSON.parse(raw) as Partial<Record<GroupKey, boolean>>) } : fallback;
@@ -290,6 +292,7 @@ function AppSidebar({
   };
   const procurementActive = procurementChildren.some((c) => isActive(pathname, c.to));
   const utilitiesActive = utilitiesChildren.some((c) => isActive(pathname, c.to));
+  const recordsActive = recordsChildren.some((c) => isActive(pathname, c.to));
 
   return (
     <Sidebar collapsed={collapsed} className={className}>
@@ -323,7 +326,15 @@ function AppSidebar({
           >
             {utilitiesChildren.map(renderItem)}
           </CollapsibleNavGroup>
-          {renderItem(recordsItem)}
+          <CollapsibleNavGroup
+            icon={Archive}
+            label="Records Management"
+            active={recordsActive}
+            expanded={expanded.records}
+            onToggle={() => toggle("records")}
+          >
+            {recordsChildren.map(renderItem)}
+          </CollapsibleNavGroup>
           {renderItem(reportsItem)}
         </SidebarGroup>
         <SidebarDivider />
@@ -373,7 +384,7 @@ function useBreadcrumbs(): BreadcrumbItem[] {
     { prefix: "/energy", label: "Energy Consumption", newLabel: "" },
     { prefix: "/water", label: "Water Consumption", newLabel: "" },
     { prefix: "/fuel", label: "Fuel Consumption", newLabel: "" },
-    { prefix: "/records", label: "Records Management", newLabel: "New Schedule" },
+    { prefix: "/records", label: "Records Disposition Schedule", newLabel: "New Schedule" },
     { prefix: "/reports", label: "Reports & Analytics", newLabel: "" },
     { prefix: "/audit", label: "Audit Trail", newLabel: "" },
     { prefix: "/settings", label: "Settings", newLabel: "" },
