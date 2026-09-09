@@ -42,11 +42,19 @@ const toDateOnly = (d: Date) =>
 /** A ruled cell of the form. */
 const CELL = "border border-black align-top";
 /**
- * Inputs inside the form carry no chrome of their own — the ruled cell is
- * already the box. The focus ring is inset so it cannot paint over a rule.
+ * A cell the clerk fills in. Tinted, so which boxes take typing is legible at
+ * a glance rather than something you discover by clicking. The cells that are
+ * NOT tinted — item number, total, schedule number — are the ones the system
+ * works out, and the contrast is what teaches that.
+ */
+const EDITABLE_CELL = `${CELL} bg-sky-50/60`;
+/**
+ * The field itself: a white box inside the tinted cell, ruled and rounded so
+ * it reads as somewhere to type. Without this the inputs were invisible and
+ * the form looked like a printout rather than something to fill in.
  */
 const INPUT =
-  "w-full bg-transparent px-1.5 py-1 text-[12.5px] leading-[1.4] text-black outline-none focus:bg-amber-50/60 focus:ring-2 focus:ring-inset focus:ring-(--accent-ring)";
+  "m-1 w-[calc(100%-0.5rem)] rounded-[3px] border border-sky-300 bg-white px-1.5 py-1 text-[12.5px] leading-[1.4] text-black outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-(--accent-ring)";
 
 /** The caption printed above a field's value, e.g. "1. AGENCY NAME:". */
 function FieldLabel({ children }: { children: React.ReactNode }) {
@@ -68,7 +76,7 @@ function YearsCell({
   label: string;
 }) {
   return (
-    <td className={CELL}>
+    <td className={EDITABLE_CELL}>
       <input
         type="number"
         min={0}
@@ -150,9 +158,22 @@ export function ScheduleForm({
         <span className="text-xs text-neutral-500">
           Tracked by this system — it is not part of the National Archives form.
         </span>
+        {/*
+         * Which boxes take typing is carried by colour, so the legend names
+         * that rule once instead of leaving each clerk to find it by clicking.
+         */}
+        <span className="ml-auto flex items-center gap-2 text-xs text-neutral-600">
+          <span className="inline-block h-3 w-5 rounded-[2px] border border-sky-300 bg-sky-50" />
+          Shaded boxes are the ones you fill in. Item number and Total are worked out for you.
+        </span>
       </div>
 
-      <div className="overflow-x-auto">
+      {/*
+       * The sheet takes the full width of the page. A government form is read
+       * across its columns, and a narrow measure would put the retention
+       * figures further from the series they belong to.
+       */}
+      <div className="w-full overflow-x-auto">
         <table className="w-full min-w-[900px] border-collapse bg-white font-[Arial,Helvetica,sans-serif]">
           <colgroup>
             <col className="w-[7%]" />
@@ -178,7 +199,7 @@ export function ScheduleForm({
                   Records Disposition Schedule
                 </div>
               </td>
-              <td colSpan={4} className={CELL}>
+              <td colSpan={4} className={EDITABLE_CELL}>
                 <FieldLabel>1. Agency Name:</FieldLabel>
                 <input
                   aria-label="Agency name"
@@ -191,7 +212,7 @@ export function ScheduleForm({
               <td />
             </tr>
             <tr>
-              <td colSpan={4} className={CELL}>
+              <td colSpan={4} className={EDITABLE_CELL}>
                 <FieldLabel>2. Address:</FieldLabel>
                 <input
                   aria-label="Agency address"
@@ -216,13 +237,13 @@ export function ScheduleForm({
                   )}
                 </div>
               </td>
-              <td colSpan={4} className={CELL}>
+              <td colSpan={4} className={EDITABLE_CELL}>
                 <FieldLabel>4. Date Prepared:</FieldLabel>
                 <DatePicker
                   id="date-prepared"
                   value={datePrepared}
                   onChange={setDatePrepared}
-                  className="rounded-none border-0 px-1.5 py-1 text-[12.5px]"
+                  className="m-1 w-[calc(100%-0.5rem)] rounded-[3px] border-sky-300 px-1.5 py-1 text-[12.5px]"
                 />
               </td>
               <td />
@@ -259,7 +280,7 @@ export function ScheduleForm({
                 <td className={`${CELL} px-1 py-1 text-center text-[12.5px] tabular-nums`}>
                   {i + 1}
                 </td>
-                <td className={CELL}>
+                <td className={EDITABLE_CELL}>
                   <textarea
                     aria-label={`Item ${i + 1} record series title and description`}
                     rows={2}
@@ -287,7 +308,7 @@ export function ScheduleForm({
                 <td className={`${CELL} px-1 py-1 text-center text-[12.5px] font-medium tabular-nums`}>
                   {row.retentionActive + row.retentionStorage}
                 </td>
-                <td className={CELL}>
+                <td className={EDITABLE_CELL}>
                   <textarea
                     aria-label={`Item ${i + 1} remarks`}
                     rows={2}
