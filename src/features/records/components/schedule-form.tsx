@@ -47,14 +47,15 @@ const CELL = "border border-black align-top";
  * NOT tinted — item number, total, schedule number — are the ones the system
  * works out, and the contrast is what teaches that.
  */
-const EDITABLE_CELL = `${CELL} bg-sky-50/60`;
+const EDITABLE_CELL = `${CELL} bg-neutral-100`;
 /**
- * The field itself: a white box inside the tinted cell, ruled and rounded so
- * it reads as somewhere to type. Without this the inputs were invisible and
- * the form looked like a printout rather than something to fill in.
+ * The field itself: a white box on the shaded cell, ruled and rounded so it
+ * reads as somewhere to type. The contrast does the work — pale ground, white
+ * box — so no colour is spent on it. The form is a government document, and a
+ * blue that means nothing on the paper would be one more thing to explain.
  */
 const INPUT =
-  "m-1 w-[calc(100%-0.5rem)] rounded-[3px] border border-sky-300 bg-white px-1.5 py-1 text-[12.5px] leading-[1.4] text-black outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-(--accent-ring)";
+  "m-1 w-[calc(100%-0.5rem)] rounded-[3px] border border-neutral-400 bg-white px-1.5 py-1 text-[12.5px] leading-[1.4] text-black outline-none transition focus:border-neutral-600 focus:ring-2 focus:ring-(--accent-ring)";
 
 /** The caption printed above a field's value, e.g. "1. AGENCY NAME:". */
 function FieldLabel({ children }: { children: React.ReactNode }) {
@@ -163,26 +164,27 @@ export function ScheduleForm({
          * that rule once instead of leaving each clerk to find it by clicking.
          */}
         <span className="ml-auto flex items-center gap-2 text-xs text-neutral-600">
-          <span className="inline-block h-3 w-5 rounded-[2px] border border-sky-300 bg-sky-50" />
+          <span className="inline-block h-3.5 w-6 rounded-[2px] border border-neutral-400 bg-white ring-4 ring-neutral-100" />
           Shaded boxes are the ones you fill in. Item number and Total are worked out for you.
         </span>
       </div>
 
       {/*
-       * The sheet takes the full width of the page. A government form is read
-       * across its columns, and a narrow measure would put the retention
-       * figures further from the series they belong to.
+       * The sheet runs to the right edge of the page: it pulls back the shell's
+       * own right padding, because a government form is read across its columns
+       * and every millimetre there is width the description and remarks can
+       * use. The row controls keep a lane of their own so nothing is clipped.
        */}
-      <div className="w-full overflow-x-auto">
+      <div className="w-full overflow-x-auto md:-mr-8">
         <table className="w-full min-w-[900px] border-collapse bg-white font-[Arial,Helvetica,sans-serif]">
           <colgroup>
+            <col className="w-[6%]" />
+            <col className="w-[36%]" />
             <col className="w-[7%]" />
-            <col className="w-[31%]" />
-            <col className="w-[8%]" />
-            <col className="w-[8%]" />
-            <col className="w-[8%]" />
-            <col className="w-[22%]" />
-            <col className="w-[16%]" />
+            <col className="w-[7%]" />
+            <col className="w-[7%]" />
+            <col className="w-[28%]" />
+            <col className="w-[9%]" />
           </colgroup>
 
           <tbody>
@@ -243,7 +245,7 @@ export function ScheduleForm({
                   id="date-prepared"
                   value={datePrepared}
                   onChange={setDatePrepared}
-                  className="m-1 w-[calc(100%-0.5rem)] rounded-[3px] border-sky-300 px-1.5 py-1 text-[12.5px]"
+                  className="m-1 w-[calc(100%-0.5rem)] rounded-[3px] border-neutral-400 px-1.5 py-1 text-[12.5px]"
                 />
               </td>
               <td />
