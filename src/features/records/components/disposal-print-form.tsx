@@ -62,10 +62,14 @@ function Head({ children }: { children: React.ReactNode }) {
 }
 
 export function DisposalPrintForm({ request }: { request: DisposalRequestWithItems }) {
-  // The paper is ruled down the page whether or not the office is disposing of
-  // that many series, so short requests print blank rows.
-  const blanks = Math.max(0, 6 - request.items.length);
-  const cell = `${CELL} px-1.5 py-1 text-[10.5px] leading-[1.4]`;
+  /*
+   * Inside the table the paper carries only the column rules — no line
+   * between one record series and the next, and no ruled blank rows under
+   * them. The body is one open region a clerk writes down, so entries are
+   * separated by space rather than by a border, and what is left over stays
+   * empty rather than being ruled into rows nobody asked for.
+   */
+  const bodyCell = "border-x border-black px-1.5 pb-3 text-[10.5px] leading-[1.5]";
 
   return (
     <PrintSheet>
@@ -137,32 +141,37 @@ export function DisposalPrintForm({ request }: { request: DisposalRequestWithIte
               // Line breaks are the office's own: a series is a heading with
               // its kinds listed under it, and collapsing them would change
               // what the form says.
-              <tr key={it.id}>
-                <td className={`${cell} whitespace-pre-line text-center`}>
+              <tr key={it.id} className="align-top">
+                <td className={`${bodyCell} whitespace-pre-line pt-3 text-center`}>
                   {it.grdsRdsItemNo ?? ""}
                 </td>
-                <td className={`${cell} whitespace-pre-line`}>{it.titleAndDescription}</td>
-                <td className={`${cell} whitespace-pre-line text-center`}>
+                <td className={`${bodyCell} whitespace-pre-line pt-3`}>
+                  {it.titleAndDescription}
+                </td>
+                <td className={`${bodyCell} whitespace-pre-line pt-3 text-center`}>
                   {it.periodCovered ?? ""}
                 </td>
-                <td className={`${cell} whitespace-pre-line`}>
+                <td className={`${bodyCell} whitespace-pre-line pt-3`}>
                   {it.retentionAndProvisions ?? ""}
                 </td>
               </tr>
             ))}
-            {Array.from({ length: blanks }, (_, i) => (
-              <tr key={`blank-${i}`}>
-                <td className={`${CELL} h-[28px]`} />
-                <td className={CELL} />
-                <td className={CELL} />
-                <td className={CELL} />
-              </tr>
-            ))}
-
-            {/* ---- Location and volume ---- */}
+            {/*
+             * The open remainder of the sheet. One tall run of column rules,
+             * not a stack of ruled blank rows: on the paper the space under
+             * the last entry is simply empty.
+             */}
             <tr>
-              <Field label="Location of Records:" value={request.locationOfRecords} colSpan={3} />
-              <Field label="Volume in Cubic Meter:" value={request.volumeCubicMeter} />
+              <td className="h-[150px] border-x border-black" />
+              <td className="border-x border-black" />
+              <td className="border-x border-black" />
+              <td className="border-x border-black" />
+            </tr>
+
+            {/* ---- Location and volume. The paper splits this band evenly. ---- */}
+            <tr>
+              <Field label="Location of Records:" value={request.locationOfRecords} colSpan={2} />
+              <Field label="Volume in Cubic Meter:" value={request.volumeCubicMeter} colSpan={2} />
             </tr>
 
             {/* ---- Prepared by and position ---- */}
@@ -170,9 +179,9 @@ export function DisposalPrintForm({ request }: { request: DisposalRequestWithIte
               <Field
                 label="Prepared by: (Name & Signature)"
                 value={request.preparedBy}
-                colSpan={3}
+                colSpan={2}
               />
-              <Field label="Position:" value={request.preparedByPosition} />
+              <Field label="Position:" value={request.preparedByPosition} colSpan={2} />
             </tr>
 
             {/* ---- The certification ---- */}
@@ -184,10 +193,22 @@ export function DisposalPrintForm({ request }: { request: DisposalRequestWithIte
                 <p className="mx-auto mt-3 max-w-[32rem] text-center text-[11px] leading-[1.5]">
                   {CERTIFICATION_TEXT}
                 </p>
-                <div className="mx-auto mt-10 max-w-[22rem] text-center">
-                  <div className="text-[11px] font-bold">{request.certifiedBy || " "}</div>
-                  <div className="border-b border-black" />
-                  <div className="mt-1 text-[9.5px] leading-[1.35]">{CERTIFIED_BY_CAPTION}</div>
+                {/*
+                 * Name, then the position it is signed under, then the
+                 * caption. No rule between them: on an accomplished form the
+                 * officer signs over their own printed name, and a line drawn
+                 * through that is not what the paper shows.
+                 */}
+                <div className="mx-auto mt-12 max-w-[24rem] text-center">
+                  <div className="text-[11px] font-bold leading-[1.4]">
+                    {request.certifiedBy || " "}
+                  </div>
+                  <div className="text-[11px] font-bold leading-[1.4]">
+                    {request.certifiedByPosition || " "}
+                  </div>
+                  <div className="mt-0.5 whitespace-pre-line text-[9px] leading-[1.3]">
+                    {CERTIFIED_BY_CAPTION}
+                  </div>
                 </div>
               </td>
             </tr>

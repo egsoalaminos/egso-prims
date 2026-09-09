@@ -169,7 +169,13 @@ export function DisposalDetailPage() {
           <div className="mt-5 grid gap-5 sm:grid-cols-3">
             <Meta label="Prepared by" value={request.preparedBy} />
             <Meta label="Position" value={request.preparedByPosition} />
-            <Meta label="Certified and approved by" value={request.certifiedBy} />
+            <Meta
+              label="Certified and approved by"
+              value={
+                [request.certifiedBy, request.certifiedByPosition].filter(Boolean).join(" — ") ||
+                undefined
+              }
+            />
           </div>
         </ContainerCard>
       </PageTransition>

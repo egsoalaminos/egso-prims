@@ -36,6 +36,7 @@ function rowToRequest(r: any): DisposalRequest {
     preparedBy: r.prepared_by ?? undefined,
     preparedByPosition: r.prepared_by_position ?? undefined,
     certifiedBy: r.certified_by ?? undefined,
+    certifiedByPosition: r.certified_by_position ?? undefined,
     status: r.status,
     createdAt: r.created_at,
     updatedAt: r.updated_at,
@@ -96,6 +97,7 @@ function headerRow(input: DisposalInput) {
     prepared_by: orNull(input.preparedBy),
     prepared_by_position: orNull(input.preparedByPosition),
     certified_by: orNull(input.certifiedBy),
+    certified_by_position: orNull(input.certifiedByPosition),
     status: input.status,
   };
 }

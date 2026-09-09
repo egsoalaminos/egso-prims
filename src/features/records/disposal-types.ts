@@ -43,6 +43,8 @@ export interface DisposalRequest {
   preparedByPosition?: string;
   /** The agency head who certifies the statement printed on the form. */
   certifiedBy?: string;
+  /** Their position — the authority the certification rests on. */
+  certifiedByPosition?: string;
   status: ScheduleStatus;
   createdAt: string;
   updatedAt: string;
@@ -65,6 +67,7 @@ export interface DisposalInput {
   preparedBy?: string;
   preparedByPosition?: string;
   certifiedBy?: string;
+  certifiedByPosition?: string;
   status: ScheduleStatus;
   items: DisposalItemDraft[];
 }
@@ -87,9 +90,12 @@ export const DEFAULT_AGENCY = {
 export const CERTIFICATION_TEXT =
   "This is to certify that the above-mentioned records are no longer needed and not involved nor connected in any administrative or judicial cases.";
 
-/** The caption printed under the certification's signature line. */
+/**
+ * The caption printed under the certification's signature line, broken where
+ * the paper breaks it — it sits on two lines under the officer's name.
+ */
 export const CERTIFIED_BY_CAPTION =
-  "Name and Signature of Agency Head or Duly Authorized Representative";
+  "Name and Signature of Agency Head\nor Duly Authorized Representative";
 
 /** The two notes the form carries in its own margins. */
 export const FORM_MARKINGS = {

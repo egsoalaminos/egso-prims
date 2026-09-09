@@ -105,6 +105,7 @@ export function DisposalForm({
     preparedBy: initial?.preparedBy ?? "",
     preparedByPosition: initial?.preparedByPosition ?? "",
     certifiedBy: initial?.certifiedBy ?? "",
+    certifiedByPosition: initial?.certifiedByPosition ?? "",
   });
   const [requestDate, setRequestDate] = React.useState<Date | undefined>(
     initial ? new Date(`${initial.requestDate}T00:00:00`) : new Date(),
@@ -321,10 +322,10 @@ export function DisposalForm({
                 </tr>
               ))}
 
-              {/* ---- Location and volume ---- */}
+              {/* ---- Location and volume. The paper splits this band evenly. ---- */}
               <tr>
-                <HeaderField label="Location of Records:" field="locationOfRecords" colSpan={3} />
-                <HeaderField label="Volume in Cubic Meter:" field="volumeCubicMeter" />
+                <HeaderField label="Location of Records:" field="locationOfRecords" colSpan={2} />
+                <HeaderField label="Volume in Cubic Meter:" field="volumeCubicMeter" colSpan={2} />
                 <td />
               </tr>
 
@@ -333,9 +334,9 @@ export function DisposalForm({
                 <HeaderField
                   label="Prepared by: (Name & Signature)"
                   field="preparedBy"
-                  colSpan={3}
+                  colSpan={2}
                 />
-                <HeaderField label="Position:" field="preparedByPosition" />
+                <HeaderField label="Position:" field="preparedByPosition" colSpan={2} />
                 <td />
               </tr>
 
@@ -352,15 +353,27 @@ export function DisposalForm({
                   <p className="mx-auto mt-3 max-w-[36rem] text-center text-[11px] leading-[1.5]">
                     {CERTIFICATION_TEXT}
                   </p>
-                  <div className="mx-auto mt-6 max-w-[24rem]">
+                  {/*
+                   * Name and the position it is signed under — both are on the
+                   * paper, and the position is the authority the certification
+                   * rests on.
+                   */}
+                  <div className="mx-auto mt-6 max-w-[24rem] space-y-1">
                     <input
                       aria-label="Name of agency head or duly authorized representative"
+                      placeholder="Name"
                       value={header.certifiedBy}
                       onChange={(e) => setField("certifiedBy")(e.target.value)}
-                      className="w-full rounded-[3px] border border-neutral-400 bg-white px-1.5 py-1 text-center text-[12.5px] outline-none focus:border-neutral-600 focus:ring-2 focus:ring-(--accent-ring)"
+                      className="w-full rounded-[3px] border border-neutral-400 bg-white px-1.5 py-1 text-center text-[12.5px] font-bold outline-none focus:border-neutral-600 focus:ring-2 focus:ring-(--accent-ring)"
                     />
-                    <div className="mt-1 border-b border-black" />
-                    <div className="mt-1 text-center text-[9.5px] leading-[1.35]">
+                    <input
+                      aria-label="Position of the certifying officer"
+                      placeholder="Position"
+                      value={header.certifiedByPosition}
+                      onChange={(e) => setField("certifiedByPosition")(e.target.value)}
+                      className="w-full rounded-[3px] border border-neutral-400 bg-white px-1.5 py-1 text-center text-[12.5px] font-bold outline-none focus:border-neutral-600 focus:ring-2 focus:ring-(--accent-ring)"
+                    />
+                    <div className="whitespace-pre-line pt-0.5 text-center text-[9.5px] leading-[1.35]">
                       {CERTIFIED_BY_CAPTION}
                     </div>
                   </div>
