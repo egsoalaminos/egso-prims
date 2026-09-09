@@ -131,6 +131,24 @@ const RecordsEditPage = lazyPage(
   () => import("@/pages/records/records-edit-page"),
   "RecordsEditPage",
 );
+// Named for the records module, not the stock one: "Inventory" alone already
+// belongs to the storeroom pages above.
+const RecordsInventoryListPage = lazyPage(
+  () => import("@/pages/records/inventory-list-page"),
+  "InventoryListPage",
+);
+const RecordsInventoryCreatePage = lazyPage(
+  () => import("@/pages/records/inventory-create-page"),
+  "InventoryCreatePage",
+);
+const RecordsInventoryDetailPage = lazyPage(
+  () => import("@/pages/records/inventory-detail-page"),
+  "InventoryDetailPage",
+);
+const RecordsInventoryEditPage = lazyPage(
+  () => import("@/pages/records/inventory-edit-page"),
+  "InventoryEditPage",
+);
 
 export const router = createBrowserRouter([
   { path: "login", element: <LoginPage />, errorElement: <RouteError /> },
@@ -182,6 +200,12 @@ export const router = createBrowserRouter([
           { path: "fuel/summary", element: <FuelSummaryPage /> },
           { path: "records", element: <RecordsListPage /> },
           { path: "records/new", element: <RecordsCreatePage /> },
+          // Declared before "records/:id" so the static segment is unmistakable:
+          // an inventory route must never be read as a schedule id.
+          { path: "records/inventory", element: <RecordsInventoryListPage /> },
+          { path: "records/inventory/new", element: <RecordsInventoryCreatePage /> },
+          { path: "records/inventory/:id", element: <RecordsInventoryDetailPage /> },
+          { path: "records/inventory/:id/edit", element: <RecordsInventoryEditPage /> },
           { path: "records/:id", element: <RecordsDetailPage /> },
           { path: "records/:id/edit", element: <RecordsEditPage /> },
           { path: "reports", element: <ReportsPage /> },

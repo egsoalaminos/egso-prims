@@ -30,6 +30,7 @@ export const DOCUMENT_TYPES = {
   FC: "Fuel Consumption",
   VT: "Violation Ticket",
   RDS: "Records Disposition Schedule",
+  RIA: "Records Inventory and Appraisal",
 } as const;
 
 export type DocumentType = keyof typeof DOCUMENT_TYPES;

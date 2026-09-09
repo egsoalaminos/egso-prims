@@ -3,6 +3,14 @@ import { Plus, Trash2 } from "lucide-react";
 
 import { Button, DatePicker, IconButton, SelectField } from "@/components";
 import {
+  CELL,
+  EDITABLE_CELL,
+  FieldLabel,
+  FillLegend,
+  INPUT,
+  toDateOnly,
+} from "@/features/records/components/nap-form-chrome";
+import {
   DEFAULT_AGENCY,
   SCHEDULE_STATUSES,
   type DispositionScheduleWithSeries,
@@ -34,37 +42,6 @@ const blankSeries = (): RecordSeriesDraft => ({
   retentionStorage: 0,
   remarks: "",
 });
-
-/** yyyy-MM-dd, the column type the schedule's date is stored as. */
-const toDateOnly = (d: Date) =>
-  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-
-/** A ruled cell of the form. */
-const CELL = "border border-black align-top";
-/**
- * A cell the clerk fills in. Tinted, so which boxes take typing is legible at
- * a glance rather than something you discover by clicking. The cells that are
- * NOT tinted — item number, total, schedule number — are the ones the system
- * works out, and the contrast is what teaches that.
- */
-const EDITABLE_CELL = `${CELL} bg-neutral-100`;
-/**
- * The field itself: a white box on the shaded cell, ruled and rounded so it
- * reads as somewhere to type. The contrast does the work — pale ground, white
- * box — so no colour is spent on it. The form is a government document, and a
- * blue that means nothing on the paper would be one more thing to explain.
- */
-const INPUT =
-  "m-1 w-[calc(100%-0.5rem)] rounded-[3px] border border-neutral-400 bg-white px-1.5 py-1 text-[12.5px] leading-[1.4] text-black outline-none transition focus:border-neutral-600 focus:ring-2 focus:ring-(--accent-ring)";
-
-/** The caption printed above a field's value, e.g. "1. AGENCY NAME:". */
-function FieldLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="px-1.5 pt-1 text-[9px] font-bold uppercase leading-[1.3] text-black">
-      {children}
-    </div>
-  );
-}
 
 /** Whole years only, never negative — the retention columns. */
 function YearsCell({
@@ -159,14 +136,7 @@ export function ScheduleForm({
         <span className="text-xs text-neutral-500">
           Tracked by this system — it is not part of the National Archives form.
         </span>
-        {/*
-         * Which boxes take typing is carried by colour, so the legend names
-         * that rule once instead of leaving each clerk to find it by clicking.
-         */}
-        <span className="ml-auto flex items-center gap-2 text-xs text-neutral-600">
-          <span className="inline-block h-3.5 w-6 rounded-[2px] border border-neutral-400 bg-white ring-4 ring-neutral-100" />
-          Shaded boxes are the ones you fill in. Item number and Total are worked out for you.
-        </span>
+        <FillLegend />
       </div>
 
       {/*

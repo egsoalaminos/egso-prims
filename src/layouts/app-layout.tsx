@@ -7,6 +7,7 @@ import {
   Building2,
   CalendarDays,
   ChevronDown,
+  ClipboardCheck,
   ClipboardList,
   Droplets,
   FileText,
@@ -115,11 +116,11 @@ const utilitiesChildren: ModuleNavItem[] = [
   { icon: Droplets, label: "Water Consumption", to: "/water" },
   { icon: Fuel, label: "Fuel Consumption", to: "/fuel" },
 ];
-// A group of one for now. The office files more than one kind of records
-// document with the National Archives, so the schedule is named for what it
+// The two National Archives forms the office files. Each is named for what it
 // is rather than standing in for the whole module.
 const recordsChildren: ModuleNavItem[] = [
   { icon: ScrollText, label: "Records Disposition Schedule", to: "/records" },
+  { icon: ClipboardCheck, label: "Records Inventory and Appraisal", to: "/records/inventory" },
 ];
 
 /* ---- Collapsible group state (persisted; default expanded) ---- */
@@ -384,6 +385,13 @@ function useBreadcrumbs(): BreadcrumbItem[] {
     { prefix: "/energy", label: "Energy Consumption", newLabel: "" },
     { prefix: "/water", label: "Water Consumption", newLabel: "" },
     { prefix: "/fuel", label: "Fuel Consumption", newLabel: "" },
+    // Before "/records": the match is a prefix test, so the longer path has to
+    // be offered first or an inventory would read as a disposition schedule.
+    {
+      prefix: "/records/inventory",
+      label: "Records Inventory and Appraisal",
+      newLabel: "New Inventory",
+    },
     { prefix: "/records", label: "Records Disposition Schedule", newLabel: "New Schedule" },
     { prefix: "/reports", label: "Reports & Analytics", newLabel: "" },
     { prefix: "/audit", label: "Audit Trail", newLabel: "" },
