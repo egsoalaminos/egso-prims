@@ -149,6 +149,22 @@ const RecordsInventoryEditPage = lazyPage(
   () => import("@/pages/records/inventory-edit-page"),
   "InventoryEditPage",
 );
+const DisposalListPage = lazyPage(
+  () => import("@/pages/records/disposal-list-page"),
+  "DisposalListPage",
+);
+const DisposalCreatePage = lazyPage(
+  () => import("@/pages/records/disposal-create-page"),
+  "DisposalCreatePage",
+);
+const DisposalDetailPage = lazyPage(
+  () => import("@/pages/records/disposal-detail-page"),
+  "DisposalDetailPage",
+);
+const DisposalEditPage = lazyPage(
+  () => import("@/pages/records/disposal-edit-page"),
+  "DisposalEditPage",
+);
 
 export const router = createBrowserRouter([
   { path: "login", element: <LoginPage />, errorElement: <RouteError /> },
@@ -206,6 +222,10 @@ export const router = createBrowserRouter([
           { path: "records/inventory/new", element: <RecordsInventoryCreatePage /> },
           { path: "records/inventory/:id", element: <RecordsInventoryDetailPage /> },
           { path: "records/inventory/:id/edit", element: <RecordsInventoryEditPage /> },
+          { path: "records/disposal", element: <DisposalListPage /> },
+          { path: "records/disposal/new", element: <DisposalCreatePage /> },
+          { path: "records/disposal/:id", element: <DisposalDetailPage /> },
+          { path: "records/disposal/:id/edit", element: <DisposalEditPage /> },
           { path: "records/:id", element: <RecordsDetailPage /> },
           { path: "records/:id/edit", element: <RecordsEditPage /> },
           { path: "reports", element: <ReportsPage /> },

@@ -31,6 +31,7 @@ export const DOCUMENT_TYPES = {
   VT: "Violation Ticket",
   RDS: "Records Disposition Schedule",
   RIA: "Records Inventory and Appraisal",
+  RAD: "Request for Authority to Dispose of Records",
 } as const;
 
 export type DocumentType = keyof typeof DOCUMENT_TYPES;

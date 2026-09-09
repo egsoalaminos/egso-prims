@@ -10,6 +10,7 @@ import {
   ClipboardCheck,
   ClipboardList,
   Droplets,
+  FileCheck2,
   FileText,
   Files,
   Fuel,
@@ -121,6 +122,7 @@ const utilitiesChildren: ModuleNavItem[] = [
 const recordsChildren: ModuleNavItem[] = [
   { icon: ScrollText, label: "Records Disposition Schedule", to: "/records" },
   { icon: ClipboardCheck, label: "Records Inventory and Appraisal", to: "/records/inventory" },
+  { icon: FileCheck2, label: "Authority to Dispose of Records", to: "/records/disposal" },
 ];
 
 /* ---- Collapsible group state (persisted; default expanded) ---- */
@@ -391,6 +393,11 @@ function useBreadcrumbs(): BreadcrumbItem[] {
       prefix: "/records/inventory",
       label: "Records Inventory and Appraisal",
       newLabel: "New Inventory",
+    },
+    {
+      prefix: "/records/disposal",
+      label: "Authority to Dispose of Records",
+      newLabel: "New Request",
     },
     { prefix: "/records", label: "Records Disposition Schedule", newLabel: "New Schedule" },
     { prefix: "/reports", label: "Reports & Analytics", newLabel: "" },
