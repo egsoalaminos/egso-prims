@@ -176,15 +176,22 @@ export function ScheduleForm({
        * use. The row controls keep a lane of their own so nothing is clipped.
        */}
       <div className="w-full overflow-x-auto md:-mr-8">
-        <table className="w-full min-w-[900px] border-collapse bg-white font-[Arial,Helvetica,sans-serif]">
+        <table className="w-full min-w-[900px] table-fixed border-collapse bg-white font-[Arial,Helvetica,sans-serif]">
+          {/*
+           * The row-control lane is a fixed 40px — just the icon. It used to be
+           * a percentage, which on a wide screen reserved well over a hundred
+           * pixels for one small button and left the ruled sheet ending short
+           * of the page. The description column is left unsized so it absorbs
+           * whatever the ruled columns do not need.
+           */}
           <colgroup>
-            <col className="w-[6%]" />
-            <col className="w-[36%]" />
+            <col className="w-[5%]" />
+            <col />
             <col className="w-[7%]" />
             <col className="w-[7%]" />
             <col className="w-[7%]" />
-            <col className="w-[28%]" />
-            <col className="w-[9%]" />
+            <col className="w-[26%]" />
+            <col className="w-10" />
           </colgroup>
 
           <tbody>
@@ -319,7 +326,7 @@ export function ScheduleForm({
                     className={`${INPUT} resize-y`}
                   />
                 </td>
-                <td className="pl-2 align-middle">
+                <td className="pl-1.5 align-middle">
                   <IconButton
                     type="button"
                     size="icon-sm"
