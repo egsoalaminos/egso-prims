@@ -38,17 +38,25 @@ const blankItem = (): DisposalItemDraft => ({
   retentionAndProvisions: "",
 });
 
-/** A free-text cell of the line. */
+/**
+ * A free-text cell of the line.
+ *
+ * Alignment follows the accomplished form: the item number and the period sit
+ * centred in their narrow columns, while the description and the retention
+ * note read as prose from the left.
+ */
 function TextCell({
   value,
   onChange,
   label,
   rows = 2,
+  centre = false,
 }: {
   value?: string;
   onChange: (v: string) => void;
   label: string;
   rows?: number;
+  centre?: boolean;
 }) {
   return (
     <td className={EDITABLE_CELL}>
@@ -57,7 +65,7 @@ function TextCell({
         rows={rows}
         value={value ?? ""}
         onChange={(e) => onChange(e.target.value)}
-        className={`${INPUT} resize-y`}
+        className={`${INPUT} resize-y ${centre ? "text-center" : ""}`}
       />
     </td>
   );
@@ -131,24 +139,43 @@ export function DisposalForm({
     onSubmit({ ...header, requestDate: toDateOnly(requestDate), status, items });
   };
 
-  /** A header field: caption above, a filled box beneath, in a ruled cell. */
+  /**
+   * A header field: caption above, a filled box beneath, in a ruled cell.
+   *
+   * Values are centred and the agency block takes more than one line, because
+   * that is how an accomplished form reads: the agency name carries its
+   * division under it, and the address runs to two lines.
+   */
   const HeaderField = ({
     label,
     field,
     colSpan,
+    rows,
   }: {
     label: string;
     field: keyof typeof header;
     colSpan?: number;
+    /** Set for the fields the paper fills across more than one line. */
+    rows?: number;
   }) => (
     <td colSpan={colSpan} className={EDITABLE_CELL}>
       <FieldLabel>{label}</FieldLabel>
-      <input
-        aria-label={label}
-        value={header[field]}
-        onChange={(e) => setField(field)(e.target.value)}
-        className={INPUT}
-      />
+      {rows ? (
+        <textarea
+          aria-label={label}
+          rows={rows}
+          value={header[field]}
+          onChange={(e) => setField(field)(e.target.value)}
+          className={`${INPUT} resize-y text-center`}
+        />
+      ) : (
+        <input
+          aria-label={label}
+          value={header[field]}
+          onChange={(e) => setField(field)(e.target.value)}
+          className={`${INPUT} text-center`}
+        />
+      )}
     </td>
   );
 
@@ -202,11 +229,11 @@ export function DisposalForm({
                     Request for Authority to Dispose of Records
                   </div>
                 </td>
-                <HeaderField label="Agency Name:" field="agencyName" colSpan={2} />
+                <HeaderField label="Agency Name:" field="agencyName" colSpan={2} rows={2} />
                 <td />
               </tr>
               <tr>
-                <HeaderField label="Address:" field="agencyAddress" colSpan={2} />
+                <HeaderField label="Address:" field="agencyAddress" colSpan={2} rows={2} />
                 <td />
               </tr>
 
@@ -249,11 +276,18 @@ export function DisposalForm({
                     label={`Item ${i + 1} GRDS or RDS item number`}
                     value={row.grdsRdsItemNo}
                     onChange={(v) => patch(i, { grdsRdsItemNo: v })}
+                    rows={4}
+                    centre
                   />
                   <td className={EDITABLE_CELL}>
+                    {/*
+                     * Four lines, because a record series on this form is a
+                     * heading with its kinds listed under it — "LISTS", then
+                     * Associations, Committee, Cooperatives.
+                     */}
                     <textarea
                       aria-label={`Item ${i + 1} record series title and description`}
-                      rows={3}
+                      rows={4}
                       value={row.titleAndDescription}
                       onChange={(e) => patch(i, { titleAndDescription: e.target.value })}
                       required
@@ -264,13 +298,14 @@ export function DisposalForm({
                     label={`Item ${i + 1} period covered`}
                     value={row.periodCovered}
                     onChange={(v) => patch(i, { periodCovered: v })}
-                    rows={3}
+                    rows={4}
+                    centre
                   />
                   <TextCell
                     label={`Item ${i + 1} retention period and provisions complied`}
                     value={row.retentionAndProvisions}
                     onChange={(v) => patch(i, { retentionAndProvisions: v })}
-                    rows={3}
+                    rows={4}
                   />
                   <td className="pl-1.5 align-middle">
                     <IconButton

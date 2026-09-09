@@ -25,7 +25,13 @@ function printLongDate(iso: string): string {
 
 const CELL = "border border-black align-top";
 
-/** A captioned field: label above, value beneath, inside a ruled cell. */
+/**
+ * A captioned field: label above, value beneath, inside a ruled cell.
+ *
+ * The value is centred and keeps its line breaks — an accomplished form
+ * carries the agency's division under its name, and the address over two
+ * lines, so a value collapsed to one line would not match the paper.
+ */
 function Field({
   label,
   value,
@@ -38,7 +44,9 @@ function Field({
   return (
     <td colSpan={colSpan} className={`${CELL} px-1.5 py-1`}>
       <div className="text-[8.5px] font-bold uppercase leading-[1.3]">{label}</div>
-      <div className="mt-0.5 min-h-[16px] text-[11px] leading-[1.35]">{value || " "}</div>
+      <div className="mt-1 min-h-[26px] whitespace-pre-line text-center text-[11px] font-bold leading-[1.4]">
+        {value || " "}
+      </div>
     </td>
   );
 }
@@ -126,11 +134,20 @@ export function DisposalPrintForm({ request }: { request: DisposalRequestWithIte
 
           <tbody>
             {request.items.map((it) => (
+              // Line breaks are the office's own: a series is a heading with
+              // its kinds listed under it, and collapsing them would change
+              // what the form says.
               <tr key={it.id}>
-                <td className={`${cell} text-center`}>{it.grdsRdsItemNo ?? ""}</td>
-                <td className={cell}>{it.titleAndDescription}</td>
-                <td className={cell}>{it.periodCovered ?? ""}</td>
-                <td className={cell}>{it.retentionAndProvisions ?? ""}</td>
+                <td className={`${cell} whitespace-pre-line text-center`}>
+                  {it.grdsRdsItemNo ?? ""}
+                </td>
+                <td className={`${cell} whitespace-pre-line`}>{it.titleAndDescription}</td>
+                <td className={`${cell} whitespace-pre-line text-center`}>
+                  {it.periodCovered ?? ""}
+                </td>
+                <td className={`${cell} whitespace-pre-line`}>
+                  {it.retentionAndProvisions ?? ""}
+                </td>
               </tr>
             ))}
             {Array.from({ length: blanks }, (_, i) => (
