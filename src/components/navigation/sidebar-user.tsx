@@ -10,7 +10,7 @@ export interface SidebarUserProps {
 
 /**
  * Who is signed in, and the way out. Settings is not repeated here: it has its
- * own place in the list above and in the top bar's account menu.
+ * own place in the list above. The top bar carries no account menu.
  */
 export function SidebarUser({ name, detail, initials, onSignOut }: SidebarUserProps) {
   return (
