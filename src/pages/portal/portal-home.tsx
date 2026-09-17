@@ -129,7 +129,8 @@ function TrackingCard({ service, index }: { service: PortalService; index: numbe
         <span className="hidden h-10 w-10 place-items-center rounded-md bg-neutral-100 text-neutral-900 sm:grid">
           <Icon className="h-5 w-5" />
         </span>
-        <h2 className="text-[15px] font-semibold text-neutral-900 sm:mt-5 sm:text-[17px]">
+        {/* Same line box as the filing titles, so the four headings share a baseline. */}
+        <h2 className="text-[15px] font-semibold leading-snug text-neutral-900 sm:mt-5 sm:text-[17px]">
           {service.title}
         </h2>
         <label
