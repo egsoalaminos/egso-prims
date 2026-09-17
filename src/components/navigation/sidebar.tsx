@@ -9,7 +9,9 @@ import { OverlineLabel } from "@/components/typography/typography";
  * the crimson edge across the window read as one corner.
  *
  * Crimson means two things here, both a clerk could say out loud: "this is the
- * office" (the letterhead block) and "you are here" (the current page). The
+ * office" (the letterhead block) and "you are here" (the current page, a solid
+ * crimson row with white text; owner's choice over a pink crimson wash, 18 Sep
+ * 2026, comp `.impeccable/comps/admin-sidebar-active.html`). The
  * rail takes the municipal token scope (`data-municipal`), which gives it 4px
  * corners and the crimson accent without touching the admin pages beside it.
  */
@@ -153,7 +155,7 @@ export function SidebarItem({
       className={cn(
         "flex h-9 w-full shrink-0 items-center gap-3 rounded-md px-2.5 text-left text-[14px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-(--accent-ring) disabled:pointer-events-none disabled:opacity-50 group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:gap-0 group-data-[collapsed=true]:px-0",
         active
-          ? "ui-accent-soft ui-accent-fg font-semibold"
+          ? "ui-accent font-semibold focus-visible:ring-white"
           : containsActive
             ? "font-semibold text-neutral-900 hover:bg-neutral-100"
             : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900",
@@ -170,11 +172,20 @@ export function SidebarItem({
       {dot && (
         <span
           aria-hidden="true"
-          className="h-2 w-2 shrink-0 rounded-full bg-neutral-900 group-data-[collapsed=true]:hidden"
+          className={cn(
+            "h-2 w-2 shrink-0 rounded-full group-data-[collapsed=true]:hidden",
+            active ? "bg-white" : "bg-neutral-900",
+          )}
         />
       )}
       {badge && (
-        <span className="shrink-0 rounded-full bg-neutral-900 px-1.5 text-[12px] font-semibold leading-5 tabular-nums text-white group-data-[collapsed=true]:hidden">
+        // On the crimson current row the pill turns white, so it still reads.
+        <span
+          className={cn(
+            "shrink-0 rounded-full px-1.5 text-[12px] font-semibold leading-5 tabular-nums group-data-[collapsed=true]:hidden",
+            active ? "bg-white text-(--accent-text)" : "bg-neutral-900 text-white",
+          )}
+        >
           {badge.text}
         </span>
       )}

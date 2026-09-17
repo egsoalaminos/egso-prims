@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sidebar current-page and hover states (comp)</title>
+<!--
+THESIS: The page you are on should read at a glance without a tinted pink box. The owner disliked the crimson wash (#f6eced) behind the current page: "parang hindi magandang tingnan".
+FORM: Four rails side by side, identical except for the current-page and hover treatment. Column 4 is what shipped, for reference. Every colour is from the documented palette: ink #171717, neutral #f5f5f5 / #fafafa / #e5e5e5, crimson #7e1624, cool ground #f6f7f8.
+Each rail shows Dashboard as the current page, "Procurement" in its hover state, and a hover that works on every row.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Spectral:wght@500&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<style type="text/tailwindcss">
+  @theme {
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --font-serif: "Spectral", ui-serif, Georgia, serif;
+  }
+</style>
+<style>
+  :root { --identity: #7e1624; --wash: #f6eced; }
+  svg.lucide { width: 18px; height: 18px; stroke-width: 1.75; flex-shrink: 0; }
+  .item { color: #525252; transition: background-color 150ms, color 150ms; }
+
+  /* 1 · Grey with a crimson icon */
+  .v1 .item:hover, .v1 .item.is-hover { background: #f5f5f5; color: #171717; }
+  .v1 .item[aria-current="page"] { background: #e5e5e5; color: #171717; font-weight: 600; }
+  .v1 .item[aria-current="page"] svg { color: var(--identity); }
+
+  /* 2 · Solid crimson */
+  .v2 .item:hover, .v2 .item.is-hover { background: #f5f5f5; color: #171717; }
+  .v2 .item[aria-current="page"] { background: var(--identity); color: #fff; font-weight: 600; }
+
+  /* 3 · Hairline outline */
+  .v3 .item { border: 1px solid transparent; }
+  .v3 .item:hover, .v3 .item.is-hover { background: #fafafa; color: #171717; }
+  .v3 .item[aria-current="page"] { background: #f6f7f8; border-color: #e5e5e5; color: var(--identity); font-weight: 600; }
+
+  /* 4 · As shipped (crimson wash) */
+  .v4 .item:hover, .v4 .item.is-hover { background: #f5f5f5; color: #171717; }
+  .v4 .item[aria-current="page"] { background: var(--wash); color: var(--identity); font-weight: 600; }
+</style>
+</head>
+<body class="min-h-[100dvh] bg-[#f6f7f8] p-8 font-sans text-neutral-900 antialiased">
+  <p class="mb-6 max-w-3xl text-[15px] text-neutral-600">Dashboard is the page you're on. "Procurement" shows the hover. Hover any row to try it.</p>
+  <div id="grid" class="grid grid-cols-4 gap-6"></div>
+
+<template id="rail">
+  <div>
+    <p class="title mb-2 text-[15px] font-semibold"></p>
+    <p class="note mb-3 min-h-10 text-[13px] leading-snug text-neutral-500"></p>
+    <aside class="overflow-hidden rounded-[4px] border border-neutral-200 bg-white">
+      <div class="flex h-14 items-center gap-2.5 bg-[var(--identity)] px-4 text-white">
+        <span class="grid h-9 w-9 place-items-center rounded-full bg-white"><img src="../../public/logo/alaminos-seal.png" alt="" class="h-8 w-8" /></span>
+        <span class="flex min-w-0 flex-col"><span class="truncate font-serif text-[17px] font-medium leading-tight">General Services Office</span><span class="truncate text-[12px] text-white/75">Municipality of Alaminos, Laguna</span></span>
+      </div>
+      <nav class="flex flex-col gap-0.5 p-3 text-[14px]">
+        <a href="#" aria-current="page" class="item flex h-9 items-center gap-3 rounded-[4px] px-2.5"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+        <a href="#" class="item is-hover flex h-9 items-center gap-3 rounded-[4px] px-2.5"><i data-lucide="files"></i><span class="flex-1">Procurement</span><i data-lucide="chevron-down" class="text-neutral-400"></i></a>
+        <div class="my-0.5 ml-[19px] flex flex-col gap-0.5 border-l border-neutral-200 pl-2">
+          <a href="#" class="item flex h-9 items-center justify-between rounded-[4px] px-2.5">Purchase Requests<span class="rounded-full bg-neutral-900 px-1.5 text-[12px] font-semibold leading-5 text-white">1</span></a>
+          <a href="#" class="item flex h-9 items-center rounded-[4px] px-2.5">Purchase Orders</a>
+        </div>
+        <a href="#" class="item flex h-9 items-center gap-3 rounded-[4px] px-2.5"><i data-lucide="warehouse"></i><span class="flex-1">Supply</span><i data-lucide="chevron-right" class="text-neutral-400"></i></a>
+        <a href="#" class="item flex h-9 items-center gap-3 rounded-[4px] px-2.5"><i data-lucide="calendar-days"></i>Facility Reservation</a>
+        <a href="#" class="item flex h-9 items-center gap-3 rounded-[4px] px-2.5"><i data-lucide="shield-alert"></i>Violation Management</a>
+        <a href="#" class="item flex h-9 items-center gap-3 rounded-[4px] px-2.5"><i data-lucide="gauge"></i><span class="flex-1">Utilities</span><i data-lucide="chevron-right" class="text-neutral-400"></i></a>
+        <a href="#" class="item flex h-9 items-center gap-3 rounded-[4px] px-2.5"><i data-lucide="bar-chart-3"></i>Reports</a>
+      </nav>
+    </aside>
+  </div>
+</template>
+
+<script>
+  const variants = [
+    ['v1', '1 · Grey, red icon', 'Grey box, black text, only the icon is red. Hover is a lighter grey.'],
+    ['v2', '2 · Solid red', 'Deep red box, white text: the page you are on is unmistakable. Hover is light grey.'],
+    ['v3', '3 · Outline', 'A light box with a thin grey border, red text. Hover is light grey without a border.'],
+    ['v4', '4 · Current', 'What is live now: light red (pinkish) box, red text.'],
+  ];
+  const grid = document.getElementById('grid');
+  const tpl = document.getElementById('rail');
+  for (const [cls, title, note] of variants) {
+    const node = tpl.content.cloneNode(true);
+    node.querySelector('div').classList.add(cls);
+    node.querySelector('.title').textContent = title;
+    node.querySelector('.note').textContent = note;
+    grid.appendChild(node);
+  }
+  // A real hover replaces the demonstrated one on that rail.
+  document.querySelectorAll('aside').forEach((a) => {
+    a.addEventListener('mouseenter', () => a.querySelector('.is-hover')?.classList.replace('is-hover', 'was-hover'));
+    a.addEventListener('mouseleave', () => a.querySelector('.was-hover')?.classList.replace('was-hover', 'is-hover'));
+  });
+  document.querySelectorAll('a[href="#"]').forEach((l) => l.addEventListener('click', (e) => e.preventDefault()));
+  lucide.createIcons();
+</script>
+</body>
+</html>

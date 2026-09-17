@@ -17,7 +17,7 @@ export function SidebarUser({ name, detail, initials, onSignOut }: SidebarUserPr
     <div className="flex items-center gap-3 group-data-[collapsed=true]:flex-col group-data-[collapsed=true]:gap-2">
       <span
         aria-hidden="true"
-        className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-(--accent-subtle) text-[13px] font-semibold text-(--accent-text)"
+        className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-neutral-100 text-[13px] font-semibold text-neutral-700"
       >
         {initials}
       </span>
