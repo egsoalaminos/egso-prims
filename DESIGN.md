@@ -217,7 +217,7 @@ The palette is one restrained crimson on a cool neutral field. The accent covers
 Neutrals come from Tailwind's stock `neutral` ramp (declared in oklch; the hex values above are exact conversions).
 
 ### Named Rules
-**The Stateable Colour Rule.** Every colour must carry a meaning a clerk could say out loud. Crimson means "this is the office" or "start a document". Ink means "follow a document". Red means "this field is wrong". If you can't state what a colour means, don't use it.
+**The Stateable Colour Rule.** Every colour must carry a meaning a clerk could say out loud. Crimson means "this is the office" or "start a document". Ink means "follow a document". Red means "this field is wrong" or "this request was stopped" (rejected or cancelled). If you can't state what a colour means, don't use it.
 
 **The Crimson Is Not a Field Rule.** Crimson appears as the thin strip, the band behind a heading, and solid action buttons. It is never a large bright surface, a card fill, or a background for body copy. The band's height responds to the viewport so the cards, not the crimson, stay the focus.
 
@@ -277,7 +277,7 @@ The portal is flat. No surface casts a shadow: the card elevation token resolves
 
 ## Shapes
 
-Every corner is 4px. The `[data-portal]` scope collapses all seven radius steps (`sm` through `4xl`) to 4px, so shared components that ask for `rounded-lg` or `rounded-xl` get 4px inside the portal. That covers cards, buttons, inputs, icon tiles, nav links, the receipt and the focus-ring outline. The one circle is the 36px crimson go-button on a phone filing row, which reads as a single tap target at the end of the row. Borders are always 1px. Focus is a 2px ring with a 2px offset.
+Every corner is 4px. The `[data-portal]` scope collapses all seven radius steps (`sm` through `4xl`) to 4px, so shared components that ask for `rounded-lg` or `rounded-xl` get 4px inside the portal. That covers cards, buttons, inputs, icon tiles, nav links, the receipt and the focus-ring outline. The circles are the 36px crimson go-button on a phone filing row, which reads as a single tap target at the end of the row, the numbered how-it-works steps, and the 28px markers on a tracked request's progress list. Borders are always 1px. Focus is a 2px ring with a 2px offset.
 
 ## Components
 
@@ -319,6 +319,13 @@ The home band's structure is reused at the top of every inner page: crimson, a w
 
 ### Reference Receipt
 Shown after a filing is submitted. It is a white card, max width 36rem. It shows the reference number in 18px/600 tabular figures inside a #fafafa panel with a #d4d4d4 border, a line telling the person to keep the number, and a primary "Track this request" button next to a secondary "Back to Portal".
+
+### Tracked Request
+The Track page's result, one white card under the reference field. A request that is not found is a field error on that field (red border, 12.5px message, focus returned), not a separate card.
+- **Heading:** the document type in muted 500 weight, a middle dot, and the reference number in tabular figures, at 17px. On a phone the type and the number take a line each.
+- **Status tag:** the status in words at 13px/600 inside a 32px, 4px-cornered, 1px-bordered tag with an icon: a clock while it moves, a check once every step is done, both in ink; an X in red on a red-50 fill when it was stopped. Which of the three is read from the steps, not from a list of status names.
+- **Now at / Last update:** a two-column definition list (one column on a phone) between hairline rules, with 13px muted labels in sentence case and 14px/500 ink values. No uppercase labels and no grey panel.
+- **Progress:** an ordered list. Done is an ink circle with a white check, and the rule below it is ink, so the line shows how far the request has come. The step with the office now is an ink outline with an ink dot, `aria-current="step"`, and a grey "In progress" tag. Not yet is a #d4d4d4 outline on a #d4d4d4 rule with muted text. Stopped is a red circle with a white X. Each step can carry its time (12.5px tabular, right-aligned from sm), the person and office (13px), and remarks in a #fafafa box with a hairline. No avatars.
 
 ## Do's and Don'ts
 
