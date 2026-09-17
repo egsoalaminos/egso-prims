@@ -78,7 +78,7 @@ export function SidebarBrand({
 
 /** Scrollable middle region of the sidebar. */
 export function SidebarContent({ children }: { children: React.ReactNode }) {
-  return <div className="flex-1 overflow-y-auto px-3 pb-3 pt-3">{children}</div>;
+  return <div className="flex-1 overflow-y-auto overscroll-contain px-3 pb-3 pt-3">{children}</div>;
 }
 
 /** Labeled group of navigation items (e.g. "Modules", "Quick Access"). */

@@ -43,7 +43,9 @@ export function AppShell({
         <main
           id="main-content"
           tabIndex={-1}
-          className="flex-1 space-y-6 overflow-y-auto px-5 py-6 focus-visible:outline-none md:px-8"
+          // `overscroll-contain`: reaching the top or bottom of a page stops
+          // there instead of passing the scroll on to the window.
+          className="flex-1 space-y-6 overflow-y-auto overscroll-contain px-5 py-6 focus-visible:outline-none md:px-8"
         >
           {children}
         </main>

@@ -272,7 +272,7 @@ Neutrals come from Tailwind's stock `neutral` ramp (declared in oklch; the hex v
 **Rhythm.** Controls are 44px tall. Cards are padded 24px (14–16px on phones). Icon tile to title is 20px, title to description is 6px, and description to action bar is 24px.
 
 ### Named Rules
-**The One Screen Rule.** On the home page, the services and the tracking field are all visible without scrolling at 1366x768 and at 390x844. Anything added to the home page has to fit inside that constraint or not be added. Fitting means not one pixel over: a 1px overflow still lets the page scroll. The portal also turns off elastic overscroll (`overscroll-behavior: none` on `html[data-portal]` and its body), so a trackpad or phone swipe does not drag the whole frame, strip and all, away from the top of the window.
+**The One Screen Rule.** On the home page, the services and the tracking field are all visible without scrolling at 1366x768 and at 390x844. Anything added to the home page has to fit inside that constraint or not be added. Fitting means not one pixel over: a 1px overflow still lets the page scroll. The whole system turns off elastic overscroll (`overscroll-behavior: none` on `html` and `body`; the portal from 17 Sep, the admin from 18 Sep 2026), so a trackpad or phone swipe does not drag the whole frame, strip or edge and all, away from the top of the window. The admin's page area and sidebar list also contain their own scroll.
 
 ## Elevation & Depth
 

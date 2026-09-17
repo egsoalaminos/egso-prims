@@ -323,7 +323,7 @@
 /*
  * `[data-municipal]` carries the same values for the admin as it moves into this
  * world one part at a time (the sidebar first, 17 Sep 2026). It is a separate
- * name so the portal-only rules below (overscroll) stay the portal's.
+ * name so rules meant for the portal alone can still target `data-portal`.
  */
 [data-portal],
 [data-municipal] {
@@ -347,13 +347,14 @@
 }
 
 /*
- * No elastic bounce in the portal. Its pages mostly fit one screen, yet a
- * trackpad or a phone still dragged the whole frame, government strip and
- * all, and showed white above it. `html` carries data-portal only while the
- * portal is mounted, so the admin keeps the browser's default.
+ * No elastic bounce anywhere in the system. The portal's pages mostly fit one
+ * screen, and the admin's frame is exactly one screen tall with its pages
+ * scrolling inside it, yet a trackpad or a phone still dragged the whole frame
+ * at the end of a scroll: the crimson strip or edge and all, with white showing
+ * beside it. Portal first (17 Sep 2026), then the admin (18 Sep 2026).
  */
-html[data-portal],
-html[data-portal] body {
+html,
+body {
   overscroll-behavior: none;
 }
 
