@@ -261,7 +261,7 @@ Neutrals come from Tailwind's stock `neutral` ramp (declared in oklch; the hex v
 
 **Inner pages.** Each page gets a band with "All services", the title and an optional description, then content on the ground below with 32px of vertical padding. The band text and the content share one measure, so the title starts on the content's left edge. There are three measures: **wide** (1200px, for the reservation calendar), **form** (52rem: the wizards' 48rem cap plus the container's gutters), and **narrow** (42rem, for tracking). Inner pages do not repeat the home page's card-over-band overlap.
 
-**Service navigation.** The home page has no nav bar; the cards are the navigation, and the masthead's right side shows the system name from lg. On inner pages the service nav sits on the right of the masthead from md. Below md it moves to a horizontally scrolling row under a hairline.
+**Service navigation.** The home page has no nav bar; the cards are the navigation, and the masthead's right side shows the system name from lg. On inner pages the service nav sits on the right of the masthead from lg. Below lg it moves under a hairline as four equal columns, so no service is ever cut off.
 
 **Rhythm.** Controls are 44px tall. Cards are padded 24px (14–16px on phones). Icon tile to title is 20px, title to description is 6px, and description to action bar is 24px.
 
@@ -306,7 +306,7 @@ Solid, full-height bars that say what they do and point where they go.
 - **Style:** 14px Inter links with 8px/12px padding and 4px corners.
 - **Idle / Hover:** #525252 text; hover goes to ink on #f5f5f5.
 - **Current:** crimson text at weight 600, with no underline, pill or fill.
-- **Mobile:** below md, one horizontally scrolling row under the masthead. Four services do not fit a phone, so whenever the row overflows it draws its own 3px scroll bar under the links (a #737373 thumb on a #e5e5e5 track; phone browsers hide native bars until you swipe) and a 32px white fade on whichever edge still has services past it. The row scrolls the current service into view with an 8px margin, so the page you are on is never the one cut off. A "Skip to content" link comes first in the tab order.
+- **Mobile and tablet:** below lg, a row under the masthead of four equal columns, one per service, at 13px with centred text and 48px tall cells. It fits every phone without scrolling; the one long label, "Purchase Request", wraps to two lines. It replaced a sideways-scrolling row with a drawn scroll bar, which the owner found a patch: the row cut Track off at the edge. A "Skip to content" link comes first in the tab order.
 
 ### Government Strip and Letterhead Masthead (signature)
 The strip is a full-width crimson bar with 12px white text: "Republic of the Philippines" on the left and "Province of Laguna" on the right (the right text is hidden on phones). Below it, the white masthead holds the 44px municipal seal, the uppercase municipality line, and the office name in Spectral, all linking home. The masthead is ruled off with a hairline. The footer mirrors it: a 24px seal, the office line, and the copyright, in 12.5px muted text on white.

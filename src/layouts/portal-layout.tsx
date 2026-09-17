@@ -52,111 +52,30 @@ function ServiceNav({ className }: { className?: string }) {
 }
 
 /**
- * The service nav on a phone: one row that scrolls sideways.
+ * The service nav on a phone or tablet: four equal columns across the screen.
+ * The row beside the letterhead only fits from lg; below that it squeezed
+ * the office name onto four lines.
  *
- * Four services do not fit across a phone, and a row cut off at the edge looks
- * like the whole menu. So the row draws its own scroll bar whenever it
- * overflows (phone browsers hide native ones until you swipe), and it scrolls
- * the current service into view, so Track is never the item you cannot see
- * while you are on Track.
+ * A single scrolling row cut a service off at the edge, and a scroll bar was
+ * only a patch for that. Equal columns fit all four on any phone, so every
+ * service, Track included, is one tap away and nothing is hidden. The one
+ * long label, "Purchase Request", takes two lines instead.
  */
 function MobileServiceNav() {
-  const { pathname } = useLocation();
-  const listRef = React.useRef<HTMLUListElement>(null);
-  const trackRef = React.useRef<HTMLSpanElement>(null);
-  const thumbRef = React.useRef<HTMLSpanElement>(null);
-  const startFadeRef = React.useRef<HTMLSpanElement>(null);
-  const endFadeRef = React.useRef<HTMLSpanElement>(null);
-  const [overflows, setOverflows] = React.useState(false);
-
-  const syncThumb = React.useCallback(() => {
-    const list = listRef.current;
-    if (!list) return;
-    const { scrollWidth, clientWidth, scrollLeft } = list;
-    const over = scrollWidth > clientWidth + 1;
-    setOverflows(over);
-    // A fade on whichever edge still has services past it.
-    const maxScroll = scrollWidth - clientWidth;
-    if (startFadeRef.current) startFadeRef.current.style.opacity = over && scrollLeft > 1 ? "1" : "0";
-    if (endFadeRef.current) endFadeRef.current.style.opacity = over && scrollLeft < maxScroll - 1 ? "1" : "0";
-    const track = trackRef.current;
-    const thumb = thumbRef.current;
-    if (!over || !track || !thumb) return;
-    const thumbWidth = (clientWidth / scrollWidth) * track.clientWidth;
-    const travel = track.clientWidth - thumbWidth;
-    const progress = scrollLeft / maxScroll;
-    // Written straight to the element: scrolling must not re-render React.
-    thumb.style.width = `${thumbWidth}px`;
-    thumb.style.transform = `translateX(${progress * travel}px)`;
-  }, []);
-
-  React.useEffect(() => {
-    const list = listRef.current;
-    if (!list) return;
-    const observer = new ResizeObserver(syncThumb);
-    observer.observe(list);
-    list.addEventListener("scroll", syncThumb, { passive: true });
-    return () => {
-      observer.disconnect();
-      list.removeEventListener("scroll", syncThumb);
-    };
-  }, [syncThumb]);
-
-  // Bring the current service into view. Horizontal only: the page itself
-  // must not jump.
-  React.useEffect(() => {
-    const list = listRef.current;
-    const link = list?.querySelector<HTMLElement>('[aria-current="page"]');
-    if (!list || !link) return;
-    // Leave the row's own 8px inset around the link, so it does not sit on the edge.
-    const left = link.offsetLeft - 8;
-    const right = link.offsetLeft + link.offsetWidth + 8;
-    if (right > list.scrollLeft + list.clientWidth) list.scrollLeft = right - list.clientWidth;
-    else if (left < list.scrollLeft) list.scrollLeft = left;
-    syncThumb();
-  }, [pathname, syncThumb]);
-
-  // The thumb is measured after the track mounts.
-  React.useEffect(() => {
-    if (overflows) syncThumb();
-  }, [overflows, syncThumb]);
-
   return (
-    <nav aria-label="Portal services" className="relative border-t border-neutral-200 md:hidden">
-      <span
-        ref={startFadeRef}
-        aria-hidden="true"
-        className="pointer-events-none absolute left-0 top-0 z-10 h-11 w-8 bg-linear-to-r from-white to-transparent opacity-0 transition-opacity duration-150"
-      />
-      <span
-        ref={endFadeRef}
-        aria-hidden="true"
-        className="pointer-events-none absolute right-0 top-0 z-10 h-11 w-8 bg-linear-to-l from-white to-transparent opacity-0 transition-opacity duration-150"
-      />
-      <ul
-        ref={listRef}
-        className="relative flex gap-1 overflow-x-auto whitespace-nowrap px-2 py-1 text-[14px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-      >
+    <nav aria-label="Portal services" className="border-t border-neutral-200 lg:hidden">
+      <ul className="grid grid-cols-4 gap-1 px-2 py-1">
         {PORTAL_SERVICES.map((s) => (
-          <li key={s.to}>
+          <li key={s.to} className="min-w-0">
             <NavLink
               to={s.to}
-              className="block rounded-md px-3 py-2 text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-(--accent-ring) aria-[current=page]:font-semibold aria-[current=page]:text-(--accent-text)"
+              className="flex min-h-12 items-center justify-center rounded-md px-1 py-1.5 text-center text-[13px] leading-tight text-neutral-600 hyphens-auto transition-colors hover:bg-neutral-100 hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-(--accent-ring) aria-[current=page]:font-semibold aria-[current=page]:text-(--accent-text)"
             >
               {s.navLabel}
             </NavLink>
           </li>
         ))}
       </ul>
-      {overflows && (
-        <span
-          ref={trackRef}
-          aria-hidden="true"
-          className="mx-5 mb-1.5 block h-[3px] overflow-hidden rounded-full bg-neutral-200"
-        >
-          <span ref={thumbRef} className="block h-full rounded-full bg-neutral-500" />
-        </span>
-      )}
     </nav>
   );
 }
@@ -188,15 +107,17 @@ export function PortalLayout() {
         <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-6 px-5 py-3.5 md:px-8">
           <Link
             to="/portal"
-            className="flex shrink-0 items-center gap-3 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring) focus-visible:ring-offset-2"
+            className="flex min-w-0 items-center gap-3 rounded-md focus-visible:outline-none lg:shrink-0 focus-visible:ring-2 focus-visible:ring-(--accent-ring) focus-visible:ring-offset-2"
           >
             <img
               src={BRAND_LOGO}
               alt="Seal of the Municipality of Alaminos"
-              className="h-11 w-11 object-contain"
+              className="h-11 w-11 shrink-0 object-contain"
             />
-            <span className="flex flex-col">
-              <span className="text-[11.5px] font-medium uppercase tracking-[0.1em] text-neutral-500">
+            {/* On the narrowest phones (320px) the uppercase line wraps rather than
+                pushing the page sideways. */}
+            <span className="flex min-w-0 flex-col">
+              <span className="text-balance text-[11.5px] font-medium uppercase tracking-[0.1em] text-neutral-500">
                 Municipality of Alaminos, Laguna
               </span>
               {/* Set as a letterhead sets it: the one serif in the portal. */}
@@ -213,7 +134,7 @@ export function PortalLayout() {
               Management System
             </span>
           ) : (
-            <ServiceNav className="hidden md:block" />
+            <ServiceNav className="hidden lg:block" />
           )}
         </div>
         {!isHome && <MobileServiceNav />}
