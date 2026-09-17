@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en" data-rail="crimson" data-collapsed="false">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Admin sidebar v2 · General Services Office (comp)</title>
+<!--
+THESIS: A two-layer sidebar, modelled on the owner's reference (a dark icon rail beside a light module panel with spaced serif caps): the rail carries the office and the system-wide places, the panel carries the work.
+REFERENCE: owner's screenshot "ES SALES" (navy icon rail with tiled icons, light panel, serif spaced-caps brand, coloured active text, a group's pages in a white card with bullet dots and count pills, collapsible to the rail alone).
+BUILD: shadcn/ui Sidebar ("collapsible nested sidebars" pattern), restyled with the municipal tokens.
+OWN-WORLD: the rail in municipal crimson (or ink, for comparison) with white tiles; the active tile white with a crimson icon. The panel white on a hairline, brand in Spectral spaced caps, the current page in crimson text with no fill (the owner rejected the pink wash), group pages in a cool-grey card with dots and ink count pills.
+SPLIT: rail = the office and system places (Dashboard, Reports, Audit Trail, Settings; account and Sign out at the foot). Panel = the working modules (Procurement, Supply, Facility Reservation, Violation Management, Utilities, Records Management).
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Spectral:wght@500&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<style type="text/tailwindcss">
+  @theme {
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --font-serif: "Spectral", ui-serif, Georgia, serif;
+  }
+</style>
+<style>
+  :root { --identity: #7e1624; --identity-deep: #66111d; --ring: #b0415a; --rail-bg: #7e1624; --rail-tile: rgb(255 255 255 / 0.1); --rail-icon: rgb(255 255 255 / 0.85); }
+  html[data-rail="ink"] { --rail-bg: #171717; --rail-tile: rgb(255 255 255 / 0.08); --rail-icon: rgb(255 255 255 / 0.8); }
+  html, body { overscroll-behavior: none; }
+  svg.lucide { width: 18px; height: 18px; stroke-width: 1.75; flex-shrink: 0; }
+  svg.lucide.s16 { width: 16px; height: 16px; }
+  .rail { background: var(--rail-bg); }
+  .tile { background: var(--rail-tile); color: var(--rail-icon); transition: background-color 150ms, color 150ms, transform 150ms; }
+  .tile:hover { background: rgb(255 255 255 / 0.18); color: #fff; }
+  .tile:active { transform: scale(0.96); }
+  .tile[aria-current="page"] { background: #fff; color: var(--identity); box-shadow: 0 4px 12px rgb(0 0 0 / 0.18); }
+  .panel { transition: width 220ms cubic-bezier(0.23,1,0.32,1), opacity 160ms; }
+  html[data-collapsed="true"] .panel { width: 0; opacity: 0; border-width: 0; }
+  .nav { color: #525252; transition: background-color 150ms, color 150ms; }
+  .nav:hover { background: #f5f5f5; color: #171717; }
+  .nav[aria-current="page"] { color: var(--identity); font-weight: 600; }
+  .nav.open { color: #171717; font-weight: 600; }
+  .child { color: #525252; transition: color 150ms, background-color 150ms; }
+  .child:hover { color: #171717; background: #fff; }
+  .child[aria-current="page"] { color: var(--identity); font-weight: 600; background: #fff; box-shadow: 0 1px 2px rgb(23 23 23 / 0.06); }
+  .child .dot { background: #d4d4d4; }
+  .child[aria-current="page"] .dot { background: var(--identity); }
+  .tip { position: relative; }
+  .tip::after { content: attr(data-tip); position: absolute; left: calc(100% + 12px); top: 50%; transform: translateY(-50%) scale(0.97); opacity: 0; pointer-events: none; white-space: nowrap; background: #171717; color: #fff; font-size: 12.5px; padding: 4px 8px; border-radius: 6px; transition: opacity 120ms, transform 120ms; z-index: 50; }
+  .tip:hover::after { opacity: 1; transform: translateY(-50%) scale(1); }
+  .comp-switch button[aria-pressed="true"] { background: #171717; color: #fff; }
+</style>
+</head>
+<body class="flex h-[100dvh] overflow-hidden bg-[#f6f7f8] font-sans text-neutral-900 antialiased">
+
+  <!-- ============ ICON RAIL ============ -->
+  <nav aria-label="Office" class="rail flex w-[68px] shrink-0 flex-col items-center py-3">
+    <a href="#" class="tip grid h-11 w-11 place-items-center rounded-full bg-white" data-tip="General Services Office">
+      <img src="../../public/logo/alaminos-seal.png" alt="Seal of the Municipality of Alaminos" class="h-10 w-10" />
+    </a>
+    <div class="my-4 h-px w-8 bg-white/15"></div>
+    <div class="flex flex-col gap-3">
+      <a href="#" class="tile tip grid h-11 w-11 place-items-center rounded-[10px]" data-tip="Dashboard"><i data-lucide="house"></i></a>
+      <a href="#" class="tile tip grid h-11 w-11 place-items-center rounded-[10px]" data-tip="Reports"><i data-lucide="bar-chart-3"></i></a>
+      <a href="#" class="tile tip grid h-11 w-11 place-items-center rounded-[10px]" data-tip="Audit Trail"><i data-lucide="history"></i></a>
+      <a href="#" class="tile tip grid h-11 w-11 place-items-center rounded-[10px]" data-tip="Settings"><i data-lucide="settings"></i></a>
+    </div>
+    <div class="mt-auto flex flex-col items-center gap-3">
+      <span class="tip grid h-10 w-10 place-items-center rounded-full bg-white/15 text-[13px] font-semibold text-white" data-tip="Richard Nasol · Administrator">RN</span>
+      <button class="tile tip grid h-11 w-11 place-items-center rounded-[10px]" data-tip="Sign out"><i data-lucide="log-out"></i></button>
+    </div>
+  </nav>
+
+  <!-- ============ MODULE PANEL ============ -->
+  <aside class="panel flex w-[264px] shrink-0 flex-col overflow-hidden border-r border-neutral-200 bg-white">
+    <div class="flex h-14 shrink-0 flex-col justify-center border-b border-neutral-200 px-5">
+      <span class="whitespace-nowrap font-serif text-[13px] font-medium uppercase tracking-[0.1em] text-neutral-900">General Services Office</span>
+      <span class="whitespace-nowrap text-[12px] text-neutral-500">Municipality of Alaminos, Laguna</span>
+    </div>
+
+    <nav aria-label="Modules" class="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto px-3 py-4 text-[14px]">
+      <!-- Procurement (open, holds the current page) -->
+      <button class="nav open flex h-10 w-full items-center gap-3 rounded-md px-3 text-left"><i data-lucide="files"></i><span class="flex-1 whitespace-nowrap">Procurement</span><i data-lucide="chevron-down" class="s16 text-neutral-400"></i></button>
+      <div class="mb-1 ml-3 rounded-lg bg-[#f6f7f8] p-1.5">
+        <a href="#" aria-current="page" class="child flex h-9 items-center gap-2.5 rounded-md px-2.5"><span class="dot h-1.5 w-1.5 rounded-full"></span><span class="flex-1 whitespace-nowrap">Purchase Requests</span><span class="rounded-full bg-[var(--identity)] px-1.5 text-[12px] font-semibold leading-5 text-white">4</span></a>
+        <a href="#" class="child flex h-9 items-center gap-2.5 rounded-md px-2.5"><span class="dot h-1.5 w-1.5 rounded-full"></span><span class="flex-1 whitespace-nowrap">Purchase Orders</span><span class="rounded-full bg-neutral-900 px-1.5 text-[12px] font-semibold leading-5 text-white">1</span></a>
+      </div>
+
+      <!-- Supply (open) -->
+      <button class="nav flex h-10 w-full items-center gap-3 rounded-md px-3 text-left"><i data-lucide="warehouse"></i><span class="flex-1 whitespace-nowrap">Supply</span><i data-lucide="chevron-down" class="s16 text-neutral-400"></i></button>
+      <div class="mb-1 ml-3 rounded-lg bg-[#f6f7f8] p-1.5">
+        <a href="#" class="child flex h-9 items-center gap-2.5 rounded-md px-2.5"><span class="dot h-1.5 w-1.5 rounded-full"></span><span class="flex-1 whitespace-nowrap">Inventory</span><span class="rounded-full bg-neutral-900 px-1.5 text-[12px] font-semibold leading-5 text-white">5</span></a>
+        <a href="#" class="child flex h-9 items-center gap-2.5 rounded-md px-2.5"><span class="dot h-1.5 w-1.5 rounded-full"></span><span class="flex-1 whitespace-nowrap">Requisition &amp; Issue Slip</span><span class="rounded-full bg-neutral-900 px-1.5 text-[12px] font-semibold leading-5 text-white">1</span></a>
+      </div>
+
+      <a href="#" class="nav flex h-10 items-center gap-3 rounded-md px-3"><i data-lucide="calendar-days"></i><span class="flex-1 whitespace-nowrap">Facility Reservation</span><span class="rounded-full bg-neutral-900 px-1.5 text-[12px] font-semibold leading-5 text-white">2</span></a>
+      <a href="#" class="nav flex h-10 items-center gap-3 rounded-md px-3"><i data-lucide="shield-alert"></i><span class="whitespace-nowrap">Violation Management</span></a>
+      <button class="nav flex h-10 w-full items-center gap-3 rounded-md px-3 text-left"><i data-lucide="gauge"></i><span class="flex-1 whitespace-nowrap">Utilities</span><i data-lucide="chevron-right" class="s16 text-neutral-400"></i></button>
+      <button class="nav flex h-10 w-full items-center gap-3 rounded-md px-3 text-left"><i data-lucide="archive"></i><span class="flex-1 whitespace-nowrap">Records Management</span><i data-lucide="chevron-right" class="s16 text-neutral-400"></i></button>
+    </nav>
+  </aside>
+
+  <!-- ============ PAGE ============ -->
+  <div class="flex min-w-0 flex-1 flex-col">
+    <header class="flex h-14 shrink-0 items-center gap-3 border-b border-neutral-200 bg-white px-6">
+      <button id="toggle" class="grid h-9 w-9 place-items-center rounded-md text-neutral-600 hover:bg-neutral-100" aria-label="Toggle panel"><i data-lucide="panel-left"></i></button>
+      <nav class="min-w-0 flex-1 text-[14px]"><span class="text-neutral-500">Procurement</span> <span class="mx-1 text-neutral-400">›</span> <span class="font-semibold">Purchase Requests</span></nav>
+      <span class="mr-2 hidden text-[14px] text-neutral-500 xl:inline">Friday, 18 September 2026</span>
+      <span class="inline-flex h-9 items-center gap-1.5 px-2.5 text-[14px] font-medium text-neutral-600">Staff portal <i data-lucide="arrow-up-right" class="s16"></i></span>
+      <span class="inline-flex h-9 items-center gap-2 rounded-md border border-neutral-200 px-3 text-[14px] font-medium">For review <span class="rounded-full bg-neutral-900 px-1.5 text-[12px] font-semibold leading-5 text-white">12</span></span>
+      <span class="grid h-9 w-9 place-items-center rounded-md border border-neutral-200 text-neutral-600"><i data-lucide="bell"></i></span>
+      <span class="inline-flex h-9 items-center gap-1.5 rounded-md bg-[var(--identity)] pl-3 pr-2.5 text-[14px] font-semibold text-white"><i data-lucide="plus" class="s16"></i>New<i data-lucide="chevron-down" class="s16 opacity-80"></i></span>
+    </header>
+    <main class="min-h-0 flex-1 overflow-hidden px-8 py-6">
+      <h1 class="text-[26px] font-semibold tracking-[-0.02em]">Purchase Requests</h1>
+      <p class="mt-1 text-[15px] text-neutral-500">Page content (placeholder). The Purchase Requests module is redesigned after the sidebar.</p>
+      <div class="mt-5 grid grid-cols-4 gap-4">
+        <div class="h-28 rounded-[10px] border border-neutral-200 bg-white shadow-[0_1px_2px_rgb(23_23_23/0.04)]"></div>
+        <div class="h-28 rounded-[10px] border border-neutral-200 bg-white shadow-[0_1px_2px_rgb(23_23_23/0.04)]"></div>
+        <div class="h-28 rounded-[10px] border border-neutral-200 bg-white shadow-[0_1px_2px_rgb(23_23_23/0.04)]"></div>
+        <div class="h-28 rounded-[10px] border border-neutral-200 bg-white shadow-[0_1px_2px_rgb(23_23_23/0.04)]"></div>
+      </div>
+      <div class="mt-4 h-[420px] rounded-[10px] border border-neutral-200 bg-white shadow-[0_1px_2px_rgb(23_23_23/0.04)]"></div>
+    </main>
+  </div>
+
+  <div class="comp-switch fixed bottom-4 right-4 z-50 flex items-center gap-1 rounded-[6px] border border-neutral-300 bg-white p-1 text-[12.5px] shadow-lg">
+    <span class="px-2 text-neutral-500">Rail</span>
+    <button type="button" data-rail-set="crimson" aria-pressed="true" class="rounded-[4px] px-2.5 py-1.5">Red</button>
+    <button type="button" data-rail-set="ink" aria-pressed="false" class="rounded-[4px] px-2.5 py-1.5">Dark</button>
+    <span class="mx-1 h-5 w-px bg-neutral-200"></span>
+    <button type="button" id="collapse" aria-pressed="false" class="rounded-[4px] px-2.5 py-1.5">Collapsed</button>
+  </div>
+
+<script>
+  lucide.createIcons();
+  const html = document.documentElement;
+  document.querySelectorAll('[data-rail-set]').forEach((b) => b.addEventListener('click', () => {
+    html.dataset.rail = b.dataset.railSet;
+    document.querySelectorAll('[data-rail-set]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  }));
+  const setCollapsed = (v) => { html.dataset.collapsed = String(v); document.getElementById('collapse').setAttribute('aria-pressed', String(v)); };
+  document.getElementById('collapse').addEventListener('click', () => setCollapsed(html.dataset.collapsed !== 'true'));
+  document.getElementById('toggle').addEventListener('click', () => setCollapsed(html.dataset.collapsed !== 'true'));
+  document.querySelectorAll('a[href="#"]').forEach((l) => l.addEventListener('click', (e) => e.preventDefault()));
+</script>
+</body>
+</html>

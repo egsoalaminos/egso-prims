@@ -1,425 +1,39 @@
 import * as React from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import {
-  Archive,
-  BarChart3,
-  Building2,
-  CalendarDays,
-  ChevronDown,
-  ClipboardCheck,
-  ClipboardList,
-  Droplets,
-  FileCheck2,
-  FileText,
-  Files,
-  Fuel,
-  Gauge,
-  History,
-  LayoutDashboard,
-  LogOut,
-  Package,
-  ScrollText,
-  Settings,
-  ShieldAlert,
-  ShoppingCart,
-  Warehouse,
-  X,
-  Zap,
-} from "lucide-react";
+import { LogOut } from "lucide-react";
 
 // By path rather than through the barrel — see main.tsx. The app shell is on
 // every authenticated route, so whatever it reaches is in the entry chunk.
 import { AppShell } from "@/components/layout/app-shell";
 import { PageFallback } from "@/components/feedback/page-fallback";
 import { Breadcrumb, type BreadcrumbItem } from "@/components/navigation/breadcrumb";
-import { SidebarUser } from "@/components/navigation/sidebar-user";
 import { NotificationBell, TopBar } from "@/components/navigation/top-bar";
-import {
-  Sidebar,
-  SidebarBrand,
-  SidebarContent,
-  SidebarDivider,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarItem,
-} from "@/components/navigation/sidebar";
 import { ConfirmationModal } from "@/components/modal/modals";
 import { toast } from "@/components/feedback/toaster";
+import { useSidebar } from "@/components/ui/sidebar";
 import { useAuth } from "@/features/auth/auth-context";
 import { useNotifications } from "@/features/notifications/hooks";
 import { NotificationDrawer } from "@/features/notifications/components/notification-drawer";
-import { useAppearanceSync, useBranding } from "@/features/config/use-appearance";
+import { useAppearanceSync } from "@/features/config/use-appearance";
 import { useNavCounts, type NavCounts } from "@/features/shared/use-nav-counts";
+import { AppSidebar } from "@/layouts/app-sidebar";
 import {
   NewDocumentMenu,
   ReviewMenu,
   StaffPortalLink,
   TodayDate,
 } from "@/layouts/app-top-bar-actions";
-import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
 
-interface ModuleNavItem {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  /** Route path; items without a path are future modules. */
-  to?: string;
-  badge?: { text: string; color: "blue" | "green" | "orange" };
-  dot?: "orange" | "green" | "red";
-  /**
-   * Which live count fills this item's badge. Items without one never carry a
-   * badge — there are no hardcoded counts left in this file.
-   */
-  countKey?: keyof NavCounts;
-  badgeColor?: "blue" | "green" | "orange";
-  /** Show the count as a presence dot rather than a number. */
-  countAsDot?: boolean;
-}
-
-/*
- * The sidebar follows the office's work, in the order it happens (owner's
- * choice, 17 Sep 2026): buy (Procurement: PR, then PO), hold and issue
- * (Supply: Inventory, then RIS), the office's other services, the monthly
- * monitoring and records, then reports. System pages sit below the divider.
- */
-
-// Single top-level modules.
-const dashboardItem: ModuleNavItem = { icon: LayoutDashboard, label: "Dashboard", to: "/" };
-const reservationItem: ModuleNavItem = {
-  icon: CalendarDays,
-  label: "Facility Reservation",
-  to: "/reservations",
-  countKey: "pendingReservations",
-  badgeColor: "green",
-};
-const violationItem: ModuleNavItem = {
-  icon: ShieldAlert,
-  label: "Violation Management",
-  to: "/violations",
-};
-const reportsItem: ModuleNavItem = { icon: BarChart3, label: "Reports", to: "/reports" };
-
-// Collapsible groups. Children keep their existing icons/badges/dots.
-const procurementChildren: ModuleNavItem[] = [
-  {
-    icon: FileText,
-    label: "Purchase Requests",
-    to: "/purchase-requests",
-    countKey: "pendingPRs",
-    badgeColor: "blue",
-  },
-  {
-    icon: ShoppingCart,
-    label: "Purchase Orders",
-    to: "/purchase-orders",
-    countKey: "pendingPOs",
-    countAsDot: true,
-  },
-];
-// An RIS draws items out of stock, so it sits with Inventory rather than with
-// the purchasing documents.
-const supplyChildren: ModuleNavItem[] = [
-  {
-    icon: Package,
-    label: "Inventory",
-    to: "/inventory",
-    countKey: "stockAlerts",
-    badgeColor: "orange",
-  },
-  { icon: ClipboardList, label: "Requisition & Issue Slip", to: "/ris", countKey: "pendingRIS" },
-];
-const utilitiesChildren: ModuleNavItem[] = [
-  { icon: Zap, label: "Energy", to: "/energy" },
-  { icon: Droplets, label: "Water", to: "/water" },
-  { icon: Fuel, label: "Fuel", to: "/fuel" },
-];
-// The National Archives forms the office files. Inside the group they drop the
-// words the group already says ("Records"), so none is cut off; page titles and
-// breadcrumbs keep the full names.
-const recordsChildren: ModuleNavItem[] = [
-  { icon: ScrollText, label: "Disposition Schedule", to: "/records" },
-  { icon: ClipboardCheck, label: "Inventory & Appraisal", to: "/records/inventory" },
-  { icon: FileCheck2, label: "Authority to Dispose", to: "/records/disposal" },
-];
-
-/* ---- Collapsible group state (persisted; default expanded) ---- */
-
-type GroupKey = "procurement" | "supply" | "utilities" | "records";
-const GROUPS_KEY = "gso-prims.sidebar-groups";
+/** Whether the sidebar panel was left collapsed to the rail (default open). */
 const SIDEBAR_COLLAPSED_KEY = "gso-prims.sidebar-collapsed";
 
-/** Last persisted collapsed state (default expanded). */
-function readSidebarCollapsed(): boolean {
+function readSidebarOpen(): boolean {
   try {
-    return localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === "true";
+    return localStorage.getItem(SIDEBAR_COLLAPSED_KEY) !== "true";
   } catch {
-    return false;
+    return true;
   }
-}
-
-function readGroups(): Record<GroupKey, boolean> {
-  // Daily work open, monthly work (utilities, records) closed, so the rail
-  // fits a 768px-tall screen without scrolling.
-  const fallback = { procurement: true, supply: true, utilities: false, records: false };
-  try {
-    const raw = localStorage.getItem(GROUPS_KEY);
-    return raw ? { ...fallback, ...(JSON.parse(raw) as Partial<Record<GroupKey, boolean>>) } : fallback;
-  } catch {
-    return fallback;
-  }
-}
-
-function useSidebarGroups() {
-  const [expanded, setExpanded] = React.useState<Record<GroupKey, boolean>>(readGroups);
-  const set = React.useCallback((key: GroupKey, value: (prev: boolean) => boolean) =>
-    setExpanded((prev) => {
-      const nextValue = value(prev[key]);
-      if (nextValue === prev[key]) return prev;
-      const next = { ...prev, [key]: nextValue };
-      try {
-        localStorage.setItem(GROUPS_KEY, JSON.stringify(next));
-      } catch {
-        // Storage unavailable (private mode): state still applies for this session.
-      }
-      return next;
-    }), []);
-  const toggle = (key: GroupKey) => set(key, (open) => !open);
-  const open = React.useCallback((key: GroupKey) => set(key, () => true), [set]);
-  return { expanded, toggle, open };
-}
-
-/**
- * Collapsible nav group. Reuses the existing SidebarItem for both the parent
- * row (with a rotating chevron) and its children — no new sidebar component or
- * styling is introduced. The parent highlights when any child route is active.
- */
-function CollapsibleNavGroup({
-  icon,
-  label,
-  active,
-  expanded,
-  onToggle,
-  children,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  active: boolean;
-  expanded: boolean;
-  onToggle: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <div>
-      <SidebarItem
-        icon={icon}
-        label={label}
-        containsActive={active}
-        aria-expanded={expanded}
-        onClick={onToggle}
-        trailing={
-          <ChevronDown
-            className={`h-4 w-4 shrink-0 text-neutral-400 transition-transform group-data-[collapsed=true]:hidden ${
-              expanded ? "" : "-rotate-90"
-            }`}
-          />
-        }
-      />
-      <AnimatePresence initial={false}>
-        {expanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.18, ease: "easeOut" }}
-            className="overflow-hidden"
-          >
-            {/* The guide line sits under the heading's icon; collapsed, the
-                children fall back to their own icons. */}
-            <div className="my-0.5 ml-[19px] flex flex-col gap-0.5 border-l border-neutral-200 pl-2 group-data-[collapsed=true]:ml-0 group-data-[collapsed=true]:border-l-0 group-data-[collapsed=true]:pl-0">
-              {children}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
-
-const systemNav: (ModuleNavItem & { trailing?: React.ReactNode })[] = [
-  { icon: History, label: "Audit Trail", to: "/audit" },
-  { icon: Settings, label: "Settings", to: "/settings" },
-];
-
-function isActive(pathname: string, to?: string) {
-  if (!to) return false;
-  if (to === "/") return pathname === "/";
-  return pathname === to || pathname.startsWith(`${to}/`);
-}
-
-/**
- * Resolves an item's live count into a badge or a dot, and strips the count
- * fields so they never reach `SidebarItem`. A count of zero yields neither —
- * an empty queue should read as quiet, not as a `0` to decode.
- */
-function withCount(item: ModuleNavItem, counts: NavCounts): ModuleNavItem {
-  const { countKey, badgeColor, countAsDot, ...rest } = item;
-  if (!countKey) return rest;
-  const value = counts[countKey];
-  if (value <= 0) return rest;
-  return countAsDot
-    ? { ...rest, dot: "orange" }
-    : { ...rest, badge: { text: String(value), color: badgeColor ?? "blue" } };
-}
-
-/** Initials from a display name: "Juan Dela Cruz" → "JD", "Mayor" → "M". */
-function initialsOf(name: string): string {
-  const parts = name.trim().split(/\s+/).filter(Boolean);
-  if (parts.length === 0) return "?";
-  const letters = parts.length === 1 ? [parts[0][0]] : [parts[0][0], parts[parts.length - 1][0]];
-  return letters.join("").toUpperCase();
-}
-
-function AppSidebar({
-  collapsed,
-  onRequestSignOut,
-  className,
-  onNavigate,
-  counts,
-}: {
-  collapsed: boolean;
-  onRequestSignOut: () => void;
-  /** Overrides the rail's `hidden md:flex` when rendered inside the mobile drawer. */
-  className?: string;
-  /** Called after any navigation, so the mobile drawer can close itself. */
-  onNavigate?: () => void;
-  /** Live counts, loaded once by the layout and shared with the top bar. */
-  counts: NavCounts;
-}) {
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
-  const { user } = useAuth();
-  const branding = useBranding();
-  const { expanded, toggle, open: openGroup } = useSidebarGroups();
-
-  /** Navigates, then lets the mobile drawer close itself behind the new route. */
-  const go = React.useCallback(
-    (to: string) => {
-      navigate(to);
-      onNavigate?.();
-    },
-    [navigate, onNavigate],
-  );
-
-  const renderItem = (navItem: ModuleNavItem) => {
-    const { to, ...item } = withCount(navItem, counts);
-    return (
-      <SidebarItem
-        key={item.label}
-        {...item}
-        active={isActive(pathname, to)}
-        onClick={to ? () => go(to) : undefined}
-      />
-    );
-  };
-  const renderChild = (navItem: ModuleNavItem) => {
-    const { to, ...item } = withCount(navItem, counts);
-    return (
-      <SidebarItem
-        key={item.label}
-        {...item}
-        nested
-        active={isActive(pathname, to)}
-        onClick={to ? () => go(to) : undefined}
-      />
-    );
-  };
-  const procurementActive = procurementChildren.some((c) => isActive(pathname, c.to));
-  const supplyActive = supplyChildren.some((c) => isActive(pathname, c.to));
-  const utilitiesActive = utilitiesChildren.some((c) => isActive(pathname, c.to));
-  const recordsActive = recordsChildren.some((c) => isActive(pathname, c.to));
-
-  // Arriving on a page inside a closed group (a link, a search result, the back
-  // button) opens that group, so the page on screen is always visible in the rail.
-  React.useEffect(() => {
-    if (procurementActive) openGroup("procurement");
-    if (supplyActive) openGroup("supply");
-    if (utilitiesActive) openGroup("utilities");
-    if (recordsActive) openGroup("records");
-  }, [procurementActive, supplyActive, utilitiesActive, recordsActive, openGroup]);
-
-  return (
-    <Sidebar collapsed={collapsed} className={className}>
-      <SidebarBrand
-        icon={Building2}
-        logo={branding.logo}
-        title="General Services Office"
-        subtitle={branding.organizationName}
-      />
-      <SidebarContent>
-        <SidebarGroup>
-          {renderItem(dashboardItem)}
-          <CollapsibleNavGroup
-            icon={Files}
-            label="Procurement"
-            active={procurementActive}
-            expanded={expanded.procurement}
-            onToggle={() => toggle("procurement")}
-          >
-            {procurementChildren.map(renderChild)}
-          </CollapsibleNavGroup>
-          <CollapsibleNavGroup
-            icon={Warehouse}
-            label="Supply"
-            active={supplyActive}
-            expanded={expanded.supply}
-            onToggle={() => toggle("supply")}
-          >
-            {supplyChildren.map(renderChild)}
-          </CollapsibleNavGroup>
-          {renderItem(reservationItem)}
-          {renderItem(violationItem)}
-          <CollapsibleNavGroup
-            icon={Gauge}
-            label="Utilities"
-            active={utilitiesActive}
-            expanded={expanded.utilities}
-            onToggle={() => toggle("utilities")}
-          >
-            {utilitiesChildren.map(renderChild)}
-          </CollapsibleNavGroup>
-          <CollapsibleNavGroup
-            icon={Archive}
-            label="Records Management"
-            active={recordsActive}
-            expanded={expanded.records}
-            onToggle={() => toggle("records")}
-          >
-            {recordsChildren.map(renderChild)}
-          </CollapsibleNavGroup>
-          {renderItem(reportsItem)}
-        </SidebarGroup>
-        <SidebarDivider />
-        <SidebarGroup>
-          {systemNav.map(({ to, ...item }) => (
-            <SidebarItem
-              key={item.label}
-              {...item}
-              active={isActive(pathname, to)}
-              onClick={to ? () => go(to) : undefined}
-            />
-          ))}
-        </SidebarGroup>
-      </SidebarContent>
-      <SidebarFooter>
-        <SidebarUser
-          name={user?.name ?? "Administrator"}
-          detail={user?.role ?? "Administrator"}
-          initials={initialsOf(user?.name ?? "Administrator")}
-          onSignOut={onRequestSignOut}
-        />
-      </SidebarFooter>
-    </Sidebar>
-  );
 }
 
 /**
@@ -499,20 +113,20 @@ function useBreadcrumbs(): BreadcrumbItem[] {
  * notifications always stay.
  */
 function AppTopBar({
-  onToggleSidebar,
   onOpenNotifications,
   unreadCount,
   counts,
 }: {
-  onToggleSidebar: () => void;
   onOpenNotifications: () => void;
   unreadCount: number;
   counts: NavCounts;
 }) {
   const crumbs = useBreadcrumbs();
+  // Collapses the panel to the rail on a desktop; opens the sheet on a phone.
+  const { toggleSidebar } = useSidebar();
   return (
     <TopBar
-      onToggleSidebar={onToggleSidebar}
+      onToggleSidebar={toggleSidebar}
       actions={
         <>
           <TodayDate className="mr-2 hidden xl:inline" />
@@ -535,43 +149,22 @@ export function AppLayout() {
   const [confirmSignOut, setConfirmSignOut] = React.useState(false);
   const [signingOut, setSigningOut] = React.useState(false);
   const [notificationsOpen, setNotificationsOpen] = React.useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = React.useState(readSidebarCollapsed);
-  const [mobileNavOpen, setMobileNavOpen] = React.useState(false);
+  const [sidebarOpen, setSidebarOpen] = React.useState(readSidebarOpen);
   // Applies the stored theme + accent to <html> for every page in the shell.
   useAppearanceSync();
-  // One set of live counts for the rail's badges and the top bar's review menu.
+  // One set of live counts for the panel's pills and the top bar's review menu.
   const counts = useNavCounts();
   // Realtime-backed, so the badge moves without a page refresh.
   const { unreadCount } = useNotifications(React.useMemo(() => ({}), []));
 
-  /**
-   * One button, two jobs. The rail is `hidden md:flex`, so below that
-   * breakpoint there is nothing to collapse — the same control has to open the
-   * drawer instead. The check reads the viewport at click time rather than
-   * tracking it in state, which keeps the two behaviours from ever disagreeing
-   * after a resize or an orientation change.
-   */
-  const toggleSidebar = React.useCallback(() => {
-    if (!window.matchMedia("(min-width: 768px)").matches) {
-      setMobileNavOpen(true);
-      return;
+  const changeSidebarOpen = React.useCallback((open: boolean) => {
+    setSidebarOpen(open);
+    try {
+      localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(!open));
+    } catch {
+      // Storage unavailable (private mode): the state still applies this session.
     }
-    setSidebarCollapsed((c) => {
-      const next = !c;
-      try {
-        localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(next));
-      } catch {
-        // Storage unavailable (private mode): state still applies this session.
-      }
-      return next;
-    });
   }, []);
-
-  // A route change from anywhere — a breadcrumb, a card, the back button —
-  // should not leave the drawer sitting open over the page it navigated to.
-  React.useEffect(() => {
-    setMobileNavOpen(false);
-  }, [location.pathname]);
 
   const requestSignOut = () => setConfirmSignOut(true);
 
@@ -587,12 +180,11 @@ export function AppLayout() {
   return (
     <>
       <AppShell
-        sidebar={
-          <AppSidebar collapsed={sidebarCollapsed} onRequestSignOut={requestSignOut} counts={counts} />
-        }
+        open={sidebarOpen}
+        onOpenChange={changeSidebarOpen}
+        sidebar={<AppSidebar counts={counts} onRequestSignOut={requestSignOut} />}
         topBar={
           <AppTopBar
-            onToggleSidebar={toggleSidebar}
             onOpenNotifications={() => setNotificationsOpen(true)}
             unreadCount={unreadCount}
             counts={counts}
@@ -610,32 +202,6 @@ export function AppLayout() {
           </AnimatePresence>
         </React.Suspense>
       </AppShell>
-
-      {/* Below 768px the rail is display:none, so this drawer is the only way
-          to reach any module. `flex` overrides the rail's own `hidden`
-          (tailwind-merge resolves the display conflict in favour of the last
-          class), and the drawer is never collapsed — an icon-only rail makes
-          no sense when it is already an overlay. */}
-      <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
-        {/* 312px, wider than the rail, so the close button sits clear of the
-            office name on the crimson letterhead block. */}
-        <SheetContent side="left" showCloseButton={false} className="w-[312px] max-w-[85vw] p-0 md:hidden">
-          <SheetTitle className="sr-only">Navigation</SheetTitle>
-          <SheetClose
-            aria-label="Close navigation"
-            className="absolute right-2 top-[13px] z-10 grid h-9 w-9 place-items-center rounded-md text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-          >
-            <X className="h-[18px] w-[18px]" />
-          </SheetClose>
-          <AppSidebar
-            collapsed={false}
-            onRequestSignOut={requestSignOut}
-            onNavigate={() => setMobileNavOpen(false)}
-            counts={counts}
-            className="flex h-full w-full! border-r-0"
-          />
-        </SheetContent>
-      </Sheet>
 
       <NotificationDrawer open={notificationsOpen} onOpenChange={setNotificationsOpen} />
       <ConfirmationModal

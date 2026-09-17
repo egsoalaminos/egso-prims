@@ -36,6 +36,11 @@ The sidebar components are used only by this layout.
   boring") and asked for something better to put in; from four candidates he picked all four:
   "+ New", "For review", today's date and a staff portal link.
 
+- **Sidebar v2 (2026-09-18):** the owner asked to use shadcn and sent a reference (dark icon
+  rail beside a light module panel, "ES SALES"). Built on shadcn/ui Sidebar as nested sidebars;
+  he chose the **Dark** rail over a crimson one (`.impeccable/comps/admin-sidebar-v2.html`). This
+  replaced option C's crimson letterhead block and the crimson edge line.
+
 ## Unresolved decisions
 
 - A real global search (reference numbers, modules) is to be built after the modules are

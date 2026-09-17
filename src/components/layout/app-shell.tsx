@@ -1,35 +1,42 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { PageTitle, Subtitle } from "@/components/typography/typography";
 
 /**
- * Application frame: sidebar rail + content column.
+ * Application frame: the shadcn/ui sidebar (icon rail + module panel) beside
+ * the content column.
  *
- * Three surfaces, three depths — the rail (`--sidebar`) sits below the canvas
- * (`--canvas`, the portal's bond paper), and the white cards sit above it. The
- * outer ground matches the rail so the frame holds its material before the
- * sidebar paints and behind it on overscroll.
+ * `SidebarProvider` owns the open state (the layout persists it), the Cmd/Ctrl+B
+ * shortcut and the phone sheet. The content column is exactly one window tall
+ * and scrolls inside itself, so the frame never moves.
  */
 export function AppShell({
   sidebar,
   topBar,
   children,
+  open,
+  onOpenChange,
 }: {
   sidebar: React.ReactNode;
   topBar: React.ReactNode;
   children: React.ReactNode;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }) {
   return (
-    <div className="flex min-h-screen bg-sidebar font-sans antialiased">
-      {/* The sign-in sheet's crimson edge, carried across the admin. It lies over
-          the top 6px of the rail's letterhead block and of the top bar, both of
-          which leave that space empty. */}
-      <div aria-hidden="true" data-municipal="" className="fixed inset-x-0 top-0 z-40 h-1.5 bg-(--accent-solid)" />
+    <SidebarProvider
+      open={open}
+      onOpenChange={onOpenChange}
+      // Rail 68px + panel 264px open; the rail alone collapsed.
+      style={{ "--sidebar-width": "20.75rem", "--sidebar-width-icon": "4.25rem" } as React.CSSProperties}
+      className="bg-canvas font-sans antialiased"
+    >
       {/*
-       * First stop in the tab order. The rail carries ~15 nav items and the
-       * top bar another four controls, so without this a keyboard user walks
-       * all of them again on every route change.
+       * First stop in the tab order. The rail and panel carry ~20 controls and
+       * the top bar another five, so without this a keyboard user walks all of
+       * them again on every route change.
        */}
       <a
         href="#main-content"
@@ -38,7 +45,7 @@ export function AppShell({
         Skip to content
       </a>
       {sidebar}
-      <div className="flex h-screen min-w-0 flex-1 flex-col bg-canvas">
+      <div className="flex h-svh min-w-0 flex-1 flex-col bg-canvas">
         {topBar}
         <main
           id="main-content"
@@ -50,7 +57,7 @@ export function AppShell({
           {children}
         </main>
       </div>
-    </div>
+    </SidebarProvider>
   );
 }
 

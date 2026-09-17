@@ -104,6 +104,14 @@
   /* --color-sidebar drives the rail; the twelve chart and sidebar-* tokens that
      once sat here were declared three times and read nowhere. */
   --color-sidebar: var(--sidebar);
+  /* Read by shadcn/ui's Sidebar (the admin rail and panel, 18 Sep 2026). */
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
   --color-canvas: var(--canvas);
 }
 
@@ -195,6 +203,13 @@
   /* The rail was white in August, and so was the frame behind it: chrome and
      card shared a value and only the canvas sat apart. */
   --sidebar: oklch(1 0 0);
+  --sidebar-foreground: #525252;
+  --sidebar-primary: #7e1624;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f5f5f5;
+  --sidebar-accent-foreground: #171717;
+  --sidebar-border: #e5e5e5;
+  --sidebar-ring: #b0415a;
   --canvas: oklch(0.9851 0 0);
 
   /* ---- The neutral ramp: Tailwind's stock, cold ------------------------ */

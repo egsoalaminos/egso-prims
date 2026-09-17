@@ -4,9 +4,8 @@ import { Bell, PanelLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
- * The admin's top bar: 56px, level with the rail's crimson letterhead block,
- * white with a hairline under it. Its top 6px sit under the window's crimson
- * edge, so its contents centre in the 50px below.
+ * The admin's top bar: 56px, level with the sidebar panel's header, white with
+ * a hairline under it.
  *
  * It takes the municipal token scope, which gives its controls 4px corners and
  * the crimson focus ring.
@@ -28,7 +27,7 @@ export function TopBar({
     <header
       data-municipal=""
       className={cn(
-        "sticky top-0 z-10 flex h-14 shrink-0 items-center gap-2 border-b border-neutral-200 bg-white px-3 pt-1.5 md:gap-3 md:px-6",
+        "sticky top-0 z-10 flex h-14 shrink-0 items-center gap-2 border-b border-neutral-200 bg-white px-3 md:gap-3 md:px-6",
         className,
       )}
     >

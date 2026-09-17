@@ -180,7 +180,7 @@ components:
 
 > **Scope.** This file documents the **staff portal** (every route under `/portal`), which is the current design going forward. There is no older portal look to return to.
 >
-> **The admin sign-in page (`/login`) joined this world on 17 September 2026** as a letterhead sheet (see Sign-in Sheet). **The admin's sidebar and frame followed the same day** (see Admin Sidebar). **The admin pages themselves have not been migrated;** they move one module at a time. It still runs its older design (the 4 August 2026 system in the top half of `src/index.css`: near-black accent, 10px-derived corners, Inter only). The admin is next to be redesigned. Until that happens, nothing here applies to admin screens.
+> **The admin sign-in page (`/login`) joined this world on 17 September 2026** as a letterhead sheet (see Sign-in Sheet). **The admin's sidebar, top bar and dashboard followed** (see Admin Sidebar, Admin Top Bar, Admin Dashboard). **The admin pages themselves have not been migrated;** they move one module at a time. It still runs its older design (the 4 August 2026 system in the top half of `src/index.css`: near-black accent, 10px-derived corners, Inter only). The admin is next to be redesigned. Until that happens, nothing here applies to admin screens.
 >
 > **How the portal's values are applied.** Nothing here is global. The portal's colours, corners and ground are declared in one scoped `[data-portal]` token block ("THE PORTAL" in `src/index.css`). The portal layout puts `data-portal` on its root element, and on `<html>` while it is mounted, so pickers and selects portalled to `<body>` pick up the same values. The theme is `@theme inline`, so utilities compile straight to `--radius-step-*`, `--canvas` and `--accent-*`. Those are the names the scope redeclares, and every value in it is a literal, never `var(...)`.
 
@@ -230,7 +230,7 @@ Neutrals come from Tailwind's stock `neutral` ramp (declared in oklch; the hex v
 
 **The Crimson Is Not a Field Rule.** Crimson appears as the thin strip, the band behind a heading, and solid action buttons. It is never a large bright surface, a card fill, or a background for body copy. The band's height responds to the viewport so the cards, not the crimson, stay the focus.
 
-**The Scoped Palette Rule.** Portal colours reach components only through the `[data-portal]` block's `--accent-*` and `--canvas` literals. The admin takes the same values through `[data-municipal]`, the same block under a second name, on each part as it is migrated (the sidebar, the crimson edge). Never hard-code the crimson into a shared component, and never declare a portal value as `var(--other-token)`.
+**The Scoped Palette Rule.** Portal colours reach components only through the `[data-portal]` block's `--accent-*` and `--canvas` literals. The admin takes the same values through `[data-municipal]`, the same block under a second name, on each part as it is migrated (the sidebar, the top bar, the dashboard). Never hard-code the crimson into a shared component, and never declare a portal value as `var(--other-token)`.
 
 ## Typography
 
@@ -275,7 +275,7 @@ Neutrals come from Tailwind's stock `neutral` ramp (declared in oklch; the hex v
 **Rhythm.** Controls are 44px tall. Cards are padded 24px (14–16px on phones). Icon tile to title is 20px, title to description is 6px, and description to action bar is 24px.
 
 ### Named Rules
-**The One Screen Rule.** On the home page, the services and the tracking field are all visible without scrolling at 1366x768 and at 390x844. Anything added to the home page has to fit inside that constraint or not be added. Fitting means not one pixel over: a 1px overflow still lets the page scroll. The whole system turns off elastic overscroll (`overscroll-behavior: none` on `html` and `body`; the portal from 17 Sep, the admin from 18 Sep 2026), so a trackpad or phone swipe does not drag the whole frame, strip or edge and all, away from the top of the window. The admin's page area and sidebar list also contain their own scroll.
+**The One Screen Rule.** On the home page, the services and the tracking field are all visible without scrolling at 1366x768 and at 390x844. Anything added to the home page has to fit inside that constraint or not be added. Fitting means not one pixel over: a 1px overflow still lets the page scroll. The whole system turns off elastic overscroll (`overscroll-behavior: none` on `html` and `body`; the portal from 17 Sep, the admin from 18 Sep 2026), so a trackpad or phone swipe does not drag the whole frame away from the top of the window. The admin's page area and sidebar list also contain their own scroll.
 
 ## Elevation & Depth
 
@@ -337,20 +337,19 @@ Below lg, the Reserve page swaps the admin's month grid (760px minimum, which sc
 - **Selected day:** under the grid on a phone, beside it from md. The day as a 15px/600 heading, then each booking: facility name (14px/500) with its status at 12.5px on the same line, and the time and office below at 13px tabular. With none, "No bookings on this day."
 
 ### Admin Sidebar (signature)
-The admin's rail, owner-approved as option "C" (comp `.impeccable/comps/admin-sidebar.html`) over an all-white rail and an all-crimson one: crimson only where it means the office or where you are, since the admin is looked at all day beside tables.
-- **Frame:** a 6px crimson edge across the whole window (the sign-in sheet's edge, carried in). The rail is 272px, white, ruled right with a hairline; the top bar beside it is 56px.
-- **Letterhead block:** the top 56px of the rail is crimson, level with the top bar, so edge and block read as one corner. The seal on a 36px white disc, "General Services Office" in Spectral 17px white, "Municipality of Alaminos, Laguna" at 12px, 75% white. 272px is the width that fits both lines without truncating.
-- **Order:** the work in order (owner's choice): Dashboard; Procurement (Purchase Requests, Purchase Orders); Supply (Inventory, Requisition & Issue Slip); Facility Reservation; Violation Management; Utilities (Energy, Water, Fuel); Records Management (Disposition Schedule, Inventory & Appraisal, Authority to Dispose); Reports; a hairline; Audit Trail; Settings.
-- **Rows:** 36px, 14px Inter, 18px icons, 6px corners. Idle #525252, hover ink on #f5f5f5. The current page is a solid crimson row with white text at 600 (the owner's choice over crimson text on Crimson Wash, which read as pink; comp `.impeccable/comps/admin-sidebar-active.html`); a count on that row turns into a white pill with crimson figures. A group heading holding the current page is ink at 600 with no fill.
-- **Groups:** a heading with a chevron; its pages hang off a hairline guide under the heading's icon, without icons of their own and named without the group's words, so none truncates (page titles and breadcrumbs keep the full names). Procurement and Supply start open, Utilities and Records Management closed (monthly work, and the rail then fits 768px without scrolling). A group opens by itself when the page on screen is inside it. Open/closed is remembered per browser.
-- **Counts:** ink pills (12px/600 white) or an ink dot: "waiting for you", whatever the module.
-- **Account:** the initials on a #f5f5f5 disc in #404040 (not the crimson wash, which the owner found pink), the name (14px/600) and the role (12.5px muted), and one 36px hairline Sign out button. Settings is not repeated here.
-- **Collapsed (68px):** the seal, every row's icon (group pages show theirs), the initials and Sign out; labels show as a tooltip.
-- **Phone:** the same rail in a 312px drawer with a white close button on the letterhead block.
+Built on **shadcn/ui's Sidebar** as nested sidebars (`src/layouts/app-sidebar.tsx`, `src/components/ui/sidebar.tsx`), from the owner's reference of an icon rail beside a module panel (18 Sep 2026, comp `.impeccable/comps/admin-sidebar-v2.html`, "Dark" rail chosen over a crimson one). It replaced the earlier white rail with a crimson letterhead block and the 6px crimson edge across the window, both removed.
+- **Rail:** 68px, ink (#171717). The seal on a 44px white disc (goes to the Dashboard), a short 15% white rule, then 44px tiles at 10px corners for the system places: Dashboard, Reports, Audit Trail, Settings. Tiles are 8% white with 80% white icons, 16% white on hover; the current place is a white tile with a crimson icon and a soft shadow. At the foot: the initials on a 40px 15% white disc and a Sign out tile. Every rail control has a tooltip to its right on a desktop.
+- **Panel:** 264px, white, ruled right with a hairline. Its 56px header (level with the top bar) carries the office name in Spectral 13px uppercase at 0.1em and the municipality at 12px muted, the reference's spaced serif caps. Below, the working modules in the order the work happens: Procurement (Purchase Requests, Purchase Orders), Supply (Inventory, Requisition & Issue Slip), Facility Reservation, Violation Management, Utilities (Energy, Water, Fuel), Records Management (Disposition Schedule, Inventory & Appraisal, Authority to Dispose).
+- **Rows:** 40px, 14px, 18px icons, 6px corners; idle #525252, hover ink on #f5f5f5. A single page that is current is crimson text at 600 with no fill (the owner rejected a pink wash and, later, a solid crimson row for this design). A group heading holding the current page is ink at 600; its chevron turns.
+- **Group pages:** in a #f6f7f8 card (10px corners) indented under the heading, 36px rows with a 6px dot, the label and a count. The current page there is a white row with a hairline shadow, crimson text at 600 and a crimson dot. Groups open and close with shadcn Collapsible (200ms height), are remembered per browser, start with Procurement and Supply open, and open by themselves for the page on screen.
+- **Counts:** ink pills (12px/600 white); on the current page the pill turns crimson.
+- **Collapsed:** the panel folds away and the rail stays (68px), toggled from the top bar's sidebar button or Cmd/Ctrl+B; remembered per browser.
+- **Phone:** rail and panel together in a shadcn sheet (`min(20.75rem, 88vw)`), without tooltips; choosing a page closes it.
+- **Scope:** the wrapper inside the Sidebar carries `data-municipal`, so the sheet on `<body>` keeps the crimson and corners.
 
 ### Admin Top Bar
 Owner decisions, 18 Sep 2026: the search that never searched is removed until a real one is built after the modules (each list keeps its own search), and the office label and account menu are removed because the rail already carries them.
-- **Bar:** 56px, white, a hairline under it, level with the rail's letterhead block; its top 6px sit under the crimson edge. Municipal scope, so 6px corners on its controls and the crimson focus ring.
+- **Bar:** 56px, white, a hairline under it, level with the sidebar panel's header. Municipal scope, so 6px corners on its controls and the crimson focus ring.
 - **Left:** a 36px sidebar button (collapses the rail on a desktop, opens the drawer on a phone), then the breadcrumb.
 - **Breadcrumb:** starts where the sidebar does: the group (Procurement, Supply, Utilities, Records Management; plain text, groups are not pages), the page (a link when you are deeper), then the record or "New …". 14px; ancestors muted, the current page ink at 600. On a phone only the last two show, and an ancestor truncates before the current page does.
 - **Right, in order** (owner's choice, 18 Sep 2026, after the slimmed bar read as empty; comp `.impeccable/comps/admin-topbar.html`):
@@ -405,7 +404,7 @@ The admin's sign-in page. The owner asked for it to look "a little different fro
 ### Don't:
 - **Don't** add a dark mode, a theme switcher or an alternate portal palette. The portal is light mode only.
 - **Don't** edit the shared filing wizards (Purchase Request, Requisition and Issue Slip, Reservation) to change how they look in the portal.
-- **Don't** apply portal tokens globally. In the admin, apply them (through `data-municipal`) only to the parts that have been redesigned: the sign-in page, the sidebar, the top bar and the top edge so far.
+- **Don't** apply portal tokens globally. In the admin, apply them (through `data-municipal`) only to the parts that have been redesigned: the sign-in page, the sidebar, the top bar and the dashboard so far.
 - **Don't** use crimson as a bright field, a card fill or a text background.
 - **Don't** add shadows to cards, buttons or bands.
 - **Don't** set anything but the office name in Spectral, and don't use a serif display headline.
