@@ -27,12 +27,36 @@ typography:
     fontWeight: 600
     lineHeight: 1.25
     letterSpacing: "-0.01em"
+  display-compact:
+    fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "26px"
+    fontWeight: 600
+    lineHeight: 1.25
+    letterSpacing: "-0.01em"
   headline:
     fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif"
     fontSize: "28px"
     fontWeight: 600
     lineHeight: 1.25
     letterSpacing: "-0.01em"
+  headline-compact:
+    fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "24px"
+    fontWeight: 600
+    lineHeight: 1.25
+    letterSpacing: "-0.01em"
+  reference:
+    fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "18px"
+    fontWeight: 600
+    lineHeight: 1.25
+    letterSpacing: "0.025em"
+  letterhead-line:
+    fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "11.5px"
+    fontWeight: 500
+    lineHeight: 1.25
+    letterSpacing: "0.1em"
   letterhead:
     fontFamily: "Spectral, ui-serif, Georgia, serif"
     fontSize: "20px"
