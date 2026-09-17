@@ -220,7 +220,7 @@ export function PortalHome() {
       </section>
 
       <div className="-mt-9 flex flex-1 flex-col sm:-mt-[5.5rem]">
-        <div className="mx-auto w-full max-w-[1200px] px-5 pb-10 md:px-8">
+        <div className="mx-auto w-full max-w-[1200px] px-5 pb-8 sm:pb-10 md:px-8">
           {/* Each card is its own list item; `display: contents` would have
               flattened the grid but also dropped the list semantics in Safari. */}
           <ul className="grid list-none gap-2.5 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">

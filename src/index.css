@@ -339,6 +339,17 @@
   --accent-text: #7e1624;
 }
 
+/*
+ * No elastic bounce in the portal. Its pages mostly fit one screen, yet a
+ * trackpad or a phone still dragged the whole frame, government strip and
+ * all, and showed white above it. `html` carries data-portal only while the
+ * portal is mounted, so the admin keeps the browser's default.
+ */
+html[data-portal],
+html[data-portal] body {
+  overscroll-behavior: none;
+}
+
 
 
 
