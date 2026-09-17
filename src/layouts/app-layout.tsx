@@ -23,6 +23,7 @@ import {
   Settings,
   ShieldAlert,
   ShoppingCart,
+  Warehouse,
   Zap,
 } from "lucide-react";
 
@@ -71,15 +72,15 @@ interface ModuleNavItem {
   countAsDot?: boolean;
 }
 
-// Single top-level modules (unchanged — remain plain nav items).
+/*
+ * The sidebar follows the office's work, in the order it happens (owner's
+ * choice, 17 Sep 2026): buy (Procurement: PR, then PO), hold and issue
+ * (Supply: Inventory, then RIS), the office's other services, the monthly
+ * monitoring and records, then reports. System pages sit below the divider.
+ */
+
+// Single top-level modules.
 const dashboardItem: ModuleNavItem = { icon: LayoutDashboard, label: "Dashboard", to: "/" };
-const inventoryItem: ModuleNavItem = {
-  icon: Package,
-  label: "Inventory",
-  to: "/inventory",
-  countKey: "stockAlerts",
-  badgeColor: "orange",
-};
 const reservationItem: ModuleNavItem = {
   icon: CalendarDays,
   label: "Facility Reservation",
@@ -94,7 +95,7 @@ const violationItem: ModuleNavItem = {
 };
 const reportsItem: ModuleNavItem = { icon: BarChart3, label: "Reports", to: "/reports" };
 
-// The two collapsible groups. Children keep their existing icons/badges/dots.
+// Collapsible groups. Children keep their existing icons/badges/dots.
 const procurementChildren: ModuleNavItem[] = [
   {
     icon: FileText,
@@ -109,6 +110,17 @@ const procurementChildren: ModuleNavItem[] = [
     to: "/purchase-orders",
     countKey: "pendingPOs",
     countAsDot: true,
+  },
+];
+// An RIS draws items out of stock, so it sits with Inventory rather than with
+// the purchasing documents.
+const supplyChildren: ModuleNavItem[] = [
+  {
+    icon: Package,
+    label: "Inventory",
+    to: "/inventory",
+    countKey: "stockAlerts",
+    badgeColor: "orange",
   },
   { icon: ClipboardList, label: "Requisition and Issue Slip", to: "/ris" },
 ];
@@ -127,7 +139,7 @@ const recordsChildren: ModuleNavItem[] = [
 
 /* ---- Collapsible group state (persisted; default expanded) ---- */
 
-type GroupKey = "procurement" | "utilities" | "records";
+type GroupKey = "procurement" | "supply" | "utilities" | "records";
 const GROUPS_KEY = "gso-prims.sidebar-groups";
 const SIDEBAR_COLLAPSED_KEY = "gso-prims.sidebar-collapsed";
 
@@ -141,7 +153,7 @@ function readSidebarCollapsed(): boolean {
 }
 
 function readGroups(): Record<GroupKey, boolean> {
-  const fallback = { procurement: true, utilities: true, records: true };
+  const fallback = { procurement: true, supply: true, utilities: true, records: true };
   try {
     const raw = localStorage.getItem(GROUPS_KEY);
     return raw ? { ...fallback, ...(JSON.parse(raw) as Partial<Record<GroupKey, boolean>>) } : fallback;
@@ -294,6 +306,7 @@ function AppSidebar({
     );
   };
   const procurementActive = procurementChildren.some((c) => isActive(pathname, c.to));
+  const supplyActive = supplyChildren.some((c) => isActive(pathname, c.to));
   const utilitiesActive = utilitiesChildren.some((c) => isActive(pathname, c.to));
   const recordsActive = recordsChildren.some((c) => isActive(pathname, c.to));
 
@@ -317,7 +330,15 @@ function AppSidebar({
           >
             {procurementChildren.map(renderItem)}
           </CollapsibleNavGroup>
-          {renderItem(inventoryItem)}
+          <CollapsibleNavGroup
+            icon={Warehouse}
+            label="Supply"
+            active={supplyActive}
+            expanded={expanded.supply}
+            onToggle={() => toggle("supply")}
+          >
+            {supplyChildren.map(renderItem)}
+          </CollapsibleNavGroup>
           {renderItem(reservationItem)}
           {renderItem(violationItem)}
           <CollapsibleNavGroup
