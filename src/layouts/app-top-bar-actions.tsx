@@ -85,6 +85,7 @@ const REVIEW_ROWS: {
 }[] = [
   { key: "pendingPRs", label: "Purchase requests in review", to: "/purchase-requests", icon: FileText },
   { key: "pendingPOs", label: "Purchase orders to approve", to: "/purchase-orders", icon: ShoppingCart },
+  { key: "pendingRIS", label: "Requisition slips to approve", to: "/ris", icon: ClipboardList },
   { key: "pendingReservations", label: "Reservations to confirm", to: "/reservations", icon: CalendarDays },
   { key: "stockAlerts", label: "Items low or out of stock", to: "/inventory", icon: Package },
 ];

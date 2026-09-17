@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en" data-corners="soft">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Admin dashboard v2 · General Services Office (comp)</title>
+<!--
+THESIS: A current, product-grade admin dashboard for a municipal office: figures that move (trend, sparkline, a six-month chart), a queue you can work from, today's schedule as a timeline, and supplies that need reordering, all in the municipal palette.
+WHY V2: the owner approved v1's content but wants the final output to feel modern and up to date ("modern kahit na government system admin web app"). v1 read as flat and dated: hairline boxes, no data graphics, identical tiles.
+OWN-WORLD: crimson #7E1624 for the office's own figures (sparklines, the current month's bar), ink for counts, neutral greys for structure, red only for something wrong. Inter with tabular figures; Spectral stays on the letterhead only.
+CORNERS: toggle between the shipped 4px and softer 10px cards / 6px controls, with a very soft shadow. Choosing soft would carry the 6px controls into the sidebar and top bar too.
+DATA: all figures are sample data for the comp. The build derives every one from the lists the dashboard already loads.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Spectral:wght@500&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<style type="text/tailwindcss">
+  @theme {
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --font-serif: "Spectral", ui-serif, Georgia, serif;
+  }
+</style>
+<style>
+  :root { --identity: #7e1624; --ring: #b0415a; --r-card: 10px; --r-ctl: 6px; --card-shadow: 0 1px 2px rgb(23 23 23 / 0.04), 0 1px 1px rgb(23 23 23 / 0.02); }
+  html[data-corners="square"] { --r-card: 4px; --r-ctl: 4px; --card-shadow: none; }
+  html, body { overscroll-behavior: none; }
+  body { font-feature-settings: "cv11", "ss01"; }
+  svg.lucide { width: 18px; height: 18px; stroke-width: 1.75; flex-shrink: 0; }
+  svg.lucide.s16 { width: 16px; height: 16px; }
+  svg.lucide.s14 { width: 14px; height: 14px; }
+  .card { background: #fff; border: 1px solid #e5e5e5; border-radius: var(--r-card); box-shadow: var(--card-shadow); }
+  .ctl { border-radius: var(--r-ctl); }
+  .item { color: #525252; border-radius: var(--r-ctl); }
+  .item:hover { background: #f5f5f5; color: #171717; }
+  .item[aria-current="page"] { background: var(--identity); color: #fff; font-weight: 600; }
+  .num { font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  .row { transition: background-color 150ms; }
+  .row:hover { background: #fafafa; }
+  .seg button[aria-pressed="true"] { background: #fff; color: #171717; font-weight: 600; box-shadow: 0 1px 2px rgb(23 23 23 / 0.08), 0 0 0 1px #e5e5e5; }
+  .bar { transition: opacity 150ms; }
+  .chart:hover .bar { opacity: 0.55; }
+  .chart .bar:hover { opacity: 1; }
+  @media (prefers-reduced-motion: no-preference) {
+    .enter { opacity: 0; transform: translateY(8px); animation: enter 400ms cubic-bezier(0.23,1,0.32,1) forwards; }
+    .rise { transform-origin: bottom; transform: scaleY(0.2); animation: rise 600ms cubic-bezier(0.23,1,0.32,1) forwards; }
+  }
+  @keyframes enter { to { opacity: 1; transform: none; } }
+  @keyframes rise { to { transform: scaleY(1); } }
+  .comp-switch button[aria-pressed="true"] { background: #171717; color: #fff; }
+</style>
+</head>
+<body class="flex h-[100dvh] flex-col overflow-hidden bg-[#f6f7f8] font-sans text-neutral-900 antialiased">
+  <div class="fixed inset-x-0 top-0 z-40 h-1.5 bg-[var(--identity)]"></div>
+
+  <div class="flex min-h-0 flex-1">
+    <aside class="flex w-[272px] shrink-0 flex-col border-r border-neutral-200 bg-white">
+      <div class="flex h-14 shrink-0 items-center gap-2.5 bg-[var(--identity)] px-4 pt-1.5 text-white">
+        <span class="grid h-9 w-9 place-items-center rounded-full bg-white"><img src="../../public/logo/alaminos-seal.png" alt="" class="h-8 w-8" /></span>
+        <span class="flex min-w-0 flex-col"><span class="font-serif text-[17px] font-medium leading-tight">General Services Office</span><span class="text-[12px] text-white/75">Municipality of Alaminos, Laguna</span></span>
+      </div>
+      <nav class="flex flex-1 flex-col gap-0.5 px-3 pt-3 text-[14px]">
+        <a class="item flex h-9 items-center gap-3 px-2.5" aria-current="page"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+        <a class="item flex h-9 items-center gap-3 px-2.5"><i data-lucide="files"></i><span class="flex-1">Procurement</span><i data-lucide="chevron-down" class="s16 text-neutral-400"></i></a>
+        <div class="ml-[19px] flex flex-col gap-0.5 border-l border-neutral-200 pl-2">
+          <a class="item flex h-9 items-center justify-between px-2.5">Purchase Requests<span class="rounded-full bg-neutral-900 px-1.5 text-[12px] font-semibold leading-5 text-white">4</span></a>
+          <a class="item flex h-9 items-center justify-between px-2.5">Purchase Orders<span class="h-2 w-2 rounded-full bg-neutral-900"></span></a>
+        </div>
+        <a class="item flex h-9 items-center gap-3 px-2.5"><i data-lucide="warehouse"></i><span class="flex-1">Supply</span><i data-lucide="chevron-down" class="s16 text-neutral-400"></i></a>
+        <div class="ml-[19px] flex flex-col gap-0.5 border-l border-neutral-200 pl-2">
+          <a class="item flex h-9 items-center justify-between px-2.5">Inventory<span class="rounded-full bg-neutral-900 px-1.5 text-[12px] font-semibold leading-5 text-white">5</span></a>
+          <a class="item flex h-9 items-center px-2.5">Requisition &amp; Issue Slip</a>
+        </div>
+        <a class="item flex h-9 items-center justify-between px-2.5"><span class="flex items-center gap-3"><i data-lucide="calendar-days"></i>Facility Reservation</span><span class="rounded-full bg-neutral-900 px-1.5 text-[12px] font-semibold leading-5 text-white">2</span></a>
+        <a class="item flex h-9 items-center gap-3 px-2.5"><i data-lucide="shield-alert"></i>Violation Management</a>
+        <a class="item flex h-9 items-center gap-3 px-2.5"><i data-lucide="gauge"></i><span class="flex-1">Utilities</span><i data-lucide="chevron-right" class="s16 text-neutral-400"></i></a>
+        <a class="item flex h-9 items-center gap-3 px-2.5"><i data-lucide="archive"></i><span class="flex-1">Records Management</span><i data-lucide="chevron-right" class="s16 text-neutral-400"></i></a>
+        <a class="item flex h-9 items-center gap-3 px-2.5"><i data-lucide="bar-chart-3"></i>Reports</a>
+      </nav>
+    </aside>
+
+    <div class="flex min-w-0 flex-1 flex-col">
+      <header class="flex h-14 shrink-0 items-center gap-3 border-b border-neutral-200 bg-white px-6 pt-1.5">
+        <span class="grid h-9 w-9 place-items-center text-neutral-600"><i data-lucide="panel-left"></i></span>
+        <span class="min-w-0 flex-1 text-[14px] font-semibold">Dashboard</span>
+        <span class="mr-2 hidden text-[14px] text-neutral-500 xl:inline">Friday, 18 September 2026</span>
+        <span class="inline-flex h-9 items-center gap-1.5 px-2.5 text-[14px] font-medium text-neutral-600">Staff portal <i data-lucide="arrow-up-right" class="s16"></i></span>
+        <span class="ctl inline-flex h-9 items-center gap-2 border border-neutral-200 px-3 text-[14px] font-medium">For review <span class="rounded-full bg-neutral-900 px-1.5 text-[12px] font-semibold leading-5 text-white">12</span></span>
+        <span class="ctl grid h-9 w-9 place-items-center border border-neutral-200 text-neutral-600"><i data-lucide="bell"></i></span>
+        <span class="ctl inline-flex h-9 items-center gap-1.5 bg-[var(--identity)] pl-3 pr-2.5 text-[14px] font-semibold text-white"><i data-lucide="plus" class="s16"></i>New<i data-lucide="chevron-down" class="s16 opacity-80"></i></span>
+      </header>
+
+      <main class="min-h-0 flex-1 overflow-y-auto overscroll-contain px-8 pb-10 pt-6">
+        <!-- Heading + period -->
+        <section class="enter flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h1 class="text-[26px] font-semibold tracking-[-0.02em]">Good morning, Richard</h1>
+            <p class="mt-1 text-[15px] text-neutral-500"><span class="font-medium text-neutral-900">12 documents</span> are waiting for action · <span class="font-medium text-neutral-900">3 facility bookings</span> today</p>
+          </div>
+          <div class="seg ctl flex bg-neutral-100 p-1 text-[13px] text-neutral-600" role="group" aria-label="Period">
+            <button class="ctl px-3 py-1.5" aria-pressed="false">This week</button>
+            <button class="ctl px-3 py-1.5" aria-pressed="true">This month</button>
+            <button class="ctl px-3 py-1.5" aria-pressed="false">This year</button>
+          </div>
+        </section>
+
+        <!-- KPI cards with trend and sparkline -->
+        <section class="mt-5 grid grid-cols-4 gap-4" aria-label="This month">
+          <!-- template filled by script -->
+        </section>
+
+        <div class="mt-4 grid grid-cols-[minmax(0,1fr)_360px] gap-4">
+          <!-- Six-month chart -->
+          <section class="card enter p-5" style="animation-delay:200ms">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <h2 class="text-[15px] font-semibold">Amount requested</h2>
+                <p class="mt-0.5 text-[13px] text-neutral-500">Purchase requests filed, last 6 months</p>
+              </div>
+              <div class="text-right">
+                <p class="num text-[24px] font-semibold leading-tight">₱5.82M</p>
+                <p class="text-[13px] text-neutral-500"><span class="font-medium text-neutral-900">↑ 12%</span> vs previous 6 months</p>
+              </div>
+            </div>
+            <div class="chart mt-8 grid h-[180px] grid-cols-6 items-end gap-4 border-b border-neutral-200 px-2" id="bars"></div>
+            <div class="mt-2 grid grid-cols-6 gap-4 px-2 text-center text-[12.5px] text-neutral-500" id="bar-labels"></div>
+          </section>
+
+          <!-- Waiting for action -->
+          <section class="card enter overflow-hidden" style="animation-delay:240ms" aria-labelledby="waiting">
+            <div class="flex items-center justify-between px-5 pb-2 pt-5">
+              <h2 id="waiting" class="text-[15px] font-semibold">Waiting for action</h2>
+              <span class="rounded-full bg-neutral-900 px-2 text-[12px] font-semibold leading-5 text-white">12</span>
+            </div>
+            <ul class="px-2 pb-2" id="queue"></ul>
+          </section>
+        </div>
+
+        <div class="mt-4 grid grid-cols-[minmax(0,1fr)_360px] gap-4">
+          <!-- Recent documents -->
+          <section class="card enter overflow-hidden" style="animation-delay:280ms" aria-labelledby="recent">
+            <div class="flex items-center justify-between gap-3 px-5 pb-3 pt-5">
+              <h2 id="recent" class="text-[15px] font-semibold">Recent documents</h2>
+              <div class="seg ctl flex bg-neutral-100 p-1 text-[13px] text-neutral-600">
+                <button class="ctl px-2.5 py-1" aria-pressed="true">Purchase Requests</button>
+                <button class="ctl px-2.5 py-1" aria-pressed="false">Purchase Orders</button>
+                <button class="ctl px-2.5 py-1" aria-pressed="false">RIS</button>
+              </div>
+            </div>
+            <table class="w-full table-fixed text-left text-[14px]">
+              <colgroup><col class="w-[160px]" /><col /><col class="w-[120px]" /><col class="w-[200px]" /></colgroup>
+              <thead class="border-y border-neutral-200 bg-neutral-50 text-[12.5px] text-neutral-500">
+                <tr><th class="px-5 py-2 font-medium">Number</th><th class="px-2 py-2 font-medium">Purpose</th><th class="px-2 py-2 text-right font-medium">Amount</th><th class="px-5 py-2 font-medium">Status</th></tr>
+              </thead>
+              <tbody class="divide-y divide-neutral-100" id="docs"></tbody>
+            </table>
+            <a href="#" class="flex items-center justify-center gap-1.5 border-t border-neutral-200 py-2.5 text-[13px] font-medium text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900">View all purchase requests <i data-lucide="arrow-right" class="s14"></i></a>
+          </section>
+
+          <!-- Today timeline -->
+          <section class="card enter p-5" style="animation-delay:320ms" aria-labelledby="today">
+            <div class="flex items-baseline justify-between">
+              <h2 id="today" class="text-[15px] font-semibold">Today</h2>
+              <span class="text-[13px] text-neutral-500">Fri, 18 Sep</span>
+            </div>
+            <ol class="relative mt-4 space-y-4 before:absolute before:bottom-2 before:left-[5px] before:top-2 before:w-px before:bg-neutral-200">
+              <li class="relative flex gap-3 pl-6"><span class="absolute left-0 top-1.5 h-[11px] w-[11px] rounded-full border-2 border-white bg-neutral-900 ring-1 ring-neutral-300"></span><div class="min-w-0"><p class="num text-[12.5px] font-medium text-neutral-500">8:00 AM – 12:00 PM</p><p class="truncate text-[14px] font-medium">Session Hall</p><p class="truncate text-[13px] text-neutral-500">SB · Regular session</p></div></li>
+              <li class="relative flex gap-3 pl-6"><span class="absolute left-0 top-1.5 h-[11px] w-[11px] rounded-full border-2 border-white bg-[var(--identity)] ring-1 ring-[var(--identity)]"></span><div class="min-w-0"><p class="num text-[12.5px] font-medium text-[var(--identity)]">1:00 – 5:00 PM · Next</p><p class="truncate text-[14px] font-medium">Audio-Visual Room</p><p class="truncate text-[13px] text-neutral-500">MHO · Health workers orientation</p></div></li>
+              <li class="relative flex gap-3 pl-6"><span class="absolute left-0 top-1.5 h-[11px] w-[11px] rounded-full border-2 border-white bg-white ring-1 ring-neutral-400"></span><div class="min-w-0"><p class="num text-[12.5px] font-medium text-neutral-500">3:00 – 5:00 PM</p><p class="truncate text-[14px] font-medium">Conference Room A</p><p class="truncate text-[13px] text-neutral-500">MBO · Budget hearing · waiting for approval</p></div></li>
+            </ol>
+            <div class="mt-5 border-t border-neutral-200 pt-4">
+              <h3 class="text-[13px] font-medium text-neutral-500">Deliveries due this week</h3>
+              <ul class="mt-2 space-y-2">
+                <li class="ctl flex items-center justify-between gap-3 border border-red-200 bg-red-50/60 px-3 py-2"><span class="min-w-0"><span class="num block text-[14px] font-medium">PO-2026-000031</span><span class="block truncate text-[13px] text-red-900/80">Laguna Grocers Trading</span></span><span class="shrink-0 text-[13px] font-semibold text-red-700">1 day overdue</span></li>
+                <li class="ctl flex items-center justify-between gap-3 border border-neutral-200 px-3 py-2"><span class="min-w-0"><span class="num block text-[14px] font-medium">PO-2026-000033</span><span class="block truncate text-[13px] text-neutral-500">San Pablo Office Supply</span></span><span class="shrink-0 text-[13px] text-neutral-600">Mon, 21 Sep</span></li>
+              </ul>
+            </div>
+          </section>
+        </div>
+
+        <div class="mt-4 grid grid-cols-2 gap-4">
+          <section class="card enter overflow-hidden" style="animation-delay:360ms" aria-labelledby="stock">
+            <div class="flex items-center justify-between px-5 pb-3 pt-5"><h2 id="stock" class="text-[15px] font-semibold">Stock to reorder</h2><a href="#" class="inline-flex items-center gap-1 text-[13px] font-medium text-neutral-600 hover:text-neutral-900">Inventory <i data-lucide="arrow-right" class="s14"></i></a></div>
+            <ul class="divide-y divide-neutral-100 border-t border-neutral-200" id="stock-list"></ul>
+          </section>
+          <section class="card enter overflow-hidden" style="animation-delay:400ms" aria-labelledby="activity">
+            <div class="flex items-center justify-between px-5 pb-3 pt-5"><h2 id="activity" class="text-[15px] font-semibold">Recent activity</h2><a href="#" class="inline-flex items-center gap-1 text-[13px] font-medium text-neutral-600 hover:text-neutral-900">Audit Trail <i data-lucide="arrow-right" class="s14"></i></a></div>
+            <ul class="divide-y divide-neutral-100 border-t border-neutral-200" id="activity-list"></ul>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div class="comp-switch fixed bottom-4 right-4 z-50 flex items-center gap-1 rounded-[6px] border border-neutral-300 bg-white p-1 text-[12.5px] shadow-lg">
+    <span class="px-2 text-neutral-500">Corners</span>
+    <button type="button" data-set="soft" aria-pressed="true" class="rounded-[4px] px-2.5 py-1.5">Soft (10px)</button>
+    <button type="button" data-set="square" aria-pressed="false" class="rounded-[4px] px-2.5 py-1.5">As now (4px)</button>
+  </div>
+
+<script>
+  const kpis = [
+    { label: 'PRs filed', icon: 'file-text', value: '18', delta: '↑ 4', note: 'vs August', spark: [6, 9, 7, 11, 10, 14, 12, 18] },
+    { label: 'Amount requested', icon: 'banknote', value: '₱1.24M', delta: '↑ 12%', note: 'vs August', spark: [0.6, 0.9, 0.8, 1.0, 0.7, 1.1, 1.0, 1.24] },
+    { label: 'RIS issued', icon: 'clipboard-list', value: '9', delta: '↓ 2', note: 'vs August', spark: [8, 11, 10, 12, 9, 11, 11, 9] },
+    { label: 'Facility bookings', icon: 'calendar-days', value: '14', delta: '↑ 3', note: 'vs August', spark: [7, 6, 9, 8, 10, 9, 11, 14] },
+  ];
+  const kpiRoot = document.querySelector('[aria-label="This month"]');
+  kpis.forEach((k, i) => {
+    const w = 120, h = 40, max = Math.max(...k.spark), min = Math.min(...k.spark);
+    const pts = k.spark.map((v, j) => [ (j / (k.spark.length - 1)) * w, h - 4 - ((v - min) / (max - min || 1)) * (h - 8) ]);
+    const line = pts.map((p, j) => (j ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+    const area = line + ` L ${w} ${h} L 0 ${h} Z`;
+    kpiRoot.insertAdjacentHTML('beforeend', `
+      <div class="card enter flex flex-col p-4" style="animation-delay:${60 + i * 40}ms">
+        <div class="flex items-center gap-2 text-[13px] text-neutral-500"><span class="ctl grid h-7 w-7 place-items-center bg-neutral-100 text-neutral-700"><i data-lucide="${k.icon}" class="s14"></i></span>${k.label}</div>
+        <div class="mt-3 flex items-end justify-between gap-2">
+          <div>
+            <p class="num text-[28px] font-semibold leading-none">${k.value}</p>
+            <p class="mt-2 whitespace-nowrap text-[12.5px] text-neutral-500"><span class="font-medium text-neutral-900">${k.delta}</span> ${k.note}</p>
+          </div>
+          <svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" class="h-10 w-full max-w-[120px] min-w-[64px]" aria-hidden="true">
+            <defs><linearGradient id="g${i}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#7e1624" stop-opacity="0.16"/><stop offset="1" stop-color="#7e1624" stop-opacity="0"/></linearGradient></defs>
+            <path d="${area}" fill="url(#g${i})"/>
+            <path d="${line}" fill="none" stroke="#7e1624" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="${pts.at(-1)[0]}" cy="${pts.at(-1)[1]}" r="2.5" fill="#7e1624"/>
+          </svg>
+        </div>
+      </div>`);
+  });
+
+  const months = [['Apr', 0.72], ['May', 1.05], ['Jun', 0.88], ['Jul', 0.96], ['Aug', 0.97], ['Sep', 1.24]];
+  const bars = document.getElementById('bars'), labels = document.getElementById('bar-labels');
+  months.forEach(([m, v], i) => {
+    const pct = (v / 1.3) * 100, current = i === months.length - 1;
+    bars.insertAdjacentHTML('beforeend', `<div class="bar group relative flex h-full flex-col justify-end"><span class="num pointer-events-none absolute left-1/2 -translate-x-1/2 text-[12px] font-medium ${current ? 'text-[var(--identity)]' : 'text-neutral-500'}" style="bottom: calc(${pct}% + 6px)">₱${v.toFixed(2)}M</span><div class="rise w-full" style="height:${pct}%; border-radius: var(--r-ctl) var(--r-ctl) 0 0; background:${current ? '#7e1624' : '#d4d4d4'}; animation-delay:${200 + i * 50}ms"></div></div>`);
+    labels.insertAdjacentHTML('beforeend', `<span class="${current ? 'font-semibold text-neutral-900' : ''}">${m}</span>`);
+  });
+
+  const queue = [
+    ['file-text', 'Purchase requests', 'In review · oldest 3 days', 4],
+    ['shopping-cart', 'Purchase orders', 'To approve · oldest today', 1],
+    ['calendar-days', 'Reservations', 'To confirm · oldest 1 day', 2],
+    ['package', 'Stock alerts', '2 out of stock · 3 low', 5, true],
+    ['clipboard-list', 'Requisition slips', 'None waiting', 0],
+  ];
+  const q = document.getElementById('queue');
+  queue.forEach(([icon, label, meta, n, alert]) => {
+    q.insertAdjacentHTML('beforeend', `<li><a href="#" class="row ctl flex items-center gap-3 px-3 py-2.5">
+      <span class="ctl grid h-9 w-9 shrink-0 place-items-center ${n ? 'bg-neutral-100 text-neutral-800' : 'bg-neutral-50 text-neutral-400'}"><i data-lucide="${icon}" class="s16"></i></span>
+      <span class="min-w-0 flex-1"><span class="block text-[14px] font-medium ${n ? '' : 'text-neutral-500'}">${label}</span><span class="block truncate text-[13px] ${alert ? 'text-red-700' : 'text-neutral-500'}">${meta}</span></span>
+      <span class="num text-[20px] font-semibold ${n ? '' : 'text-neutral-300'}">${n}</span>
+      <i data-lucide="chevron-right" class="s16 text-neutral-300"></i></a></li>`);
+  });
+
+  const docs = [
+    ['PR-2026-000231', 'Stock of Food Supplies', 'DSWD · Richard Nasol · 6 hours ago', '₱30,000.00', 'Submitted', 'bg-blue-50 text-blue-700', 'bg-blue-600'],
+    ['PR-2026-000230', 'Medical supplies for barangay health stations', 'MHO · Dr. Ana Lopez · 1 day ago', '₱148,500.00', 'Budget Review', 'bg-amber-50 text-amber-700', 'bg-amber-500'],
+    ['PR-2026-000229', 'Road maintenance materials, Brgy. San Roque', 'MEO · Engr. Jerome Cruz · 3 days ago', '₱412,000.00', 'Approved', 'bg-emerald-50 text-emerald-700', 'bg-emerald-600'],
+    ['PR-2026-000228', 'Janitorial supplies, 4th quarter', 'GSO · Marites Villanueva · 3 days ago', '₱22,750.00', 'Department Head Review', 'bg-violet-50 text-violet-700', 'bg-violet-600'],
+  ];
+  const tb = document.getElementById('docs');
+  docs.forEach(([n, p, meta, amt, st, pill, dot]) => {
+    tb.insertAdjacentHTML('beforeend', `<tr class="row cursor-pointer"><td class="num whitespace-nowrap px-5 py-3 align-top font-medium">${n}</td><td class="max-w-0 px-2 py-3"><span class="block truncate">${p}</span><span class="block truncate text-[13px] text-neutral-500">${meta}</span></td><td class="num whitespace-nowrap px-2 py-3 text-right align-top">${amt}</td><td class="whitespace-nowrap px-5 py-3 align-top"><span class="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[12.5px] font-medium ${pill}"><span class="h-1.5 w-1.5 rounded-full ${dot}"></span>${st}</span></td></tr>`);
+  });
+
+  const stock = [['Bond paper, A4', 'ream', 0, 20], ['Printer ink, black', 'bottle', 0, 10], ['Alcohol, 500 mL', 'bottle', 4, 30], ['Garbage bags, XL', 'pack', 12, 25]];
+  const sl = document.getElementById('stock-list');
+  stock.forEach(([name, unit, on, re]) => {
+    const pct = Math.min(100, (on / re) * 100), out = on === 0, crit = !out && on / re < 0.2;
+    sl.insertAdjacentHTML('beforeend', `<li class="row flex items-center gap-4 px-5 py-3">
+      <span class="min-w-0 flex-1"><span class="block truncate text-[14px] font-medium">${name}</span><span class="num block text-[13px] text-neutral-500">${on} of ${re} ${unit}s · reorder point</span></span>
+      <span class="h-1.5 w-28 overflow-hidden rounded-full bg-neutral-100"><span class="block h-full rounded-full ${out ? '' : crit ? 'bg-neutral-900' : 'bg-neutral-500'}" style="width:${pct}%"></span></span>
+      <span class="w-[92px] text-right text-[13px] font-medium ${out ? 'text-red-700' : crit ? 'text-neutral-900' : 'text-neutral-500'}">${out ? 'Out of stock' : crit ? 'Critical' : 'Low'}</span></li>`);
+  });
+
+  const acts = [['RN', 'Richard Nasol', 'created', 'PR-2026-000231', '6h'], ['MV', 'Marites Villanueva', 'released', 'RIS-2026-000045', '1d'], ['PM', 'Engr. Paolo Madrigal', 'approved', 'PR-2026-000229', '3d'], ['DR', 'Mr. Danilo Reyes', 'received stock for', 'Alcohol, 500 mL', '4d']];
+  const al = document.getElementById('activity-list');
+  acts.forEach(([ini, who, verb, what, when]) => {
+    al.insertAdjacentHTML('beforeend', `<li class="row flex items-center gap-3 px-5 py-3"><span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-neutral-100 text-[12px] font-semibold text-neutral-700">${ini}</span><span class="min-w-0 flex-1 truncate text-[14px]"><span class="font-medium">${who}</span> <span class="text-neutral-500">${verb}</span> <span class="num font-medium">${what}</span></span><span class="num shrink-0 text-[13px] text-neutral-400">${when}</span></li>`);
+  });
+
+  document.querySelectorAll('.seg').forEach((seg) => seg.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => seg.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b))))));
+  document.querySelectorAll('[data-set]').forEach((b) => b.addEventListener('click', () => {
+    document.documentElement.dataset.corners = b.dataset.set;
+    document.querySelectorAll('[data-set]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  }));
+  document.querySelectorAll('a[href="#"]').forEach((l) => l.addEventListener('click', (e) => e.preventDefault()));
+  lucide.createIcons();
+</script>
+</body>
+</html>

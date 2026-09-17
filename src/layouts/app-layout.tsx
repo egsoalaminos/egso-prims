@@ -126,7 +126,7 @@ const supplyChildren: ModuleNavItem[] = [
     countKey: "stockAlerts",
     badgeColor: "orange",
   },
-  { icon: ClipboardList, label: "Requisition & Issue Slip", to: "/ris" },
+  { icon: ClipboardList, label: "Requisition & Issue Slip", to: "/ris", countKey: "pendingRIS" },
 ];
 const utilitiesChildren: ModuleNavItem[] = [
   { icon: Zap, label: "Energy", to: "/energy" },

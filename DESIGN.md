@@ -100,6 +100,9 @@ typography:
     lineHeight: 1.5
 rounded:
   step: "4px"
+  admin-control: "6px"
+  admin-card: "10px"
+  admin-card-large: "12px"
   circle: "9999px"
 spacing:
   gutter: "20px"
@@ -283,7 +286,7 @@ The portal is flat. No surface casts a shadow: the card elevation token resolves
 
 ## Shapes
 
-Every corner is 4px. The `[data-portal]` scope collapses all seven radius steps (`sm` through `4xl`) to 4px, so shared components that ask for `rounded-lg` or `rounded-xl` get 4px inside the portal. That covers cards, buttons, inputs, icon tiles, nav links, the receipt and the focus-ring outline. The circles are the 44px crimson go-button on a phone filing row, the only link on that row, the numbered how-it-works steps, and the 28px markers on a tracked request's progress list. Borders are always 1px. Focus is a 2px ring with a 2px offset.
+Every corner in the portal and on the sign-in page is 4px. The admin is softer (owner's choice, 18 Sep 2026, with the modern dashboard): inside `[data-municipal]` the `md` step is 6px (rows, buttons, menus, segmented controls) and `lg`/`xl` are 10px (cards), with `2xl` and up at 12px; `sm` stays 4px. Admin cards also carry a whisper of shadow (`0 1px 2px rgb(23 23 23 / 0.04), 0 1px 1px rgb(23 23 23 / 0.02)`) on top of the hairline. The `[data-portal]` scope collapses all seven radius steps (`sm` through `4xl`) to 4px, so shared components that ask for `rounded-lg` or `rounded-xl` get 4px inside the portal. That covers cards, buttons, inputs, icon tiles, nav links, the receipt and the focus-ring outline. The circles are the 44px crimson go-button on a phone filing row, the only link on that row, the numbered how-it-works steps, and the 28px markers on a tracked request's progress list. Borders are always 1px. Focus is a 2px ring with a 2px offset.
 
 ## Components
 
@@ -338,7 +341,7 @@ The admin's rail, owner-approved as option "C" (comp `.impeccable/comps/admin-si
 - **Frame:** a 6px crimson edge across the whole window (the sign-in sheet's edge, carried in). The rail is 272px, white, ruled right with a hairline; the top bar beside it is 56px.
 - **Letterhead block:** the top 56px of the rail is crimson, level with the top bar, so edge and block read as one corner. The seal on a 36px white disc, "General Services Office" in Spectral 17px white, "Municipality of Alaminos, Laguna" at 12px, 75% white. 272px is the width that fits both lines without truncating.
 - **Order:** the work in order (owner's choice): Dashboard; Procurement (Purchase Requests, Purchase Orders); Supply (Inventory, Requisition & Issue Slip); Facility Reservation; Violation Management; Utilities (Energy, Water, Fuel); Records Management (Disposition Schedule, Inventory & Appraisal, Authority to Dispose); Reports; a hairline; Audit Trail; Settings.
-- **Rows:** 36px, 14px Inter, 18px icons, 4px corners. Idle #525252, hover ink on #f5f5f5. The current page is a solid crimson row with white text at 600 (the owner's choice over crimson text on Crimson Wash, which read as pink; comp `.impeccable/comps/admin-sidebar-active.html`); a count on that row turns into a white pill with crimson figures. A group heading holding the current page is ink at 600 with no fill.
+- **Rows:** 36px, 14px Inter, 18px icons, 6px corners. Idle #525252, hover ink on #f5f5f5. The current page is a solid crimson row with white text at 600 (the owner's choice over crimson text on Crimson Wash, which read as pink; comp `.impeccable/comps/admin-sidebar-active.html`); a count on that row turns into a white pill with crimson figures. A group heading holding the current page is ink at 600 with no fill.
 - **Groups:** a heading with a chevron; its pages hang off a hairline guide under the heading's icon, without icons of their own and named without the group's words, so none truncates (page titles and breadcrumbs keep the full names). Procurement and Supply start open, Utilities and Records Management closed (monthly work, and the rail then fits 768px without scrolling). A group opens by itself when the page on screen is inside it. Open/closed is remembered per browser.
 - **Counts:** ink pills (12px/600 white) or an ink dot: "waiting for you", whatever the module.
 - **Account:** the initials on a #f5f5f5 disc in #404040 (not the crimson wash, which the owner found pink), the name (14px/600) and the role (12.5px muted), and one 36px hairline Sign out button. Settings is not repeated here.
@@ -347,7 +350,7 @@ The admin's rail, owner-approved as option "C" (comp `.impeccable/comps/admin-si
 
 ### Admin Top Bar
 Owner decisions, 18 Sep 2026: the search that never searched is removed until a real one is built after the modules (each list keeps its own search), and the office label and account menu are removed because the rail already carries them.
-- **Bar:** 56px, white, a hairline under it, level with the rail's letterhead block; its top 6px sit under the crimson edge. Municipal scope, so 4px corners and the crimson focus ring.
+- **Bar:** 56px, white, a hairline under it, level with the rail's letterhead block; its top 6px sit under the crimson edge. Municipal scope, so 6px corners on its controls and the crimson focus ring.
 - **Left:** a 36px sidebar button (collapses the rail on a desktop, opens the drawer on a phone), then the breadcrumb.
 - **Breadcrumb:** starts where the sidebar does: the group (Procurement, Supply, Utilities, Records Management; plain text, groups are not pages), the page (a link when you are deeper), then the record or "New …". 14px; ancestors muted, the current page ink at 600. On a phone only the last two show, and an ancestor truncates before the current page does.
 - **Right, in order** (owner's choice, 18 Sep 2026, after the slimmed bar read as empty; comp `.impeccable/comps/admin-topbar.html`):
@@ -357,6 +360,19 @@ Owner decisions, 18 Sep 2026: the search that never searched is removed until a 
   - **Notifications**, a 36px hairline button; the unread count is an ink pill (12px/600 white, ringed in white), like the rail's counts. Red is kept for things that went wrong.
   - **New**, a 36px crimson button (crimson starts a document) that opens every document the system can start, grouped and ordered like the sidebar. On a phone it is a 36px crimson "+" square.
 - **Menus:** white, 4px corners, a hairline border and a soft 8px/24px shadow (they float); 36px rows, 14px text, 16px grey icons, 13px muted group labels in sentence case. They render on `<body>` and carry `data-municipal` themselves.
+
+### Admin Dashboard
+Owner-approved "v2 Modern", 18 Sep 2026 (comp `.impeccable/comps/admin-dashboard-v2.html`, after a flatter v1 in `admin-dashboard.html` that the owner found not modern enough). Every figure is derived from the live lists in `src/features/dashboard/summary.ts`.
+- **Heading:** "Good morning/afternoon/evening, {name}" at 26px/600, then one sentence at 15px: how many documents wait for action and how many facility bookings are on today. A segmented control on the right picks the period: This week, This month (default), This year.
+- **Figures (4 cards):** PRs filed, amount requested, RIS issued, facility bookings, for the period. Each card: a 28px grey icon tile and 13px label, the figure at 28px/600 tabular, the change against the previous period (an arrow and "4" or "12%", ink, then "vs August" muted; no green or red, since up is not always good), and a crimson sparkline of the last eight periods with a soft crimson fill. Two columns on a phone (sparkline hidden), four from xl.
+- **Amount requested chart:** the last six periods as bars, neutral #d4d4d4 with the current period crimson, each labelled with its compact peso amount; the six-period total at 24px with its change against the six before. Hovering a bar dims the others.
+- **Waiting for action:** a list card beside the chart (360px from xl): purchase requests in review, purchase orders to approve, requisition slips to approve, reservations to confirm, stock alerts. Each row: a 36px icon tile, the label, how long the oldest has waited in calendar days ("oldest today", "oldest 3 days") or, for stock, "2 out of stock · 3 low" in red when anything is out, the count at 20px, and a chevron; the whole row opens the list. An empty queue greys out and says "None waiting".
+- **Recent documents:** the five newest purchase requests, purchase orders or requisition slips (segmented PR / PO / RIS, full names from sm): number with its status badge under it, purpose with office, requester or supplier and age, and the amount (or item count for an RIS). A row opens the request (PR) or the list.
+- **Today:** the day's facility bookings as a timeline (past grey, now or next crimson with "· Now" / "· Next", later hollow; pending ones say so), then deliveries due this week: purchase orders approved or with the supplier whose expected delivery is within seven days, a late one on a red-50 row with "1 day overdue" in red.
+- **Stock to reorder:** only items at or below their reorder point, out of stock first: name, "4 of 30 bottles · reorder point", a thin meter, and the state (Out of stock in red, Critical in ink, Low muted).
+- **Recent activity:** the latest five audit entries as sentences ("Marites Villanueva released RIS-2026-000045") with neutral initials discs and a relative time.
+- **Removed from the old dashboard:** the date chip and "New Purchase Request" button (the top bar carries both), the pastel "Operational Summary" carousel, the "System Notifications" panel (the bell carries it), and the first-five-items inventory bars.
+- **Status colours:** the recent-documents badges still use the admin's older status palette; it is decided with the Purchase Request module.
 
 ### Tracked Request
 The Track page's result, one white card under the reference field. A request that is not found is a field error on that field (red border, 12.5px message, focus returned), not a separate card.

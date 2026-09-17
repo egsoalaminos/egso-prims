@@ -347,6 +347,21 @@
 }
 
 /*
+ * The admin's shape (owner's choice, 18 Sep 2026, with the modern dashboard):
+ * softer than the portal's 4px. Controls (rows, buttons, menus) 6px, cards
+ * 10px with a hairline and a whisper of shadow. Placed after the shared block
+ * above, so these win for `data-municipal` while the portal keeps 4px.
+ */
+[data-municipal] {
+  --radius-step-md: 6px;
+  --radius-step-lg: 10px;
+  --radius-step-xl: 10px;
+  --radius-step-2xl: 12px;
+  --radius-step-3xl: 12px;
+  --radius-step-4xl: 12px;
+}
+
+/*
  * No elastic bounce anywhere in the system. The portal's pages mostly fit one
  * screen, and the admin's frame is exactly one screen tall with its pages
  * scrolling inside it, yet a trackpad or a phone still dragged the whole frame
