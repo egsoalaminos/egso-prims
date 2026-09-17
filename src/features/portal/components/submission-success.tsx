@@ -1,7 +1,67 @@
-import { useNavigate } from "react-router-dom";
-import { motion } from "motion/react";
+import * as React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { motion, useReducedMotion } from "motion/react";
+import { ArrowLeft } from "lucide-react";
 
-import { Button, Caption, ContainerCard, SuccessState } from "@/components";
+import { Button, PageTransition, SuccessState } from "@/components";
+import { cn } from "@/lib/utils";
+
+const EASE_OUT = [0.23, 1, 0.32, 1] as const;
+
+/**
+ * The frame every inner portal page shares: the crimson band from the home
+ * page, carrying the page's title and a way back to all services, then the
+ * page's own content on the canvas below.
+ *
+ * The band is full width and its text shares the content's measure, so the
+ * title and the form beneath it start on the same left edge.
+ */
+export function PortalPage({
+  title,
+  description,
+  width = "wide",
+  children,
+}: {
+  title: string;
+  description?: string;
+  /**
+   * `form` matches the filing wizards, which cap themselves at 48rem: the
+   * extra 4rem is the container's own side padding, so the title starts on
+   * the wizard's left edge. `narrow` is for a single-column task such as
+   * tracking; `wide` for a page with full-width content, like the calendar.
+   */
+  width?: "wide" | "form" | "narrow";
+  children: React.ReactNode;
+}) {
+  const measure =
+    width === "narrow" ? "max-w-2xl" : width === "form" ? "max-w-[52rem]" : "max-w-[1200px]";
+  return (
+    <div className="flex flex-1 flex-col">
+      <section className="bg-(--accent-solid) text-white">
+        <div className={cn("mx-auto w-full px-5 pb-9 pt-6 md:px-8", measure)}>
+          <Link
+            to="/portal"
+            className="-ml-1 inline-flex items-center gap-1.5 rounded-md px-1 py-0.5 text-[13px] text-white/80 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            All services
+          </Link>
+          <h1 className="mt-3 text-[24px] font-semibold tracking-[-0.01em] text-balance md:text-[28px]">
+            {title}
+          </h1>
+          {description && (
+            <p className="mt-1.5 max-w-2xl text-[15px] leading-relaxed text-pretty text-white/85">
+              {description}
+            </p>
+          )}
+        </div>
+      </section>
+      <PageTransition className={cn("mx-auto w-full px-5 py-8 md:px-8", measure)}>
+        {children}
+      </PageTransition>
+    </div>
+  );
+}
 
 /** Post-submission confirmation with the tracking reference number. */
 export function SubmissionSuccess({
@@ -12,26 +72,25 @@ export function SubmissionSuccess({
   message: string;
 }) {
   const navigate = useNavigate();
+  const reduce = useReducedMotion();
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25, ease: "easeOut" }}
+      initial={reduce ? false : { opacity: 0, transform: "translateY(8px)" }}
+      animate={{ opacity: 1, transform: "translateY(0px)" }}
+      transition={{ duration: 0.3, ease: EASE_OUT }}
     >
-      <ContainerCard className="mx-auto w-full max-w-xl p-2">
+      <div className="mx-auto w-full max-w-xl rounded-md border border-neutral-200 bg-white p-2">
         <SuccessState title="Request submitted" description={message} />
         <div className="px-6 pb-6 text-center">
-          <Caption as="p" className="mb-1.5">
-            Your reference number
-          </Caption>
-          <div className="mx-auto w-fit rounded-lg border border-neutral-200 bg-neutral-50 px-4 py-2 text-[16px] font-semibold tabular-nums tracking-wide text-neutral-900">
+          <p className="mb-1.5 text-[12.5px] text-neutral-500">Your reference number</p>
+          <div className="mx-auto w-fit rounded-md border border-neutral-300 bg-neutral-50 px-5 py-2.5 text-[18px] font-semibold tabular-nums tracking-wide text-neutral-900">
             {reference}
           </div>
-          <p className="mt-2 text-[11.5px] text-neutral-500">
-            Keep this number — you'll need it to track your request.
+          <p className="mt-2 text-[12.5px] text-neutral-500">
+            Keep this number. You will need it to track your request.
           </p>
-          <div className="mt-5 flex items-center justify-center gap-2">
-            <Button onClick={() => navigate(`/portal/track?ref=${reference}`)}>
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
+            <Button onClick={() => navigate(`/portal/track?ref=${encodeURIComponent(reference)}`)}>
               Track this request
             </Button>
             <Button variant="secondary" onClick={() => navigate("/portal")}>
@@ -39,23 +98,7 @@ export function SubmissionSuccess({
             </Button>
           </div>
         </div>
-      </ContainerCard>
+      </div>
     </motion.div>
-  );
-}
-
-/** Standard heading for public form pages. */
-export function PortalPageHeader({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="mb-6 text-center">
-      <h1 className="text-[22px] font-semibold tracking-tight text-neutral-900">{title}</h1>
-      <p className="mx-auto mt-1.5 max-w-lg text-[13px] text-neutral-500">{description}</p>
-    </div>
   );
 }

@@ -10,14 +10,12 @@
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Inter carries the whole application UI, and is the only face the app
-         asks for. Source Serif 4 was loaded here for a portal letterhead that
-         went away with the municipal direction: `--font-serif` no longer
-         exists and nothing in src/ requests a serif, so three weights with an
-         optical-size axis were being fetched render-blocking and never
-         drawn. -->
+    <!-- Inter carries the whole application UI. Spectral is fetched at a
+         single weight for one purpose: the office name in the staff portal's
+         masthead, set as a letterhead would set it. Nothing else draws it, so
+         nothing else should make it heavier than one weight. -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Spectral:wght@500&display=swap"
       rel="stylesheet"
     />
     <title>General Services Office — Purchase Request &amp; Inventory Management System</title>

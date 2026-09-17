@@ -297,6 +297,48 @@
   --accent-text: oklch(0.541 0.211 295.4);
 }
 
+/*
+ * ===========================================================================
+ * THE PORTAL
+ *
+ * The staff portal has its own identity: a deep municipal crimson chosen by
+ * the owner as easy on the eyes, small square-ish corners, and a slightly
+ * cooler ground so white cards read. The admin keeps everything above.
+ *
+ * Scoped, never global — the portal renders the same wizards the admin's
+ * create and edit pages do, and those must not change. `[data-portal]` sits on
+ * the portal layout's root and, while the portal is mounted, on <html> too, so
+ * popovers portalled to <body> inherit it.
+ *
+ * Why these particular names: the theme above is `@theme inline`, so a utility
+ * compiles to the variable it points at — `rounded-lg` becomes
+ * `var(--radius-step-lg)`, `bg-canvas` becomes `var(--canvas)`. Those are the
+ * names redeclared here, and every value is a literal: a `var(...)` would be
+ * resolved where it is written, not where it is used.
+ *
+ * Placed after the accent blocks so it wins the tie on equal specificity.
+ * ===========================================================================
+ */
+[data-portal] {
+  --radius-step-sm: 4px;
+  --radius-step-md: 4px;
+  --radius-step-lg: 4px;
+  --radius-step-xl: 4px;
+  --radius-step-2xl: 4px;
+  --radius-step-3xl: 4px;
+  --radius-step-4xl: 4px;
+
+  --canvas: #f6f7f8;
+
+  --accent-solid: #7e1624;
+  --accent-solid-hover: #66111d;
+  --accent-contrast: #ffffff;
+  /* 5.6:1 against white and 5.2:1 against the canvas: a focus ring you can see. */
+  --accent-ring: #b0415a;
+  --accent-subtle: #f6eced;
+  --accent-text: #7e1624;
+}
+
 
 
 

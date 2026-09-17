@@ -1,13 +1,9 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 
-import { PageTransition } from "@/components";
 import { createRequest, type RISDraftInput } from "@/features/ris/api";
 import { RISWizard } from "@/features/ris/components/ris-form/ris-wizard";
-import {
-  PortalPageHeader,
-  SubmissionSuccess,
-} from "@/features/portal/components/submission-success";
+import { PortalPage, SubmissionSuccess } from "@/features/portal/components/submission-success";
 
 /** Public RIS form — the same enterprise wizard, no login. */
 export function PortalRISPage() {
@@ -24,27 +20,27 @@ export function PortalRISPage() {
   };
 
   return (
-    <PageTransition className="mx-auto max-w-6xl px-5 py-10">
+    // Named as the card on the home page names it, which is the form's own
+    // title: a Requisition and Issue Slip, not a "Request for Issuance Slip".
+    <PortalPage
+      width="form"
+      title="Create Requisition and Issue Slip"
+      description="Request available supplies and consumable items from central stock."
+    >
       {reference ? (
         <SubmissionSuccess
           reference={reference}
-          message="Your Request for Issuance Slip has been received and routed to the General Services Office for approval."
+          message="Your Requisition and Issue Slip has been received and routed to the General Services Office for approval."
         />
       ) : (
-        <>
-          <PortalPageHeader
-            title="Create Request for Issuance Slip"
-            description="Request available supplies and consumable items from central stock."
-          />
-          {/* The public has no approved PR to point at; they identify themselves. */}
-          <RISWizard
-            showSourcePR={false}
-            submitting={submitting}
-            onSubmit={submit}
-            onCancel={() => navigate("/portal")}
-          />
-        </>
+        // Portal filers have no approved PR to point at; they identify themselves.
+        <RISWizard
+          showSourcePR={false}
+          submitting={submitting}
+          onSubmit={submit}
+          onCancel={() => navigate("/portal")}
+        />
       )}
-    </PageTransition>
+    </PortalPage>
   );
 }

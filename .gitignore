@@ -34,3 +34,7 @@ dist-ssr
 
 # Vercel CLI — project link and the OIDC token it refreshes. Machine-local.
 .vercel
+
+# Local design tooling: Playwright screenshots and Impeccable comps/cache.
+.playwright-mcp/
+.impeccable/
