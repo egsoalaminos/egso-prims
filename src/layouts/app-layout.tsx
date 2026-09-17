@@ -51,6 +51,12 @@ import { useNotifications } from "@/features/notifications/hooks";
 import { NotificationDrawer } from "@/features/notifications/components/notification-drawer";
 import { useAppearanceSync, useBranding } from "@/features/config/use-appearance";
 import { useNavCounts, type NavCounts } from "@/features/shared/use-nav-counts";
+import {
+  NewDocumentMenu,
+  ReviewMenu,
+  StaffPortalLink,
+  TodayDate,
+} from "@/layouts/app-top-bar-actions";
 import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
 
 interface ModuleNavItem {
@@ -278,6 +284,7 @@ function AppSidebar({
   onRequestSignOut,
   className,
   onNavigate,
+  counts,
 }: {
   collapsed: boolean;
   onRequestSignOut: () => void;
@@ -285,13 +292,14 @@ function AppSidebar({
   className?: string;
   /** Called after any navigation, so the mobile drawer can close itself. */
   onNavigate?: () => void;
+  /** Live counts, loaded once by the layout and shared with the top bar. */
+  counts: NavCounts;
 }) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { user } = useAuth();
   const branding = useBranding();
   const { expanded, toggle, open: openGroup } = useSidebarGroups();
-  const counts = useNavCounts();
 
   /** Navigates, then lets the mobile drawer close itself behind the new route. */
   const go = React.useCallback(
@@ -482,25 +490,38 @@ function useBreadcrumbs(): BreadcrumbItem[] {
 }
 
 /**
- * The admin's top bar: the sidebar button, where you are, and notifications.
- * The account and Settings live in the rail; the search that sat here never
- * searched and was removed (owner's decision, 18 Sep 2026) until a real one is
- * built after the modules.
+ * The admin's top bar: the sidebar button and where you are on the left; on the
+ * right today's date, the staff portal, what is waiting for review,
+ * notifications, and "New". The account and Settings live in the rail; the
+ * search that sat here never searched and was removed (owner's decision,
+ * 18 Sep 2026) until a real one is built after the modules. Narrower screens
+ * shed the date, then the portal link, then the review menu; "New" and
+ * notifications always stay.
  */
 function AppTopBar({
   onToggleSidebar,
   onOpenNotifications,
   unreadCount,
+  counts,
 }: {
   onToggleSidebar: () => void;
   onOpenNotifications: () => void;
   unreadCount: number;
+  counts: NavCounts;
 }) {
   const crumbs = useBreadcrumbs();
   return (
     <TopBar
       onToggleSidebar={onToggleSidebar}
-      actions={<NotificationBell count={unreadCount} onClick={onOpenNotifications} />}
+      actions={
+        <>
+          <TodayDate className="mr-2 hidden xl:inline" />
+          <StaffPortalLink className="hidden lg:inline-flex" />
+          <ReviewMenu counts={counts} className="hidden md:inline-flex" />
+          <NotificationBell count={unreadCount} onClick={onOpenNotifications} />
+          <NewDocumentMenu />
+        </>
+      }
     >
       <Breadcrumb items={crumbs} />
     </TopBar>
@@ -518,6 +539,8 @@ export function AppLayout() {
   const [mobileNavOpen, setMobileNavOpen] = React.useState(false);
   // Applies the stored theme + accent to <html> for every page in the shell.
   useAppearanceSync();
+  // One set of live counts for the rail's badges and the top bar's review menu.
+  const counts = useNavCounts();
   // Realtime-backed, so the badge moves without a page refresh.
   const { unreadCount } = useNotifications(React.useMemo(() => ({}), []));
 
@@ -564,12 +587,15 @@ export function AppLayout() {
   return (
     <>
       <AppShell
-        sidebar={<AppSidebar collapsed={sidebarCollapsed} onRequestSignOut={requestSignOut} />}
+        sidebar={
+          <AppSidebar collapsed={sidebarCollapsed} onRequestSignOut={requestSignOut} counts={counts} />
+        }
         topBar={
           <AppTopBar
             onToggleSidebar={toggleSidebar}
             onOpenNotifications={() => setNotificationsOpen(true)}
             unreadCount={unreadCount}
+            counts={counts}
           />
         }
       >
@@ -605,6 +631,7 @@ export function AppLayout() {
             collapsed={false}
             onRequestSignOut={requestSignOut}
             onNavigate={() => setMobileNavOpen(false)}
+            counts={counts}
             className="flex h-full w-full! border-r-0"
           />
         </SheetContent>

@@ -32,6 +32,10 @@ The sidebar components are used only by this layout.
   and account menu removed as duplicates of the rail ("Alisin ang dalawa"). The bar keeps the
   sidebar button, a breadcrumb that starts at the sidebar group, and notifications.
 
+- **Top bar additions (2026-09-18):** the owner found the slimmed bar boring ("nagmukha namang
+  boring") and asked for something better to put in; from four candidates he picked all four:
+  "+ New", "For review", today's date and a staff portal link.
+
 ## Unresolved decisions
 
 - A real global search (reference numbers, modules) is to be built after the modules are

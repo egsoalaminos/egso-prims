@@ -350,7 +350,13 @@ Owner decisions, 18 Sep 2026: the search that never searched is removed until a 
 - **Bar:** 56px, white, a hairline under it, level with the rail's letterhead block; its top 6px sit under the crimson edge. Municipal scope, so 4px corners and the crimson focus ring.
 - **Left:** a 36px sidebar button (collapses the rail on a desktop, opens the drawer on a phone), then the breadcrumb.
 - **Breadcrumb:** starts where the sidebar does: the group (Procurement, Supply, Utilities, Records Management; plain text, groups are not pages), the page (a link when you are deeper), then the record or "New …". 14px; ancestors muted, the current page ink at 600. On a phone only the last two show, and an ancestor truncates before the current page does.
-- **Right:** notifications, a 36px hairline button; the unread count is an ink pill (12px/600 white, ringed in white), like the rail's counts. Red is kept for things that went wrong.
+- **Right, in order** (owner's choice, 18 Sep 2026, after the slimmed bar read as empty; comp `.impeccable/comps/admin-topbar.html`):
+  - **Today's date** ("Friday, 18 September 2026", 14px muted), from xl; it turns over at midnight.
+  - **Staff portal**, a 36px text link with an up-right arrow that opens `/portal` in a new tab, from lg.
+  - **For review**, a 36px hairline button with the total waiting as an ink pill, from md. Its menu lists purchase requests in review, purchase orders to approve, reservations to confirm, and items low or out of stock, each with its count (ink when above zero, muted at zero) and a link to its list. The counts are the rail's own live counts, loaded once by the layout.
+  - **Notifications**, a 36px hairline button; the unread count is an ink pill (12px/600 white, ringed in white), like the rail's counts. Red is kept for things that went wrong.
+  - **New**, a 36px crimson button (crimson starts a document) that opens every document the system can start, grouped and ordered like the sidebar. On a phone it is a 36px crimson "+" square.
+- **Menus:** white, 4px corners, a hairline border and a soft 8px/24px shadow (they float); 36px rows, 14px text, 16px grey icons, 13px muted group labels in sentence case. They render on `<body>` and carry `data-municipal` themselves.
 
 ### Tracked Request
 The Track page's result, one white card under the reference field. A request that is not found is a field error on that field (red border, 12.5px message, focus returned), not a separate card.
