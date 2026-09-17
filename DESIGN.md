@@ -273,18 +273,18 @@ Neutrals come from Tailwind's stock `neutral` ramp (declared in oklch; the hex v
 The portal is flat. No surface casts a shadow: the card elevation token resolves to `none`, and no portal element adds one. Depth comes from three things only. White cards sit on the cool grey ground. Cards are ruled with a 1px hairline. The card row overlaps the crimson band, which puts the services physically in front of the question.
 
 ### Named Rules
-**The Hairline, Not Shadow Rule.** A card is separated from its ground by a 1px #e5e5e5 border and nothing else. Hover darkens the border to #d4d4d4. It never lifts the card.
+**The Hairline, Not Shadow Rule.** A card is separated from its ground by a 1px #e5e5e5 border and nothing else. It never lifts, and since cards are not links it does not react to hover; its button does.
 
 ## Shapes
 
-Every corner is 4px. The `[data-portal]` scope collapses all seven radius steps (`sm` through `4xl`) to 4px, so shared components that ask for `rounded-lg` or `rounded-xl` get 4px inside the portal. That covers cards, buttons, inputs, icon tiles, nav links, the receipt and the focus-ring outline. The circles are the 36px crimson go-button on a phone filing row, which reads as a single tap target at the end of the row, the numbered how-it-works steps, and the 28px markers on a tracked request's progress list. Borders are always 1px. Focus is a 2px ring with a 2px offset.
+Every corner is 4px. The `[data-portal]` scope collapses all seven radius steps (`sm` through `4xl`) to 4px, so shared components that ask for `rounded-lg` or `rounded-xl` get 4px inside the portal. That covers cards, buttons, inputs, icon tiles, nav links, the receipt and the focus-ring outline. The circles are the 44px crimson go-button on a phone filing row, the only link on that row, the numbered how-it-works steps, and the 28px markers on a tracked request's progress list. Borders are always 1px. Focus is a 2px ring with a 2px offset.
 
 ## Components
 
 ### Buttons
 Solid, full-height bars that say what they do and point where they go.
 - **Shape:** 4px corners, 44px tall, 16px horizontal padding, label left and an 18px arrow right (`justify-between`) when the button fills its card.
-- **File (crimson):** #7e1624 with white 14px/600 text. It darkens to #66111d on hover. On a filing card the whole card is the link, and the bar is its last line, not a second control.
+- **File (crimson):** #7e1624 with white 14px/600 text. It darkens to #66111d on hover. On a filing card only the bar is the link; the rest of the card is not clickable, so a stray click does not start a filing (owner's call). On a phone the same link is a 44px crimson circle at the end of the row, labelled by its hidden action text.
 - **Track (ink):** #171717 with white 14px/600 text. It goes to #000000 on hover, and its focus ring is ink.
 - **Hover / Press:** the arrow nudges 3px right on hover (150ms ease-out). Press scales to 0.98. Transitions cover only colour and transform.
 - **Secondary:** a white fill with a 1px hairline, body-coloured text, and #fafafa on hover. Used next to a primary button, for example "Back to Portal" on the receipt.
@@ -293,7 +293,7 @@ Solid, full-height bars that say what they do and point where they go.
 - **Corner Style:** 4px.
 - **Background:** white on the cool ground.
 - **Shadow Strategy:** none (see Elevation & Depth).
-- **Border:** 1px #e5e5e5, going to #d4d4d4 on hover for linked cards.
+- **Border:** 1px #e5e5e5. Cards are not links, so they have no hover state; their buttons do.
 - **Internal Padding:** 24px from sm. Phone rows use 14px, and the tracking card uses 16px.
 - **Arrival:** home cards fade in and rise 8px once, in reading order: 360ms, 40ms stagger, ease `cubic-bezier(0.23, 1, 0.32, 1)`. With reduced motion, they appear in place. Nothing loops.
 

@@ -61,19 +61,13 @@ function FilingCard({ service, index }: { service: PortalService; index: number 
   return (
     <CardFrame index={index}>
       {/*
-       * One interactive element per card, and it is a real link. The action
-       * bar is the link's own last line rather than a second thing to press.
+       * The card is not a link; only its button opens the form (owner's call:
+       * a stray click on the card should not start a filing). On a phone the
+       * card is a row and the button is the crimson circle at its end, which
+       * keeps all three filings and the tracking field on one phone screen.
+       * From `sm` up it is the full card and the button is its action bar.
        */}
-      {/*
-       * On a phone the card is a row: icon, title, what tapping does, and a
-       * crimson go-button. That keeps all three filings and the tracking field
-       * on one phone screen, as they are on a desktop. From `sm` up it is the
-       * full card with its description and action bar.
-       */}
-      <Link
-        to={service.to}
-        className="group flex h-full items-center gap-3 rounded-md border border-neutral-200 bg-white p-3.5 transition-[border-color,transform] duration-150 hover:border-neutral-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring) focus-visible:ring-offset-2 active:scale-[0.98] sm:flex-col sm:items-stretch sm:gap-0 sm:p-6"
-      >
+      <div className="flex h-full items-center gap-3 rounded-md border border-neutral-200 bg-white px-3.5 py-3 sm:flex-col sm:items-stretch sm:gap-0 sm:p-6">
         <div className="flex items-center justify-between">
           <span className="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-neutral-100 text-(--accent-text)">
             <Icon className="h-5 w-5" />
@@ -86,22 +80,22 @@ function FilingCard({ service, index }: { service: PortalService; index: number 
           <h2 className="text-[15px] font-semibold leading-snug text-neutral-900 sm:mt-5 sm:text-[17px]">
             {service.title}
           </h2>
-          <span className="text-[13px] font-medium text-(--accent-text) sm:hidden">{service.cta}</span>
           <p className="mt-1.5 hidden flex-1 text-[14px] leading-relaxed text-neutral-500 sm:block">
             {service.description}
           </p>
-          <span className="ui-accent ui-accent-hover mt-6 hidden h-11 items-center justify-between rounded-md px-4 text-[14px] font-semibold group-hover:bg-(--accent-solid-hover) sm:flex">
-            {service.cta}
-            <ArrowRight className="h-[18px] w-[18px] transition-transform duration-150 ease-out group-hover:translate-x-[3px]" />
-          </span>
         </div>
-        <span
-          aria-hidden="true"
-          className="ui-accent grid h-9 w-9 shrink-0 place-items-center rounded-full sm:hidden"
+        {/* One link, two shapes: a 44px circle on a phone, the full-width bar from sm. */}
+        <Link
+          to={service.to}
+          className="group ui-accent ui-accent-hover grid h-11 w-11 shrink-0 place-items-center rounded-full text-[14px] font-semibold transition-[background-color,transform] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring) focus-visible:ring-offset-2 active:scale-[0.98] sm:mt-6 sm:flex sm:w-full sm:items-center sm:justify-between sm:rounded-md sm:px-4"
         >
-          <ArrowRight className="h-[18px] w-[18px]" />
-        </span>
-      </Link>
+          <span className="sr-only sm:not-sr-only">{service.cta}</span>
+          <ArrowRight
+            aria-hidden="true"
+            className="h-[18px] w-[18px] transition-transform duration-150 ease-out group-hover:translate-x-[3px]"
+          />
+        </Link>
+      </div>
     </CardFrame>
   );
 }
