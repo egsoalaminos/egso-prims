@@ -45,6 +45,12 @@ typography:
     fontWeight: 600
     lineHeight: 1.25
     letterSpacing: "-0.01em"
+  sign-in-title:
+    fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "20px"
+    fontWeight: 600
+    lineHeight: 1.25
+    letterSpacing: "-0.01em"
   reference:
     fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif"
     fontSize: "18px"
@@ -171,7 +177,7 @@ components:
 
 > **Scope.** This file documents the **staff portal** (every route under `/portal`), which is the current design going forward. There is no older portal look to return to.
 >
-> **The admin application (everything behind `/login`) has not been migrated.** It still runs its older design (the 4 August 2026 system in the top half of `src/index.css`: near-black accent, 10px-derived corners, Inter only). The admin is next to be redesigned. Until that happens, nothing here applies to admin screens.
+> **The admin sign-in page (`/login`) joined this world on 17 September 2026** as a letterhead sheet (see Sign-in Sheet). **The admin application behind it has not been migrated.** It still runs its older design (the 4 August 2026 system in the top half of `src/index.css`: near-black accent, 10px-derived corners, Inter only). The admin is next to be redesigned. Until that happens, nothing here applies to admin screens.
 >
 > **How the portal's values are applied.** Nothing here is global. The portal's colours, corners and ground are declared in one scoped `[data-portal]` token block ("THE PORTAL" in `src/index.css`). The portal layout puts `data-portal` on its root element, and on `<html>` while it is mounted, so pickers and selects portalled to `<body>` pick up the same values. The theme is `@theme inline`, so utilities compile straight to `--radius-step-*`, `--canvas` and `--accent-*`. Those are the names the scope redeclares, and every value in it is a literal, never `var(...)`.
 
@@ -334,6 +340,15 @@ The Track page's result, one white card under the reference field. A request tha
 - **Now at / Last update:** a two-column definition list (one column on a phone) between hairline rules, with 13px muted labels in sentence case and 14px/500 ink values. No uppercase labels and no grey panel.
 - **Progress:** an ordered list. Done is an ink circle with a white check, and the rule below it is ink, so the line shows how far the request has come. The step with the office now is an ink outline with an ink dot, `aria-current="step"`, and a grey "In progress" tag. Not yet is a #d4d4d4 outline on a #d4d4d4 rule with muted text. Stopped is a red circle with a white X. Each step can carry its time (12.5px tabular, right-aligned from sm), the person and office (13px), and remarks in a #fafafa box with a hairline. No avatars.
 
+### Sign-in Sheet (signature)
+The admin's sign-in page. The owner asked for it to look "a little different from the portal", and chose it over the portal's band layout and over a crimson split panel (comps `.impeccable/comps/admin-login.html` and `admin-login-v2.html`, option B). It shares the portal's palette, corners, fields and serif, but has no strip, masthead, band or footer.
+- **Frame:** the cool ground, a 6px crimson edge across the top, and one centred white sheet 440px wide with a hairline border.
+- **Letterhead:** set the way the municipality heads its letters, centred: the 56px seal, "Republic of the Philippines" and "Province of Laguna" at 12.5px muted, the municipality in 12px/600 uppercase at 0.12em, and the office name in Spectral 20px. A 2px crimson rule, inset to the sheet's padding, closes it. Seal, province, municipality and office name come from the branding settings.
+- **Form:** "Sign in" at 20px/600 with the system name under it at 14px muted; Email Address and Password as portal fields, "Forgot password?" on the password label's line, a 44px show-password button inside the field, a native checkbox in crimson reading "Keep me signed in on this computer" (off by default: office computers are shared and every action is audited), and a crimson full-width "Sign in" bar with its arrow. A wrong password shows a red-50 alert with a red-200 hairline above the fields; a missing field shows its 12.5px message under it.
+- **Under the sheet:** the audit-trail notice at 13px muted, and "Filing or tracking a request? You do not need an account. Go to the staff portal", linking to `/portal`.
+- **Fit:** one screen at 1366x768 and 390x844, including with the wrong-password alert showing.
+- **Scope:** the page sets `data-portal` on its root and on `<html>` while mounted, so the reset-password dialog portalled to `<body>` takes 4px corners and the crimson button.
+
 ## Do's and Don'ts
 
 ### Do:
@@ -349,7 +364,7 @@ The Track page's result, one white card under the reference field. A request tha
 ### Don't:
 - **Don't** add a dark mode, a theme switcher or an alternate portal palette. The portal is light mode only.
 - **Don't** edit the shared filing wizards (Purchase Request, Requisition and Issue Slip, Reservation) to change how they look in the portal.
-- **Don't** apply portal tokens globally or to admin routes. The admin keeps its own design until it is redesigned.
+- **Don't** apply portal tokens globally or to admin routes. The sign-in page is the one exception; the admin behind it keeps its own design until it is redesigned.
 - **Don't** use crimson as a bright field, a card fill or a text background.
 - **Don't** add shadows to cards, buttons or bands.
 - **Don't** set anything but the office name in Spectral, and don't use a serif display headline.

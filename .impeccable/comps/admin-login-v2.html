@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en" data-layout="split">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sign in · General Services Office (comp v2)</title>
+<!--
+THESIS: The admin's front door is the office's own entrance, not the public counter. Same municipality, same crimson and seal as the staff portal, but a different room: it should not read as one more portal page.
+OWN-WORLD: The portal's palette and type, a different arrangement. Crimson #7E1624 for identity and the one action, ink for text, hairlines, 4px corners, Inter with Spectral only on the office name.
+STORY: A GSO user recognises the seal and the office, signs in, and goes in. Someone who only needs to file or track a request is pointed to the portal.
+FORM: v1 (the portal's band) was set aside by the owner: "para maiba naman ng konti sa portal". Two directions to choose between:
+  Split: a crimson identity panel beside a plain white sign-in column.
+  Letterhead: a single sheet set like an official municipal letterhead, with a crimson rule under the heading.
+Kept from v1 by the owner: the portal pointer and the "Keep me signed in on this computer" label.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Spectral:wght@500&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+  @theme {
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --font-serif: "Spectral", ui-serif, Georgia, serif;
+  }
+</style>
+<style>
+  :root {
+    --identity: #7e1624;
+    --identity-hover: #66111d;
+    --ring: #b0415a;
+    --canvas: #f6f7f8;
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  html, body { overscroll-behavior: none; }
+
+  html[data-layout="split"] .v-letterhead,
+  html[data-layout="letterhead"] .v-split { display: none; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .enter { opacity: 0; transform: translateY(8px); animation: enter 360ms var(--ease-out) forwards; }
+  }
+  @keyframes enter { to { opacity: 1; transform: none; } }
+
+  .field {
+    height: 44px; width: 100%; border: 1px solid #a3a3a3; border-radius: 4px; background: #fff;
+    padding: 0 14px; font-size: 14px; color: #171717; transition: border-color 150ms, box-shadow 150ms;
+  }
+  .field::placeholder { color: #737373; }
+  .field:focus { outline: none; border-color: #171717; box-shadow: 0 0 0 2px rgb(23 23 23 / 0.15); }
+  .field[aria-invalid="true"] { border-color: #dc2626; box-shadow: 0 0 0 2px rgb(220 38 38 / 0.15); }
+
+  .btn-primary { background: var(--identity); color: #fff; transition: background-color 150ms, transform 150ms; }
+  .btn-primary:hover { background: var(--identity-hover); }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--ring); }
+  .btn-primary svg { transition: transform 150ms var(--ease-out); }
+  .btn-primary:hover svg { transform: translateX(3px); }
+
+  .comp-switch button[aria-pressed="true"] { background: #171717; color: #fff; }
+</style>
+</head>
+<body class="font-sans text-neutral-900 antialiased">
+
+<template id="form-fields">
+  <div data-error role="alert" class="mb-4 hidden rounded-[4px] border border-red-200 bg-red-50 px-3.5 py-2.5 text-[13px] leading-snug text-red-700">
+    The email address or password is not correct.
+  </div>
+
+  <label data-for="email" class="block text-[14px] font-medium text-neutral-900">Email Address</label>
+  <input data-id="email" type="email" autocomplete="email" placeholder="name@alaminos.gov.ph" class="field mt-1.5" />
+
+  <div class="mt-4 flex items-baseline justify-between">
+    <label data-for="password" class="block text-[14px] font-medium text-neutral-900">Password</label>
+    <button type="button" class="text-[13px] font-medium text-neutral-600 underline-offset-2 hover:text-neutral-900 hover:underline">Forgot password?</button>
+  </div>
+  <div class="relative mt-1.5">
+    <input data-id="password" type="password" autocomplete="current-password" class="field pr-12" />
+    <button type="button" aria-label="Show password" data-toggle class="absolute right-0 top-0 grid h-11 w-11 place-items-center rounded-[4px] text-neutral-500 hover:text-neutral-900">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+    </button>
+  </div>
+
+  <label class="mt-4 flex w-fit cursor-pointer items-center gap-2.5 text-[14px] text-neutral-700">
+    <input type="checkbox" class="h-[18px] w-[18px] accent-[#7e1624]" />
+    Keep me signed in on this computer
+  </label>
+
+  <button type="submit" class="btn-primary mt-5 flex h-11 w-full items-center justify-between rounded-[4px] px-4 text-[14px] font-semibold">
+    Sign in
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+  </button>
+</template>
+
+<!-- ============================ A. SPLIT ============================ -->
+<div class="v-split flex min-h-[100dvh] flex-col bg-white lg:grid lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
+
+  <!-- Identity panel: a compact crimson header on a phone, the left half from lg. -->
+  <aside class="bg-[var(--identity)] text-white lg:flex lg:flex-col lg:px-12 lg:py-8 xl:px-16">
+    <div class="hidden justify-between text-[12px] text-white/80 lg:flex">
+      <span>Republic of the Philippines</span>
+      <span>Province of Laguna</span>
+    </div>
+
+    <div class="flex items-center gap-3 px-5 py-4 lg:my-auto lg:flex-col lg:items-start lg:gap-0 lg:p-0">
+      <span class="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-white lg:h-[104px] lg:w-[104px]">
+        <img src="../../public/logo/alaminos-seal.png" alt="Seal of the Municipality of Alaminos" class="h-11 w-11 lg:h-[96px] lg:w-[96px]" />
+      </span>
+      <div class="min-w-0 lg:mt-8">
+        <p class="text-[11.5px] font-medium uppercase tracking-[0.1em] text-white/75 lg:text-[12.5px]">Municipality of Alaminos, Laguna</p>
+        <p class="font-serif text-[20px] font-medium leading-tight lg:mt-1 lg:text-[40px]">General Services Office</p>
+        <p class="mt-3 hidden max-w-sm text-[15px] leading-relaxed text-white/85 lg:block">Purchase Request &amp; Inventory Management System</p>
+      </div>
+    </div>
+
+    <p class="hidden text-[12.5px] text-white/70 lg:block">Copyright © Municipality of Alaminos, Laguna</p>
+  </aside>
+
+  <!-- Sign-in column: plain white, no card. -->
+  <main class="flex flex-1 flex-col px-5 py-8 lg:justify-center lg:px-16">
+    <div class="enter mx-auto w-full max-w-sm">
+      <h1 class="text-[24px] font-semibold tracking-[-0.01em] md:text-[28px]">Sign in</h1>
+      <p class="mt-1 text-pretty text-[15px] text-neutral-500">Authorized personnel only. All activity is recorded in the audit trail.</p>
+
+      <form class="mt-6" novalidate data-form></form>
+
+      <p class="mt-6 border-t border-neutral-200 pt-5 text-pretty text-[14px] leading-relaxed text-neutral-600">
+        Filing or tracking a request? You do not need an account.
+        <a href="#" class="whitespace-nowrap font-medium text-neutral-900 underline underline-offset-2 hover:text-black">Go to the staff portal</a>
+      </p>
+    </div>
+  </main>
+</div>
+
+<!-- ========================== B. LETTERHEAD ========================= -->
+<div class="v-letterhead flex min-h-[100dvh] flex-col bg-[var(--canvas)]">
+  <div class="h-1.5 bg-[var(--identity)]"></div>
+
+  <main class="flex flex-1 flex-col items-center justify-center px-4 py-6 sm:py-10">
+    <div class="enter w-full max-w-[440px] rounded-[4px] border border-neutral-200 bg-white">
+      <!-- Set the way the municipality heads its own letters: centred, seal above. -->
+      <header class="px-6 pb-5 pt-6 text-center sm:px-8 sm:pt-7">
+        <img src="../../public/logo/alaminos-seal.png" alt="Seal of the Municipality of Alaminos" class="mx-auto h-16 w-16" />
+        <p class="mt-3 text-[12.5px] leading-snug text-neutral-500">Republic of the Philippines<br />Province of Laguna</p>
+        <p class="mt-1.5 text-[12px] font-semibold uppercase tracking-[0.12em] text-neutral-700">Municipality of Alaminos</p>
+        <p class="font-serif text-[20px] font-medium leading-tight">General Services Office</p>
+      </header>
+      <div class="mx-6 h-0.5 bg-[var(--identity)] sm:mx-8"></div>
+
+      <div class="px-6 pb-6 pt-5 sm:px-8 sm:pb-7">
+        <h1 class="text-[20px] font-semibold tracking-[-0.01em]">Sign in</h1>
+        <p class="mt-0.5 text-[14px] text-neutral-500">Purchase Request &amp; Inventory Management System</p>
+        <form class="mt-5" novalidate data-form></form>
+      </div>
+    </div>
+
+    <div class="enter mt-4 w-full max-w-[440px] space-y-2 text-center" style="animation-delay:40ms">
+      <p class="text-[13px] text-neutral-500">Authorized personnel only. All activity is recorded in the audit trail.</p>
+      <p class="text-pretty text-[14px] text-neutral-600">
+        Filing or tracking a request? You do not need an account.
+        <a href="#" class="whitespace-nowrap font-medium text-neutral-900 underline underline-offset-2 hover:text-black">Go to the staff portal</a>
+      </p>
+    </div>
+  </main>
+</div>
+
+<!-- Comp chrome: choose a direction, preview the error state. Not part of the design. -->
+<div class="comp-switch fixed bottom-4 right-4 z-50 flex items-center gap-1 rounded-[4px] border border-neutral-300 bg-white p-1 text-[12.5px] shadow-lg">
+  <button type="button" data-set="split" aria-pressed="true" class="rounded-[3px] px-2.5 py-1.5">A · Split</button>
+  <button type="button" data-set="letterhead" aria-pressed="false" class="rounded-[3px] px-2.5 py-1.5">B · Letterhead</button>
+  <span class="mx-1 h-5 w-px bg-neutral-200"></span>
+  <button type="button" data-show-error class="rounded-[3px] px-2.5 py-1.5 hover:bg-neutral-100">Show error</button>
+</div>
+
+<script>
+  const tpl = document.getElementById('form-fields');
+  document.querySelectorAll('[data-form]').forEach((form, n) => {
+    form.appendChild(tpl.content.cloneNode(true));
+    form.querySelectorAll('[data-id]').forEach((el) => (el.id = `${el.dataset.id}-${n}`));
+    form.querySelectorAll('[data-for]').forEach((el) => el.setAttribute('for', `${el.dataset.for}-${n}`));
+    form.querySelector('[data-toggle]').addEventListener('click', (e) => {
+      const input = form.querySelector('[data-id=password]');
+      const show = input.type === 'password';
+      input.type = show ? 'text' : 'password';
+      e.currentTarget.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+    });
+    form.addEventListener('submit', (e) => { e.preventDefault(); showError(); });
+  });
+  function showError() {
+    document.querySelectorAll('[data-error]').forEach((el) => el.classList.remove('hidden'));
+    document.querySelectorAll('[data-id=password]').forEach((el) => el.setAttribute('aria-invalid', 'true'));
+  }
+  document.querySelector('[data-show-error]').addEventListener('click', showError);
+  document.querySelectorAll('[data-set]').forEach((b) => b.addEventListener('click', () => {
+    document.documentElement.dataset.layout = b.dataset.set;
+    document.querySelectorAll('[data-set]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  }));
+</script>
+</body>
+</html>

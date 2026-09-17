@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en" data-layout="band">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sign in · General Services Office (comp)</title>
+<!--
+THESIS: The admin's front door belongs to the same municipal office as the staff portal. A signed-in clerk and a filing clerk should recognise one building.
+OWN-WORLD: The portal's world, unchanged: the crimson government strip, the letterhead masthead with the seal and the office name in Spectral, a crimson band that carries the page's title, one white card with hairline borders and 4px corners on the cool ground. Inter throughout.
+STORY: A GSO user sees the seal and the office, reads "Sign in", enters email and password, and goes in. Someone who only needs to file or track a request is told they do not need an account and pointed to the portal.
+FIRST VIEWPORT: Strip, masthead, band with "Sign in" and the audit-trail notice, the card overlapping the band's lower edge, the portal pointer under it. One screen at 1366x768 and 390x844.
+FORM: Category standard played straight, as the owner chose for the portal. Two layouts for the owner to choose between: Band (the portal's inner-page pattern) and Plain (no band).
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Spectral:wght@500&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+  @theme {
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --font-serif: "Spectral", ui-serif, Georgia, serif;
+  }
+</style>
+<style>
+  :root {
+    --identity: #7e1624;
+    --identity-hover: #66111d;
+    --ring: #b0415a;
+    --canvas: #f6f7f8;
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  html, body { overscroll-behavior: none; }
+  body { background: var(--canvas); }
+
+  /* Band: the title sits on crimson and the card overlaps the band's lower edge. */
+  .band { background: var(--identity); color: #fff; }
+  .band .sub { color: rgb(255 255 255 / 0.85); }
+  .card-wrap { margin-top: -4.5rem; }
+
+  /* Plain: no band; the title sits on the ground above the card. */
+  html[data-layout="plain"] .band { background: transparent; color: #171717; }
+  html[data-layout="plain"] .band .sub { color: #737373; }
+  html[data-layout="plain"] .band .pad { padding-bottom: 1.25rem; }
+  html[data-layout="plain"] .card-wrap { margin-top: 0; }
+  html[data-layout="plain"] main { justify-content: center; }
+  html[data-layout="plain"] .band-wrap { display: contents; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .enter { opacity: 0; transform: translateY(8px); animation: enter 360ms var(--ease-out) forwards; }
+  }
+  @keyframes enter { to { opacity: 1; transform: none; } }
+
+  .field {
+    height: 44px; width: 100%; border: 1px solid #a3a3a3; border-radius: 4px; background: #fff;
+    padding: 0 14px; font-size: 14px; color: #171717; transition: border-color 150ms, box-shadow 150ms;
+  }
+  .field::placeholder { color: #737373; }
+  .field:focus { outline: none; border-color: #171717; box-shadow: 0 0 0 2px rgb(23 23 23 / 0.15); }
+  .field[aria-invalid="true"] { border-color: #dc2626; box-shadow: 0 0 0 2px rgb(220 38 38 / 0.15); }
+
+  .btn-primary {
+    background: var(--identity); color: #fff; transition: background-color 150ms, transform 150ms;
+  }
+  .btn-primary:hover { background: var(--identity-hover); }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--ring); }
+  .btn-primary svg { transition: transform 150ms var(--ease-out); }
+  .btn-primary:hover svg { transform: translateX(3px); }
+
+  /* Comp chrome only, not part of the design. */
+  .comp-switch button[aria-pressed="true"] { background: #171717; color: #fff; }
+</style>
+</head>
+<body class="flex min-h-[100dvh] flex-col font-sans text-neutral-900 antialiased">
+
+  <!-- Government strip -->
+  <div class="bg-[var(--identity)] text-white">
+    <div class="mx-auto flex w-full max-w-[1200px] items-center justify-between px-5 py-1.5 text-[12px] md:px-8">
+      <span>Republic of the Philippines</span>
+      <span class="hidden sm:inline">Province of Laguna</span>
+    </div>
+  </div>
+
+  <!-- Letterhead masthead -->
+  <header class="border-b border-neutral-200 bg-white">
+    <div class="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-6 px-5 py-3.5 md:px-8">
+      <span class="flex min-w-0 items-center gap-3">
+        <img src="../../public/logo/alaminos-seal.png" alt="Seal of the Municipality of Alaminos" class="h-11 w-11 shrink-0" />
+        <span class="flex min-w-0 flex-col">
+          <span class="text-balance text-[11.5px] font-medium uppercase tracking-[0.1em] text-neutral-500">Municipality of Alaminos, Laguna</span>
+          <span class="font-serif text-[20px] font-medium leading-tight">General Services Office</span>
+        </span>
+      </span>
+      <span class="hidden text-right text-[13px] leading-snug text-neutral-500 lg:block">
+        Purchase Request &amp; Inventory<br />Management System
+      </span>
+    </div>
+  </header>
+
+  <main class="flex flex-1 flex-col">
+    <div class="band-wrap">
+      <section class="band">
+        <div class="pad mx-auto w-full max-w-md px-5 pb-24 pt-10 sm:pt-[clamp(2.5rem,9vh,5rem)]">
+          <h1 class="text-[24px] font-semibold tracking-[-0.01em] md:text-[28px]">Sign in</h1>
+          <p class="sub mt-1 text-pretty text-[15px]">Authorized personnel only. All activity is recorded in the audit trail.</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="card-wrap mx-auto w-full max-w-md px-5 pb-10">
+      <form class="enter rounded-[4px] border border-neutral-200 bg-white p-5 sm:p-6" novalidate onsubmit="event.preventDefault(); showError();">
+        <div id="error" role="alert" class="mb-4 hidden rounded-[4px] border border-red-200 bg-red-50 px-3.5 py-2.5 text-[13px] leading-snug text-red-700">
+          The email address or password is not correct.
+        </div>
+
+        <label for="email" class="block text-[14px] font-medium text-neutral-900">Email Address</label>
+        <input id="email" type="email" autocomplete="email" placeholder="name@alaminos.gov.ph" class="field mt-1.5" />
+
+        <div class="mt-4 flex items-baseline justify-between">
+          <label for="password" class="block text-[14px] font-medium text-neutral-900">Password</label>
+          <button type="button" class="text-[13px] font-medium text-neutral-600 underline-offset-2 hover:text-neutral-900 hover:underline">Forgot password?</button>
+        </div>
+        <div class="relative mt-1.5">
+          <input id="password" type="password" autocomplete="current-password" class="field pr-12" />
+          <button type="button" aria-label="Show password" onclick="togglePw(this)" class="absolute right-0 top-0 grid h-11 w-11 place-items-center rounded-[4px] text-neutral-500 hover:text-neutral-900">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+
+        <label class="mt-4 flex w-fit cursor-pointer items-center gap-2.5 text-[14px] text-neutral-700">
+          <input type="checkbox" class="h-[18px] w-[18px] rounded-[4px] accent-[#7e1624]" />
+          Keep me signed in on this computer
+        </label>
+
+        <button type="submit" class="btn-primary mt-5 flex h-11 w-full items-center justify-between rounded-[4px] px-4 text-[14px] font-semibold">
+          Sign in
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </button>
+      </form>
+
+      <p class="enter mt-4 text-pretty text-[14px] leading-relaxed text-neutral-600" style="animation-delay:40ms">
+        Filing or tracking a request? You do not need an account.
+        <a href="#" class="whitespace-nowrap font-medium text-neutral-900 underline underline-offset-2 hover:text-black">Go to the staff portal</a>
+      </p>
+    </div>
+  </main>
+
+  <footer class="border-t border-neutral-200 bg-white">
+    <div class="mx-auto flex w-full max-w-[1200px] flex-col gap-1 px-5 py-4 text-[12.5px] text-neutral-500 sm:flex-row sm:items-center sm:justify-between md:px-8">
+      <span class="flex items-center gap-2.5">
+        <img src="../../public/logo/alaminos-seal.png" alt="" class="h-6 w-6" />
+        General Services Office, Municipality of Alaminos, Laguna
+      </span>
+      <span>Copyright © Municipality of Alaminos, Laguna</span>
+    </div>
+  </footer>
+
+  <!-- Comp chrome: choose a layout, preview the error state. Not part of the design. -->
+  <div class="comp-switch fixed bottom-4 right-4 z-50 flex items-center gap-1 rounded-[4px] border border-neutral-300 bg-white p-1 text-[12.5px] shadow-lg">
+    <span class="px-2 text-neutral-500">Layout</span>
+    <button type="button" data-set="band" aria-pressed="true" class="rounded-[3px] px-2.5 py-1.5">Band</button>
+    <button type="button" data-set="plain" aria-pressed="false" class="rounded-[3px] px-2.5 py-1.5">Plain</button>
+    <span class="mx-1 h-5 w-px bg-neutral-200"></span>
+    <button type="button" onclick="showError()" class="rounded-[3px] px-2.5 py-1.5 hover:bg-neutral-100">Show error</button>
+  </div>
+
+<script>
+  document.querySelectorAll('[data-set]').forEach((b) => b.addEventListener('click', () => {
+    document.documentElement.dataset.layout = b.dataset.set;
+    document.querySelectorAll('[data-set]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  }));
+  function showError() {
+    document.getElementById('error').classList.remove('hidden');
+    document.getElementById('password').setAttribute('aria-invalid', 'true');
+  }
+  function togglePw(btn) {
+    const i = document.getElementById('password');
+    const show = i.type === 'password';
+    i.type = show ? 'text' : 'password';
+    btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+  }
+</script>
+</body>
+</html>
