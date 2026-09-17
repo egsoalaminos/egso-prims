@@ -141,7 +141,8 @@
   --control-py: 0.375rem;
   --control-px: 0.75rem;
   --nav-row-py: 0.375rem;
-  --sidebar-w: 240px;
+  /* 272px: the letterhead block fits "General Services Office" in Spectral 17px on one line. */
+  --sidebar-w: 272px;
   --nav-icon: 1rem;
   --nav-gap: 0.625rem;
   --rail-pad: 0.75rem;
@@ -319,7 +320,13 @@
  * Placed after the accent blocks so it wins the tie on equal specificity.
  * ===========================================================================
  */
-[data-portal] {
+/*
+ * `[data-municipal]` carries the same values for the admin as it moves into this
+ * world one part at a time (the sidebar first, 17 Sep 2026). It is a separate
+ * name so the portal-only rules below (overscroll) stay the portal's.
+ */
+[data-portal],
+[data-municipal] {
   --radius-step-sm: 4px;
   --radius-step-md: 4px;
   --radius-step-lg: 4px;

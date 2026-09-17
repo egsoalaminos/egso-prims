@@ -22,6 +22,10 @@ export function AppShell({
 }) {
   return (
     <div className="flex min-h-screen bg-sidebar font-sans antialiased">
+      {/* The sign-in sheet's crimson edge, carried across the admin. It lies over
+          the top 6px of the rail's letterhead block and of the top bar, both of
+          which leave that space empty. */}
+      <div aria-hidden="true" data-municipal="" className="fixed inset-x-0 top-0 z-40 h-1.5 bg-(--accent-solid)" />
       {/*
        * First stop in the tab order. The rail carries ~15 nav items and the
        * top bar another four controls, so without this a keyboard user walks

@@ -24,6 +24,7 @@ import {
   ShieldAlert,
   ShoppingCart,
   Warehouse,
+  X,
   Zap,
 } from "lucide-react";
 
@@ -53,7 +54,7 @@ import { useNotifications } from "@/features/notifications/hooks";
 import { NotificationDrawer } from "@/features/notifications/components/notification-drawer";
 import { useAppearanceSync, useBranding } from "@/features/config/use-appearance";
 import { useNavCounts, type NavCounts } from "@/features/shared/use-nav-counts";
-import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
 
 interface ModuleNavItem {
   icon: React.ComponentType<{ className?: string }>;
@@ -122,19 +123,20 @@ const supplyChildren: ModuleNavItem[] = [
     countKey: "stockAlerts",
     badgeColor: "orange",
   },
-  { icon: ClipboardList, label: "Requisition and Issue Slip", to: "/ris" },
+  { icon: ClipboardList, label: "Requisition & Issue Slip", to: "/ris" },
 ];
 const utilitiesChildren: ModuleNavItem[] = [
-  { icon: Zap, label: "Energy Consumption", to: "/energy" },
-  { icon: Droplets, label: "Water Consumption", to: "/water" },
-  { icon: Fuel, label: "Fuel Consumption", to: "/fuel" },
+  { icon: Zap, label: "Energy", to: "/energy" },
+  { icon: Droplets, label: "Water", to: "/water" },
+  { icon: Fuel, label: "Fuel", to: "/fuel" },
 ];
-// The two National Archives forms the office files. Each is named for what it
-// is rather than standing in for the whole module.
+// The National Archives forms the office files. Inside the group they drop the
+// words the group already says ("Records"), so none is cut off; page titles and
+// breadcrumbs keep the full names.
 const recordsChildren: ModuleNavItem[] = [
-  { icon: ScrollText, label: "Records Disposition Schedule", to: "/records" },
-  { icon: ClipboardCheck, label: "Records Inventory and Appraisal", to: "/records/inventory" },
-  { icon: FileCheck2, label: "Authority to Dispose of Records", to: "/records/disposal" },
+  { icon: ScrollText, label: "Disposition Schedule", to: "/records" },
+  { icon: ClipboardCheck, label: "Inventory & Appraisal", to: "/records/inventory" },
+  { icon: FileCheck2, label: "Authority to Dispose", to: "/records/disposal" },
 ];
 
 /* ---- Collapsible group state (persisted; default expanded) ---- */
@@ -153,7 +155,9 @@ function readSidebarCollapsed(): boolean {
 }
 
 function readGroups(): Record<GroupKey, boolean> {
-  const fallback = { procurement: true, supply: true, utilities: true, records: true };
+  // Daily work open, monthly work (utilities, records) closed, so the rail
+  // fits a 768px-tall screen without scrolling.
+  const fallback = { procurement: true, supply: true, utilities: false, records: false };
   try {
     const raw = localStorage.getItem(GROUPS_KEY);
     return raw ? { ...fallback, ...(JSON.parse(raw) as Partial<Record<GroupKey, boolean>>) } : fallback;
@@ -164,17 +168,21 @@ function readGroups(): Record<GroupKey, boolean> {
 
 function useSidebarGroups() {
   const [expanded, setExpanded] = React.useState<Record<GroupKey, boolean>>(readGroups);
-  const toggle = (key: GroupKey) =>
+  const set = React.useCallback((key: GroupKey, value: (prev: boolean) => boolean) =>
     setExpanded((prev) => {
-      const next = { ...prev, [key]: !prev[key] };
+      const nextValue = value(prev[key]);
+      if (nextValue === prev[key]) return prev;
+      const next = { ...prev, [key]: nextValue };
       try {
         localStorage.setItem(GROUPS_KEY, JSON.stringify(next));
       } catch {
         // Storage unavailable (private mode): state still applies for this session.
       }
       return next;
-    });
-  return { expanded, toggle };
+    }), []);
+  const toggle = (key: GroupKey) => set(key, (open) => !open);
+  const open = React.useCallback((key: GroupKey) => set(key, () => true), [set]);
+  return { expanded, toggle, open };
 }
 
 /**
@@ -202,7 +210,8 @@ function CollapsibleNavGroup({
       <SidebarItem
         icon={icon}
         label={label}
-        active={active}
+        containsActive={active}
+        aria-expanded={expanded}
         onClick={onToggle}
         trailing={
           <ChevronDown
@@ -221,7 +230,9 @@ function CollapsibleNavGroup({
             transition={{ duration: 0.18, ease: "easeOut" }}
             className="overflow-hidden"
           >
-            <div className="mt-0.5 flex flex-col gap-0.5 pl-4 group-data-[collapsed=true]:pl-0">
+            {/* The guide line sits under the heading's icon; collapsed, the
+                children fall back to their own icons. */}
+            <div className="my-0.5 ml-[19px] flex flex-col gap-0.5 border-l border-neutral-200 pl-2 group-data-[collapsed=true]:ml-0 group-data-[collapsed=true]:border-l-0 group-data-[collapsed=true]:pl-0">
               {children}
             </div>
           </motion.div>
@@ -282,7 +293,7 @@ function AppSidebar({
   const { pathname } = useLocation();
   const { user } = useAuth();
   const branding = useBranding();
-  const { expanded, toggle } = useSidebarGroups();
+  const { expanded, toggle, open: openGroup } = useSidebarGroups();
   const counts = useNavCounts();
 
   /** Navigates, then lets the mobile drawer close itself behind the new route. */
@@ -305,10 +316,31 @@ function AppSidebar({
       />
     );
   };
+  const renderChild = (navItem: ModuleNavItem) => {
+    const { to, ...item } = withCount(navItem, counts);
+    return (
+      <SidebarItem
+        key={item.label}
+        {...item}
+        nested
+        active={isActive(pathname, to)}
+        onClick={to ? () => go(to) : undefined}
+      />
+    );
+  };
   const procurementActive = procurementChildren.some((c) => isActive(pathname, c.to));
   const supplyActive = supplyChildren.some((c) => isActive(pathname, c.to));
   const utilitiesActive = utilitiesChildren.some((c) => isActive(pathname, c.to));
   const recordsActive = recordsChildren.some((c) => isActive(pathname, c.to));
+
+  // Arriving on a page inside a closed group (a link, a search result, the back
+  // button) opens that group, so the page on screen is always visible in the rail.
+  React.useEffect(() => {
+    if (procurementActive) openGroup("procurement");
+    if (supplyActive) openGroup("supply");
+    if (utilitiesActive) openGroup("utilities");
+    if (recordsActive) openGroup("records");
+  }, [procurementActive, supplyActive, utilitiesActive, recordsActive, openGroup]);
 
   return (
     <Sidebar collapsed={collapsed} className={className}>
@@ -328,7 +360,7 @@ function AppSidebar({
             expanded={expanded.procurement}
             onToggle={() => toggle("procurement")}
           >
-            {procurementChildren.map(renderItem)}
+            {procurementChildren.map(renderChild)}
           </CollapsibleNavGroup>
           <CollapsibleNavGroup
             icon={Warehouse}
@@ -337,7 +369,7 @@ function AppSidebar({
             expanded={expanded.supply}
             onToggle={() => toggle("supply")}
           >
-            {supplyChildren.map(renderItem)}
+            {supplyChildren.map(renderChild)}
           </CollapsibleNavGroup>
           {renderItem(reservationItem)}
           {renderItem(violationItem)}
@@ -348,7 +380,7 @@ function AppSidebar({
             expanded={expanded.utilities}
             onToggle={() => toggle("utilities")}
           >
-            {utilitiesChildren.map(renderItem)}
+            {utilitiesChildren.map(renderChild)}
           </CollapsibleNavGroup>
           <CollapsibleNavGroup
             icon={Archive}
@@ -357,7 +389,7 @@ function AppSidebar({
             expanded={expanded.records}
             onToggle={() => toggle("records")}
           >
-            {recordsChildren.map(renderItem)}
+            {recordsChildren.map(renderChild)}
           </CollapsibleNavGroup>
           {renderItem(reportsItem)}
         </SidebarGroup>
@@ -376,10 +408,8 @@ function AppSidebar({
       <SidebarFooter>
         <SidebarUser
           name={user?.name ?? "Administrator"}
-          detail="System Settings · Sign Out"
+          detail={user?.role ?? "Administrator"}
           initials={initialsOf(user?.name ?? "Administrator")}
-          onOpenMenu={() => go("/settings")}
-          onSettings={() => go("/settings")}
           onSignOut={onRequestSignOut}
         />
       </SidebarFooter>
@@ -570,13 +600,21 @@ export function AppLayout() {
           class), and the drawer is never collapsed — an icon-only rail makes
           no sense when it is already an overlay. */}
       <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
-        <SheetContent side="left" className="w-[260px] p-0 md:hidden">
+        {/* 312px, wider than the rail, so the close button sits clear of the
+            office name on the crimson letterhead block. */}
+        <SheetContent side="left" showCloseButton={false} className="w-[312px] max-w-[85vw] p-0 md:hidden">
           <SheetTitle className="sr-only">Navigation</SheetTitle>
+          <SheetClose
+            aria-label="Close navigation"
+            className="absolute right-2 top-[13px] z-10 grid h-9 w-9 place-items-center rounded-md text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+          >
+            <X className="h-[18px] w-[18px]" />
+          </SheetClose>
           <AppSidebar
             collapsed={false}
             onRequestSignOut={requestSignOut}
             onNavigate={() => setMobileNavOpen(false)}
-            className="flex h-full w-full border-r-0"
+            className="flex h-full w-full! border-r-0"
           />
         </SheetContent>
       </Sheet>

@@ -26,7 +26,9 @@ export function TopBar({
         // The rail's tone, not white: the bar and the rail are both chrome and
         // they meet at the top-left corner, so painting one lighter than the
         // canvas and the other darker split the frame into two materials.
-        "sticky top-0 z-10 flex items-center gap-3 border-b border-neutral-200 bg-sidebar/85 px-barpx py-barpy backdrop-blur md:px-8",
+        // 56px, the height of the rail's letterhead block, so the two meet in a
+        // straight line; the top 6px sit under the window's crimson edge.
+        "sticky top-0 z-10 flex h-14 shrink-0 items-center gap-3 border-b border-neutral-200 bg-sidebar/85 px-barpx pt-1.5 backdrop-blur md:px-8",
         className,
       )}
     >

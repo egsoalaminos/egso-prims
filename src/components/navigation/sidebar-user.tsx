@@ -1,54 +1,39 @@
-import { ChevronDown, LogOut, Settings } from "lucide-react";
-
-import { Avatar } from "@/components/utilities/avatar";
+import { LogOut } from "lucide-react";
 
 export interface SidebarUserProps {
   name: string;
-  /** Secondary line under the name. */
+  /** Secondary line under the name: the account's role. */
   detail?: string;
   initials?: string;
-  onOpenMenu?: () => void;
-  onSettings?: () => void;
   onSignOut?: () => void;
 }
 
-/** Bottom-of-sidebar user block with settings / sign-out shortcuts. */
-export function SidebarUser({
-  name,
-  detail,
-  initials,
-  onOpenMenu,
-  onSettings,
-  onSignOut,
-}: SidebarUserProps) {
+/**
+ * Who is signed in, and the way out. Settings is not repeated here: it has its
+ * own place in the list above and in the top bar's account menu.
+ */
+export function SidebarUser({ name, detail, initials, onSignOut }: SidebarUserProps) {
   return (
-    <>
-      <button
-        onClick={onOpenMenu}
-        aria-label={name}
-        className="flex w-full items-center gap-2.5 rounded-lg p-2 transition hover:bg-neutral-50 group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:gap-0"
+    <div className="flex items-center gap-3 group-data-[collapsed=true]:flex-col group-data-[collapsed=true]:gap-2">
+      <span
+        aria-hidden="true"
+        className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-(--accent-subtle) text-[13px] font-semibold text-(--accent-text)"
       >
-        <Avatar name={name} initials={initials} />
-        <div className="min-w-0 flex-1 text-left group-data-[collapsed=true]:hidden">
-          <div className="truncate text-[12.5px] font-semibold text-neutral-800">{name}</div>
-          {detail && <div className="truncate text-[11px] text-neutral-500">{detail}</div>}
-        </div>
-        <ChevronDown className="h-3.5 w-3.5 shrink-0 text-neutral-400 group-data-[collapsed=true]:hidden" />
-      </button>
-      <div className="mt-1 grid grid-cols-2 gap-1 group-data-[collapsed=true]:hidden">
-        <button
-          onClick={onSettings}
-          className="flex items-center justify-center gap-1 rounded-md px-2 py-1 text-[11px] text-neutral-600 transition hover:bg-neutral-50"
-        >
-          <Settings className="h-3 w-3" /> Settings
-        </button>
-        <button
-          onClick={onSignOut}
-          className="flex items-center justify-center gap-1 rounded-md px-2 py-1 text-[11px] text-neutral-600 transition hover:bg-neutral-50"
-        >
-          <LogOut className="h-3 w-3" /> Sign Out
-        </button>
+        {initials}
+      </span>
+      <div className="min-w-0 flex-1 group-data-[collapsed=true]:hidden">
+        <div className="truncate text-[14px] font-semibold leading-tight text-neutral-900">{name}</div>
+        {detail && <div className="truncate text-[12.5px] text-neutral-500">{detail}</div>}
       </div>
-    </>
+      <button
+        type="button"
+        onClick={onSignOut}
+        aria-label="Sign out"
+        title="Sign out"
+        className="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-neutral-200 text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring)"
+      >
+        <LogOut className="h-[18px] w-[18px]" />
+      </button>
+    </div>
   );
 }

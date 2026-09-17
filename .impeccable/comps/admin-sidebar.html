@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en" data-rail="white">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Admin sidebar · General Services Office (comp)</title>
+<!--
+THESIS: The admin sidebar is the office's own filing cabinet: every module in the order the work happens, one place for each thing, nothing cut off.
+OWN-WORLD: The portal and sign-in palette (crimson #7E1624, ink, hairlines, 4px corners, Inter, Spectral only on the office name), in the admin's own arrangement. The 6px crimson edge of the sign-in page continues across the top of the admin, so signing in feels like walking through the same door.
+STORY: A clerk signs in, sees the seal and the office, finds the module by the stage of work it belongs to, and always knows which page they are on.
+FIRST VIEWPORT: 1366x768 with the Procurement and Supply groups open and the monthly groups (Utilities, Records Management) closed; no scrolling in the rail.
+FORM: Two directions for the owner: A White rail (crimson marks where you are) and B Crimson rail (the strip's colour carries the whole rail). The page area is a neutral stand-in: the admin pages are redesigned later, one module at a time.
+CHANGES CARRIED BY BOTH: children named without their group's words (so nothing truncates), child icons only in the collapsed rail, Settings once (in the list), the account block shows name and role with one Sign out, Utilities and Records closed by default, and a group opens by itself when you are on one of its pages.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Spectral:wght@500&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<style type="text/tailwindcss">
+  @theme {
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --font-serif: "Spectral", ui-serif, Georgia, serif;
+  }
+</style>
+<style>
+  :root { --identity: #7e1624; --wash: #f6eced; --ring: #b0415a; --canvas: #f6f7f8; }
+  html, body { overscroll-behavior: none; }
+  body { background: var(--canvas); }
+  svg.lucide { width: 18px; height: 18px; stroke-width: 1.75; flex-shrink: 0; }
+  .chev svg.lucide { width: 16px; height: 16px; }
+
+  /* ---------- A: White rail ---------- */
+  .rail { background: #fff; border-right: 1px solid #e5e5e5; color: #525252; }
+  .rail .office { color: #171717; }
+  .rail .muni { color: #737373; }
+  .rail .item { color: #525252; }
+  .rail .item:hover { background: #f5f5f5; color: #171717; }
+  .rail .item[aria-current="page"] { background: var(--wash); color: var(--identity); font-weight: 600; }
+  .rail .parent.has-current { color: #171717; font-weight: 600; }
+  .rail .guide { border-left: 1px solid #e5e5e5; }
+  .rail .rule { border-top: 1px solid #e5e5e5; }
+  .rail .chev { color: #a3a3a3; }
+  .rail .avatar { background: var(--wash); color: var(--identity); }
+  .rail .name { color: #171717; }
+  .rail .role { color: #737373; }
+  .rail .signout { color: #525252; border: 1px solid #e5e5e5; }
+  .rail .signout:hover { background: #f5f5f5; color: #171717; }
+  .rail .seal-disc { background: transparent; }
+  .rail .count { background: #171717; color: #fff; }
+
+  /* ---------- B: Crimson rail ---------- */
+  html[data-rail="crimson"] .rail { background: var(--identity); border-right-color: var(--identity); color: rgb(255 255 255 / 0.82); }
+  html[data-rail="crimson"] .rail .office { color: #fff; }
+  html[data-rail="crimson"] .rail .muni { color: rgb(255 255 255 / 0.72); }
+  html[data-rail="crimson"] .rail .item { color: rgb(255 255 255 / 0.82); }
+  html[data-rail="crimson"] .rail .item:hover { background: rgb(255 255 255 / 0.1); color: #fff; }
+  html[data-rail="crimson"] .rail .item[aria-current="page"] { background: #fff; color: var(--identity); font-weight: 600; }
+  html[data-rail="crimson"] .rail .parent.has-current { color: #fff; font-weight: 600; }
+  html[data-rail="crimson"] .rail .guide { border-left-color: rgb(255 255 255 / 0.22); }
+  html[data-rail="crimson"] .rail .rule { border-top-color: rgb(255 255 255 / 0.18); }
+  html[data-rail="crimson"] .rail .chev { color: rgb(255 255 255 / 0.6); }
+  html[data-rail="crimson"] .rail .avatar { background: rgb(255 255 255 / 0.16); color: #fff; }
+  html[data-rail="crimson"] .rail .name { color: #fff; }
+  html[data-rail="crimson"] .rail .role { color: rgb(255 255 255 / 0.72); }
+  html[data-rail="crimson"] .rail .signout { color: #fff; border-color: rgb(255 255 255 / 0.3); }
+  html[data-rail="crimson"] .rail .signout:hover { background: rgb(255 255 255 / 0.1); }
+  html[data-rail="crimson"] .rail .seal-disc { background: #fff; }
+  html[data-rail="crimson"] .rail .count { background: #fff; color: var(--identity); }
+  html[data-rail="crimson"] .rail .item[aria-current="page"] .count { background: var(--identity); color: #fff; }
+  html[data-rail="crimson"] .edge { background: #66111d; }
+
+  /* ---------- C: White rail, crimson letterhead block ---------- */
+  /* The top of the rail is the letterhead: crimson, as tall as the top bar, so
+     the edge line and the block read as one crimson corner. The list below stays
+     white, so crimson still only marks the office and where you are. */
+  html[data-rail="corner"] .brand { background: var(--identity); height: 56px; padding-top: 0; padding-bottom: 0; }
+  html[data-rail="corner"] .rail .office { color: #fff; }
+  html[data-rail="corner"] .rail .muni { color: rgb(255 255 255 / 0.75); }
+  html[data-rail="corner"] .rail .seal-disc { background: #fff; height: 36px; width: 36px; }
+  html[data-rail="corner"] .rail .seal-disc img { height: 32px; width: 32px; }
+  html[data-rail="corner"] nav { padding-top: 12px; }
+
+  .item:focus-visible, .signout:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ring); }
+  .group-body { display: grid; grid-template-rows: 1fr; transition: grid-template-rows 200ms cubic-bezier(0.23, 1, 0.32, 1); }
+  .group-body > div { overflow: hidden; }
+  .group[data-open="false"] .group-body { grid-template-rows: 0fr; }
+  .group[data-open="false"] .chev { transform: rotate(-90deg); }
+  .chev { transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1); }
+
+  .comp-switch button[aria-pressed="true"] { background: #171717; color: #fff; }
+</style>
+</head>
+<body class="flex h-[100dvh] flex-col overflow-hidden font-sans text-neutral-900 antialiased">
+  <!-- The sign-in page's crimson edge, carried into the admin. -->
+  <div class="edge h-1.5 shrink-0 bg-[var(--identity)]"></div>
+
+  <div class="flex min-h-0 flex-1">
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="rail flex w-[272px] shrink-0 flex-col">
+      <div class="brand flex items-center gap-2.5 px-4 pb-3 pt-4">
+        <span class="seal-disc grid h-10 w-10 shrink-0 place-items-center rounded-full">
+          <img src="../../public/logo/alaminos-seal.png" alt="Seal of the Municipality of Alaminos" class="h-9 w-9" />
+        </span>
+        <span class="flex min-w-0 flex-col">
+          <span class="office font-serif text-[17px] font-medium leading-tight">General Services Office</span>
+          <span class="muni text-[12px] leading-snug">Municipality of Alaminos, Laguna</span>
+        </span>
+      </div>
+
+      <nav aria-label="Modules" class="flex min-h-0 flex-1 flex-col overflow-y-auto px-3 pb-3 pt-1 text-[14px]">
+        <a href="#" class="item flex h-9 items-center gap-3 rounded-[4px] px-2.5"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+
+        <div class="group mt-0.5" data-open="true">
+          <button type="button" class="item parent has-current flex h-9 w-full items-center gap-3 rounded-[4px] px-2.5 text-left" aria-expanded="true">
+            <i data-lucide="files"></i><span class="flex-1">Procurement</span><span class="chev"><i data-lucide="chevron-down"></i></span>
+          </button>
+          <div class="group-body"><div>
+            <div class="guide my-0.5 ml-[21px] flex flex-col gap-0.5 pl-2.5">
+              <a href="#" aria-current="page" class="item flex h-9 items-center justify-between rounded-[4px] px-2.5">Purchase Requests<span class="count rounded-full px-1.5 text-[12px] font-semibold leading-5">3</span></a>
+              <a href="#" class="item flex h-9 items-center rounded-[4px] px-2.5">Purchase Orders</a>
+            </div>
+          </div></div>
+        </div>
+
+        <div class="group mt-0.5" data-open="true">
+          <button type="button" class="item parent flex h-9 w-full items-center gap-3 rounded-[4px] px-2.5 text-left" aria-expanded="true">
+            <i data-lucide="warehouse"></i><span class="flex-1">Supply</span><span class="chev"><i data-lucide="chevron-down"></i></span>
+          </button>
+          <div class="group-body"><div>
+            <div class="guide my-0.5 ml-[21px] flex flex-col gap-0.5 pl-2.5">
+              <a href="#" class="item flex h-9 items-center rounded-[4px] px-2.5">Inventory</a>
+              <a href="#" class="item flex h-9 items-center rounded-[4px] px-2.5">Requisition &amp; Issue Slip</a>
+            </div>
+          </div></div>
+        </div>
+
+        <a href="#" class="item mt-0.5 flex h-9 items-center gap-3 rounded-[4px] px-2.5"><i data-lucide="calendar-days"></i>Facility Reservation</a>
+        <a href="#" class="item mt-0.5 flex h-9 items-center gap-3 rounded-[4px] px-2.5"><i data-lucide="shield-alert"></i>Violation Management</a>
+
+        <div class="group mt-0.5" data-open="false">
+          <button type="button" class="item parent flex h-9 w-full items-center gap-3 rounded-[4px] px-2.5 text-left" aria-expanded="false">
+            <i data-lucide="gauge"></i><span class="flex-1">Utilities</span><span class="chev"><i data-lucide="chevron-down"></i></span>
+          </button>
+          <div class="group-body"><div>
+            <div class="guide my-0.5 ml-[21px] flex flex-col gap-0.5 pl-2.5">
+              <a href="#" class="item flex h-9 items-center rounded-[4px] px-2.5">Energy</a>
+              <a href="#" class="item flex h-9 items-center rounded-[4px] px-2.5">Water</a>
+              <a href="#" class="item flex h-9 items-center rounded-[4px] px-2.5">Fuel</a>
+            </div>
+          </div></div>
+        </div>
+
+        <div class="group mt-0.5" data-open="false">
+          <button type="button" class="item parent flex h-9 w-full items-center gap-3 rounded-[4px] px-2.5 text-left" aria-expanded="false">
+            <i data-lucide="archive"></i><span class="flex-1">Records Management</span><span class="chev"><i data-lucide="chevron-down"></i></span>
+          </button>
+          <div class="group-body"><div>
+            <div class="guide my-0.5 ml-[21px] flex flex-col gap-0.5 pl-2.5">
+              <a href="#" class="item flex h-9 items-center rounded-[4px] px-2.5">Disposition Schedule</a>
+              <a href="#" class="item flex h-9 items-center rounded-[4px] px-2.5">Inventory &amp; Appraisal</a>
+              <a href="#" class="item flex h-9 items-center rounded-[4px] px-2.5">Authority to Dispose</a>
+            </div>
+          </div></div>
+        </div>
+
+        <a href="#" class="item mt-0.5 flex h-9 items-center gap-3 rounded-[4px] px-2.5"><i data-lucide="bar-chart-3"></i>Reports</a>
+
+        <div class="rule my-3"></div>
+        <a href="#" class="item flex h-9 items-center gap-3 rounded-[4px] px-2.5"><i data-lucide="history"></i>Audit Trail</a>
+        <a href="#" class="item mt-0.5 flex h-9 items-center gap-3 rounded-[4px] px-2.5"><i data-lucide="settings"></i>Settings</a>
+      </nav>
+
+      <div class="rule flex items-center gap-3 px-4 py-3">
+        <span class="avatar grid h-9 w-9 shrink-0 place-items-center rounded-full text-[13px] font-semibold">RN</span>
+        <span class="flex min-w-0 flex-1 flex-col">
+          <span class="name truncate text-[14px] font-semibold leading-tight">Richard Nasol</span>
+          <span class="role truncate text-[12.5px]">Administrator</span>
+        </span>
+        <button type="button" aria-label="Sign out" class="signout grid h-9 w-9 shrink-0 place-items-center rounded-[4px]"><i data-lucide="log-out"></i></button>
+      </div>
+    </aside>
+
+    <!-- ============ PAGE AREA (neutral stand-in, not part of this decision) ============ -->
+    <div class="flex min-w-0 flex-1 flex-col">
+      <header class="flex h-14 shrink-0 items-center gap-3 border-b border-neutral-200 bg-white px-6">
+        <i data-lucide="panel-left" class="text-neutral-500"></i>
+        <span class="text-[14px] text-neutral-500">General Services Office</span>
+        <i data-lucide="chevron-right" class="text-neutral-400"></i>
+        <span class="text-[14px] font-medium">Purchase Requests</span>
+      </header>
+      <main class="min-h-0 flex-1 overflow-hidden p-8">
+        <div class="h-7 w-56 rounded-[4px] bg-neutral-200"></div>
+        <div class="mt-3 h-4 w-96 rounded-[4px] bg-neutral-200/70"></div>
+        <div class="mt-8 h-[calc(100%-6rem)] rounded-[4px] border border-dashed border-neutral-300 bg-white/60 p-6 text-[14px] text-neutral-500">
+          Page content. The admin pages keep their current design for now and are redesigned one module at a time after the sidebar.
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div class="comp-switch fixed bottom-4 right-4 z-50 flex items-center gap-1 rounded-[4px] border border-neutral-300 bg-white p-1 text-[12.5px] shadow-lg">
+    <button type="button" data-set="white" aria-pressed="true" class="rounded-[3px] px-2.5 py-1.5">A · White</button>
+    <button type="button" data-set="crimson" aria-pressed="false" class="rounded-[3px] px-2.5 py-1.5">B · Red</button>
+    <button type="button" data-set="corner" aria-pressed="false" class="rounded-[3px] px-2.5 py-1.5">C · White, red on top</button>
+  </div>
+
+<script>
+  lucide.createIcons();
+  document.querySelectorAll('.group > button').forEach((btn) => btn.addEventListener('click', () => {
+    const g = btn.parentElement;
+    const open = g.dataset.open !== 'true';
+    g.dataset.open = String(open);
+    btn.setAttribute('aria-expanded', String(open));
+  }));
+  document.querySelectorAll('[data-set]').forEach((b) => b.addEventListener('click', () => {
+    document.documentElement.dataset.rail = b.dataset.set;
+    document.querySelectorAll('[data-set]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  }));
+</script>
+</body>
+</html>

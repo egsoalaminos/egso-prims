@@ -177,7 +177,7 @@ components:
 
 > **Scope.** This file documents the **staff portal** (every route under `/portal`), which is the current design going forward. There is no older portal look to return to.
 >
-> **The admin sign-in page (`/login`) joined this world on 17 September 2026** as a letterhead sheet (see Sign-in Sheet). **The admin application behind it has not been migrated.** It still runs its older design (the 4 August 2026 system in the top half of `src/index.css`: near-black accent, 10px-derived corners, Inter only). The admin is next to be redesigned. Until that happens, nothing here applies to admin screens.
+> **The admin sign-in page (`/login`) joined this world on 17 September 2026** as a letterhead sheet (see Sign-in Sheet). **The admin's sidebar and frame followed the same day** (see Admin Sidebar). **The admin pages themselves have not been migrated;** they move one module at a time. It still runs its older design (the 4 August 2026 system in the top half of `src/index.css`: near-black accent, 10px-derived corners, Inter only). The admin is next to be redesigned. Until that happens, nothing here applies to admin screens.
 >
 > **How the portal's values are applied.** Nothing here is global. The portal's colours, corners and ground are declared in one scoped `[data-portal]` token block ("THE PORTAL" in `src/index.css`). The portal layout puts `data-portal` on its root element, and on `<html>` while it is mounted, so pickers and selects portalled to `<body>` pick up the same values. The theme is `@theme inline`, so utilities compile straight to `--radius-step-*`, `--canvas` and `--accent-*`. Those are the names the scope redeclares, and every value in it is a literal, never `var(...)`.
 
@@ -227,7 +227,7 @@ Neutrals come from Tailwind's stock `neutral` ramp (declared in oklch; the hex v
 
 **The Crimson Is Not a Field Rule.** Crimson appears as the thin strip, the band behind a heading, and solid action buttons. It is never a large bright surface, a card fill, or a background for body copy. The band's height responds to the viewport so the cards, not the crimson, stay the focus.
 
-**The Scoped Palette Rule.** Portal colours reach components only through the `[data-portal]` block's `--accent-*` and `--canvas` literals. Never hard-code the crimson into a shared component, and never declare a portal value as `var(--other-token)`.
+**The Scoped Palette Rule.** Portal colours reach components only through the `[data-portal]` block's `--accent-*` and `--canvas` literals. The admin takes the same values through `[data-municipal]`, the same block under a second name, on each part as it is migrated (the sidebar, the crimson edge). Never hard-code the crimson into a shared component, and never declare a portal value as `var(--other-token)`.
 
 ## Typography
 
@@ -333,6 +333,18 @@ Below lg, the Reserve page swaps the admin's month grid (760px minimum, which sc
 - **Booking dots:** a 7px dot under the number when a facility is held that day. Filled means approved (or completed), a ring means waiting for approval, both in ink, with a legend under the grid. Rejected, cancelled and draft bookings hold nothing and are not shown.
 - **Selected day:** under the grid on a phone, beside it from md. The day as a 15px/600 heading, then each booking: facility name (14px/500) with its status at 12.5px on the same line, and the time and office below at 13px tabular. With none, "No bookings on this day."
 
+### Admin Sidebar (signature)
+The admin's rail, owner-approved as option "C" (comp `.impeccable/comps/admin-sidebar.html`) over an all-white rail and an all-crimson one: crimson only where it means the office or where you are, since the admin is looked at all day beside tables.
+- **Frame:** a 6px crimson edge across the whole window (the sign-in sheet's edge, carried in). The rail is 272px, white, ruled right with a hairline; the top bar beside it is 56px.
+- **Letterhead block:** the top 56px of the rail is crimson, level with the top bar, so edge and block read as one corner. The seal on a 36px white disc, "General Services Office" in Spectral 17px white, "Municipality of Alaminos, Laguna" at 12px, 75% white. 272px is the width that fits both lines without truncating.
+- **Order:** the work in order (owner's choice): Dashboard; Procurement (Purchase Requests, Purchase Orders); Supply (Inventory, Requisition & Issue Slip); Facility Reservation; Violation Management; Utilities (Energy, Water, Fuel); Records Management (Disposition Schedule, Inventory & Appraisal, Authority to Dispose); Reports; a hairline; Audit Trail; Settings.
+- **Rows:** 36px, 14px Inter, 18px icons, 4px corners. Idle #525252, hover ink on #f5f5f5. The current page is crimson text at 600 on Crimson Wash. A group heading holding the current page is ink at 600 with no fill.
+- **Groups:** a heading with a chevron; its pages hang off a hairline guide under the heading's icon, without icons of their own and named without the group's words, so none truncates (page titles and breadcrumbs keep the full names). Procurement and Supply start open, Utilities and Records Management closed (monthly work, and the rail then fits 768px without scrolling). A group opens by itself when the page on screen is inside it. Open/closed is remembered per browser.
+- **Counts:** ink pills (12px/600 white) or an ink dot: "waiting for you", whatever the module.
+- **Account:** the initials on a Crimson Wash disc, the name (14px/600) and the role (12.5px muted), and one 36px hairline Sign out button. Settings is not repeated here.
+- **Collapsed (68px):** the seal, every row's icon (group pages show theirs), the initials and Sign out; labels show as a tooltip.
+- **Phone:** the same rail in a 312px drawer with a white close button on the letterhead block.
+
 ### Tracked Request
 The Track page's result, one white card under the reference field. A request that is not found is a field error on that field (red border, 12.5px message, focus returned), not a separate card.
 - **Heading:** the document type in muted 500 weight, a middle dot, and the reference number in tabular figures, at 17px. On a phone the type and the number take a line each.
@@ -364,7 +376,7 @@ The admin's sign-in page. The owner asked for it to look "a little different fro
 ### Don't:
 - **Don't** add a dark mode, a theme switcher or an alternate portal palette. The portal is light mode only.
 - **Don't** edit the shared filing wizards (Purchase Request, Requisition and Issue Slip, Reservation) to change how they look in the portal.
-- **Don't** apply portal tokens globally or to admin routes. The sign-in page is the one exception; the admin behind it keeps its own design until it is redesigned.
+- **Don't** apply portal tokens globally. In the admin, apply them (through `data-municipal`) only to the parts that have been redesigned: the sign-in page, the sidebar and the top edge so far.
 - **Don't** use crimson as a bright field, a card fill or a text background.
 - **Don't** add shadows to cards, buttons or bands.
 - **Don't** set anything but the office name in Spectral, and don't use a serif display headline.
