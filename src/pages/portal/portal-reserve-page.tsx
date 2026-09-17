@@ -6,6 +6,7 @@ import { createReservation, type ReservationDraftInput } from "@/features/reserv
 import { useReservations } from "@/features/reservations/hooks";
 import { ReservationCalendar } from "@/features/reservations/components/reservation-calendar";
 import { ResWizard } from "@/features/reservations/components/res-form/res-wizard";
+import { CompactReservationCalendar } from "@/features/portal/components/compact-reservation-calendar";
 import { PortalPage, SubmissionSuccess } from "@/features/portal/components/submission-success";
 
 /** Public facility reservation form — the same enterprise wizard, no login. */
@@ -40,10 +41,17 @@ export function PortalReservePage() {
         />
       ) : (
         <>
+          {/* The admin's month grid needs 760px; below lg the portal shows a
+              compact month that fits a phone without scrolling sideways. */}
+          <CompactReservationCalendar
+            reservations={calendar.data}
+            loading={calendar.loading}
+            className="mb-6 lg:hidden"
+          />
           <ReservationCalendar
             reservations={calendar.data}
             loading={calendar.loading}
-            className="mb-6"
+            className="mb-6 hidden lg:block"
           />
           <ResWizard submitting={submitting} onSubmit={submit} onCancel={() => navigate("/portal")} />
         </>

@@ -306,7 +306,7 @@ Solid, full-height bars that say what they do and point where they go.
 - **Style:** 14px Inter links with 8px/12px padding and 4px corners.
 - **Idle / Hover:** #525252 text; hover goes to ink on #f5f5f5.
 - **Current:** crimson text at weight 600, with no underline, pill or fill.
-- **Mobile:** below md, one horizontally scrolling row under the masthead. A "Skip to content" link comes first in the tab order.
+- **Mobile:** below md, one horizontally scrolling row under the masthead. Four services do not fit a phone, so whenever the row overflows it draws its own 3px scroll bar under the links (a #737373 thumb on a #e5e5e5 track; phone browsers hide native bars until you swipe) and a 32px white fade on whichever edge still has services past it. The row scrolls the current service into view with an 8px margin, so the page you are on is never the one cut off. A "Skip to content" link comes first in the tab order.
 
 ### Government Strip and Letterhead Masthead (signature)
 The strip is a full-width crimson bar with 12px white text: "Republic of the Philippines" on the left and "Province of Laguna" on the right (the right text is hidden on phones). Below it, the white masthead holds the 44px municipal seal, the uppercase municipality line, and the office name in Spectral, all linking home. The masthead is ruled off with a hairline. The footer mirrors it: a 24px seal, the office line, and the copyright, in 12.5px muted text on white.
@@ -319,6 +319,13 @@ The home band's structure is reused at the top of every inner page: crimson, a w
 
 ### Reference Receipt
 Shown after a filing is submitted. It is a white card, max width 36rem. It shows the reference number in 18px/600 tabular figures inside a #fafafa panel with a #d4d4d4 border, a line telling the person to keep the number, and a primary "Track this request" button next to a secondary "Back to Portal".
+
+### Compact Reservation Calendar
+Below lg, the Reserve page swaps the admin's month grid (760px minimum, which scrolled sideways on a phone) for a compact month that answers one question: is this date taken? The admin calendar is shared and unchanged; from lg it still shows.
+- **Header:** "Reservation Calendar" at 15px/600 with a hairline "Today" button beside it; below, 44px hairline previous and next buttons around the month name at 15px/600.
+- **Days:** a seven-column grid of 44px day buttons (they shrink with their column on narrow phones), 14px tabular numbers, days outside the month left blank. The selected day is ink with white text; today, when not selected, has a 1px ink outline. Selection switches instantly, with no transition, because it is tapped often.
+- **Booking dots:** a 7px dot under the number when a facility is held that day. Filled means approved (or completed), a ring means waiting for approval, both in ink, with a legend under the grid. Rejected, cancelled and draft bookings hold nothing and are not shown.
+- **Selected day:** under the grid on a phone, beside it from md. The day as a 15px/600 heading, then each booking: facility name (14px/500) with its status at 12.5px on the same line, and the time and office below at 13px tabular. With none, "No bookings on this day."
 
 ### Tracked Request
 The Track page's result, one white card under the reference field. A request that is not found is a field error on that field (red border, 12.5px message, focus returned), not a separate card.
