@@ -28,7 +28,13 @@ The sidebar components are used only by this layout.
   once, the account block with name, role and one Sign out, Utilities and Records closed by
   default, the sign-in page's crimson edge across the admin.
 
+- **Top bar (2026-09-18):** the dead global search removed ("Alisin muna"), and the office label
+  and account menu removed as duplicates of the rail ("Alisin ang dalawa"). The bar keeps the
+  sidebar button, a breadcrumb that starts at the sidebar group, and notifications.
+
 ## Unresolved decisions
 
-- The top bar's own design (search, office switcher, account menu) is not redesigned yet.
+- A real global search (reference numbers, modules) is to be built after the modules are
+  redesigned, since it needs every list page to open a record from a link.
+
 - The admin pages still use the older design.

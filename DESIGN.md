@@ -345,6 +345,13 @@ The admin's rail, owner-approved as option "C" (comp `.impeccable/comps/admin-si
 - **Collapsed (68px):** the seal, every row's icon (group pages show theirs), the initials and Sign out; labels show as a tooltip.
 - **Phone:** the same rail in a 312px drawer with a white close button on the letterhead block.
 
+### Admin Top Bar
+Owner decisions, 18 Sep 2026: the search that never searched is removed until a real one is built after the modules (each list keeps its own search), and the office label and account menu are removed because the rail already carries them.
+- **Bar:** 56px, white, a hairline under it, level with the rail's letterhead block; its top 6px sit under the crimson edge. Municipal scope, so 4px corners and the crimson focus ring.
+- **Left:** a 36px sidebar button (collapses the rail on a desktop, opens the drawer on a phone), then the breadcrumb.
+- **Breadcrumb:** starts where the sidebar does: the group (Procurement, Supply, Utilities, Records Management; plain text, groups are not pages), the page (a link when you are deeper), then the record or "New …". 14px; ancestors muted, the current page ink at 600. On a phone only the last two show, and an ancestor truncates before the current page does.
+- **Right:** notifications, a 36px hairline button; the unread count is an ink pill (12px/600 white, ringed in white), like the rail's counts. Red is kept for things that went wrong.
+
 ### Tracked Request
 The Track page's result, one white card under the reference field. A request that is not found is a field error on that field (red border, 12.5px message, focus returned), not a separate card.
 - **Heading:** the document type in muted 500 weight, a middle dot, and the reference number in tabular figures, at 17px. On a phone the type and the number take a line each.
@@ -376,7 +383,7 @@ The admin's sign-in page. The owner asked for it to look "a little different fro
 ### Don't:
 - **Don't** add a dark mode, a theme switcher or an alternate portal palette. The portal is light mode only.
 - **Don't** edit the shared filing wizards (Purchase Request, Requisition and Issue Slip, Reservation) to change how they look in the portal.
-- **Don't** apply portal tokens globally. In the admin, apply them (through `data-municipal`) only to the parts that have been redesigned: the sign-in page, the sidebar and the top edge so far.
+- **Don't** apply portal tokens globally. In the admin, apply them (through `data-municipal`) only to the parts that have been redesigned: the sign-in page, the sidebar, the top bar and the top edge so far.
 - **Don't** use crimson as a bright field, a card fill or a text background.
 - **Don't** add shadows to cards, buttons or bands.
 - **Don't** set anything but the office name in Spectral, and don't use a serif display headline.

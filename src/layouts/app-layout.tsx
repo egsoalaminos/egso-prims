@@ -33,8 +33,6 @@ import {
 import { AppShell } from "@/components/layout/app-shell";
 import { PageFallback } from "@/components/feedback/page-fallback";
 import { Breadcrumb, type BreadcrumbItem } from "@/components/navigation/breadcrumb";
-import { OfficeSwitcher } from "@/components/navigation/office-switcher";
-import { ProfileMenu } from "@/components/navigation/profile-menu";
 import { SidebarUser } from "@/components/navigation/sidebar-user";
 import { NotificationBell, TopBar } from "@/components/navigation/top-bar";
 import {
@@ -47,7 +45,6 @@ import {
   SidebarItem,
 } from "@/components/navigation/sidebar";
 import { ConfirmationModal } from "@/components/modal/modals";
-import { SearchBar } from "@/components/toolbar/search-bar";
 import { toast } from "@/components/feedback/toaster";
 import { useAuth } from "@/features/auth/auth-context";
 import { useNotifications } from "@/features/notifications/hooks";
@@ -417,47 +414,58 @@ function AppSidebar({
   );
 }
 
-/** Derives the breadcrumb trail from the current route. */
+/**
+ * Derives the breadcrumb trail from the current route.
+ *
+ * It starts where the sidebar does: the group a page sits in (Procurement,
+ * Supply, Utilities, Records Management), then the page, then the record. The
+ * office is not repeated; the rail's letterhead already names it. Groups are
+ * not pages, so their crumb is plain text.
+ */
 function useBreadcrumbs(): BreadcrumbItem[] {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const crumbs: BreadcrumbItem[] = [{ label: "General Services Office" }];
 
-  if (pathname === "/") {
-    crumbs.push({ label: "Dashboard" });
-    return crumbs;
-  }
+  if (pathname === "/") return [{ label: "Dashboard" }];
 
-  const sections: { prefix: string; label: string; newLabel: string }[] = [
-    { prefix: "/purchase-requests", label: "Purchase Requests", newLabel: "New Request" },
-    { prefix: "/purchase-orders", label: "Purchase Orders", newLabel: "New Order" },
-    { prefix: "/ris", label: "Requisition and Issue Slip", newLabel: "New RIS" },
-    { prefix: "/inventory", label: "Inventory", newLabel: "New Item" },
+  const sections: { prefix: string; group?: string; label: string; newLabel: string }[] = [
+    { prefix: "/purchase-requests", group: "Procurement", label: "Purchase Requests", newLabel: "New Request" },
+    { prefix: "/purchase-orders", group: "Procurement", label: "Purchase Orders", newLabel: "New Order" },
+    { prefix: "/inventory", group: "Supply", label: "Inventory", newLabel: "New Item" },
+    { prefix: "/ris", group: "Supply", label: "Requisition and Issue Slip", newLabel: "New RIS" },
     { prefix: "/reservations", label: "Facility Reservation", newLabel: "New Reservation" },
     { prefix: "/violations", label: "Violation Management", newLabel: "" },
-    { prefix: "/energy", label: "Energy Consumption", newLabel: "" },
-    { prefix: "/water", label: "Water Consumption", newLabel: "" },
-    { prefix: "/fuel", label: "Fuel Consumption", newLabel: "" },
+    { prefix: "/energy", group: "Utilities", label: "Energy Consumption", newLabel: "" },
+    { prefix: "/water", group: "Utilities", label: "Water Consumption", newLabel: "" },
+    { prefix: "/fuel", group: "Utilities", label: "Fuel Consumption", newLabel: "" },
     // Before "/records": the match is a prefix test, so the longer path has to
     // be offered first or an inventory would read as a disposition schedule.
     {
       prefix: "/records/inventory",
+      group: "Records Management",
       label: "Records Inventory and Appraisal",
       newLabel: "New Inventory",
     },
     {
       prefix: "/records/disposal",
+      group: "Records Management",
       label: "Authority to Dispose of Records",
       newLabel: "New Request",
     },
-    { prefix: "/records", label: "Records Disposition Schedule", newLabel: "New Schedule" },
+    {
+      prefix: "/records",
+      group: "Records Management",
+      label: "Records Disposition Schedule",
+      newLabel: "New Schedule",
+    },
     { prefix: "/reports", label: "Reports & Analytics", newLabel: "" },
     { prefix: "/audit", label: "Audit Trail", newLabel: "" },
     { prefix: "/settings", label: "Settings", newLabel: "" },
   ];
 
-  for (const { prefix, label, newLabel } of sections) {
+  for (const { prefix, group, label, newLabel } of sections) {
     if (!pathname.startsWith(prefix)) continue;
+    const crumbs: BreadcrumbItem[] = group ? [{ label: group }] : [];
     const rest = pathname.slice(prefix.length).split("/").filter(Boolean);
     if (rest.length === 0) {
       crumbs.push({ label });
@@ -470,45 +478,29 @@ function useBreadcrumbs(): BreadcrumbItem[] {
     return crumbs;
   }
 
-  return crumbs;
+  return [];
 }
 
+/**
+ * The admin's top bar: the sidebar button, where you are, and notifications.
+ * The account and Settings live in the rail; the search that sat here never
+ * searched and was removed (owner's decision, 18 Sep 2026) until a real one is
+ * built after the modules.
+ */
 function AppTopBar({
   onToggleSidebar,
-  onRequestSignOut,
   onOpenNotifications,
   unreadCount,
 }: {
   onToggleSidebar: () => void;
-  onRequestSignOut: () => void;
   onOpenNotifications: () => void;
   unreadCount: number;
 }) {
   const crumbs = useBreadcrumbs();
-  const { user } = useAuth();
-  const navigate = useNavigate();
   return (
     <TopBar
       onToggleSidebar={onToggleSidebar}
-      actions={
-        <>
-          <SearchBar
-            placeholder="Search PR, PO, RIS, items, departments..."
-            className="hidden sm:block"
-          />
-          <OfficeSwitcher current={user?.office ?? "General Services Office"} />
-          <NotificationBell count={unreadCount} onClick={onOpenNotifications} />
-          <ProfileMenu
-            name={user?.name ?? "Administrator"}
-            detail={user?.office ?? "General Services Office"}
-            initials={initialsOf(user?.name ?? "Administrator")}
-            items={[
-              { label: "Settings", icon: Settings, onClick: () => navigate("/settings") },
-              { label: "Sign Out", icon: LogOut, destructive: true, onClick: onRequestSignOut },
-            ]}
-          />
-        </>
-      }
+      actions={<NotificationBell count={unreadCount} onClick={onOpenNotifications} />}
     >
       <Breadcrumb items={crumbs} />
     </TopBar>
@@ -576,7 +568,6 @@ export function AppLayout() {
         topBar={
           <AppTopBar
             onToggleSidebar={toggleSidebar}
-            onRequestSignOut={requestSignOut}
             onOpenNotifications={() => setNotificationsOpen(true)}
             unreadCount={unreadCount}
           />
