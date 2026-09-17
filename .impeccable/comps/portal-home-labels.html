@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en" data-layout="band" data-variant="steps">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>General Services Office · Municipality of Alaminos (label options)</title>
+<!--
+THESIS: A government service counter on one screen. The four services are the page; nothing competes with them. Refuses the marketing hero and the editorial university look.
+OWN-WORLD: Deep municipal crimson (#7E1624) carries the government strip and a band behind the question; white cards with hairline borders sit over the band's lower edge on a cool light-grey ground. Crimson marks identity and "start a filing"; ink marks "track". Inter throughout; the office name alone is set in a serif, as on a letterhead. Small 4px corners, no shadows.
+STORY: A staff member sees the seal and the office, reads one question, and either starts one of three filings or types a reference number to track one.
+FIRST VIEWPORT: Crimson strip, white masthead with seal, crimson band with the question, then three filing cards and one tracking card overlapping the band, all above the fold at 1366x768.
+FORM: Category standard played straight (owner-selected), craft bar Linear; roll seed 28920130 acknowledged, owner decision wins.
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Spectral:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+  @theme {
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --font-serif: "Spectral", ui-serif, Georgia, serif;
+  }
+</style>
+<style>
+  :root {
+    /* The owner's pick: the deep crimson of the top strip, easy on the eyes. */
+    --identity: #7e1624;
+    --identity-hover: #66111d;
+    --ink: #15171c;
+    --muted: #5b5f68;
+    --rule: #e2e4e8;
+    --canvas: #f6f7f8;
+    --tile: #f3f4f6;
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  body { background: var(--canvas); color: var(--ink); }
+
+  /* Band layout (default): the question sits on crimson, the cards overlap its lower edge. */
+  .intro { background: var(--identity); color: #fff; }
+  .intro .sub { color: rgb(255 255 255 / 0.82); }
+  .intro .glabel { color: rgb(255 255 255 / 0.75); }
+  .cards-wrap { margin-top: -5.5rem; }
+  .ruled { border-top: 1px solid var(--rule); }
+
+  /* Flat layout (comp comparison): no band, a crimson rule tops each card instead. */
+  html[data-layout="flat"] .intro { background: transparent; color: var(--ink); }
+  html[data-layout="flat"] .intro .sub,
+  html[data-layout="flat"] .intro .glabel { color: var(--muted); }
+  html[data-layout="flat"] .intro .pad { padding-bottom: 1rem; }
+  html[data-layout="flat"] .cards-wrap { margin-top: 0; }
+  html[data-layout="flat"] .ruled { border-top: 3px solid var(--identity); }
+  html[data-layout="flat"] .ruled.ink { border-top-color: var(--ink); }
+  html[data-layout="flat"] main { justify-content: center; }
+
+  /* Cards arrive once, in order, from a small offset. Nothing loops. */
+  @media (prefers-reduced-motion: no-preference) {
+    .enter { opacity: 0; transform: translateY(8px); animation: enter 360ms var(--ease-out) forwards; }
+  }
+  @keyframes enter { to { opacity: 1; transform: none; } }
+
+  /* Pressing anything pressable gives way slightly. */
+  .press { transition: transform 120ms var(--ease-out), background-color 150ms ease, border-color 150ms ease; }
+  .press:active { transform: scale(0.98); }
+
+  /* Hover only where hover is real. The arrow is the only thing that moves. */
+  .card .arrow { transition: transform 160ms var(--ease-out); }
+  @media (hover: hover) and (pointer: fine) {
+    .card:hover { border-color: #c9ccd2; }
+    .card:hover .action { background: var(--identity-hover); }
+    .card:hover .arrow { transform: translateX(3px); }
+  }
+
+  /* Label options (comp only). */
+  html[data-variant="labels"] .v-labels { display: grid; }
+  html[data-variant="steps"] .v-steps,
+  html[data-variant="both"] .v-steps { display: flex; }
+  .v-seal { display: none !important; }
+  @media (min-width: 1024px) {
+    html[data-variant="seal"] .v-seal,
+    html[data-variant="both"] .v-seal { display: block !important; opacity: 0.1; filter: grayscale(1) brightness(1.6); mix-blend-mode: screen; translate: 0 -50%; }
+    /* Keep the band as tall as it is with the steps, so the cards sit in the same place. */
+    html[data-variant="seal"] .intro .pad { padding-bottom: calc(clamp(8rem, 18vh, 12rem) + 60px) !important; }
+  }
+</style>
+</head>
+<body class="flex min-h-[100dvh] flex-col font-sans antialiased">
+
+  <!-- Government strip -->
+  <div class="bg-[var(--identity)] text-white">
+    <div class="mx-auto flex w-full max-w-[1200px] items-center justify-between px-5 py-1.5 text-[12px] md:px-8">
+      <span>Republic of the Philippines</span>
+      <span class="hidden sm:inline">Province of Laguna</span>
+    </div>
+  </div>
+
+  <!-- Masthead -->
+  <header class="border-b border-[var(--rule)] bg-white">
+    <div class="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-6 px-5 py-3.5 md:px-8">
+      <a href="#" class="flex items-center gap-3">
+        <img src="../../public/logo/alaminos-seal.png" alt="Seal of the Municipality of Alaminos" class="h-11 w-11" />
+        <span class="flex flex-col">
+          <span class="text-[11.5px] font-medium uppercase tracking-[0.1em] text-[var(--muted)]">Municipality of Alaminos, Laguna</span>
+          <span class="font-serif text-[20px] font-medium leading-tight">General Services Office</span>
+        </span>
+      </a>
+      <span class="hidden text-right text-[13px] leading-snug text-[var(--muted)] lg:block">
+        Purchase Request &amp; Inventory<br />Management System
+      </span>
+    </div>
+  </header>
+
+  <!-- The question -->
+  <section class="intro relative overflow-hidden">
+    <!-- Option B: the seal, large and faint, carried by the band's right side. -->
+    <img src="../../public/logo/alaminos-seal.png" alt="" aria-hidden="true" class="v-seal pointer-events-none absolute -right-16 top-1/2 hidden h-[460px] w-[460px] select-none lg:block" />
+    <!-- The band grows with the screen's height, so a tall screen is not left with a gap under the cards. -->
+    <div class="pad relative mx-auto w-full max-w-[1200px] px-5 pb-[clamp(8rem,18vh,12rem)] pt-[clamp(2.5rem,8vh,6rem)] md:px-8">
+      <h1 class="text-[26px] font-semibold tracking-[-0.01em] md:text-[32px]">What do you need from the&nbsp;GSO?</h1>
+      <p class="sub mt-1.5 text-[15px]">File a request, or track one you already submitted. No account needed.</p>
+
+      <!-- Current: the two group labels. -->
+      <div class="v-labels mt-8 hidden gap-5 lg:grid-cols-4">
+        <div class="glabel text-[13px] font-semibold lg:col-span-3">File a request</div>
+        <div class="glabel text-[13px] font-semibold">Track a request</div>
+      </div>
+
+      <!-- Option A: how a request goes, in the order it happens. -->
+      <ol class="v-steps mt-8 hidden items-center gap-3.5 text-[14px] text-white/90">
+        <li class="flex items-center gap-2.5"><span class="grid h-7 w-7 place-items-center rounded-full border border-white/45 text-[12.5px] font-semibold">1</span>Choose a service</li>
+        <li aria-hidden="true" class="h-px w-10 bg-white/35"></li>
+        <li class="flex items-center gap-2.5"><span class="grid h-7 w-7 place-items-center rounded-full border border-white/45 text-[12.5px] font-semibold">2</span>Complete the form</li>
+        <li aria-hidden="true" class="h-px w-10 bg-white/35"></li>
+        <li class="flex items-center gap-2.5"><span class="grid h-7 w-7 place-items-center rounded-full border border-white/45 text-[12.5px] font-semibold">3</span>Keep your reference number to track it</li>
+      </ol>
+    </div>
+  </section>
+
+  <main class="cards-wrap flex flex-1 flex-col">
+    <div class="mx-auto w-full max-w-[1200px] px-5 pb-10 md:px-8">
+      <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+
+        <!-- Purchase Request -->
+        <a href="#" class="card ruled press enter flex flex-col rounded-[4px] border-x border-b border-[var(--rule)] bg-white p-6" style="animation-delay:0ms">
+          <div class="flex items-center justify-between">
+            <span class="grid h-10 w-10 place-items-center rounded-[4px] bg-[var(--tile)] text-[var(--identity)]">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+            </span>
+            <span class="text-[12px] font-semibold tracking-[0.06em] text-[var(--muted)]">PR</span>
+          </div>
+          <h2 class="mt-5 text-[17px] font-semibold">Purchase Request</h2>
+          <p class="mt-1.5 flex-1 text-[14px] leading-relaxed text-[var(--muted)]">Submit official purchase requests for office supplies, equipment, and operational requirements.</p>
+          <span class="action mt-6 flex h-11 items-center justify-between rounded-[4px] bg-[var(--identity)] px-4 text-[14px] font-semibold text-white">
+            Create PR
+            <svg class="arrow h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </span>
+        </a>
+
+        <!-- RIS -->
+        <a href="#" class="card ruled press enter flex flex-col rounded-[4px] border-x border-b border-[var(--rule)] bg-white p-6" style="animation-delay:40ms">
+          <div class="flex items-center justify-between">
+            <span class="grid h-10 w-10 place-items-center rounded-[4px] bg-[var(--tile)] text-[var(--identity)]">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg>
+            </span>
+            <span class="text-[12px] font-semibold tracking-[0.06em] text-[var(--muted)]">RIS</span>
+          </div>
+          <h2 class="mt-5 text-[17px] font-semibold">Requisition &amp; Issue Slip (RIS)</h2>
+          <p class="mt-1.5 flex-1 text-[14px] leading-relaxed text-[var(--muted)]">Request available inventory items from the General Services Office inventory.</p>
+          <span class="action mt-6 flex h-11 items-center justify-between rounded-[4px] bg-[var(--identity)] px-4 text-[14px] font-semibold text-white">
+            Request Items
+            <svg class="arrow h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </span>
+        </a>
+
+        <!-- Facility Reservation -->
+        <a href="#" class="card ruled press enter flex flex-col rounded-[4px] border-x border-b border-[var(--rule)] bg-white p-6" style="animation-delay:80ms">
+          <div class="flex items-center justify-between">
+            <span class="grid h-10 w-10 place-items-center rounded-[4px] bg-[var(--tile)] text-[var(--identity)]">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
+            </span>
+            <span class="text-[12px] font-semibold tracking-[0.06em] text-[var(--muted)]">FR</span>
+          </div>
+          <h2 class="mt-5 text-[17px] font-semibold">Facility Reservation</h2>
+          <p class="mt-1.5 flex-1 text-[14px] leading-relaxed text-[var(--muted)]">Reserve available government facilities through an online scheduling system.</p>
+          <span class="action mt-6 flex h-11 items-center justify-between rounded-[4px] bg-[var(--identity)] px-4 text-[14px] font-semibold text-white">
+            Reserve Facility
+            <svg class="arrow h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </span>
+        </a>
+
+        <!-- Track Request: its own job, so ink instead of crimson, and the field is right here. -->
+        <form class="ruled ink enter flex flex-col rounded-[4px] border-x border-b border-[var(--rule)] bg-white p-6" style="animation-delay:120ms" onsubmit="event.preventDefault()">
+          <div class="flex items-center justify-between">
+            <span class="grid h-10 w-10 place-items-center rounded-[4px] bg-[var(--tile)] text-[var(--ink)]">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 11 2 2 4-4"/><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            </span>
+          </div>
+          <h2 class="mt-5 text-[17px] font-semibold">Track Request</h2>
+          <label for="ref" class="mt-1.5 text-[14px] leading-relaxed text-[var(--muted)]">Enter the reference number from your receipt.</label>
+          <input id="ref" placeholder="e.g. PR-2026-000214" class="mt-auto h-11 w-full rounded-[4px] border border-[#b9bdc4] px-3.5 pt-px text-[14px] uppercase placeholder:normal-case placeholder:text-[#8a8e96] focus:border-[var(--ink)] focus:outline-none focus:ring-2 focus:ring-[var(--ink)]/15" />
+          <button class="press mt-2.5 flex h-11 items-center justify-between rounded-[4px] bg-[var(--ink)] px-4 text-[14px] font-semibold text-white hover:bg-black">
+            Track Request
+            <svg class="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-[var(--rule)] bg-white">
+    <div class="mx-auto flex w-full max-w-[1200px] flex-col gap-2 px-5 py-4 text-[12.5px] text-[var(--muted)] sm:flex-row sm:items-center sm:justify-between md:px-8">
+      <span class="flex items-center gap-2.5">
+        <img src="../../public/logo/alaminos-seal.png" alt="" class="h-6 w-6" />
+        General Services Office, Municipality of Alaminos, Laguna
+      </span>
+      <span>Copyright © Municipality of Alaminos, Laguna</span>
+    </div>
+  </footer>
+
+  <!-- COMP ONLY, not part of the design: compare what replaces the labels. -->
+  <div class="fixed bottom-16 right-4 z-50 flex items-center gap-1 border border-black/20 bg-white p-1 text-[12px]">
+    <span class="px-2 text-[#5b5f68]">Band</span>
+    <button onclick="document.documentElement.dataset.variant='labels'" class="border border-[#15171c] px-3 py-1.5 text-[#15171c]">Current labels</button>
+    <button onclick="document.documentElement.dataset.variant='steps'" class="bg-[#7e1624] px-3 py-1.5 text-white">A: Steps</button>
+    <button onclick="document.documentElement.dataset.variant='seal'" class="bg-[#7e1624] px-3 py-1.5 text-white">B: Seal</button>
+    <button onclick="document.documentElement.dataset.variant='both'" class="bg-[#7e1624] px-3 py-1.5 text-white">A + B</button>
+  </div>
+</body>
+</html>

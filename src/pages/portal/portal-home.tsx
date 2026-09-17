@@ -23,6 +23,13 @@ const EASE_OUT = [0.23, 1, 0.32, 1] as const;
 const FILING = PORTAL_SERVICES.filter((s) => s.kind === "filing");
 const TRACKING = PORTAL_SERVICES.find((s) => s.kind === "lookup");
 
+/** What a filer does, start to finish. */
+const STEPS = [
+  "Choose a service",
+  "Complete the form",
+  "Keep your reference number to track it",
+] as const;
+
 /** A reference number as the office writes it: trimmed and in capitals. */
 const normaliseReference = (value: string) => value.trim().toUpperCase();
 
@@ -184,10 +191,31 @@ export function PortalHome() {
           <p className="mt-1.5 text-[15px] text-white/85">
             File a request, or track one you already submitted. No account needed.
           </p>
-          <div className="mt-8 hidden gap-5 lg:grid lg:grid-cols-4" aria-hidden="true">
-            <div className="text-[13px] font-semibold text-white/75 lg:col-span-3">File a request</div>
-            <div className="text-[13px] font-semibold text-white/75">Track a request</div>
-          </div>
+          {/*
+           * How a request goes, in the order it happens. It took the place of two
+           * group labels ("File a request", "Track a request") that only restated
+           * the cards; the sequence is information a first-time filer needs.
+           * Desktop only: on a phone it would push tracking off the screen.
+           */}
+          <ol
+            aria-label="How it works"
+            className="mt-8 hidden list-none items-center gap-3.5 text-[14px] text-white/90 lg:flex"
+          >
+            {STEPS.map((step, i) => (
+              // The connecting rule lives inside the step it leads to, so the list
+              // is read as three items rather than five.
+              <li key={step} className="flex items-center gap-2.5">
+                {i > 0 && <span aria-hidden="true" className="mr-1 h-px w-10 bg-white/35" />}
+                <span
+                  aria-hidden="true"
+                  className="grid h-7 w-7 place-items-center rounded-full border border-white/45 text-[12.5px] font-semibold tabular-nums"
+                >
+                  {i + 1}
+                </span>
+                {step}
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 

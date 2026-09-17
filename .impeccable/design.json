@@ -1,0 +1,510 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-17T10:50:48.802315+00:00",
+  "title": "Design System: GSO PRIMS Staff Portal",
+  "extensions": {
+    "scope": "Staff portal only (routes under /portal), applied through the scoped [data-portal] token block in src/index.css. The admin application behind /login still runs its older design and has not been migrated.",
+    "colorMeta": {
+      "municipal-crimson": {
+        "role": "primary",
+        "displayName": "Municipal Crimson",
+        "canonical": "#7e1624",
+        "tonalRamp": [
+          "#2a070c",
+          "#4a0c15",
+          "#66111d",
+          "#7e1624",
+          "#9a3346",
+          "#b0415a",
+          "#d9a3ad",
+          "#f6eced"
+        ]
+      },
+      "municipal-crimson-deep": {
+        "role": "primary",
+        "displayName": "Crimson Deep",
+        "canonical": "#66111d",
+        "tonalRamp": [
+          "#2a070c",
+          "#4a0c15",
+          "#66111d",
+          "#7e1624",
+          "#9a3346",
+          "#b0415a",
+          "#d9a3ad",
+          "#f6eced"
+        ]
+      },
+      "crimson-focus": {
+        "role": "primary",
+        "displayName": "Crimson Focus",
+        "canonical": "#b0415a",
+        "tonalRamp": [
+          "#2a070c",
+          "#4a0c15",
+          "#66111d",
+          "#7e1624",
+          "#9a3346",
+          "#b0415a",
+          "#d9a3ad",
+          "#f6eced"
+        ]
+      },
+      "crimson-wash": {
+        "role": "primary",
+        "displayName": "Crimson Wash",
+        "canonical": "#f6eced",
+        "tonalRamp": [
+          "#2a070c",
+          "#4a0c15",
+          "#66111d",
+          "#7e1624",
+          "#9a3346",
+          "#b0415a",
+          "#d9a3ad",
+          "#f6eced"
+        ]
+      },
+      "cool-ground": {
+        "role": "neutral",
+        "displayName": "Cool Ground",
+        "canonical": "#f6f7f8",
+        "tonalRamp": [
+          "#1b1d1f",
+          "#2f3236",
+          "#4a4e53",
+          "#6b7076",
+          "#9aa0a6",
+          "#c9cdd1",
+          "#e6e8ea",
+          "#f6f7f8"
+        ]
+      },
+      "card-white": {
+        "role": "neutral",
+        "displayName": "Card White",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#171717",
+          "#262626",
+          "#525252",
+          "#737373",
+          "#a3a3a3",
+          "#d4d4d4",
+          "#e5e5e5",
+          "#fafafa"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "oklch(0.205 0 0)",
+        "tonalRamp": [
+          "#171717",
+          "#262626",
+          "#525252",
+          "#737373",
+          "#a3a3a3",
+          "#d4d4d4",
+          "#e5e5e5",
+          "#fafafa"
+        ]
+      },
+      "ink-press": {
+        "role": "neutral",
+        "displayName": "Ink Press",
+        "canonical": "#000000",
+        "tonalRamp": [
+          "#171717",
+          "#262626",
+          "#525252",
+          "#737373",
+          "#a3a3a3",
+          "#d4d4d4",
+          "#e5e5e5",
+          "#fafafa"
+        ]
+      },
+      "text-body": {
+        "role": "neutral",
+        "displayName": "Text Body",
+        "canonical": "oklch(0.269 0 0)",
+        "tonalRamp": [
+          "#171717",
+          "#262626",
+          "#525252",
+          "#737373",
+          "#a3a3a3",
+          "#d4d4d4",
+          "#e5e5e5",
+          "#fafafa"
+        ]
+      },
+      "nav-idle": {
+        "role": "neutral",
+        "displayName": "Nav Idle",
+        "canonical": "oklch(0.439 0 0)",
+        "tonalRamp": [
+          "#171717",
+          "#262626",
+          "#525252",
+          "#737373",
+          "#a3a3a3",
+          "#d4d4d4",
+          "#e5e5e5",
+          "#fafafa"
+        ]
+      },
+      "text-muted": {
+        "role": "neutral",
+        "displayName": "Text Muted",
+        "canonical": "oklch(0.556 0 0)",
+        "tonalRamp": [
+          "#171717",
+          "#262626",
+          "#525252",
+          "#737373",
+          "#a3a3a3",
+          "#d4d4d4",
+          "#e5e5e5",
+          "#fafafa"
+        ]
+      },
+      "field-stroke": {
+        "role": "neutral",
+        "displayName": "Field Stroke",
+        "canonical": "oklch(0.708 0 0)",
+        "tonalRamp": [
+          "#171717",
+          "#262626",
+          "#525252",
+          "#737373",
+          "#a3a3a3",
+          "#d4d4d4",
+          "#e5e5e5",
+          "#fafafa"
+        ]
+      },
+      "hairline-strong": {
+        "role": "neutral",
+        "displayName": "Hairline Strong",
+        "canonical": "oklch(0.87 0 0)",
+        "tonalRamp": [
+          "#171717",
+          "#262626",
+          "#525252",
+          "#737373",
+          "#a3a3a3",
+          "#d4d4d4",
+          "#e5e5e5",
+          "#fafafa"
+        ]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "oklch(0.922 0 0)",
+        "tonalRamp": [
+          "#171717",
+          "#262626",
+          "#525252",
+          "#737373",
+          "#a3a3a3",
+          "#d4d4d4",
+          "#e5e5e5",
+          "#fafafa"
+        ]
+      },
+      "tile-grey": {
+        "role": "neutral",
+        "displayName": "Tile Grey",
+        "canonical": "oklch(0.97 0 0)",
+        "tonalRamp": [
+          "#171717",
+          "#262626",
+          "#525252",
+          "#737373",
+          "#a3a3a3",
+          "#d4d4d4",
+          "#e5e5e5",
+          "#fafafa"
+        ]
+      },
+      "panel-grey": {
+        "role": "neutral",
+        "displayName": "Panel Grey",
+        "canonical": "oklch(0.985 0 0)",
+        "tonalRamp": [
+          "#171717",
+          "#262626",
+          "#525252",
+          "#737373",
+          "#a3a3a3",
+          "#d4d4d4",
+          "#e5e5e5",
+          "#fafafa"
+        ]
+      },
+      "error-stroke": {
+        "role": "error",
+        "displayName": "Error Stroke",
+        "canonical": "#dc2626",
+        "tonalRamp": [
+          "#450a0a",
+          "#7f1d1d",
+          "#b91c1c",
+          "#dc2626",
+          "#ef4444",
+          "#f87171",
+          "#fecaca",
+          "#fef2f2"
+        ]
+      },
+      "error-text": {
+        "role": "error",
+        "displayName": "Error Text",
+        "canonical": "#b91c1c",
+        "tonalRamp": [
+          "#450a0a",
+          "#7f1d1d",
+          "#b91c1c",
+          "#dc2626",
+          "#ef4444",
+          "#f87171",
+          "#fecaca",
+          "#fef2f2"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The single question on the home band; 26px phone, 32px from md."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Inner page title on the band; 24px phone, 28px from md."
+      },
+      "letterhead": {
+        "displayName": "Letterhead",
+        "purpose": "The office name in the masthead only. The portal's one serif."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Service card titles and track result heading; 15px phone, 17px from sm."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Card descriptions, nav links, input text."
+      },
+      "body-lead": {
+        "displayName": "Body Lead",
+        "purpose": "The one supporting sentence under a band heading, white at 85%."
+      },
+      "action": {
+        "displayName": "Action",
+        "purpose": "Labels on 44px crimson and ink action bars."
+      },
+      "small": {
+        "displayName": "Small",
+        "purpose": "Phone CTA lines, the All services link, result detail."
+      },
+      "meta": {
+        "displayName": "Meta",
+        "purpose": "Government strip, receipt captions, field errors, footer."
+      }
+    },
+    "shadows": [
+      {
+        "name": "none",
+        "value": "none",
+        "purpose": "The portal is flat; depth comes from hairlines, the cool ground, and cards overlapping the band."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out-strong",
+        "value": "cubic-bezier(0.23, 1, 0.32, 1)",
+        "purpose": "Card and receipt entrance."
+      },
+      {
+        "name": "card-arrive",
+        "value": "opacity 0 to 1, translateY(8px) to 0, 360ms, 40ms stagger per card",
+        "purpose": "Home cards arrive once in reading order; disabled under reduced motion."
+      },
+      {
+        "name": "press",
+        "value": "scale(0.98), 150ms",
+        "purpose": "Active state of cards and action buttons."
+      },
+      {
+        "name": "arrow-nudge",
+        "value": "translateX(3px), 150ms ease-out",
+        "purpose": "Action arrow on hover."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "File Button",
+      "kind": "button",
+      "refersTo": "button-file",
+      "description": "Crimson action bar that starts a filing.",
+      "html": "<a class=\"ds-btn-file\" href=\"#\">Create PR <svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></a>",
+      "css": ".ds-btn-file{display:flex;align-items:center;justify-content:space-between;gap:12px;height:44px;padding:0 16px;min-width:220px;background:#7e1624;color:#fff;font:600 14px/1 Inter,ui-sans-serif,system-ui,sans-serif;border-radius:4px;text-decoration:none;transition:background-color 150ms,transform 150ms}.ds-btn-file svg{transition:transform 150ms ease-out}.ds-btn-file:hover{background:#66111d}.ds-btn-file:hover svg{transform:translateX(3px)}.ds-btn-file:focus-visible{outline:none;box-shadow:0 0 0 2px #fff,0 0 0 4px #b0415a}.ds-btn-file:active{transform:scale(0.98)}"
+    },
+    {
+      "name": "Track Button",
+      "kind": "button",
+      "refersTo": "button-track",
+      "description": "Ink action bar that follows a filed document.",
+      "html": "<button class=\"ds-btn-track\" type=\"button\">Track Request <svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></button>",
+      "css": ".ds-btn-track{display:flex;align-items:center;justify-content:space-between;gap:12px;height:44px;padding:0 16px;min-width:220px;background:#171717;color:#fff;font:600 14px/1 Inter,ui-sans-serif,system-ui,sans-serif;border:0;border-radius:4px;cursor:pointer;transition:background-color 150ms,transform 150ms}.ds-btn-track svg{transition:transform 150ms ease-out}.ds-btn-track:hover{background:#000}.ds-btn-track:hover svg{transform:translateX(3px)}.ds-btn-track:focus-visible{outline:none;box-shadow:0 0 0 2px #fff,0 0 0 4px #171717}.ds-btn-track:active{transform:scale(0.98)}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "White hairline button beside a primary action.",
+      "html": "<button class=\"ds-btn-secondary\" type=\"button\">Back to Portal</button>",
+      "css": ".ds-btn-secondary{display:inline-flex;align-items:center;padding:6px 12px;background:#fff;color:#262626;border:1px solid #e5e5e5;border-radius:4px;font:500 12.5px/1.5 Inter,ui-sans-serif,system-ui,sans-serif;cursor:pointer;transition:background-color 150ms}.ds-btn-secondary:hover{background:#fafafa}.ds-btn-secondary:focus-visible{outline:none;box-shadow:0 0 0 2px #b0415a}"
+    },
+    {
+      "name": "Reference Input",
+      "kind": "input",
+      "refersTo": "input-reference",
+      "description": "44px field for a reference number; capitals on entry, sentence-case placeholder.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Enter the reference number from your receipt.</span><input class=\"ds-input\" placeholder=\"e.g. PR-2026-000214\"></label>",
+      "css": ".ds-field{display:flex;flex-direction:column;gap:6px;width:280px;font-family:Inter,ui-sans-serif,system-ui,sans-serif}.ds-field-label{font-size:14px;line-height:1.625;color:#737373}.ds-input{height:44px;padding:0 14px;background:#fff;color:#171717;border:1px solid #a3a3a3;border-radius:4px;font:400 14px Inter,ui-sans-serif,system-ui,sans-serif;text-transform:uppercase;transition:border-color 150ms,box-shadow 150ms}.ds-input::placeholder{text-transform:none;color:#737373}.ds-input:focus{outline:none;border-color:#171717;box-shadow:0 0 0 2px rgba(23,23,23,.15)}.ds-input[aria-invalid=true]{border-color:#dc2626;box-shadow:0 0 0 2px rgba(220,38,38,.15)}"
+    },
+    {
+      "name": "Service Nav",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Inner-page service navigation in the masthead; current page in crimson.",
+      "html": "<nav class=\"ds-nav\"><a href=\"#\" aria-current=\"page\">Purchase Request</a><a href=\"#\">Requisition</a><a href=\"#\">Reservation</a><a href=\"#\">Track</a></nav>",
+      "css": ".ds-nav{display:flex;gap:4px;font:400 14px Inter,ui-sans-serif,system-ui,sans-serif}.ds-nav a{display:block;padding:8px 12px;border-radius:4px;color:#525252;text-decoration:none;transition:background-color 150ms,color 150ms}.ds-nav a:hover{background:#f5f5f5;color:#171717}.ds-nav a:focus-visible{outline:none;box-shadow:0 0 0 2px #b0415a}.ds-nav a[aria-current=page]{color:#7e1624;font-weight:600}"
+    },
+    {
+      "name": "Service Card",
+      "kind": "card",
+      "refersTo": "service-card",
+      "description": "White hairline card for one filing: icon tile, reference prefix, title, description, crimson action bar.",
+      "html": "<a class=\"ds-card\" href=\"#\"><div class=\"ds-card-top\"><span class=\"ds-card-tile\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z\"/><path d=\"M14 2v4a2 2 0 0 0 2 2h4\"/></svg></span><span class=\"ds-card-code\">PR</span></div><h2>Purchase Request</h2><p>Submit official purchase requests for office supplies, equipment, and operational requirements.</p><span class=\"ds-card-bar\">Create PR <svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></span></a>",
+      "css": ".ds-card{display:flex;flex-direction:column;width:260px;padding:24px;background:#fff;border:1px solid #e5e5e5;border-radius:4px;color:#171717;text-decoration:none;font-family:Inter,ui-sans-serif,system-ui,sans-serif;transition:border-color 150ms,transform 150ms}.ds-card:hover{border-color:#d4d4d4}.ds-card:focus-visible{outline:none;box-shadow:0 0 0 2px #fff,0 0 0 4px #b0415a}.ds-card:active{transform:scale(0.98)}.ds-card-top{display:flex;align-items:center;justify-content:space-between}.ds-card-tile{display:grid;place-items:center;width:40px;height:40px;border-radius:4px;background:#f5f5f5;color:#7e1624}.ds-card-code{font-size:12px;font-weight:600;letter-spacing:.06em;color:#737373}.ds-card h2{margin:20px 0 0;font-size:17px;font-weight:600;line-height:1.375}.ds-card p{margin:6px 0 0;flex:1;font-size:14px;line-height:1.625;color:#737373}.ds-card-bar{margin-top:24px;display:flex;align-items:center;justify-content:space-between;height:44px;padding:0 16px;border-radius:4px;background:#7e1624;color:#fff;font-size:14px;font-weight:600;transition:background-color 150ms}.ds-card-bar svg{transition:transform 150ms ease-out}.ds-card:hover .ds-card-bar{background:#66111d}.ds-card:hover .ds-card-bar svg{transform:translateX(3px)}"
+    },
+    {
+      "name": "Government Strip and Masthead",
+      "kind": "custom",
+      "refersTo": "government-strip",
+      "description": "Crimson strip naming Republic and Province over a white letterhead masthead with seal and Spectral office name.",
+      "html": "<div class=\"ds-strip\"><span>Republic of the Philippines</span><span>Province of Laguna</span></div><header class=\"ds-mast\"><a href=\"#\" class=\"ds-mast-lockup\"><svg width=\"44\" height=\"44\" viewBox=\"0 0 44 44\" aria-hidden=\"true\"><circle cx=\"22\" cy=\"22\" r=\"20\" fill=\"none\" stroke=\"#7e1624\" stroke-width=\"2\"/><circle cx=\"22\" cy=\"22\" r=\"13\" fill=\"none\" stroke=\"#7e1624\" stroke-width=\"1\"/></svg><span class=\"ds-mast-text\"><span class=\"ds-mast-lgu\">Municipality of Alaminos, Laguna</span><span class=\"ds-mast-office\">General Services Office</span></span></a></header>",
+      "css": ".ds-strip{display:flex;justify-content:space-between;padding:6px 20px;background:#7e1624;color:#fff;font:400 12px Inter,ui-sans-serif,system-ui,sans-serif}.ds-mast{padding:14px 20px;background:#fff;border-bottom:1px solid #e5e5e5}.ds-mast-lockup{display:inline-flex;align-items:center;gap:12px;text-decoration:none;border-radius:4px}.ds-mast-lockup:focus-visible{outline:none;box-shadow:0 0 0 2px #fff,0 0 0 4px #b0415a}.ds-mast-text{display:flex;flex-direction:column}.ds-mast-lgu{font:500 11.5px Inter,ui-sans-serif,system-ui,sans-serif;text-transform:uppercase;letter-spacing:.1em;color:#737373}.ds-mast-office{font:500 20px/1.25 Spectral,ui-serif,Georgia,serif;color:#171717}"
+    },
+    {
+      "name": "Title Band",
+      "kind": "custom",
+      "refersTo": "service-band",
+      "description": "Crimson band carrying an inner page's back link, title and description.",
+      "html": "<section class=\"ds-band\"><a href=\"#\" class=\"ds-band-back\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m12 19-7-7 7-7\"/><path d=\"M19 12H5\"/></svg>All services</a><h1>Track Request</h1><p>Enter the reference number from your submission receipt.</p></section>",
+      "css": ".ds-band{padding:24px 32px 36px;background:#7e1624;color:#fff;font-family:Inter,ui-sans-serif,system-ui,sans-serif}.ds-band-back{display:inline-flex;align-items:center;gap:6px;padding:2px 4px;margin-left:-4px;border-radius:4px;font-size:13px;color:rgba(255,255,255,.8);text-decoration:none;transition:color 150ms}.ds-band-back:hover{color:#fff}.ds-band-back:focus-visible{outline:none;box-shadow:0 0 0 2px rgba(255,255,255,.7)}.ds-band h1{margin:12px 0 0;font-size:28px;font-weight:600;letter-spacing:-.01em}.ds-band p{margin:6px 0 0;font-size:15px;line-height:1.625;color:rgba(255,255,255,.85)}"
+    },
+    {
+      "name": "Reference Receipt",
+      "kind": "custom",
+      "refersTo": "reference-receipt",
+      "description": "The issued reference number after submission, in tabular figures.",
+      "html": "<div class=\"ds-receipt\"><p>Your reference number</p><div class=\"ds-receipt-num\">PR-2026-000214</div><p>Keep this number. You will need it to track your request.</p></div>",
+      "css": ".ds-receipt{text-align:center;padding:24px;background:#fff;border:1px solid #e5e5e5;border-radius:4px;font-family:Inter,ui-sans-serif,system-ui,sans-serif}.ds-receipt p{margin:6px 0;font-size:12.5px;color:#737373}.ds-receipt-num{display:inline-block;padding:10px 20px;background:#fafafa;border:1px solid #d4d4d4;border-radius:4px;font-size:18px;font-weight:600;letter-spacing:.025em;font-variant-numeric:tabular-nums;color:#171717}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Service Counter",
+    "overview": "**Creative North Star: \"The Service Counter\"**\n\nThe portal is a municipal service counter that fits on one screen. Staff from other offices come to do one of two things: start a filing (Purchase Request, Requisition and Issue Slip, Facility Reservation) or follow one they already filed. The layout reads like a government letterhead. A thin crimson strip names the Republic and the Province. A white masthead carries the seal and the office name. A crimson band asks one question. The service cards sit across the band's lower edge. Nothing else on the page competes with the services.\n\nThe look is calm and plain, and it stays in its category on purpose. Deep municipal crimson is the one colour with a voice. The owner chose it because it is easy on the eyes, and it marks identity and the act of starting a filing. Ink (near-black) marks tracking. Everything else is white cards with hairline borders on a cool light-grey ground, with 4px corners and no shadows. The owner rejected two looks: a marketing hero, and an editorial, university-style direction with a serif display headline, a bright crimson hero and a ruled list. Harvard was only ever a colour reference.\n\nThe portal is light mode only. There is no dark mode and no theme switcher.",
+    "keyCharacteristics": [
+      "One crimson (#7e1624) for identity and \"start a filing\"; ink for \"track\".",
+      "A letterhead masthead: seal, municipality line, and the office name in Spectral. That is the only serif.",
+      "White cards with 1px hairlines on a cool grey ground (#f6f7f8). Flat, with no shadows.",
+      "4px corners on every surface, control and tile.",
+      "The home page fits one screen with no scrolling at 1366x768 and at 390x844.",
+      "The filing wizards are shared with the admin and are never edited for the portal. The scope restyles them."
+    ],
+    "rules": [
+      {
+        "name": "The Stateable Colour Rule",
+        "body": "Every colour must carry a meaning a clerk could say out loud. Crimson means \"this is the office\" or \"start a document\". Ink means \"follow a document\". Red means \"this field is wrong\". If you can't state what a colour means, don't use it.",
+        "section": "colors"
+      },
+      {
+        "name": "The Crimson Is Not a Field Rule",
+        "body": "Crimson appears as the thin strip, the band behind a heading, and solid action buttons. It is never a large bright surface, a card fill, or a background for body copy. The band's height responds to the viewport so the cards, not the crimson, stay the focus.",
+        "section": "colors"
+      },
+      {
+        "name": "The Scoped Palette Rule",
+        "body": "Portal colours reach components only through the `[data-portal]` block's `--accent-*` and `--canvas` literals. Never hard-code the crimson into a shared component, and never declare a portal value as `var(--other-token)`.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Serif Rule",
+        "body": "Spectral sets the office name and nothing else. Headings, questions, titles and numbers are all Inter.",
+        "section": "typography"
+      },
+      {
+        "name": "The Literal Sizes Rule",
+        "body": "Type sizes are written as literal pixel values on the element (14px, 17px, 32px), not remapped through tokens. Don't bulk-rewrite them.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Reference Rule",
+        "body": "Reference numbers (PR-2026-000214) are set with tabular figures. Inputs for them display in capitals while the placeholder stays in sentence case.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Screen Rule",
+        "body": "On the home page, the services and the tracking field are all visible without scrolling at 1366x768 and at 390x844. Anything added to the home page has to fit inside that constraint or not be added.",
+        "section": "layout"
+      },
+      {
+        "name": "The Hairline, Not Shadow Rule",
+        "body": "A card is separated from its ground by a 1px #e5e5e5 border and nothing else. Hover darkens the border to #d4d4d4. It never lifts the card.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** use Municipal Crimson (#7e1624) only for identity (strip, bands) and for actions that start a filing. Use ink (#171717) for actions that follow one.",
+      "**Do** make sure every colour carries a meaning a clerk could state.",
+      "**Do** keep the home page to one screen with no scrolling at 1366x768 and 390x844.",
+      "**Do** separate surfaces with 1px hairlines on the cool ground (#f6f7f8), with 4px corners throughout.",
+      "**Do** restyle shared admin components and filing wizards only through the `[data-portal]` token scope, with literal values.",
+      "**Do** give inner pages the crimson title band and match the band's measure to the content below it (wide, form or narrow).",
+      "**Do** make controls 44px tall with a visible 2px focus ring (#b0415a for crimson and neutral controls, ink for ink controls).",
+      "**Do** keep motion to a single entrance (8px rise, 360ms or less, strong ease-out) and honour reduced motion."
+    ],
+    "donts": [
+      "**Don't** add a dark mode, a theme switcher or an alternate portal palette. The portal is light mode only.",
+      "**Don't** edit the shared filing wizards (Purchase Request, Requisition and Issue Slip, Reservation) to change how they look in the portal.",
+      "**Don't** apply portal tokens globally or to admin routes. The admin keeps its own design until it is redesigned.",
+      "**Don't** use crimson as a bright field, a card fill or a text background.",
+      "**Don't** add shadows to cards, buttons or bands.",
+      "**Don't** set anything but the office name in Spectral, and don't use a serif display headline.",
+      "**Don't** build a marketing hero or an editorial, university-style layout (serif display, bright crimson hero, ruled filing lists).",
+      "**Don't** add a colour that stands for nothing, such as a decorative second accent or a tinted card per service.",
+      "**Don't** reuse the masthead's uppercase municipality line as a section label or eyebrow above headings. It belongs to the letterhead lockup only."
+    ]
+  }
+}

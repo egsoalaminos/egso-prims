@@ -31,6 +31,15 @@ filing, ink follows one. Inter throughout; Spectral only on the office name, as 
   direction (serif display headline, bright crimson hero, ruled filing list). Owner: too
   Harvard, too complicated; Harvard was only ever a colour reference.
 
+- **Band labels replaced (owner decision, 2026-09-17):** the "File a request" / "Track a
+  request" group labels were replaced by three numbered how-it-works steps on desktop
+  ("Choose a service", "Complete the form", "Keep your reference number to track it"). The
+  owner would not remove the labels without something in their place, because the band
+  "loses its life"; he picked the steps over a large faint seal and over both combined.
+  Options comp: `.impeccable/comps/portal-home-labels.html`.
+- **Sign-off:** merged to `main` and live. Owner: this is the current design, with no older
+  portal to return to.
+
 Memorable moment: the tracking card takes a reference number on the home page itself.
 
 ## Unresolved decisions
