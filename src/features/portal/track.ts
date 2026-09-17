@@ -19,7 +19,11 @@ import type { DocumentStatus } from "@/components";
  */
 
 export interface TrackResult {
-  kind: "Purchase Request" | "Purchase Order" | "Issuance Slip" | "Facility Reservation";
+  kind:
+    | "Purchase Request"
+    | "Purchase Order"
+    | "Requisition and Issue Slip"
+    | "Facility Reservation";
   number: string;
   title: string;
   status: DocumentStatus;
@@ -97,7 +101,7 @@ export async function trackReference(raw: string): Promise<TrackResult | null> {
     const slip = await getRequest(ref);
     if (!slip) return null;
     return {
-      kind: "Issuance Slip",
+      kind: "Requisition and Issue Slip",
       number: slip.risNumber,
       title: slip.purpose,
       status: slip.status,

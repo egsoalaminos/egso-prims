@@ -6,7 +6,6 @@ import { ArrowRight, Building2, Clock3 } from "lucide-react";
 
 import {
   ApprovalTimeline,
-  Caption,
   ContainerCard,
   ErrorState,
   OverlineLabel,
@@ -117,10 +116,14 @@ export function PortalTrackPage() {
           <ContainerCard padded className="mt-4">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="min-w-0">
-                <Caption className="text-[11px] uppercase tracking-wider">{result.kind}</Caption>
-                <div className="text-[17px] font-semibold tabular-nums tracking-tight text-neutral-900">
-                  {result.number}
-                </div>
+                {/* The document type belongs to the heading, not to a label above it. */}
+                <h2 className="text-[17px] font-semibold tracking-tight text-neutral-900">
+                  <span className="font-medium text-neutral-500">{result.kind}</span>
+                  <span aria-hidden="true" className="mx-1.5 text-neutral-300">
+                    ·
+                  </span>
+                  <span className="tabular-nums">{result.number}</span>
+                </h2>
                 <p className="mt-0.5 max-w-md truncate text-[13px] text-neutral-500">
                   {result.title}
                 </p>

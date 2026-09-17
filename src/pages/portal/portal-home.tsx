@@ -57,25 +57,42 @@ function FilingCard({ service, index }: { service: PortalService; index: number 
        * One interactive element per card, and it is a real link. The action
        * bar is the link's own last line rather than a second thing to press.
        */}
+      {/*
+       * On a phone the card is a row: icon, title, what tapping does, and a
+       * crimson go-button. That keeps all three filings and the tracking field
+       * on one phone screen, as they are on a desktop. From `sm` up it is the
+       * full card with its description and action bar.
+       */}
       <Link
         to={service.to}
-        className="group flex h-full flex-col rounded-md border border-neutral-200 bg-white p-6 transition-[border-color,transform] duration-150 hover:border-neutral-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring) focus-visible:ring-offset-2 active:scale-[0.98]"
+        className="group flex h-full items-center gap-3 rounded-md border border-neutral-200 bg-white p-3.5 transition-[border-color,transform] duration-150 hover:border-neutral-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring) focus-visible:ring-offset-2 active:scale-[0.98] sm:flex-col sm:items-stretch sm:gap-0 sm:p-6"
       >
         <div className="flex items-center justify-between">
-          <span className="grid h-10 w-10 place-items-center rounded-md bg-neutral-100 text-(--accent-text)">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-neutral-100 text-(--accent-text)">
             <Icon className="h-5 w-5" />
           </span>
-          <span className="text-[12px] font-semibold tracking-[0.06em] text-neutral-500">
+          <span className="hidden text-[12px] font-semibold tracking-[0.06em] text-neutral-500 sm:inline">
             {service.code}
           </span>
         </div>
-        <h2 className="mt-5 text-[17px] font-semibold text-neutral-900">{service.title}</h2>
-        <p className="mt-1.5 flex-1 text-[14px] leading-relaxed text-neutral-500">
-          {service.description}
-        </p>
-        <span className="ui-accent ui-accent-hover mt-6 flex h-11 items-center justify-between rounded-md px-4 text-[14px] font-semibold group-hover:bg-(--accent-solid-hover)">
-          {service.cta}
-          <ArrowRight className="h-[18px] w-[18px] transition-transform duration-150 ease-out group-hover:translate-x-[3px]" />
+        <div className="flex min-w-0 flex-1 flex-col">
+          <h2 className="text-[15px] font-semibold leading-snug text-neutral-900 sm:mt-5 sm:text-[17px]">
+            {service.title}
+          </h2>
+          <span className="text-[13px] font-medium text-(--accent-text) sm:hidden">{service.cta}</span>
+          <p className="mt-1.5 hidden flex-1 text-[14px] leading-relaxed text-neutral-500 sm:block">
+            {service.description}
+          </p>
+          <span className="ui-accent ui-accent-hover mt-6 hidden h-11 items-center justify-between rounded-md px-4 text-[14px] font-semibold group-hover:bg-(--accent-solid-hover) sm:flex">
+            {service.cta}
+            <ArrowRight className="h-[18px] w-[18px] transition-transform duration-150 ease-out group-hover:translate-x-[3px]" />
+          </span>
+        </div>
+        <span
+          aria-hidden="true"
+          className="ui-accent grid h-9 w-9 shrink-0 place-items-center rounded-full sm:hidden"
+        >
+          <ArrowRight className="h-[18px] w-[18px]" />
         </span>
       </Link>
     </CardFrame>
@@ -106,13 +123,19 @@ function TrackingCard({ service, index }: { service: PortalService; index: numbe
       <form
         onSubmit={submit}
         noValidate
-        className="flex h-full flex-col rounded-md border border-neutral-200 bg-white p-6"
+        className="flex h-full flex-col rounded-md border border-neutral-200 bg-white p-4 sm:p-6"
       >
-        <span className="grid h-10 w-10 place-items-center rounded-md bg-neutral-100 text-neutral-900">
+        {/* The icon tile is dropped on a phone, where the field is what matters. */}
+        <span className="hidden h-10 w-10 place-items-center rounded-md bg-neutral-100 text-neutral-900 sm:grid">
           <Icon className="h-5 w-5" />
         </span>
-        <h2 className="mt-5 text-[17px] font-semibold text-neutral-900">{service.title}</h2>
-        <label htmlFor="portal-track-ref" className="mt-1.5 text-[14px] leading-relaxed text-neutral-500">
+        <h2 className="text-[15px] font-semibold text-neutral-900 sm:mt-5 sm:text-[17px]">
+          {service.title}
+        </h2>
+        <label
+          htmlFor="portal-track-ref"
+          className="mt-0.5 mb-3 text-[13px] leading-relaxed text-neutral-500 sm:mb-0 sm:mt-1.5 sm:text-[14px]"
+        >
           {service.description}
         </label>
         <input
@@ -153,7 +176,7 @@ export function PortalHome() {
       {/* The question, on the band. Its height follows the screen's, so a tall
           screen is not left with a gap under the cards. */}
       <section className="bg-(--accent-solid) text-white">
-        <div className="mx-auto w-full max-w-[1200px] px-5 pb-[clamp(8rem,18vh,12rem)] pt-[clamp(2.5rem,8vh,6rem)] md:px-8">
+        <div className="mx-auto w-full max-w-[1200px] px-5 pb-14 pt-7 sm:pb-[clamp(8rem,18vh,12rem)] sm:pt-[clamp(2.5rem,8vh,6rem)] md:px-8">
           <h1 className="text-[26px] font-semibold tracking-[-0.01em] text-balance md:text-[32px]">
             What do you need from the&nbsp;GSO?
           </h1>
@@ -167,11 +190,11 @@ export function PortalHome() {
         </div>
       </section>
 
-      <div className="-mt-[5.5rem] flex flex-1 flex-col">
+      <div className="-mt-9 flex flex-1 flex-col sm:-mt-[5.5rem]">
         <div className="mx-auto w-full max-w-[1200px] px-5 pb-10 md:px-8">
           {/* Each card is its own list item; `display: contents` would have
               flattened the grid but also dropped the list semantics in Safari. */}
-          <ul className="grid list-none gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <ul className="grid list-none gap-2.5 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
             {FILING.map((s, i) => (
               <li key={s.to} className="min-w-0">
                 <FilingCard service={s} index={i} />
