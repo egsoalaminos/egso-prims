@@ -12,8 +12,7 @@ import {
  * Recreated from the official form, not redesigned: the margin notes, the
  * boxed identity block, the four columns, the location and volume band, and
  * the certification the agency head signs over all sit where the paper puts
- * them, in the form's own words. Sizes and rules follow an accomplished copy
- * the office supplied (the National Archives' own "SAMPLE ONLY" request).
+ * them, in the form's own words.
  */
 
 /** dd MMMM yyyy — how the paper form is dated. */
@@ -31,53 +30,34 @@ const CELL = "border border-black align-top";
  *
  * The value is centred and keeps its line breaks — an accomplished form
  * carries the agency's division under its name, and the address over two
- * lines, so a value collapsed to one line would not match the paper. Only the
- * names on the form are bold: the agency, the preparer and their position.
+ * lines, so a value collapsed to one line would not match the paper.
  */
 function Field({
   label,
-  note,
   value,
   colSpan,
-  bold = false,
-  small = false,
 }: {
   label: string;
-  /** Printed after the label in ordinary type, e.g. "(Name & Signature)". */
-  note?: string;
   value?: string;
   colSpan?: number;
-  bold?: boolean;
-  /** For a value too long for its cell at full size, like the email address. */
-  small?: boolean;
 }) {
   return (
     <td colSpan={colSpan} className={`${CELL} px-1.5 py-1`}>
-      <div className="text-[9.5px] font-bold uppercase leading-[1.3] tracking-[0.02em]">
-        {label}
-        {note && <span className="ml-1 font-normal normal-case tracking-normal">{note}</span>}
-      </div>
-      <div
-        className={`mt-1 min-h-[26px] whitespace-pre-line text-center leading-[1.4] [overflow-wrap:anywhere] ${
-          small ? "text-[10.5px]" : "text-[12.5px]"
-        } ${bold ? "font-bold" : ""}`}
-      >
+      <div className="text-[8.5px] font-bold uppercase leading-[1.3]">{label}</div>
+      <div className="mt-1 min-h-[26px] whitespace-pre-line text-center text-[11px] font-bold leading-[1.4]">
         {value || " "}
       </div>
     </td>
   );
 }
 
-/** A column heading, centred both ways as the paper sets it. */
 function Head({ children }: { children: React.ReactNode }) {
   return (
-    // Not CELL: its align-top outranks align-middle in the stylesheet, which
-    // pinned every heading to the top of the row.
-    <th
-      className="border border-black px-1 py-1.5 text-center align-middle text-[11.5px] font-bold uppercase leading-[1.25]"
+    <td
+      className={`${CELL} px-1 py-1 text-center align-middle text-[9px] font-bold uppercase leading-[1.25]`}
     >
       {children}
-    </th>
+    </td>
   );
 }
 
@@ -88,79 +68,58 @@ export function DisposalPrintForm({ request }: { request: DisposalRequestWithIte
    * them. The body is one open region a clerk writes down, so entries are
    * separated by space rather than by a border, and what is left over stays
    * empty rather than being ruled into rows nobody asked for.
-   *
-   * pre-wrap rather than pre-line: a series is a heading with its kinds
-   * indented under it, and that indent is typed as spaces.
    */
-  const bodyCell = "border-x border-black px-1.5 pb-3 pt-3 text-[12.5px] leading-[1.45] whitespace-pre-wrap";
+  const bodyCell = "border-x border-black px-1.5 pb-3 text-[10.5px] leading-[1.5]";
 
   return (
     <PrintSheet>
       <div className="font-[Arial,Helvetica,sans-serif] text-black">
         {/* The form's own margin notes. */}
-        <div className="mb-1 flex items-start justify-between text-[10px] leading-[1.35]">
+        <div className="mb-1 flex items-start justify-between text-[9.5px] leading-[1.35]">
           <span className="whitespace-pre-line">{FORM_MARKINGS.reference}</span>
           <span>{FORM_MARKINGS.copies}</span>
         </div>
 
-        {/*
-         * Three tables stacked on a shared rule (-mt-px), not one. The paper's
-         * three bands do not share their dividers — the identity block takes
-         * half the width, the columns below split elsewhere, the footer
-         * elsewhere again — and the column headings must sit under the
-         * identity block yet still repeat on every page a long request runs
-         * to. A <thead> is always drawn at the top of its table, so it can
-         * only do both if the header band is a table of its own.
-         */}
-
-        {/* ---- Identity block, agency, address, date, telephone, email ---- */}
         <table className="w-full table-fixed border-collapse">
           <colgroup>
-            <col className="w-[49.7%]" />
+            <col className="w-[13%]" />
             <col />
-            <col className="w-[22.6%]" />
+            <col className="w-[18%]" />
+            <col className="w-[24%]" />
           </colgroup>
+
           <tbody>
+            {/* ---- Identity block, agency name and address ---- */}
             <tr>
-              <td rowSpan={2} className={`${CELL} relative px-4 pb-4 pt-3 text-center`}>
-                {/* The title stands in its own heavier box, inset from the cell. */}
-                <div
-                  aria-hidden
-                  className="pointer-events-none absolute inset-x-[7px] inset-y-[5px] border-[1.5px] border-black"
-                />
-                <div className="font-['Times_New_Roman',Times,serif] text-[14px] uppercase leading-[1.25]">
+              <td rowSpan={2} colSpan={2} className={`${CELL} px-2 py-2 text-center align-middle`}>
+                <div className="text-[11px] font-bold uppercase leading-[1.3]">
                   National Archives of the Philippines
                 </div>
-                <div className="text-[12px] italic leading-[1.35]">
+                <div className="text-[10px] italic leading-[1.35]">
                   Pambansang Sinupan ng Pilipinas
                 </div>
-                <div className="mt-4 text-[13px] font-bold uppercase leading-[1.3]">
-                  Request for Authority to Dispose
-                  <br />
-                  of Records
+                <div className="mt-2 text-[12px] font-bold uppercase leading-[1.3]">
+                  Request for Authority to Dispose of Records
                 </div>
               </td>
-              <Field label="Agency Name:" value={request.agencyName} colSpan={2} bold />
+              <Field label="Agency Name:" value={request.agencyName} colSpan={2} />
             </tr>
             <tr>
               <Field label="Address:" value={request.agencyAddress} colSpan={2} />
             </tr>
+
+            {/* ---- Date, telephone, email ---- */}
             <tr>
-              <Field label="Date:" value={printLongDate(request.requestDate)} />
+              <Field label="Date:" value={printLongDate(request.requestDate)} colSpan={2} />
               <Field label="Telephone Number:" value={request.telephoneNumber} />
-              <Field label="Email Address:" value={request.emailAddress} small />
+              <Field label="Email Address:" value={request.emailAddress} />
             </tr>
           </tbody>
-        </table>
 
-        {/* ---- The record series ---- */}
-        <table className="-mt-px w-full table-fixed border-collapse">
-          <colgroup>
-            <col className="w-[11.9%]" />
-            <col />
-            <col className="w-[19.8%]" />
-            <col className="w-[22.6%]" />
-          </colgroup>
+          {/*
+           * In <thead> so the browser repeats the headings on every page a long
+           * request runs to.
+           */}
           <thead>
             <tr>
               <Head>
@@ -172,79 +131,82 @@ export function DisposalPrintForm({ request }: { request: DisposalRequestWithIte
               <Head>Period Covered</Head>
               <Head>
                 Retention Period and Provision/s Complied{" "}
-                <span className="font-bold italic normal-case">(If Any)</span>
+                <span className="font-bold italic">(If Any)</span>
               </Head>
             </tr>
           </thead>
+
           <tbody>
             {request.items.map((it) => (
               // Line breaks are the office's own: a series is a heading with
               // its kinds listed under it, and collapsing them would change
               // what the form says.
               <tr key={it.id} className="align-top">
-                <td className={`${bodyCell} text-center`}>{it.grdsRdsItemNo ?? ""}</td>
-                <td className={bodyCell}>{it.titleAndDescription}</td>
-                <td className={`${bodyCell} text-center`}>{it.periodCovered ?? ""}</td>
-                <td className={bodyCell}>{it.retentionAndProvisions ?? ""}</td>
+                <td className={`${bodyCell} whitespace-pre-line pt-3 text-center`}>
+                  {it.grdsRdsItemNo ?? ""}
+                </td>
+                <td className={`${bodyCell} whitespace-pre-line pt-3`}>
+                  {it.titleAndDescription}
+                </td>
+                <td className={`${bodyCell} whitespace-pre-line pt-3 text-center`}>
+                  {it.periodCovered ?? ""}
+                </td>
+                <td className={`${bodyCell} whitespace-pre-line pt-3`}>
+                  {it.retentionAndProvisions ?? ""}
+                </td>
               </tr>
             ))}
             {/*
              * The open remainder of the sheet. One tall run of column rules,
              * not a stack of ruled blank rows: on the paper the space under
-             * the last entry is simply empty. Sized so a three-series request
-             * still ends on one A4 page, with about 30px to spare.
+             * the last entry is simply empty.
              */}
             <tr>
-              <td className="h-[200px] border-x border-black" />
+              <td className="h-[150px] border-x border-black" />
               <td className="border-x border-black" />
               <td className="border-x border-black" />
               <td className="border-x border-black" />
             </tr>
-          </tbody>
-        </table>
 
-        {/* ---- Location, volume, preparer, and the certification ---- */}
-        <table className="-mt-px w-full table-fixed border-collapse">
-          <colgroup>
-            <col className="w-[60%]" />
-            <col />
-          </colgroup>
-          <tbody>
+            {/* ---- Location and volume. The paper splits this band evenly. ---- */}
             <tr>
-              <Field label="Location of Records:" value={request.locationOfRecords} />
-              <Field label="Volume in Cubic Meter:" value={request.volumeCubicMeter} />
+              <Field label="Location of Records:" value={request.locationOfRecords} colSpan={2} />
+              <Field label="Volume in Cubic Meter:" value={request.volumeCubicMeter} colSpan={2} />
             </tr>
+
+            {/* ---- Prepared by and position ---- */}
             <tr>
               <Field
-                label="Prepared by:"
-                note="(Name & Signature)"
+                label="Prepared by: (Name & Signature)"
                 value={request.preparedBy}
-                bold
+                colSpan={2}
               />
-              <Field label="Position:" value={request.preparedByPosition} bold />
+              <Field label="Position:" value={request.preparedByPosition} colSpan={2} />
             </tr>
+
+            {/* ---- The certification ---- */}
             <tr>
-              <td colSpan={2} className={`${CELL} px-2 pb-2 pt-1.5`}>
-                <div className="text-[9.5px] font-bold uppercase leading-[1.3] tracking-[0.02em]">
+              <td colSpan={4} className={`${CELL} px-2 py-2`}>
+                <div className="text-[8.5px] font-bold uppercase leading-[1.3]">
                   Certified and Approved by:
                 </div>
-                {/* A paragraph, as the paper sets it: first line indented, ragged right. */}
-                <p className="ml-[14.5%] mr-[11%] mt-4 indent-[4em] text-left text-[12px] leading-[1.3]">
+                <p className="mx-auto mt-3 max-w-[32rem] text-center text-[11px] leading-[1.5]">
                   {CERTIFICATION_TEXT}
                 </p>
                 {/*
-                 * Name, then the position it is signed under with the
-                 * signature rule beneath it, then the caption. The block sits
-                 * right of centre, where the paper puts the agency head.
+                 * Name, then the position it is signed under, then the
+                 * caption. No rule between them: on an accomplished form the
+                 * officer signs over their own printed name, and a line drawn
+                 * through that is not what the paper shows.
                  */}
-                <div className="ml-auto mr-[11%] mt-12 w-[38%] text-center">
-                  <div className="text-[11.5px] font-bold leading-[1.35]">
+                <div className="mx-auto mt-12 max-w-[24rem] text-center">
+                  <div className="text-[11px] font-bold leading-[1.4]">
                     {request.certifiedBy || " "}
                   </div>
-                  <div className="border-b border-black text-[11.5px] font-bold leading-[1.35]">
+                  <div className="text-[11px] font-bold leading-[1.4]">
                     {request.certifiedByPosition || " "}
                   </div>
-                  <div className="mt-0.5 whitespace-pre-line text-[10px] leading-[1.3]">
+                  <div className="mt-0.5 whitespace-pre-line text-[9px] leading-[1.3]">
                     {CERTIFIED_BY_CAPTION}
                   </div>
                 </div>

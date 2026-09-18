@@ -30,9 +30,6 @@ import {
  * the name and the form supplies the sentence.
  */
 
-/** Each of the form's three stacked bands. */
-const TABLE = "w-full table-fixed border-collapse bg-white font-[Arial,Helvetica,sans-serif]";
-
 const blankItem = (): DisposalItemDraft => ({
   itemNumber: 0,
   grdsRdsItemNo: "",
@@ -54,18 +51,15 @@ function TextCell({
   label,
   rows = 2,
   centre = false,
-  trailing,
 }: {
   value?: string;
   onChange: (v: string) => void;
   label: string;
   rows?: number;
   centre?: boolean;
-  /** A control positioned against the cell, e.g. the line's remove button. */
-  trailing?: React.ReactNode;
 }) {
   return (
-    <td className={`${EDITABLE_CELL} relative`}>
+    <td className={EDITABLE_CELL}>
       <textarea
         aria-label={label}
         rows={rows}
@@ -73,15 +67,16 @@ function TextCell({
         onChange={(e) => onChange(e.target.value)}
         className={`${INPUT} resize-y ${centre ? "text-center" : ""}`}
       />
-      {trailing}
     </td>
   );
 }
 
-function Head({ children }: { children: React.ReactNode }) {
+function Head({ children, colSpan }: { children: React.ReactNode; colSpan?: number }) {
   return (
-    // Not CELL: its align-top outranks align-middle in the stylesheet.
-    <td className="border border-black px-1 py-1 text-center align-middle text-[9px] font-bold uppercase leading-[1.25]">
+    <td
+      colSpan={colSpan}
+      className={`${CELL} px-1 py-1 text-center align-middle text-[9px] font-bold uppercase leading-[1.25]`}
+    >
       {children}
     </td>
   );
@@ -151,31 +146,21 @@ export function DisposalForm({
    * Values are centred and the agency block takes more than one line, because
    * that is how an accomplished form reads: the agency name carries its
    * division under it, and the address runs to two lines.
-   *
-   * Called as a function, never rendered as <HeaderField />: defined inside
-   * the form, it would be a new component type on every render, so React
-   * would replace the input on each keystroke and the cursor would leave it.
    */
-  const headerField = ({
+  const HeaderField = ({
     label,
-    note,
     field,
     colSpan,
     rows,
   }: {
     label: string;
-    /** Printed after the label in ordinary type, e.g. "(Name & Signature)". */
-    note?: string;
     field: keyof typeof header;
     colSpan?: number;
     /** Set for the fields the paper fills across more than one line. */
     rows?: number;
   }) => (
     <td colSpan={colSpan} className={EDITABLE_CELL}>
-      <FieldLabel>
-        {label}
-        {note && <span className="ml-1 font-normal normal-case">{note}</span>}
-      </FieldLabel>
+      <FieldLabel>{label}</FieldLabel>
       {rows ? (
         <textarea
           aria-label={label}
@@ -215,55 +200,47 @@ export function DisposalForm({
       </div>
 
       <div className="w-full overflow-x-auto md:-mr-8">
-        <div className="min-w-[900px] pr-10">
+        <div className="min-w-[900px]">
           {/* The form's own margin notes, printed on the paper. */}
           <div className="mb-1 flex items-start justify-between text-[9.5px] leading-[1.35] text-black">
             <span className="whitespace-pre-line">{FORM_MARKINGS.reference}</span>
             <span>{FORM_MARKINGS.copies}</span>
           </div>
 
-          {/*
-           * Three tables on a shared rule, as the print is drawn: the paper's
-           * three bands split at different points, so each carries its own
-           * columns. Right padding keeps room for each line's remove button,
-           * which hangs just outside the form so the rules still line up.
-           */}
-          <table className={TABLE}>
+          <table className="w-full table-fixed border-collapse bg-white font-[Arial,Helvetica,sans-serif]">
             <colgroup>
-              <col className="w-[49.7%]" />
+              <col className="w-[13%]" />
               <col />
-              <col className="w-[22.6%]" />
+              <col className="w-[18%]" />
+              <col className="w-[24%]" />
+              <col className="w-10" />
             </colgroup>
+
             <tbody>
               {/* ---- Identity block, agency name and address ---- */}
               <tr>
-                <td rowSpan={2} className={`${CELL} relative px-4 pb-4 pt-3 text-center`}>
-                  {/* The title stands in its own heavier box, inset from the cell. */}
-                  <div
-                    aria-hidden
-                    className="pointer-events-none absolute inset-x-[7px] inset-y-[5px] border-[1.5px] border-black"
-                  />
-                  <div className="font-['Times_New_Roman',Times,serif] text-[14px] uppercase leading-[1.25]">
+                <td rowSpan={2} colSpan={2} className={`${CELL} px-2 py-3 text-center align-middle`}>
+                  <div className="text-[11px] font-bold uppercase leading-[1.3]">
                     National Archives of the Philippines
                   </div>
-                  <div className="text-[12px] italic leading-[1.35]">
+                  <div className="text-[10px] italic leading-[1.35]">
                     Pambansang Sinupan ng Pilipinas
                   </div>
-                  <div className="mt-4 text-[13px] font-bold uppercase leading-[1.3]">
-                    Request for Authority to Dispose
-                    <br />
-                    of Records
+                  <div className="mt-2 text-[12.5px] font-bold uppercase leading-[1.3]">
+                    Request for Authority to Dispose of Records
                   </div>
                 </td>
-                {headerField({ label: "Agency Name:", field: "agencyName", colSpan: 2, rows: 2 })}
+                <HeaderField label="Agency Name:" field="agencyName" colSpan={2} rows={2} />
+                <td />
               </tr>
               <tr>
-                {headerField({ label: "Address:", field: "agencyAddress", colSpan: 2, rows: 2 })}
+                <HeaderField label="Address:" field="agencyAddress" colSpan={2} rows={2} />
+                <td />
               </tr>
 
               {/* ---- Date, telephone, email ---- */}
               <tr>
-                <td className={EDITABLE_CELL}>
+                <td colSpan={2} className={EDITABLE_CELL}>
                   <FieldLabel>Date:</FieldLabel>
                   <DatePicker
                     id="request-date"
@@ -272,20 +249,11 @@ export function DisposalForm({
                     className="m-1 w-[calc(100%-0.5rem)] rounded-[3px] border-neutral-400 px-1.5 py-1 text-[12.5px]"
                   />
                 </td>
-                {headerField({ label: "Telephone Number:", field: "telephoneNumber" })}
-                {headerField({ label: "Email Address:", field: "emailAddress" })}
+                <HeaderField label="Telephone Number:" field="telephoneNumber" />
+                <HeaderField label="Email Address:" field="emailAddress" />
+                <td />
               </tr>
-            </tbody>
-          </table>
 
-          <table className={`-mt-px ${TABLE}`}>
-            <colgroup>
-              <col className="w-[11.9%]" />
-              <col />
-              <col className="w-[19.8%]" />
-              <col className="w-[22.6%]" />
-            </colgroup>
-            <tbody>
               {/* ---- Column headings ---- */}
               <tr>
                 <Head>
@@ -297,8 +265,9 @@ export function DisposalForm({
                 <Head>Period Covered</Head>
                 <Head>
                   Retention Period and Provision/s Complied{" "}
-                  <span className="font-bold italic normal-case">(If Any)</span>
+                  <span className="font-bold italic">(If Any)</span>
                 </Head>
+                <td />
               </tr>
 
               {/* ---- The lines ---- */}
@@ -338,62 +307,58 @@ export function DisposalForm({
                     value={row.retentionAndProvisions}
                     onChange={(v) => patch(i, { retentionAndProvisions: v })}
                     rows={4}
-                    trailing={
-                      <IconButton
-                        type="button"
-                        size="icon-sm"
-                        aria-label={`Remove item ${i + 1}`}
-                        disabled={items.length === 1}
-                        onClick={() => removeRow(i)}
-                        className="absolute left-[calc(100%+6px)] top-1/2 -translate-y-1/2"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </IconButton>
-                    }
                   />
+                  <td className="pl-1.5 align-middle">
+                    <IconButton
+                      type="button"
+                      size="icon-sm"
+                      aria-label={`Remove item ${i + 1}`}
+                      disabled={items.length === 1}
+                      onClick={() => removeRow(i)}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </IconButton>
+                  </td>
                 </tr>
               ))}
-            </tbody>
-          </table>
 
-          <table className={`-mt-px ${TABLE}`}>
-            <colgroup>
-              <col className="w-[60%]" />
-              <col />
-            </colgroup>
-            <tbody>
-              {/* ---- Location and volume ---- */}
+              {/* ---- Location and volume. The paper splits this band evenly. ---- */}
               <tr>
-                {headerField({ label: "Location of Records:", field: "locationOfRecords" })}
-                {headerField({ label: "Volume in Cubic Meter:", field: "volumeCubicMeter" })}
+                <HeaderField label="Location of Records:" field="locationOfRecords" colSpan={2} />
+                <HeaderField label="Volume in Cubic Meter:" field="volumeCubicMeter" colSpan={2} />
+                <td />
               </tr>
 
               {/* ---- Prepared by and position ---- */}
               <tr>
-                {headerField({ label: "Prepared by:", note: "(Name & Signature)", field: "preparedBy" })}
-                {headerField({ label: "Position:", field: "preparedByPosition" })}
+                <HeaderField
+                  label="Prepared by: (Name & Signature)"
+                  field="preparedBy"
+                  colSpan={2}
+                />
+                <HeaderField label="Position:" field="preparedByPosition" colSpan={2} />
+                <td />
               </tr>
 
               {/* ---- The certification ---- */}
               <tr>
-                <td colSpan={2} className={`${CELL} px-2 pb-2 pt-1.5`}>
+                <td colSpan={4} className={`${CELL} px-2 py-2`}>
                   <div className="text-[9px] font-bold uppercase leading-[1.3]">
                     Certified and Approved by:
                   </div>
                   {/*
                    * Printed, never typed: the form's own wording, and a legal
-                   * undertaking the agency head signs over. Set as the paper
-                   * sets it — first line indented, ragged right.
+                   * undertaking the agency head signs over.
                    */}
-                  <p className="ml-[14.5%] mr-[11%] mt-3 indent-[4em] text-left text-[11px] leading-[1.5]">
+                  <p className="mx-auto mt-3 max-w-[36rem] text-center text-[11px] leading-[1.5]">
                     {CERTIFICATION_TEXT}
                   </p>
                   {/*
                    * Name and the position it is signed under — both are on the
                    * paper, and the position is the authority the certification
-                   * rests on. Right of centre, over the signature rule.
+                   * rests on.
                    */}
-                  <div className="ml-auto mr-[11%] mt-6 w-[38%] space-y-1">
+                  <div className="mx-auto mt-6 max-w-[24rem] space-y-1">
                     <input
                       aria-label="Name of agency head or duly authorized representative"
                       placeholder="Name"
@@ -408,11 +373,12 @@ export function DisposalForm({
                       onChange={(e) => setField("certifiedByPosition")(e.target.value)}
                       className="w-full rounded-[3px] border border-neutral-400 bg-white px-1.5 py-1 text-center text-[12.5px] font-bold outline-none focus:border-neutral-600 focus:ring-2 focus:ring-(--accent-ring)"
                     />
-                    <div className="whitespace-pre-line border-t border-black pt-0.5 text-center text-[9.5px] leading-[1.35]">
+                    <div className="whitespace-pre-line pt-0.5 text-center text-[9.5px] leading-[1.35]">
                       {CERTIFIED_BY_CAPTION}
                     </div>
                   </div>
                 </td>
+                <td />
               </tr>
             </tbody>
           </table>
