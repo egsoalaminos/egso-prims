@@ -219,8 +219,14 @@ export function AppraisalForm({
     onSubmit({ ...header, datePrepared: toDateOnly(datePrepared), status, records });
   };
 
-  /** A header field: caption above, a filled box beneath, in a ruled cell. */
-  const HeaderField = ({
+  /**
+   * A header field: caption above, a filled box beneath, in a ruled cell.
+   *
+   * Called as a function, never rendered as <HeaderField />: defined inside
+   * the form, it would be a new component type on every render, so React
+   * would replace the input on each keystroke and the cursor would leave it.
+   */
+  const headerField = ({
     label,
     field,
     colSpan,
@@ -300,23 +306,19 @@ export function AppraisalForm({
                   Records Inventory and Appraisal
                 </div>
               </td>
-              <HeaderField label="1. Name of Office:" field="officeName" colSpan={3} rowSpan={2} />
-              <HeaderField label="2. Department/Division:" field="departmentDivision" colSpan={4} />
-              <HeaderField label="4. Telephone No.:" field="telephoneNo" colSpan={4} />
+              {headerField({ label: "1. Name of Office:", field: "officeName", colSpan: 3, rowSpan: 2 })}
+              {headerField({ label: "2. Department/Division:", field: "departmentDivision", colSpan: 4 })}
+              {headerField({ label: "4. Telephone No.:", field: "telephoneNo", colSpan: 4 })}
               <td />
             </tr>
             <tr>
-              <HeaderField label="3. Section/Unit:" field="sectionUnit" colSpan={4} />
-              <HeaderField label="5. Email Address:" field="emailAddress" colSpan={4} />
+              {headerField({ label: "3. Section/Unit:", field: "sectionUnit", colSpan: 4 })}
+              {headerField({ label: "5. Email Address:", field: "emailAddress", colSpan: 4 })}
               <td />
             </tr>
             <tr>
-              <HeaderField label="6. Address:" field="officeAddress" colSpan={3} />
-              <HeaderField
-                label="7. Person-in-Charge of Files:"
-                field="personInCharge"
-                colSpan={4}
-              />
+              {headerField({ label: "6. Address:", field: "officeAddress", colSpan: 3 })}
+              {headerField({ label: "7. Person-in-Charge of Files:", field: "personInCharge", colSpan: 4 })}
               <td colSpan={4} className={EDITABLE_CELL}>
                 <FieldLabel>8. Date Prepared:</FieldLabel>
                 <DatePicker
