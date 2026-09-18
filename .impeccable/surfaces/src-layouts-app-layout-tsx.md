@@ -41,6 +41,12 @@ The sidebar components are used only by this layout.
   he chose the **Dark** rail over a crimson one (`.impeccable/comps/admin-sidebar-v2.html`). This
   replaced option C's crimson letterhead block and the crimson edge line.
 
+- **Colour exploration declined (2026-09-18):** after comparing with e.gov.ph the owner wondered
+  whether the admin read as dead. A comp offered a seal-derived palette (crimson brand with blue /
+  yellow / green / red status colours, coloured icon tiles, a gradient banner, Lexend) and an
+  eGov-blue variant (`.impeccable/comps/admin-color-v3.html`). He looked and said to stop: *"wag na
+  muna... okay na pala yung ngayon."* The shipped palette, Inter and the current surfaces stand.
+
 ## Unresolved decisions
 
 - A real global search (reference numbers, modules) is to be built after the modules are

@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en" data-palette="seal" data-font="lexend">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Admin colour v3 · General Services Office (comp)</title>
+<!--
+THESIS: An admin a clerk sits in front of all day can be alive without being loud: colour in small, meaningful doses (icon tiles, status pills, charts, one banner) on calm white and tinted surfaces.
+WHY: the owner found the shipped admin dead next to e.gov.ph ("parang patay... ang boring gamitin"). e.gov.ph is a marketing site (saturated royal blue, flag red and yellow, Lexend, 14-16px cards, tinted surfaces, soft shadows), but the eGovPH app itself keeps a white UI with colour-coded service tiles — that is the model for an admin.
+A · SEAL: the palette comes from the Alaminos seal — crimson (the office), royal blue (in review), golden yellow (waiting), green (done), red (wrong). Municipal identity kept.
+B · EGOV: the national platform's royal blue as primary, with flag red and yellow as accents; crimson survives only on the seal itself.
+BOTH: colours carry a meaning a clerk can state; the layout, data and functions are the shipped dashboard's.
+FONT: Lexend (e.gov.ph's, friendlier) against the current Inter.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@400;500;600;700&family=Spectral:wght@500&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<style>
+  /* ---------------- palettes ---------------- */
+  :root {
+    --font: "Lexend", ui-sans-serif, system-ui, sans-serif;
+    /* A · Seal */
+    --brand: #7e1624;          /* the office, primary action */
+    --brand-deep: #66111d;
+    --brand-tint: #fceef0;
+    --rail: #171717;           /* the dark rail the owner picked */
+    --info: #1d4ed8;           /* in review / in progress */
+    --info-tint: #eaf0fe;
+    --warn: #b45309;           /* waiting on someone */
+    --warn-tint: #fef4e6;
+    --good: #047857;           /* done, available */
+    --good-tint: #e9f7f1;
+    --bad: #c8102e;            /* rejected, out of stock, late */
+    --bad-tint: #fdeced;
+    --ink: #16181d;
+    --muted: #5b6270;
+    --line: #e6e8ec;
+    --canvas: #f6f7f9;
+    --surface-tint: #f7f8fc;
+    --r-card: 14px;
+    --r-ctl: 10px;
+    --shadow: 0 1px 2px rgb(16 18 23 / 0.05), 0 8px 24px -16px rgb(16 18 23 / 0.2);
+  }
+  html[data-palette="egov"] {
+    --brand: #0040e7;
+    --brand-deep: #0033b8;
+    --brand-tint: #e9efff;
+    --rail: #0a1230;
+    --info: #0040e7;
+    --info-tint: #e9efff;
+    --warn: #a16207;
+    --warn-tint: #fef7e0;
+    --good: #047857;
+    --good-tint: #e9f7f1;
+    --bad: #ce1126;
+    --bad-tint: #fdecee;
+    --canvas: #f6f8ff;
+    --surface-tint: #f5f8ff;
+  }
+  html[data-font="inter"] { --font: "Inter", ui-sans-serif, system-ui, sans-serif; }
+
+  html, body { overscroll-behavior: none; }
+  body { font-family: var(--font); background: var(--canvas); color: var(--ink); }
+  svg.lucide { width: 18px; height: 18px; stroke-width: 1.75; flex-shrink: 0; }
+  svg.lucide.s16 { width: 16px; height: 16px; }
+  svg.lucide.s14 { width: 14px; height: 14px; }
+  .num { font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: var(--r-card); box-shadow: var(--shadow); }
+  .ctl { border-radius: var(--r-ctl); }
+  .tile { border-radius: var(--r-ctl); display: grid; place-items: center; }
+
+  /* rail */
+  .rail { background: var(--rail); }
+  .rail-tile { background: rgb(255 255 255 / 0.08); color: rgb(255 255 255 / 0.82); border-radius: var(--r-ctl); transition: background-color 150ms, color 150ms; }
+  .rail-tile:hover { background: rgb(255 255 255 / 0.16); color: #fff; }
+  .rail-tile[aria-current="page"] { background: #fff; color: var(--brand); box-shadow: 0 4px 12px rgb(0 0 0 / 0.25); }
+
+  /* panel */
+  .nav { color: var(--muted); border-radius: var(--r-ctl); transition: background-color 150ms, color 150ms; }
+  .nav:hover { background: #f3f4f7; color: var(--ink); }
+  .nav[aria-current="page"] { color: var(--brand); font-weight: 600; }
+  .nav.open { color: var(--ink); font-weight: 600; }
+  .child { color: var(--muted); border-radius: 8px; }
+  .child:hover { background: #fff; color: var(--ink); }
+  .child[aria-current="page"] { background: #fff; color: var(--brand); font-weight: 600; box-shadow: 0 1px 2px rgb(16 18 23 / 0.06); }
+
+  /* banner */
+  .banner { background: linear-gradient(135deg, var(--brand) 0%, var(--brand-deep) 100%); color: #fff; border-radius: var(--r-card); position: relative; overflow: hidden; }
+  .banner::after { content: ""; position: absolute; right: -60px; top: -80px; width: 320px; height: 320px; border-radius: 9999px; background: rgb(255 255 255 / 0.07); }
+  .banner .chip { background: rgb(255 255 255 / 0.16); border-radius: 9999px; }
+
+  .btn { background: var(--brand); color: #fff; border-radius: var(--r-ctl); transition: background-color 150ms, transform 150ms; box-shadow: 0 6px 16px -8px color-mix(in oklab, var(--brand) 70%, transparent); }
+  .btn:hover { background: var(--brand-deep); }
+  .btn:active { transform: scale(0.98); }
+
+  .pill { border-radius: 9999px; font-size: 12.5px; font-weight: 600; padding: 2px 10px; display: inline-flex; align-items: center; gap: 6px; }
+  .pill::before { content: ""; width: 6px; height: 6px; border-radius: 9999px; background: currentColor; }
+  .pill.info { background: var(--info-tint); color: var(--info); }
+  .pill.warn { background: var(--warn-tint); color: var(--warn); }
+  .pill.good { background: var(--good-tint); color: var(--good); }
+  .pill.bad { background: var(--bad-tint); color: var(--bad); }
+  .pill.done { background: #f1f2f5; color: var(--muted); }
+
+  .seg { background: #eef0f4; border-radius: var(--r-ctl); }
+  .seg button[aria-pressed="true"] { background: #fff; color: var(--ink); font-weight: 600; box-shadow: 0 1px 2px rgb(16 18 23 / 0.1); }
+  .row:hover { background: var(--surface-tint); }
+  .comp-switch button[aria-pressed="true"] { background: #16181d; color: #fff; }
+</style>
+</head>
+<body class="flex h-[100dvh] overflow-hidden antialiased">
+
+  <!-- rail -->
+  <nav class="rail flex w-[68px] shrink-0 flex-col items-center py-3" aria-label="Office">
+    <span class="grid h-11 w-11 place-items-center rounded-full bg-white"><img src="../../public/logo/alaminos-seal.png" alt="" class="h-10 w-10" /></span>
+    <div class="my-4 h-px w-8 bg-white/15"></div>
+    <div class="flex flex-col gap-3">
+      <a href="#" aria-current="page" class="rail-tile grid h-11 w-11"><i data-lucide="house"></i></a>
+      <a href="#" class="rail-tile grid h-11 w-11"><i data-lucide="bar-chart-3"></i></a>
+      <a href="#" class="rail-tile grid h-11 w-11"><i data-lucide="history"></i></a>
+      <a href="#" class="rail-tile grid h-11 w-11"><i data-lucide="settings"></i></a>
+    </div>
+    <div class="mt-auto flex flex-col items-center gap-3">
+      <span class="grid h-10 w-10 place-items-center rounded-full bg-white/15 text-[13px] font-semibold text-white">RN</span>
+      <a href="#" class="rail-tile grid h-11 w-11"><i data-lucide="log-out"></i></a>
+    </div>
+  </nav>
+
+  <!-- panel -->
+  <aside class="flex w-[276px] shrink-0 flex-col border-r bg-white" style="border-color: var(--line)">
+    <div class="flex h-14 shrink-0 flex-col justify-center border-b px-5" style="border-color: var(--line)">
+      <span class="truncate text-[13px] font-medium uppercase tracking-[0.1em]" style="font-family: Spectral, serif">General Services Office</span>
+      <span class="truncate text-[12px]" style="color: var(--muted)">Municipality of Alaminos, Laguna</span>
+    </div>
+    <nav class="flex flex-1 flex-col gap-1 px-3 py-4 text-[14px]">
+      <button class="nav open flex h-10 items-center gap-3 px-3 text-left"><span class="tile h-7 w-7" style="background: var(--info-tint); color: var(--info)"><i data-lucide="files" class="s16"></i></span><span class="flex-1">Procurement</span><i data-lucide="chevron-down" class="s16" style="color:#9aa1ae"></i></button>
+      <div class="mb-1 ml-3 flex flex-col gap-0.5 rounded-[12px] p-1.5" style="background: var(--surface-tint)">
+        <a href="#" class="child flex h-9 items-center justify-between px-2.5">Purchase Requests<span class="num rounded-full px-1.5 text-[12px] font-semibold leading-5 text-white" style="background: var(--info)">4</span></a>
+        <a href="#" class="child flex h-9 items-center px-2.5">Purchase Orders</a>
+      </div>
+      <button class="nav flex h-10 items-center gap-3 px-3 text-left"><span class="tile h-7 w-7" style="background: var(--warn-tint); color: var(--warn)"><i data-lucide="warehouse" class="s16"></i></span><span class="flex-1">Supply</span><i data-lucide="chevron-down" class="s16" style="color:#9aa1ae"></i></button>
+      <div class="mb-1 ml-3 flex flex-col gap-0.5 rounded-[12px] p-1.5" style="background: var(--surface-tint)">
+        <a href="#" class="child flex h-9 items-center justify-between px-2.5">Inventory<span class="num rounded-full px-1.5 text-[12px] font-semibold leading-5 text-white" style="background: var(--bad)">5</span></a>
+        <a href="#" class="child flex h-9 items-center px-2.5">Requisition &amp; Issue Slip</a>
+      </div>
+      <a href="#" class="nav flex h-10 items-center gap-3 px-3"><span class="tile h-7 w-7" style="background: var(--good-tint); color: var(--good)"><i data-lucide="calendar-days" class="s16"></i></span><span class="flex-1">Facility Reservation</span><span class="num rounded-full px-1.5 text-[12px] font-semibold leading-5 text-white" style="background: var(--good)">2</span></a>
+      <a href="#" class="nav flex h-10 items-center gap-3 px-3"><span class="tile h-7 w-7" style="background:#f1f2f5; color: var(--muted)"><i data-lucide="shield-alert" class="s16"></i></span>Violation Management</a>
+      <button class="nav flex h-10 items-center gap-3 px-3 text-left"><span class="tile h-7 w-7" style="background:#f1f2f5; color: var(--muted)"><i data-lucide="gauge" class="s16"></i></span><span class="flex-1">Utilities</span><i data-lucide="chevron-right" class="s16" style="color:#9aa1ae"></i></button>
+      <button class="nav flex h-10 items-center gap-3 px-3 text-left"><span class="tile h-7 w-7" style="background:#f1f2f5; color: var(--muted)"><i data-lucide="archive" class="s16"></i></span><span class="flex-1">Records Management</span><i data-lucide="chevron-right" class="s16" style="color:#9aa1ae"></i></button>
+    </nav>
+  </aside>
+
+  <!-- page -->
+  <div class="flex min-w-0 flex-1 flex-col">
+    <header class="flex h-14 shrink-0 items-center gap-3 border-b bg-white px-6" style="border-color: var(--line)">
+      <span class="grid h-9 w-9 place-items-center" style="color: var(--muted)"><i data-lucide="panel-left"></i></span>
+      <span class="min-w-0 flex-1 text-[14px] font-semibold">Dashboard</span>
+      <span class="mr-2 hidden text-[14px] xl:inline" style="color: var(--muted)">Friday, 18 September 2026</span>
+      <span class="ctl inline-flex h-9 items-center gap-1.5 px-2.5 text-[14px] font-medium" style="color: var(--muted)">Staff portal <i data-lucide="arrow-up-right" class="s16"></i></span>
+      <span class="ctl inline-flex h-9 items-center gap-2 border px-3 text-[14px] font-medium" style="border-color: var(--line)">For review <span class="num rounded-full px-1.5 text-[12px] font-semibold leading-5 text-white" style="background: var(--brand)">9</span></span>
+      <span class="ctl grid h-9 w-9 place-items-center border" style="border-color: var(--line); color: var(--muted)"><i data-lucide="bell"></i></span>
+      <span class="btn inline-flex h-9 items-center gap-1.5 pl-3 pr-2.5 text-[14px] font-semibold"><i data-lucide="plus" class="s16"></i>New<i data-lucide="chevron-down" class="s16 opacity-80"></i></span>
+    </header>
+
+    <main class="min-h-0 flex-1 overflow-y-auto overscroll-contain px-8 pb-10 pt-6">
+      <!-- banner: the one saturated surface -->
+      <section class="banner flex flex-wrap items-center justify-between gap-6 px-6 py-5">
+        <div class="relative z-10">
+          <p class="text-[13px] font-medium" style="color: rgb(255 255 255 / 0.75)">Friday, 18 September 2026</p>
+          <h1 class="mt-1 text-[24px] font-semibold tracking-[-0.01em]">Good morning, Richard</h1>
+          <p class="mt-1 text-[15px]" style="color: rgb(255 255 255 / 0.85)">9 documents are waiting for action · 3 facility bookings today</p>
+        </div>
+        <div class="relative z-10 flex flex-wrap gap-2">
+          <span class="chip inline-flex h-9 items-center gap-2 px-3.5 text-[13.5px] font-medium"><i data-lucide="file-text" class="s16"></i>4 purchase requests</span>
+          <span class="chip inline-flex h-9 items-center gap-2 px-3.5 text-[13.5px] font-medium"><i data-lucide="package" class="s16"></i>5 stock alerts</span>
+        </div>
+      </section>
+
+      <!-- figures -->
+      <section class="mt-5 grid grid-cols-4 gap-4" id="kpis"></section>
+
+      <div class="mt-4 grid grid-cols-[minmax(0,1fr)_360px] gap-4">
+        <section class="card p-5">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <h2 class="text-[15px] font-semibold">Amount requested</h2>
+              <p class="mt-0.5 text-[13px]" style="color: var(--muted)">Purchase requests filed, last 6 months</p>
+            </div>
+            <div class="text-right">
+              <p class="num text-[24px] font-semibold leading-tight">₱5.82M</p>
+              <p class="text-[13px]" style="color: var(--muted)"><span class="font-semibold" style="color: var(--good)">↑ 12%</span> vs previous 6 months</p>
+            </div>
+          </div>
+          <div class="mt-8 grid h-[180px] grid-cols-6 items-end gap-4 border-b px-1" style="border-color: var(--line)" id="bars"></div>
+          <div class="mt-2 grid grid-cols-6 gap-4 px-1 text-center text-[12.5px]" style="color: var(--muted)" id="bar-labels"></div>
+        </section>
+
+        <section class="card overflow-hidden">
+          <div class="flex items-center justify-between px-5 pb-2 pt-5"><h2 class="text-[15px] font-semibold">Waiting for action</h2><span class="num rounded-full px-2 text-[12px] font-semibold leading-5 text-white" style="background: var(--brand)">9</span></div>
+          <ul class="px-2 pb-2" id="queue"></ul>
+        </section>
+      </div>
+
+      <div class="mt-4 grid grid-cols-[minmax(0,1fr)_360px] gap-4">
+        <section class="card overflow-hidden">
+          <div class="flex items-center justify-between gap-3 px-5 pb-3 pt-5">
+            <h2 class="text-[15px] font-semibold">Recent documents</h2>
+            <div class="seg flex p-1 text-[13px]" style="color: var(--muted)">
+              <button class="ctl px-2.5 py-1" aria-pressed="true">Purchase Requests</button>
+              <button class="ctl px-2.5 py-1" aria-pressed="false">Purchase Orders</button>
+              <button class="ctl px-2.5 py-1" aria-pressed="false">RIS</button>
+            </div>
+          </div>
+          <table class="w-full table-fixed text-left text-[14px]">
+            <colgroup><col class="w-[160px]" /><col /><col class="w-[120px]" /><col class="w-[190px]" /></colgroup>
+            <thead class="border-y text-[12.5px]" style="border-color: var(--line); color: var(--muted); background: var(--surface-tint)">
+              <tr><th class="px-5 py-2 font-medium">Number</th><th class="px-2 py-2 font-medium">Purpose</th><th class="px-2 py-2 text-right font-medium">Amount</th><th class="px-5 py-2 font-medium">Status</th></tr>
+            </thead>
+            <tbody id="docs"></tbody>
+          </table>
+          <a href="#" class="flex items-center justify-center gap-1.5 border-t py-2.5 text-[13px] font-medium" style="border-color: var(--line); color: var(--muted)">View all purchase requests <i data-lucide="arrow-right" class="s14"></i></a>
+        </section>
+
+        <section class="card p-5">
+          <div class="flex items-baseline justify-between"><h2 class="text-[15px] font-semibold">Today</h2><span class="text-[13px]" style="color: var(--muted)">Fri, 18 Sep</span></div>
+          <ol class="relative mt-4 space-y-4 before:absolute before:bottom-2 before:left-[5px] before:top-2 before:w-px" style="--tw-before: 0" id="today"></ol>
+          <div class="mt-5 border-t pt-4" style="border-color: var(--line)">
+            <h3 class="text-[13px] font-medium" style="color: var(--muted)">Deliveries due this week</h3>
+            <ul class="mt-2 space-y-2">
+              <li class="ctl flex items-center justify-between gap-3 border px-3 py-2" style="border-color: color-mix(in oklab, var(--bad) 30%, white); background: var(--bad-tint)"><span class="min-w-0"><span class="num block text-[14px] font-medium">PO-2026-000031</span><span class="block truncate text-[13px]" style="color: color-mix(in oklab, var(--bad) 70%, #333)">Laguna Grocers Trading</span></span><span class="shrink-0 text-[13px] font-semibold" style="color: var(--bad)">1 day overdue</span></li>
+              <li class="ctl flex items-center justify-between gap-3 border px-3 py-2" style="border-color: var(--line)"><span class="min-w-0"><span class="num block text-[14px] font-medium">PO-2026-000033</span><span class="block truncate text-[13px]" style="color: var(--muted)">San Pablo Office Supply</span></span><span class="shrink-0 text-[13px]" style="color: var(--muted)">Mon, 21 Sep</span></li>
+            </ul>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="comp-switch fixed bottom-4 right-4 z-50 flex items-center gap-1 rounded-[10px] border bg-white p-1 text-[12.5px] shadow-lg" style="border-color:#d5d8de">
+    <span class="px-2" style="color: var(--muted)">Palette</span>
+    <button type="button" data-p="seal" aria-pressed="true" class="rounded-[8px] px-2.5 py-1.5">A · Seal</button>
+    <button type="button" data-p="egov" aria-pressed="false" class="rounded-[8px] px-2.5 py-1.5">B · eGov blue</button>
+    <span class="mx-1 h-5 w-px" style="background:#e6e8ec"></span>
+    <span class="px-2" style="color: var(--muted)">Font</span>
+    <button type="button" data-f="lexend" aria-pressed="true" class="rounded-[8px] px-2.5 py-1.5">Lexend</button>
+    <button type="button" data-f="inter" aria-pressed="false" class="rounded-[8px] px-2.5 py-1.5">Inter</button>
+  </div>
+
+<script>
+  const kpis = [
+    { label: 'PRs filed', icon: 'file-text', tone: 'info', value: '18', delta: '↑ 4', note: 'vs August', up: true, spark: [6, 9, 7, 11, 10, 14, 12, 18] },
+    { label: 'Amount requested', icon: 'banknote', tone: 'brand', value: '₱1.24M', delta: '↑ 12%', note: 'vs August', up: true, spark: [0.6, 0.9, 0.8, 1.0, 0.7, 1.1, 1.0, 1.24] },
+    { label: 'RIS issued', icon: 'clipboard-list', tone: 'warn', value: '9', delta: '↓ 2', note: 'vs August', up: false, spark: [8, 11, 10, 12, 9, 11, 11, 9] },
+    { label: 'Facility bookings', icon: 'calendar-days', tone: 'good', value: '14', delta: '↑ 3', note: 'vs August', up: true, spark: [7, 6, 9, 8, 10, 9, 11, 14] },
+  ];
+  const toneVar = { info: ['var(--info-tint)', 'var(--info)'], warn: ['var(--warn-tint)', 'var(--warn)'], good: ['var(--good-tint)', 'var(--good)'], brand: ['var(--brand-tint)', 'var(--brand)'] };
+  const k$ = document.getElementById('kpis');
+  kpis.forEach((k, i) => {
+    const w = 120, h = 40, max = Math.max(...k.spark), min = Math.min(...k.spark);
+    const pts = k.spark.map((v, j) => [(j / (k.spark.length - 1)) * w, h - 4 - ((v - min) / (max - min || 1)) * (h - 8)]);
+    const line = pts.map((p, j) => (j ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+    const [tint, solid] = toneVar[k.tone];
+    k$.insertAdjacentHTML('beforeend', `
+      <div class="card flex flex-col p-4">
+        <div class="flex items-center gap-2 text-[13px]" style="color: var(--muted)"><span class="tile h-7 w-7" style="background:${tint}; color:${solid}"><i data-lucide="${k.icon}" class="s14"></i></span>${k.label}</div>
+        <div class="mt-3 flex items-end justify-between gap-2">
+          <div>
+            <p class="num text-[28px] font-semibold leading-none">${k.value}</p>
+            <p class="mt-2 whitespace-nowrap text-[12.5px]" style="color: var(--muted)"><span class="font-semibold" style="color:${k.up ? 'var(--good)' : 'var(--warn)'}">${k.delta}</span> ${k.note}</p>
+          </div>
+          <svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" class="h-10 w-[104px]" aria-hidden="true">
+            <defs><linearGradient id="g${i}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${solid}" stop-opacity="0.22"/><stop offset="1" stop-color="${solid}" stop-opacity="0"/></linearGradient></defs>
+            <path d="${line} L ${w} ${h} L 0 ${h} Z" fill="url(#g${i})"/>
+            <path d="${line}" fill="none" stroke="${solid}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+          </svg>
+        </div>
+      </div>`);
+  });
+
+  const months = [['Apr', 0.72], ['May', 1.05], ['Jun', 0.88], ['Jul', 0.96], ['Aug', 0.97], ['Sep', 1.24]];
+  const bars = document.getElementById('bars'), labels = document.getElementById('bar-labels');
+  months.forEach(([m, v], i) => {
+    const pct = (v / 1.3) * 100, current = i === months.length - 1;
+    bars.insertAdjacentHTML('beforeend', `<div class="relative flex h-full flex-col justify-end"><span class="num pointer-events-none absolute left-1/2 -translate-x-1/2 text-[12px] font-medium" style="bottom: calc(${pct}% + 6px); color:${current ? 'var(--brand)' : 'var(--muted)'}">₱${v.toFixed(2)}M</span><div style="height:${pct}%; border-radius: 8px 8px 0 0; background:${current ? 'var(--brand)' : '#dfe2e8'}"></div></div>`);
+    labels.insertAdjacentHTML('beforeend', `<span class="${current ? 'font-semibold' : ''}" style="${current ? 'color: var(--ink)' : ''}">${m}</span>`);
+  });
+
+  const queue = [
+    ['file-text', 'info', 'Purchase requests', 'In review · oldest 3 days', 4],
+    ['shopping-cart', 'info', 'Purchase orders', 'To approve · oldest today', 1],
+    ['clipboard-list', 'warn', 'Requisition slips', 'To approve · oldest 1 day', 1],
+    ['calendar-days', 'good', 'Reservations', 'To confirm · oldest 1 day', 2],
+    ['package', 'bad', 'Stock alerts', '2 out of stock · 3 low', 5],
+  ];
+  const q = document.getElementById('queue');
+  queue.forEach(([icon, tone, label, meta, n]) => {
+    const tints = { info: ['var(--info-tint)', 'var(--info)'], warn: ['var(--warn-tint)', 'var(--warn)'], good: ['var(--good-tint)', 'var(--good)'], bad: ['var(--bad-tint)', 'var(--bad)'] }[tone];
+    q.insertAdjacentHTML('beforeend', `<li><a href="#" class="row ctl flex items-center gap-3 px-3 py-2.5">
+      <span class="tile h-9 w-9 shrink-0" style="background:${tints[0]}; color:${tints[1]}"><i data-lucide="${icon}" class="s16"></i></span>
+      <span class="min-w-0 flex-1"><span class="block text-[14px] font-medium">${label}</span><span class="block truncate text-[13px]" style="color:${tone === 'bad' ? 'var(--bad)' : 'var(--muted)'}">${meta}</span></span>
+      <span class="num text-[20px] font-semibold">${n}</span>
+      <i data-lucide="chevron-right" class="s16" style="color:#b9bec8"></i></a></li>`);
+  });
+
+  const docs = [
+    ['PR-2026-000231', 'Stock of Food Supplies', 'DSWD · Richard Nasol · 6 hours ago', '₱30,000.00', 'Submitted', 'info'],
+    ['PR-2026-000230', 'Medical supplies for barangay health stations', 'MHO · Dr. Ana Lopez · 1 day ago', '₱148,500.00', 'Budget Review', 'warn'],
+    ['PR-2026-000229', 'Road maintenance materials, Brgy. San Roque', 'MEO · Engr. Jerome Cruz · 3 days ago', '₱412,000.00', 'Approved', 'good'],
+    ['PR-2026-000228', 'Janitorial supplies, 4th quarter', 'GSO · Marites Villanueva · 3 days ago', '₱22,750.00', 'Department Head Review', 'info'],
+    ['PR-2026-000227', 'Seedlings for the rice sufficiency program', 'MAO · Engr. Jerome Cruz · 5 days ago', '₱96,000.00', 'Completed', 'done'],
+  ];
+  const tb = document.getElementById('docs');
+  docs.forEach(([n, p, meta, amt, st, tone]) => {
+    tb.insertAdjacentHTML('beforeend', `<tr class="row" style="border-bottom:1px solid #f0f1f4"><td class="num whitespace-nowrap px-5 py-3 align-top font-medium">${n}</td><td class="max-w-0 px-2 py-3"><span class="block truncate">${p}</span><span class="block truncate text-[13px]" style="color: var(--muted)">${meta}</span></td><td class="num whitespace-nowrap px-2 py-3 text-right align-top">${amt}</td><td class="whitespace-nowrap px-5 py-3 align-top"><span class="pill ${tone}">${st}</span></td></tr>`);
+  });
+
+  const today = [
+    ['8:00 AM – 12:00 PM', 'Session Hall', 'SB · Regular session', 'past'],
+    ['1:00 – 5:00 PM · Next', 'Audio-Visual Room', 'MHO · Health workers orientation', 'next'],
+    ['3:00 – 5:00 PM', 'Conference Room A', 'MBO · Budget hearing · waiting for approval', 'later'],
+  ];
+  const t$ = document.getElementById('today');
+  t$.style.setProperty('--x', '0');
+  today.forEach(([time, place, meta, when]) => {
+    const dot = when === 'next' ? 'background: var(--brand); box-shadow: 0 0 0 3px color-mix(in oklab, var(--brand) 18%, transparent)' : when === 'past' ? 'background:#b9bec8' : 'background:#fff; box-shadow: 0 0 0 1px #b9bec8 inset';
+    t$.insertAdjacentHTML('beforeend', `<li class="relative pl-6"><span class="absolute left-0 top-1.5 h-[11px] w-[11px] rounded-full border-2 border-white" style="${dot}"></span><p class="num text-[12.5px] font-medium" style="color:${when === 'next' ? 'var(--brand)' : 'var(--muted)'}">${time}</p><p class="truncate text-[14px] font-medium">${place}</p><p class="truncate text-[13px]" style="color: var(--muted)">${meta}</p></li>`);
+  });
+  document.querySelector('#today').style.setProperty('border-color', 'var(--line)');
+  document.querySelectorAll('#today')[0].insertAdjacentHTML('afterbegin', '');
+
+  document.querySelectorAll('[data-p]').forEach((b) => b.addEventListener('click', () => {
+    document.documentElement.dataset.palette = b.dataset.p;
+    document.querySelectorAll('[data-p]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    document.querySelectorAll('svg path[stroke]').forEach(() => {});
+  }));
+  document.querySelectorAll('[data-f]').forEach((b) => b.addEventListener('click', () => {
+    document.documentElement.dataset.font = b.dataset.f;
+    document.querySelectorAll('[data-f]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  }));
+  document.querySelectorAll('a[href="#"]').forEach((l) => l.addEventListener('click', (e) => e.preventDefault()));
+  lucide.createIcons();
+</script>
+</body>
+</html>
