@@ -61,6 +61,13 @@ export interface EnterpriseTableProps<TData> {
   /** Header cells stay pinned while the body scrolls. */
   stickyHeader?: boolean;
   /**
+   * Tightens the horizontal cell padding from 16px to 12px (and the first
+   * cell's 20px to 14px). For a record with enough columns that the shared
+   * padding pushes the last one off the right edge — a purchase request
+   * carries nine. Row height is untouched.
+   */
+  dense?: boolean;
+  /**
    * Fill the parent's height: the table body becomes the scroll region and
    * pagination stays pinned below. Parent must constrain height.
    */
@@ -89,6 +96,7 @@ export function EnterpriseTable<TData>({
   getRowId,
   stickyHeader = false,
   fillContainer = false,
+  dense = false,
   minWidth = 900,
   className,
 }: EnterpriseTableProps<TData>) {
@@ -168,6 +176,12 @@ export function EnterpriseTable<TData>({
     ? "sticky top-0 z-[5] table-head-band shadow-[inset_0_-1px_0_0_var(--color-border)]"
     : undefined;
 
+  // `!` because the padding these replace is spelled on TableCell/TableHead
+  // itself, and two utilities in the same group are settled by stylesheet
+  // order rather than by the order they are listed here.
+  const densePad = (first: boolean) =>
+    dense ? (first ? "px-3.5!" : "px-3!") : undefined;
+
   return (
     <div className={cn(fillContainer && "flex h-full min-h-0 flex-col", className)}>
       <div className={cn("overflow-x-auto", fillContainer && "min-h-0 flex-1 overflow-y-auto")}>
@@ -183,6 +197,7 @@ export function EnterpriseTable<TData>({
                       first={i === 0}
                       className={cn(
                         stickyHeadClass,
+                        densePad(i === 0),
                         meta.align === "right" && "text-right",
                         meta.headerClassName,
                       )}
@@ -221,7 +236,11 @@ export function EnterpriseTable<TData>({
                         <TableCell
                           key={cell.id}
                           first={i === 0}
-                          className={cn(meta.align === "right" && "text-right", meta.className)}
+                          className={cn(
+                            densePad(i === 0),
+                            meta.align === "right" && "text-right",
+                            meta.className,
+                          )}
                         >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </TableCell>

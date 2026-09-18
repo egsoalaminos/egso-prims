@@ -32,6 +32,38 @@ export const PENDING_PR_STATUSES: PRStatus[] = [
   "Budget Review",
 ];
 
+/**
+ * The stages the list page groups by. Eight statuses are the record; these six
+ * are the questions someone opens the page with — above all "what is waiting
+ * for me". `waiting` is exactly {@link PENDING_PR_STATUSES}, so the strip, the
+ * sidebar badge and the dashboard tile can never disagree.
+ */
+export type PRQueue = "all" | "waiting" | "drafts" | "approved" | "completed" | "closed";
+
+export const PR_QUEUES: { id: PRQueue; label: string }[] = [
+  { id: "all", label: "All" },
+  { id: "waiting", label: "Waiting for action" },
+  { id: "drafts", label: "Drafts" },
+  { id: "approved", label: "Approved" },
+  { id: "completed", label: "Completed" },
+  { id: "closed", label: "Closed" },
+];
+
+/** Which queue a status belongs to. Never returns "all". */
+export function queueOf(status: PRStatus): Exclude<PRQueue, "all"> {
+  if (PENDING_PR_STATUSES.includes(status)) return "waiting";
+  switch (status) {
+    case "Draft":
+      return "drafts";
+    case "Approved":
+      return "approved";
+    case "Completed":
+      return "completed";
+    default:
+      return "closed";
+  }
+}
+
 export interface Department {
   code: string;
   name: string;

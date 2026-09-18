@@ -313,11 +313,16 @@ export function AppSidebar({
 
         {/* ---------- Panel ---------- */}
         <Sidebar collapsible="none" className="min-w-0 flex-1 border-r border-neutral-200 bg-white text-neutral-600">
+          {/* Set exactly as the portal and the sign-in sheet set it: the
+              municipality as a small uppercase line, the office name in the
+              one serif. Same letterhead, three surfaces. */}
           <SidebarHeader className="h-14 shrink-0 justify-center gap-0 border-b border-neutral-200 px-5 py-0">
-            <span className="truncate font-['Spectral',ui-serif,Georgia,serif] text-[13px] font-medium uppercase tracking-[0.1em] text-neutral-900">
+            <span className="truncate text-[10px] font-medium uppercase tracking-[0.08em] text-neutral-500">
+              {municipality}
+            </span>
+            <span className="truncate font-['Spectral',ui-serif,Georgia,serif] text-[17px] font-medium leading-tight text-neutral-900">
               {branding.officeName}
             </span>
-            <span className="truncate text-[12px] text-neutral-500">{municipality}</span>
           </SidebarHeader>
 
           <SidebarContent className="px-3 py-4">

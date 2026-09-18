@@ -427,13 +427,18 @@ body {
 
 /*
  * A sticky header cell paints over the rows scrolling beneath it, so it needs
- * an opaque ground — and `--accent-subtle` is a translucent wash under the
- * coloured accents. White is laid down as the colour and the accent tint as an
- * image on top of it, so the band stays opaque whichever accent is selected.
+ * an opaque ground. It is the same band `--thead-bg` gives a header that is not
+ * sticking, so a table does not change colour the moment it starts to scroll.
+ *
+ * It used to lay `--accent-subtle` over white instead. That reads as a neutral
+ * for the ink accent it was written against, but `[data-municipal]` sets the
+ * same token to `#f6eced` — so the first list to enter the crimson scope
+ * (Purchase Requests, 18 Sep 2026) got a pink header band. A column heading is
+ * not the office, not where you are and not a document being started, which
+ * are the three things this system spends crimson on.
  */
 @utility table-head-band {
-  background-color: var(--color-white);
-  background-image: linear-gradient(var(--accent-subtle), var(--accent-subtle));
+  background-color: var(--thead-bg);
 }
 
 @utility scrollbar-none {

@@ -3,29 +3,48 @@ import { cn } from "@/lib/utils";
 /**
  * Status pill anatomy from the Design Foundation:
  * rounded-full, 50-tint background, 700 text, 500 dot, 11.5px medium.
+ *
+ * `hollow` is the one tone with no fill: a ruled outline for a state that is
+ * nobody's queue yet (a Draft) or that ended without a verdict (Cancelled).
+ * Its border is declared on every tone as transparent so all pills share one
+ * height.
  */
-type Tone = "amber" | "emerald" | "blue" | "red" | "violet" | "neutral" | "sky" | "orange";
+type Tone =
+  | "amber"
+  | "emerald"
+  | "blue"
+  | "red"
+  | "violet"
+  | "neutral"
+  | "sky"
+  | "orange"
+  | "hollow";
 
 const pillTone: Record<Tone, string> = {
-  amber: "bg-amber-50 text-amber-700",
-  emerald: "bg-emerald-50 text-emerald-700",
+  amber: "bg-amber-50 text-amber-800",
+  // The one green in the system (18 Sep 2026, owner's palette B). Muted
+  // against emerald-50/700, which read closer to a consumer app than to a
+  // municipal record.
+  emerald: "bg-[#f1f5f2] text-[#15653f]",
   blue: "bg-blue-50 text-blue-700",
   red: "bg-red-50 text-red-700",
   violet: "bg-violet-50 text-violet-700",
   neutral: "bg-neutral-100 text-neutral-700",
   sky: "bg-sky-50 text-sky-700",
   orange: "bg-orange-50 text-orange-700",
+  hollow: "border-neutral-300 bg-white text-neutral-600",
 };
 
 const dotTone: Record<Tone, string> = {
-  amber: "bg-amber-500",
-  emerald: "bg-emerald-500",
+  amber: "bg-amber-600",
+  emerald: "bg-[#15653f]",
   blue: "bg-blue-500",
-  red: "bg-red-500",
+  red: "bg-red-600",
   violet: "bg-violet-500",
   neutral: "bg-neutral-500",
   sky: "bg-sky-500",
   orange: "bg-orange-500",
+  hollow: "bg-neutral-400",
 };
 
 function Pill({
@@ -42,7 +61,7 @@ function Pill({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2 py-0.5 text-[11.5px] font-medium",
+        "inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-transparent px-2 py-0.5 text-[11.5px] font-medium",
         pillTone[tone],
         className,
       )}
@@ -88,20 +107,38 @@ export type DocumentStatus =
   | "No Record"
   | "Returned";
 
+/*
+ * A document's state says one of three things, and the colour says which
+ * (owner's choice, 18 Sep 2026, palette B on `.impeccable/comps/admin-pr-list.html`):
+ *
+ *   waiting for someone  -> amber
+ *   finished             -> green
+ *   stopped              -> red
+ *   nobody's queue yet   -> hollow
+ *
+ * It is the same moving / finished / stopped vocabulary the portal's tracked
+ * request already speaks. Before this, the three review stages of one purchase
+ * request were blue, amber and sky — three colours for one meaning, which made
+ * a list of them unreadable at a glance.
+ *
+ * Stock levels, utility movement and vehicle state below are a different axis
+ * and keep their own scale.
+ */
 const statusTone: Record<DocumentStatus, Tone> = {
   Pending: "amber",
   Approved: "emerald",
-  "For Review": "blue",
+  "For Review": "amber",
   Rejected: "red",
-  Draft: "neutral",
+  Draft: "hollow",
   Completed: "emerald",
-  Cancelled: "neutral",
-  Submitted: "blue",
+  Cancelled: "hollow",
+  Submitted: "amber",
   "Department Head Review": "amber",
-  "BAC Review": "violet",
-  "Budget Review": "sky",
+  "BAC Review": "amber",
+  "Budget Review": "amber",
   "Pending Approval": "amber",
-  Released: "blue",
+  // Issued and on its way: the office is done with it.
+  Released: "emerald",
   Available: "emerald",
   "Low Stock": "amber",
   Critical: "orange",
@@ -124,21 +161,27 @@ const statusTone: Record<DocumentStatus, Tone> = {
   Paid: "emerald",
   "No Record": "neutral",
   // A disposition schedule the National Archives sent back for correction.
-  // Not "Rejected" — the filing stands and is amended, so it reads as work
-  // to redo rather than a refusal.
-  Returned: "orange",
+  // Not "Rejected" — the filing stands and is amended, so it is waiting on
+  // someone rather than refused.
+  Returned: "amber",
 };
 
 export function StatusBadge({
   status,
+  children,
   className,
 }: {
   status: DocumentStatus;
+  /**
+   * Overrides the words while keeping the status's colour — for a column too
+   * narrow to carry the full spelling. The record itself never changes.
+   */
+  children?: React.ReactNode;
   className?: string;
 }) {
   return (
     <Pill tone={statusTone[status]} className={className}>
-      {status}
+      {children ?? status}
     </Pill>
   );
 }

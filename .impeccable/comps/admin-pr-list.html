@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Purchase Requests — comp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Spectral:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --crimson:#7e1624; --crimson-hover:#66111d; --crimson-subtle:#f6eced; --ring:#b0415a;
+  --ink:#171717; --canvas:#f6f7f8;
+  --n50:#fafafa; --n100:#f5f5f5; --n200:#e5e5e5; --n300:#d4d4d4; --n400:#a3a3a3; --n500:#737373; --n600:#525252; --n700:#404040;
+  --card-shadow:0 1px 2px rgb(23 23 23 / .04), 0 1px 1px rgb(23 23 23 / .02);
+  --r-md:6px; --r-lg:10px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:Inter,ui-sans-serif,system-ui,sans-serif;background:var(--canvas);color:var(--ink);-webkit-font-smoothing:antialiased}
+.app{display:flex;height:100vh;overflow:hidden}
+
+/* ---------- rail ---------- */
+.rail{width:68px;flex:0 0 68px;background:var(--ink);display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:8px}
+.seal{width:44px;height:44px;border-radius:999px;background:#fff;display:grid;place-items:center;font-size:9px;font-weight:700;color:var(--crimson);text-align:center;line-height:1}
+.rail-rule{width:28px;height:1px;background:rgb(255 255 255 / .15);margin:6px 0}
+.tile{width:44px;height:44px;border-radius:var(--r-lg);background:rgb(255 255 255 / .08);display:grid;place-items:center;color:rgb(255 255 255 / .8)}
+.tile svg{width:18px;height:18px}
+.rail-foot{margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:8px}
+.avatar{width:40px;height:40px;border-radius:999px;background:rgb(255 255 255 / .15);display:grid;place-items:center;color:#fff;font-size:13px;font-weight:600}
+
+/* ---------- panel ---------- */
+.panel{width:264px;flex:0 0 264px;background:#fff;border-right:1px solid var(--n200);display:flex;flex-direction:column}
+.panel-head{height:56px;border-bottom:1px solid var(--n200);padding:0 20px;display:flex;flex-direction:column;justify-content:center}
+.lh-line{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--n500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lh-name{font-family:Spectral,ui-serif,Georgia,serif;font-size:17px;font-weight:500;line-height:1.25;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.panel-body{padding:16px 12px;display:flex;flex-direction:column;gap:4px;overflow:auto}
+.nav-row{height:40px;display:flex;align-items:center;gap:10px;padding:0 10px;border-radius:var(--r-md);font-size:14px;color:var(--n600);cursor:default}
+.nav-row svg{width:18px;height:18px}
+.nav-row.head-open{color:var(--ink);font-weight:600}
+.nav-group{background:#f6f7f8;border-radius:var(--r-lg);padding:4px;margin:2px 0 6px}
+.sub-row{height:36px;display:flex;align-items:center;gap:10px;padding:0 10px;border-radius:var(--r-md);font-size:14px;color:var(--n600)}
+.dot{width:6px;height:6px;border-radius:999px;background:var(--n300)}
+.sub-row.current{background:#fff;box-shadow:0 1px 1px rgb(23 23 23 / .06);color:var(--crimson);font-weight:600}
+.sub-row.current .dot{background:var(--crimson)}
+.count{margin-left:auto;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--ink);color:#fff;font-size:12px;font-weight:600;display:grid;place-items:center}
+.sub-row.current .count{background:var(--crimson)}
+.chev{margin-left:auto;color:var(--n400)}
+
+/* ---------- main ---------- */
+.main{flex:1;min-width:0;display:flex;flex-direction:column;background:var(--canvas)}
+.topbar{height:56px;flex:0 0 56px;background:#fff;border-bottom:1px solid var(--n200);display:flex;align-items:center;gap:12px;padding:0 24px}
+.crumb{font-size:13px;color:var(--n500);display:flex;align-items:center;gap:8px}
+.crumb b{color:var(--ink);font-weight:600}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--n500)}
+.btn{height:36px;padding:0 12px;border-radius:var(--r-md);border:1px solid var(--n200);background:#fff;font:inherit;font-size:13px;font-weight:500;color:var(--n700);display:inline-flex;align-items:center;gap:6px;cursor:pointer;transition:background .15s cubic-bezier(.23,1,.32,1),transform .12s cubic-bezier(.23,1,.32,1)}
+.btn:hover{background:var(--n100)}
+.btn:active{transform:scale(.985)}
+.btn svg{width:16px;height:16px}
+.btn-primary{background:var(--crimson);border-color:var(--crimson);color:#fff}
+.btn-primary:hover{background:var(--crimson-hover)}
+.btn-ghost{border-color:transparent;background:transparent;color:var(--n600)}
+.btn-ghost:hover{background:var(--n100)}
+.pill-ink{min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--ink);color:#fff;font-size:12px;font-weight:600;display:inline-grid;place-items:center}
+
+.content{flex:1;min-height:0;overflow:auto;padding:24px}
+
+/* ---------- page head ---------- */
+.page-head{display:flex;align-items:flex-start;gap:16px;margin-bottom:16px}
+.page-title{font-size:20px;font-weight:600;letter-spacing:-.01em;margin:0}
+.page-meta{margin:4px 0 0;font-size:13px;color:var(--n500)}
+.page-meta b{color:var(--n700);font-weight:600;font-variant-numeric:tabular-nums}
+.page-actions{margin-left:auto;display:flex;align-items:center;gap:8px}
+
+/* ---------- queue strip ---------- */
+.queues{display:flex;align-items:center;gap:4px;margin-bottom:14px;flex-wrap:wrap}
+.queue{height:34px;padding:0 12px;border-radius:var(--r-md);border:1px solid transparent;background:transparent;font:inherit;font-size:13px;font-weight:500;color:var(--n600);display:inline-flex;align-items:center;gap:7px;cursor:pointer;transition:background .15s cubic-bezier(.23,1,.32,1)}
+.queue:hover{background:#eceef0}
+.queue .n{font-size:12px;font-weight:600;color:var(--n500);font-variant-numeric:tabular-nums}
+.queue[aria-selected="true"]{background:#fff;border-color:var(--n200);color:var(--ink);font-weight:600;box-shadow:var(--card-shadow)}
+.queue[aria-selected="true"] .n{color:var(--ink)}
+.queue.needs .n{background:var(--crimson);color:#fff;min-width:18px;height:18px;padding:0 5px;border-radius:999px;display:inline-grid;place-items:center}
+.queue-sep{width:1px;height:20px;background:var(--n200);margin:0 6px}
+
+/* ---------- card + table ---------- */
+.card{background:#fff;border:1px solid var(--n200);border-radius:var(--r-lg);box-shadow:var(--card-shadow);overflow:hidden}
+.toolbar{display:flex;align-items:center;gap:8px;padding:12px;border-bottom:1px solid var(--n200)}
+.search{position:relative;flex:1;max-width:320px}
+.search svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--n400)}
+.search input{width:100%;height:36px;border:1px solid var(--n200);border-radius:var(--r-md);padding:0 10px 0 32px;font:inherit;font-size:13px;color:var(--ink);background:#fff}
+.search input::placeholder{color:var(--n400)}
+.search input:focus{outline:none;border-color:var(--ring);box-shadow:0 0 0 2px #fff,0 0 0 4px rgb(176 65 90 / .35)}
+.sel{height:36px;padding:0 10px;border:1px solid var(--n200);border-radius:var(--r-md);background:#fff;font:inherit;font-size:13px;color:var(--n700);display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.sel svg{width:14px;height:14px;color:var(--n400)}
+.toolbar-end{margin-left:auto;display:flex;gap:6px}
+
+table{width:100%;border-collapse:collapse}
+thead th{position:sticky;top:0;background:var(--n50);border-bottom:1px solid var(--n200);text-align:left;font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--n500);padding:9px 12px;white-space:nowrap}
+thead th.r{text-align:right}
+tbody td{border-bottom:1px solid #f0f0f0;padding:0 12px;height:46px;font-size:13px;color:var(--n700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+tbody tr:hover{background:#fafafa}
+tbody td.r{text-align:right;font-variant-numeric:tabular-nums}
+.prno{font-size:13px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+.office{display:inline-flex;align-items:center;height:20px;padding:0 7px;border-radius:4px;background:var(--n100);color:var(--n600);font-size:11.5px;font-weight:600;letter-spacing:.02em}
+.purpose{color:var(--n600);width:100%;max-width:1px}
+.amount{font-weight:600;color:var(--ink)}
+.muted{color:var(--n500)}
+.wait{color:var(--n500);font-variant-numeric:tabular-nums}
+.wait.long{color:var(--ink);font-weight:600}
+.check{width:15px;height:15px;border:1px solid var(--n300);border-radius:4px;display:inline-block;vertical-align:middle}
+.tfoot{display:flex;align-items:center;padding:10px 14px;border-top:1px solid var(--n200);font-size:12.5px;color:var(--n500)}
+.pager{margin-left:auto;display:flex;gap:6px}
+.pg{width:28px;height:28px;border-radius:var(--r-md);border:1px solid var(--n200);background:#fff;display:grid;place-items:center;color:var(--n500);cursor:pointer}
+
+/* ---------- status badges ---------- */
+.badge{display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 8px;border-radius:999px;font-size:11.5px;font-weight:500;white-space:nowrap}
+.badge .bd{width:6px;height:6px;border-radius:999px}
+
+/* palette A — what ships today (8 colours) */
+[data-pal="a"] .s-draft{background:var(--n100);color:var(--n700)}       [data-pal="a"] .s-draft .bd{background:#737373}
+[data-pal="a"] .s-submitted{background:#eff6ff;color:#1d4ed8}           [data-pal="a"] .s-submitted .bd{background:#3b82f6}
+[data-pal="a"] .s-dept{background:#fffbeb;color:#b45309}                [data-pal="a"] .s-dept .bd{background:#f59e0b}
+[data-pal="a"] .s-budget{background:#f0f9ff;color:#0369a1}              [data-pal="a"] .s-budget .bd{background:#0ea5e9}
+[data-pal="a"] .s-approved{background:#ecfdf5;color:#047857}            [data-pal="a"] .s-approved .bd{background:#10b981}
+[data-pal="a"] .s-completed{background:#ecfdf5;color:#047857}           [data-pal="a"] .s-completed .bd{background:#10b981}
+[data-pal="a"] .s-rejected{background:#fef2f2;color:#b91c1c}            [data-pal="a"] .s-rejected .bd{background:#ef4444}
+[data-pal="a"] .s-cancelled{background:var(--n100);color:var(--n700)}   [data-pal="a"] .s-cancelled .bd{background:#737373}
+
+/* palette B — three meanings: waiting / done / stopped */
+[data-pal="b"] .badge{border:1px solid transparent}
+[data-pal="b"] .s-draft{background:#fff;border-color:var(--n300);color:var(--n600)}      [data-pal="b"] .s-draft .bd{background:var(--n400)}
+[data-pal="b"] .s-submitted,[data-pal="b"] .s-dept,[data-pal="b"] .s-budget{background:#fffbeb;color:#92400e}
+[data-pal="b"] .s-submitted .bd,[data-pal="b"] .s-dept .bd,[data-pal="b"] .s-budget .bd{background:#d97706}
+[data-pal="b"] .s-approved,[data-pal="b"] .s-completed{background:#f1f5f2;color:#15653f}
+[data-pal="b"] .s-approved .bd,[data-pal="b"] .s-completed .bd{background:#15653f}
+[data-pal="b"] .s-rejected{background:#fef2f2;color:#b91c1c}            [data-pal="b"] .s-rejected .bd{background:#dc2626}
+[data-pal="b"] .s-cancelled{background:#fff;border-color:var(--n300);color:var(--n500)}  [data-pal="b"] .s-cancelled .bd{background:var(--n400)}
+
+/* ---------- comp switcher ---------- */
+.switcher{position:fixed;right:16px;bottom:16px;z-index:50;background:var(--ink);color:#fff;border-radius:var(--r-lg);padding:10px 12px;display:flex;align-items:center;gap:10px;font-size:12.5px;box-shadow:0 8px 24px rgb(0 0 0 / .25)}
+.switcher span{opacity:.7}
+.switcher button{height:28px;padding:0 10px;border-radius:var(--r-md);border:1px solid rgb(255 255 255 / .2);background:transparent;color:#fff;font:inherit;font-size:12.5px;cursor:pointer}
+.switcher button[aria-pressed="true"]{background:#fff;color:var(--ink);border-color:#fff;font-weight:600}
+</style>
+</head>
+<body data-pal="b">
+<div class="app">
+
+  <!-- rail -->
+  <div class="rail">
+    <div class="seal">SEAL</div>
+    <div class="rail-rule"></div>
+    <div class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg></div>
+    <div class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 4-6"/></svg></div>
+    <div class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+    <div class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 7 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0-1.1-2.7H1a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 2.6 7"/></svg></div>
+    <div class="rail-foot">
+      <div class="avatar">A</div>
+      <div class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg></div>
+    </div>
+  </div>
+
+  <!-- panel -->
+  <div class="panel">
+    <div class="panel-head">
+      <span class="lh-line">Municipality of Alaminos, Laguna</span>
+      <span class="lh-name">General Services Office</span>
+    </div>
+    <div class="panel-body">
+      <div class="nav-row head-open">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v5h5"/></svg>
+        Procurement
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="nav-group">
+        <div class="sub-row current"><span class="dot"></span>Purchase Requests</div>
+        <div class="sub-row"><span class="dot"></span>Purchase Orders</div>
+      </div>
+      <div class="nav-row head-open">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h18v13H3z"/><path d="M3 7l2-4h14l2 4"/></svg>
+        Supply
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="nav-group">
+        <div class="sub-row"><span class="dot"></span>Inventory<span class="count">4</span></div>
+        <div class="sub-row"><span class="dot"></span>Requisition &amp; Issue Slip</div>
+      </div>
+      <div class="nav-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Facility Reservation</div>
+      <div class="nav-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 4v6c0 5-3.5 7.5-8 8-4.5-.5-8-3-8-8V7z"/></svg>Violation Management</div>
+      <div class="nav-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 12l4-2"/></svg>Utilities<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="m9 6 6 6-6 6"/></svg></div>
+      <div class="nav-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="5"/><path d="M5 9v11h14V9"/></svg>Records Management<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="m9 6 6 6-6 6"/></svg></div>
+    </div>
+  </div>
+
+  <!-- main -->
+  <div class="main">
+    <div class="topbar">
+      <button class="btn btn-ghost" style="width:36px;padding:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg></button>
+      <div class="crumb">Procurement <span style="color:var(--n300)">›</span> <b>Purchase Requests</b></div>
+      <div class="topbar-right">
+        <span>Friday, 18 September 2026</span>
+        <span>Staff portal ↗</span>
+        <button class="btn">For review <span class="pill-ink">4</span></button>
+        <button class="btn" style="width:36px;padding:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></button>
+        <!-- Global shortcut, not the page's action: the one crimson "start a
+             document" on this screen belongs to the page header below. -->
+        <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="var(--crimson)" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>New <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:var(--n400)"><path d="m6 9 6 6 6-6"/></svg></button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="page-head">
+        <div>
+          <h1 class="page-title">Purchase Requests</h1>
+          <p class="page-meta"><b>60</b> requests · <b>4</b> waiting for action · <b>₱2,481,400</b> this year</p>
+        </div>
+        <div class="page-actions">
+          <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Export</button>
+          <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V3h12v6"/><rect x="6" y="14" width="12" height="7"/><path d="M6 18H3v-6h18v6h-3"/></svg>Print</button>
+          <button class="btn btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>New Purchase Request</button>
+        </div>
+      </div>
+
+      <div class="queues" role="tablist">
+        <button class="queue" role="tab" aria-selected="false">All <span class="n">60</span></button>
+        <button class="queue needs" role="tab" aria-selected="true">Waiting for action <span class="n">4</span></button>
+        <span class="queue-sep"></span>
+        <button class="queue" role="tab" aria-selected="false">Drafts <span class="n">2</span></button>
+        <button class="queue" role="tab" aria-selected="false">Approved <span class="n">3</span></button>
+        <button class="queue" role="tab" aria-selected="false">Completed <span class="n">47</span></button>
+        <button class="queue" role="tab" aria-selected="false">Closed <span class="n">4</span></button>
+      </div>
+
+      <div class="card">
+        <div class="toolbar">
+          <div class="search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input placeholder="Search PR number, requester, purpose…">
+          </div>
+          <button class="sel">All Offices <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button>
+          <button class="sel">All Statuses <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button>
+          <button class="sel">Funding <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button>
+          <div class="toolbar-end"></div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th style="width:38px"><span class="check"></span></th>
+              <th style="width:130px">PR Number</th>
+              <th style="width:68px">Office</th>
+              <th style="width:134px">Requester</th>
+              <th>Purpose</th>
+              <th class="r" style="width:98px">Amount</th>
+              <th style="width:90px">Filed</th>
+              <th style="width:76px">Waiting</th>
+              <th style="width:160px">Status</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+
+        <div class="tfoot">
+          <span>Showing <b style="color:var(--n700)">1–14</b> of <b style="color:var(--n700)">60</b></span>
+          <div class="pager">
+            <span class="pg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="m15 18-6-6 6-6"/></svg></span>
+            <span class="pg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="m9 18 6-6-6-6"/></svg></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ROWS = [
+  ["PR-2026-000240","MHO","Dr. Ana Lopez","Medical supplies for barangay health stations","₱48,200","16 Sep 2026","2 days","Budget Review","s-budget"],
+  ["PR-2026-000239","MEO","Engr. Jerome Cruz","Road maintenance materials, Brgy. San Roque","₱134,500","15 Sep 2026","3 days","Dept Head Review","s-dept"],
+  ["PR-2026-000238","MSWDO","Marites Villanueva","Relief goods for the flood response","₱96,000","11 Sep 2026","7 days","Budget Review","s-budget"],
+  ["PR-2026-000237","GSO","Richard Nasol","Janitorial supplies, 4th quarter","₱23,750","17 Sep 2026","1 day","Submitted","s-submitted"],
+  ["PR-2026-000236","MAO","Marites Villanueva","Seedlings for the rice sufficiency program","₱61,100","14 Sep 2026","","Approved","s-approved"],
+  ["PR-2026-000235","MBO","Richard Nasol","Office supplies for the budget hearing","₱18,400","12 Sep 2026","","Approved","s-approved"],
+  ["PR-2026-000234","MHO","Dr. Ana Lopez","Cold chain boxes for the immunisation drive","₱72,000","9 Sep 2026","","Approved","s-approved"],
+  ["PR-2026-000233","GSO","Richard Nasol","Bond paper and toner, third quarter","₱31,900","8 Sep 2026","","Completed","s-completed"],
+  ["PR-2026-000232","MEO","Engr. Jerome Cruz","Steel matting for the covered court","₱210,000","5 Sep 2026","","Completed","s-completed"],
+  ["PR-2026-000231","MSWDO","Marites Villanueva","Stock of food supplies","₱51,700","3 Sep 2026","","Completed","s-completed"],
+  ["PR-2026-000230","MAO","Dr. Ana Lopez","Fertiliser for the demo farm","₱44,300","1 Sep 2026","","Completed","s-completed"],
+  ["PR-2026-000229","GSO","Richard Nasol","Replacement tyres, service vehicles","₱88,600","28 Aug 2026","","Rejected","s-rejected"],
+  ["PR-2026-000228","MBO","Richard Nasol","Laptop for the assessment unit","₱65,000","26 Aug 2026","","Cancelled","s-cancelled"],
+  ["PR-2026-000227","MHO","Dr. Ana Lopez","Face masks, quarterly restock","₱12,800","24 Aug 2026","","Draft","s-draft"],
+];
+document.getElementById('rows').innerHTML = ROWS.map(r => `
+  <tr>
+    <td><span class="check"></span></td>
+    <td><span class="prno">${r[0]}</span></td>
+    <td><span class="office">${r[1]}</span></td>
+    <td>${r[2]}</td>
+    <td class="purpose">${r[3]}</td>
+    <td class="r amount">${r[4]}</td>
+    <td class="muted">${r[5]}</td>
+    <td class="wait${parseInt(r[6]) >= 5 ? ' long' : ''}">${r[6] || '<span style="color:#d4d4d4">—</span>'}</td>
+    <td><span class="badge ${r[8]}"><span class="bd"></span>${r[7]}</span></td>
+  </tr>`).join('');
+
+</script>
+</body>
+</html>

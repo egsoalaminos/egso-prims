@@ -169,8 +169,15 @@ const NEW_GROUPS: {
 ];
 
 /**
- * Start any document from any page. Crimson, because on this system crimson
- * starts a document. The menu follows the sidebar's groups and order.
+ * Start any document from any page. The menu follows the sidebar's groups and
+ * order.
+ *
+ * It used to be a solid crimson button, which put two crimson "start a
+ * document" controls on every module page — this one and the page's own, six
+ * inches apart, both making a purchase request (owner, 18 Sep 2026: *"dapat pa
+ * ba maglagay ng new PR kasi meron nasa header so maddodoble pag ganon?"*).
+ * The page's button is the specific one and keeps the crimson; this one is the
+ * shortcut from anywhere, so only its plus is crimson.
  */
 export function NewDocumentMenu({ className }: { className?: string }) {
   const navigate = useNavigate();
@@ -181,13 +188,13 @@ export function NewDocumentMenu({ className }: { className?: string }) {
           type="button"
           aria-label="New document"
           className={cn(
-            "ui-accent ui-accent-hover inline-flex h-9 items-center justify-center gap-1.5 rounded-md px-2.5 text-[14px] font-semibold transition-[background-color,transform] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring) focus-visible:ring-offset-2 active:scale-[0.98] sm:pl-3",
+            "inline-flex h-9 items-center justify-center gap-1.5 rounded-md border border-neutral-200 bg-white px-2.5 text-[14px] font-medium text-neutral-700 transition-[background-color,transform] duration-150 hover:bg-neutral-100 hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring) focus-visible:ring-offset-2 active:scale-[0.98] sm:pl-3",
             className,
           )}
         >
-          <Plus aria-hidden="true" className="h-4 w-4" />
+          <Plus aria-hidden="true" className="h-4 w-4 text-(--accent-text)" strokeWidth={2.5} />
           <span className="hidden sm:inline">New</span>
-          <ChevronDown aria-hidden="true" className="hidden h-4 w-4 opacity-80 sm:block" />
+          <ChevronDown aria-hidden="true" className="hidden h-4 w-4 text-neutral-400 sm:block" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent data-municipal="" align="end" sideOffset={6} className={cn(menuContentClass, "w-72")}>
