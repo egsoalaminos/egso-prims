@@ -52,6 +52,7 @@ import { useNotifications } from "@/features/notifications/hooks";
 import { NotificationDrawer } from "@/features/notifications/components/notification-drawer";
 import { useAppearanceSync, useBranding } from "@/features/config/use-appearance";
 import { useNavCounts, type NavCounts } from "@/features/shared/use-nav-counts";
+import { SIDEBAR_GROUPS_KEY } from "@/layouts/sidebar-groups";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 
 interface ModuleNavItem {
@@ -125,10 +126,9 @@ const recordsChildren: ModuleNavItem[] = [
   { icon: FileCheck2, label: "Authority to Dispose of Records", to: "/records/disposal" },
 ];
 
-/* ---- Collapsible group state (persisted; default expanded) ---- */
+/* ---- Collapsible group state (persisted until the next sign-in; default closed) ---- */
 
 type GroupKey = "procurement" | "utilities" | "records";
-const GROUPS_KEY = "gso-prims.sidebar-groups";
 const SIDEBAR_COLLAPSED_KEY = "gso-prims.sidebar-collapsed";
 
 /** Last persisted collapsed state (default expanded). */
@@ -140,23 +140,31 @@ function readSidebarCollapsed(): boolean {
   }
 }
 
-function readGroups(): Record<GroupKey, boolean> {
-  const fallback = { procurement: true, utilities: true, records: true };
+function readGroups(pathname: string): Record<GroupKey, boolean> {
+  // Closed, except the group holding the page being opened, so arriving on a
+  // link such as /fuel never leaves the current page hidden inside a shut group.
+  const fallback = {
+    procurement: procurementChildren.some((c) => isActive(pathname, c.to)),
+    utilities: utilitiesChildren.some((c) => isActive(pathname, c.to)),
+    records: recordsChildren.some((c) => isActive(pathname, c.to)),
+  };
   try {
-    const raw = localStorage.getItem(GROUPS_KEY);
+    const raw = localStorage.getItem(SIDEBAR_GROUPS_KEY);
     return raw ? { ...fallback, ...(JSON.parse(raw) as Partial<Record<GroupKey, boolean>>) } : fallback;
   } catch {
     return fallback;
   }
 }
 
-function useSidebarGroups() {
-  const [expanded, setExpanded] = React.useState<Record<GroupKey, boolean>>(readGroups);
+function useSidebarGroups(pathname: string) {
+  const [expanded, setExpanded] = React.useState<Record<GroupKey, boolean>>(() =>
+    readGroups(pathname),
+  );
   const toggle = (key: GroupKey) =>
     setExpanded((prev) => {
       const next = { ...prev, [key]: !prev[key] };
       try {
-        localStorage.setItem(GROUPS_KEY, JSON.stringify(next));
+        localStorage.setItem(SIDEBAR_GROUPS_KEY, JSON.stringify(next));
       } catch {
         // Storage unavailable (private mode): state still applies for this session.
       }
@@ -270,7 +278,7 @@ function AppSidebar({
   const { pathname } = useLocation();
   const { user } = useAuth();
   const branding = useBranding();
-  const { expanded, toggle } = useSidebarGroups();
+  const { expanded, toggle } = useSidebarGroups(pathname);
   const counts = useNavCounts();
 
   /** Navigates, then lets the mobile drawer close itself behind the new route. */

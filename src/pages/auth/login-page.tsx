@@ -9,6 +9,7 @@ import { ArrowRight, Eye, EyeOff, KeyRound } from "lucide-react";
 import { ConfirmationModal, Input, Spinner, toast } from "@/components";
 import { DEV_CREDENTIALS, useAuth } from "@/features/auth/auth-context";
 import { useBranding } from "@/features/config/use-appearance";
+import { forgetSidebarGroups } from "@/layouts/sidebar-groups";
 
 const loginSchema = z.object({
   email: z.string().min(1, "Enter your email address").email("Enter a valid email address"),
@@ -69,6 +70,9 @@ export function LoginPage() {
   const submit = form.handleSubmit(async (values) => {
     setSubmitting(true);
     setAuthError(null);
+    // Before signing in, not after: a successful sign-in redirects straight
+    // into the sidebar, which reads the stored groups as it mounts.
+    forgetSidebarGroups();
     const result = await signIn(values.email, values.password, values.remember);
     setSubmitting(false);
     if (result.error) {
