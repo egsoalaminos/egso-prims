@@ -53,3 +53,26 @@ The sidebar components are used only by this layout.
   redesigned, since it needs every list page to open a record from a link.
 
 - The admin pages still use the older design.
+
+## Reverted (18 September 2026)
+
+The whole admin redesign recorded above — the sidebar order, the shadcn rail and
+module panel, the slimmed top bar with its four additions, the modern dashboard
+and the Purchase Requests list — was **taken back out at the owner's request**:
+*"yung design ng admin web app ibalik mo nalang sa dati."* He kept the portal and
+the sign-in sheet, which he had just signed off on in the same message.
+
+Everything from `7256bbe` to `86b4512` was reversed in the working tree: the old
+white sidebar, the old top bar with its global search, office switcher and
+profile menu, the old dashboard with its Operational Summary carousel, the old
+purchase-request list, and the eight-colour status palette are all back. The
+files the redesign added (`app-sidebar.tsx`, `app-top-bar-actions.tsx`,
+`features/dashboard/summary.ts`, the shadcn `ui/sidebar.tsx` and its four
+companions, `hooks/use-mobile.ts`) were deleted.
+
+Two things went with it that were not cosmetic, and he was told before it
+happened: **the admin's scroll-bounce fix** and **the sidebar order that follows
+the office's work**. He chose the full revert anyway.
+
+The commits are still in history, so any part of it can be brought back by name.
+The comps stay in `.impeccable/comps/` as a record of what was shown and chosen.

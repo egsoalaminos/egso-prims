@@ -1,50 +1,10 @@
-import { differenceInCalendarDays, format } from "date-fns";
+import { format } from "date-fns";
 
 import type { ApprovalTimelineStep } from "@/components";
-import {
-  PENDING_PR_STATUSES,
-  type PRStatus,
-  type PurchaseRequest,
-} from "@/features/purchase-requests/types";
+import type { PRStatus, PurchaseRequest } from "@/features/purchase-requests/types";
 
 export const formatDateTime = (iso: string) => format(new Date(iso), "d MMM yyyy · h:mm a");
 export const formatDate = (iso: string) => format(new Date(iso), "d MMM yyyy");
-
-/**
- * How long a request has sat in the queue it is in now, in calendar days —
- * `null` when it is nobody's queue (a Draft) or the cycle is closed.
- *
- * Counted from the last time it moved, not from when it was filed: a request
- * that reached Budget Review yesterday has been waiting a day, however old the
- * paperwork is. Calendar days, so something that arrived this morning reads
- * "today" rather than "0 days" — the same counting the dashboard uses.
- */
-export function waitingDays(pr: Pick<PurchaseRequest, "status" | "updatedAt">): number | null {
-  if (!PENDING_PR_STATUSES.includes(pr.status)) return null;
-  return Math.max(0, differenceInCalendarDays(new Date(), new Date(pr.updatedAt)));
-}
-
-/** "today", "1 day", "6 days" — the words for {@link waitingDays}. */
-export function waitingLabel(days: number): string {
-  if (days <= 0) return "today";
-  return `${days} ${days === 1 ? "day" : "days"}`;
-}
-
-/**
- * A request is overdue in the office's own terms once it has sat for a working
- * week. Past that the count is set in ink rather than muted; no new colour,
- * because nothing has gone wrong — it is just old.
- */
-export const LONG_WAIT_DAYS = 5;
-
-/**
- * Column-width spelling of a status. Only one is long enough to squeeze the
- * purpose out of a row, and the drawer and the printed form still say it in
- * full.
- */
-export function shortStatusLabel(status: PRStatus): string {
-  return status === "Department Head Review" ? "Dept Head Review" : status;
-}
 
 const WORKFLOW_CHAIN = [
   "Created",

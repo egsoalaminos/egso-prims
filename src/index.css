@@ -104,14 +104,6 @@
   /* --color-sidebar drives the rail; the twelve chart and sidebar-* tokens that
      once sat here were declared three times and read nowhere. */
   --color-sidebar: var(--sidebar);
-  /* Read by shadcn/ui's Sidebar (the admin rail and panel, 18 Sep 2026). */
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
   --color-canvas: var(--canvas);
 }
 
@@ -149,8 +141,7 @@
   --control-py: 0.375rem;
   --control-px: 0.75rem;
   --nav-row-py: 0.375rem;
-  /* 272px: the letterhead block fits "General Services Office" in Spectral 17px on one line. */
-  --sidebar-w: 272px;
+  --sidebar-w: 240px;
   --nav-icon: 1rem;
   --nav-gap: 0.625rem;
   --rail-pad: 0.75rem;
@@ -203,13 +194,6 @@
   /* The rail was white in August, and so was the frame behind it: chrome and
      card shared a value and only the canvas sat apart. */
   --sidebar: oklch(1 0 0);
-  --sidebar-foreground: #525252;
-  --sidebar-primary: #7e1624;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f5f5f5;
-  --sidebar-accent-foreground: #171717;
-  --sidebar-border: #e5e5e5;
-  --sidebar-ring: #b0415a;
   --canvas: oklch(0.9851 0 0);
 
   /* ---- The neutral ramp: Tailwind's stock, cold ------------------------ */
@@ -335,13 +319,7 @@
  * Placed after the accent blocks so it wins the tie on equal specificity.
  * ===========================================================================
  */
-/*
- * `[data-municipal]` carries the same values for the admin as it moves into this
- * world one part at a time (the sidebar first, 17 Sep 2026). It is a separate
- * name so rules meant for the portal alone can still target `data-portal`.
- */
-[data-portal],
-[data-municipal] {
+[data-portal] {
   --radius-step-sm: 4px;
   --radius-step-md: 4px;
   --radius-step-lg: 4px;
@@ -362,29 +340,13 @@
 }
 
 /*
- * The admin's shape (owner's choice, 18 Sep 2026, with the modern dashboard):
- * softer than the portal's 4px. Controls (rows, buttons, menus) 6px, cards
- * 10px with a hairline and a whisper of shadow. Placed after the shared block
- * above, so these win for `data-municipal` while the portal keeps 4px.
+ * No elastic bounce in the portal. Its pages mostly fit one screen, yet a
+ * trackpad or a phone still dragged the whole frame, government strip and
+ * all, and showed white above it. `html` carries data-portal only while the
+ * portal is mounted, so the admin keeps the browser's default.
  */
-[data-municipal] {
-  --radius-step-md: 6px;
-  --radius-step-lg: 10px;
-  --radius-step-xl: 10px;
-  --radius-step-2xl: 12px;
-  --radius-step-3xl: 12px;
-  --radius-step-4xl: 12px;
-}
-
-/*
- * No elastic bounce anywhere in the system. The portal's pages mostly fit one
- * screen, and the admin's frame is exactly one screen tall with its pages
- * scrolling inside it, yet a trackpad or a phone still dragged the whole frame
- * at the end of a scroll: the crimson strip or edge and all, with white showing
- * beside it. Portal first (17 Sep 2026), then the admin (18 Sep 2026).
- */
-html,
-body {
+html[data-portal],
+html[data-portal] body {
   overscroll-behavior: none;
 }
 
@@ -427,18 +389,13 @@ body {
 
 /*
  * A sticky header cell paints over the rows scrolling beneath it, so it needs
- * an opaque ground. It is the same band `--thead-bg` gives a header that is not
- * sticking, so a table does not change colour the moment it starts to scroll.
- *
- * It used to lay `--accent-subtle` over white instead. That reads as a neutral
- * for the ink accent it was written against, but `[data-municipal]` sets the
- * same token to `#f6eced` — so the first list to enter the crimson scope
- * (Purchase Requests, 18 Sep 2026) got a pink header band. A column heading is
- * not the office, not where you are and not a document being started, which
- * are the three things this system spends crimson on.
+ * an opaque ground — and `--accent-subtle` is a translucent wash under the
+ * coloured accents. White is laid down as the colour and the accent tint as an
+ * image on top of it, so the band stays opaque whichever accent is selected.
  */
 @utility table-head-band {
-  background-color: var(--thead-bg);
+  background-color: var(--color-white);
+  background-image: linear-gradient(var(--accent-subtle), var(--accent-subtle));
 }
 
 @utility scrollbar-none {

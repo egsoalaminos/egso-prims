@@ -100,9 +100,6 @@ typography:
     lineHeight: 1.5
 rounded:
   step: "4px"
-  admin-control: "6px"
-  admin-card: "10px"
-  admin-card-large: "12px"
   circle: "9999px"
 spacing:
   gutter: "20px"
@@ -180,7 +177,7 @@ components:
 
 > **Scope.** This file documents the **staff portal** (every route under `/portal`), which is the current design going forward. There is no older portal look to return to.
 >
-> **The admin sign-in page (`/login`) joined this world on 17 September 2026** as a letterhead sheet (see Sign-in Sheet). **The admin's sidebar, top bar and dashboard followed** (see Admin Sidebar, Admin Top Bar, Admin Dashboard). **The admin pages themselves have not been migrated;** they move one module at a time. It still runs its older design (the 4 August 2026 system in the top half of `src/index.css`: near-black accent, 10px-derived corners, Inter only). The admin is next to be redesigned. Until that happens, nothing here applies to admin screens.
+> **The admin sign-in page (`/login`) joined this world on 17 September 2026** as a letterhead sheet (see Sign-in Sheet). **The admin application behind it has not been migrated.** It still runs its older design (the 4 August 2026 system in the top half of `src/index.css`: near-black accent, 10px-derived corners, Inter only). The admin is next to be redesigned. Until that happens, nothing here applies to admin screens.
 >
 > **How the portal's values are applied.** Nothing here is global. The portal's colours, corners and ground are declared in one scoped `[data-portal]` token block ("THE PORTAL" in `src/index.css`). The portal layout puts `data-portal` on its root element, and on `<html>` while it is mounted, so pickers and selects portalled to `<body>` pick up the same values. The theme is `@theme inline`, so utilities compile straight to `--radius-step-*`, `--canvas` and `--accent-*`. Those are the names the scope redeclares, and every value in it is a literal, never `var(...)`.
 
@@ -228,11 +225,9 @@ Neutrals come from Tailwind's stock `neutral` ramp (declared in oklch; the hex v
 ### Named Rules
 **The Stateable Colour Rule.** Every colour must carry a meaning a clerk could say out loud. Crimson means "this is the office" or "start a document". Ink means "follow a document". Red means "this field is wrong" or "this request was stopped" (rejected or cancelled). If you can't state what a colour means, don't use it.
 
-**The Three Meanings Rule** (owner's palette B, 18 Sep 2026, comp `.impeccable/comps/admin-pr-list.html`). A document's status says one of three things, and its badge colour says which: **amber** — waiting for someone (Pending, For Review, Submitted, Department Head Review, BAC Review, Budget Review, Pending Approval, Returned); **green** `#f1f5f2` on `#15653f` — finished (Approved, Completed, Released); **red** — stopped (Rejected); **hollow** (white, ruled `neutral-300`) — nobody's queue yet (Draft, Cancelled). It is the same moving / finished / stopped vocabulary the portal's tracked request speaks. Before it, one purchase request's three review stages were blue, amber and sky — three colours for one meaning. Stock levels, utility movement and vehicle state are a different axis and keep their own scale. There is **one green in the system**: the muted `#15653f`, not emerald.
-
 **The Crimson Is Not a Field Rule.** Crimson appears as the thin strip, the band behind a heading, and solid action buttons. It is never a large bright surface, a card fill, or a background for body copy. The band's height responds to the viewport so the cards, not the crimson, stay the focus.
 
-**The Scoped Palette Rule.** Portal colours reach components only through the `[data-portal]` block's `--accent-*` and `--canvas` literals. The admin takes the same values through `[data-municipal]`, the same block under a second name, on each part as it is migrated (the sidebar, the top bar, the dashboard). Never hard-code the crimson into a shared component, and never declare a portal value as `var(--other-token)`.
+**The Scoped Palette Rule.** Portal colours reach components only through the `[data-portal]` block's `--accent-*` and `--canvas` literals. Never hard-code the crimson into a shared component, and never declare a portal value as `var(--other-token)`.
 
 ## Typography
 
@@ -251,7 +246,7 @@ Neutrals come from Tailwind's stock `neutral` ramp (declared in oklch; the hex v
 - **Action** (600, 14px): the labels on the 44px crimson and ink action bars.
 - **Small** (13px): phone call-to-action lines, the "All services" back link, and result detail lines.
 - **Meta** (12–12.5px): the government strip, receipt captions, field errors, and the footer.
-- **Letterhead line** (500, 11.5px, uppercase, 0.1em tracking, muted): "Municipality of Alaminos, Laguna" above the office name. It belongs to the letterhead lockup only, and drops to **10px at 0.08em** in the admin sidebar's 264px panel, where Spectral drops to 17px with it (see Admin Sidebar). The lockup is the same on all three surfaces; only the step changes with the width it has.
+- **Letterhead line** (500, 11.5px, uppercase, 0.1em tracking, muted): "Municipality of Alaminos, Laguna" above the office name. It belongs to the masthead lockup only.
 
 ### Named Rules
 **The One Serif Rule.** Spectral sets the office name and nothing else. Headings, questions, titles and numbers are all Inter.
@@ -277,7 +272,7 @@ Neutrals come from Tailwind's stock `neutral` ramp (declared in oklch; the hex v
 **Rhythm.** Controls are 44px tall. Cards are padded 24px (14–16px on phones). Icon tile to title is 20px, title to description is 6px, and description to action bar is 24px.
 
 ### Named Rules
-**The One Screen Rule.** On the home page, the services and the tracking field are all visible without scrolling at 1366x768 and at 390x844. Anything added to the home page has to fit inside that constraint or not be added. Fitting means not one pixel over: a 1px overflow still lets the page scroll. The whole system turns off elastic overscroll (`overscroll-behavior: none` on `html` and `body`; the portal from 17 Sep, the admin from 18 Sep 2026), so a trackpad or phone swipe does not drag the whole frame away from the top of the window. The admin's page area and sidebar list also contain their own scroll.
+**The One Screen Rule.** On the home page, the services and the tracking field are all visible without scrolling at 1366x768 and at 390x844. Anything added to the home page has to fit inside that constraint or not be added. Fitting means not one pixel over: a 1px overflow still lets the page scroll. The portal also turns off elastic overscroll (`overscroll-behavior: none` on `html[data-portal]` and its body), so a trackpad or phone swipe does not drag the whole frame, strip and all, away from the top of the window.
 
 ## Elevation & Depth
 
@@ -288,7 +283,7 @@ The portal is flat. No surface casts a shadow: the card elevation token resolves
 
 ## Shapes
 
-Every corner in the portal and on the sign-in page is 4px. The admin is softer (owner's choice, 18 Sep 2026, with the modern dashboard): inside `[data-municipal]` the `md` step is 6px (rows, buttons, menus, segmented controls) and `lg`/`xl` are 10px (cards), with `2xl` and up at 12px; `sm` stays 4px. Admin cards also carry a whisper of shadow (`0 1px 2px rgb(23 23 23 / 0.04), 0 1px 1px rgb(23 23 23 / 0.02)`) on top of the hairline. The `[data-portal]` scope collapses all seven radius steps (`sm` through `4xl`) to 4px, so shared components that ask for `rounded-lg` or `rounded-xl` get 4px inside the portal. That covers cards, buttons, inputs, icon tiles, nav links, the receipt and the focus-ring outline. The circles are the 44px crimson go-button on a phone filing row, the only link on that row, the numbered how-it-works steps, and the 28px markers on a tracked request's progress list. Borders are always 1px. Focus is a 2px ring with a 2px offset.
+Every corner is 4px. The `[data-portal]` scope collapses all seven radius steps (`sm` through `4xl`) to 4px, so shared components that ask for `rounded-lg` or `rounded-xl` get 4px inside the portal. That covers cards, buttons, inputs, icon tiles, nav links, the receipt and the focus-ring outline. The circles are the 44px crimson go-button on a phone filing row, the only link on that row, the numbered how-it-works steps, and the 28px markers on a tracked request's progress list. Borders are always 1px. Focus is a 2px ring with a 2px offset.
 
 ## Components
 
@@ -338,55 +333,6 @@ Below lg, the Reserve page swaps the admin's month grid (760px minimum, which sc
 - **Booking dots:** a 7px dot under the number when a facility is held that day. Filled means approved (or completed), a ring means waiting for approval, both in ink, with a legend under the grid. Rejected, cancelled and draft bookings hold nothing and are not shown.
 - **Selected day:** under the grid on a phone, beside it from md. The day as a 15px/600 heading, then each booking: facility name (14px/500) with its status at 12.5px on the same line, and the time and office below at 13px tabular. With none, "No bookings on this day."
 
-### Admin Sidebar (signature)
-Built on **shadcn/ui's Sidebar** as nested sidebars (`src/layouts/app-sidebar.tsx`, `src/components/ui/sidebar.tsx`), from the owner's reference of an icon rail beside a module panel (18 Sep 2026, comp `.impeccable/comps/admin-sidebar-v2.html`, "Dark" rail chosen over a crimson one). It replaced the earlier white rail with a crimson letterhead block and the 6px crimson edge across the window, both removed.
-- **Rail:** 68px, ink (#171717). The seal on a 44px white disc (goes to the Dashboard), a short 15% white rule, then 44px tiles at 10px corners for the system places: Dashboard, Reports, Audit Trail, Settings. Tiles are 8% white with 80% white icons, 16% white on hover; the current place is a white tile with a crimson icon and a soft shadow. At the foot: the initials on a 40px 15% white disc and a Sign out tile. Every rail control has a tooltip to its right on a desktop.
-- **Panel:** 264px, white, ruled right with a hairline. Its 56px header (level with the top bar) carries **the same letterhead lockup as the portal and the sign-in sheet** (owner's call, 18 Sep 2026: *"kung anong ginamit mo na font sa portal ganon nalang din gamitin mo sa admin sidebar header"*) — the municipality above in small uppercase Inter, the office name below in Spectral. One step down from the masthead because the panel is 264px wide: 10px/500 at 0.08em over Spectral 17px, against the masthead's 11.5px over 20px. Measured at 1440: both lines clear 223px of usable width with no truncation; the masthead's own 11.5px line would need 257px. It replaced the earlier Spectral 13px uppercase caps, which no other surface used. Below, the working modules in the order the work happens: Procurement (Purchase Requests, Purchase Orders), Supply (Inventory, Requisition & Issue Slip), Facility Reservation, Violation Management, Utilities (Energy, Water, Fuel), Records Management (Disposition Schedule, Inventory & Appraisal, Authority to Dispose).
-- **Rows:** 40px, 14px, 18px icons, 6px corners; idle #525252, hover ink on #f5f5f5. A single page that is current is crimson text at 600 with no fill (the owner rejected a pink wash and, later, a solid crimson row for this design). A group heading holding the current page is ink at 600; its chevron turns.
-- **Group pages:** in a #f6f7f8 card (10px corners) indented under the heading, 36px rows with a 6px dot, the label and a count. The current page there is a white row with a hairline shadow, crimson text at 600 and a crimson dot. Groups open and close with shadcn Collapsible (200ms height), are remembered per browser, start with Procurement and Supply open, and open by themselves for the page on screen.
-- **Counts:** ink pills (12px/600 white); on the current page the pill turns crimson.
-- **Collapsed:** the panel folds away and the rail stays (68px), toggled from the top bar's sidebar button or Cmd/Ctrl+B; remembered per browser.
-- **Phone:** rail and panel together in a shadcn sheet (`min(20.75rem, 88vw)`), without tooltips; choosing a page closes it.
-- **Scope:** the wrapper inside the Sidebar carries `data-municipal`, so the sheet on `<body>` keeps the crimson and corners.
-
-### Admin Top Bar
-Owner decisions, 18 Sep 2026: the search that never searched is removed until a real one is built after the modules (each list keeps its own search), and the office label and account menu are removed because the rail already carries them.
-- **Bar:** 56px, white, a hairline under it, level with the sidebar panel's header. Municipal scope, so 6px corners on its controls and the crimson focus ring.
-- **Left:** a 36px sidebar button (collapses the rail on a desktop, opens the drawer on a phone), then the breadcrumb.
-- **Breadcrumb:** starts where the sidebar does: the group (Procurement, Supply, Utilities, Records Management; plain text, groups are not pages), the page (a link when you are deeper), then the record or "New …". 14px; ancestors muted, the current page ink at 600. On a phone only the last two show, and an ancestor truncates before the current page does.
-- **Right, in order** (owner's choice, 18 Sep 2026, after the slimmed bar read as empty; comp `.impeccable/comps/admin-topbar.html`):
-  - **Today's date** ("Friday, 18 September 2026", 14px muted), from xl; it turns over at midnight.
-  - **Staff portal**, a 36px text link with an up-right arrow that opens `/portal` in a new tab, from lg.
-  - **For review**, a 36px hairline button with the total waiting as an ink pill, from md. Its menu lists purchase requests in review, purchase orders to approve, reservations to confirm, and items low or out of stock, each with its count (ink when above zero, muted at zero) and a link to its list. The counts are the rail's own live counts, loaded once by the layout.
-  - **Notifications**, a 36px hairline button; the unread count is an ink pill (12px/600 white, ringed in white), like the rail's counts. Red is kept for things that went wrong.
-  - **New**, a 36px crimson button (crimson starts a document) that opens every document the system can start, grouped and ordered like the sidebar. On a phone it is a 36px crimson "+" square.
-- **Menus:** white, 4px corners, a hairline border and a soft 8px/24px shadow (they float); 36px rows, 14px text, 16px grey icons, 13px muted group labels in sentence case. They render on `<body>` and carry `data-municipal` themselves.
-
-### Admin Dashboard
-Owner-approved "v2 Modern", 18 Sep 2026 (comp `.impeccable/comps/admin-dashboard-v2.html`, after a flatter v1 in `admin-dashboard.html` that the owner found not modern enough). Every figure is derived from the live lists in `src/features/dashboard/summary.ts`.
-- **Heading:** "Good morning/afternoon/evening, {name}" at 26px/600, then one sentence at 15px: how many documents wait for action and how many facility bookings are on today. A segmented control on the right picks the period: This week, This month (default), This year.
-- **Figures (4 cards):** PRs filed, amount requested, RIS issued, facility bookings, for the period. Each card: a 28px grey icon tile and 13px label, the figure at 28px/600 tabular, the change against the previous period (an arrow and "4" or "12%", ink, then "vs August" muted; no green or red, since up is not always good), and a crimson sparkline of the last eight periods with a soft crimson fill. Two columns on a phone (sparkline hidden), four from xl.
-- **Amount requested chart:** the last six periods as bars, neutral #d4d4d4 with the current period crimson, each labelled with its compact peso amount; the six-period total at 24px with its change against the six before. Hovering a bar dims the others.
-- **Waiting for action:** a list card beside the chart (360px from xl): purchase requests in review, purchase orders to approve, requisition slips to approve, reservations to confirm, stock alerts. Each row: a 36px icon tile, the label, how long the oldest has waited in calendar days ("oldest today", "oldest 3 days") or, for stock, "2 out of stock · 3 low" in red when anything is out, the count at 20px, and a chevron; the whole row opens the list. An empty queue greys out and says "None waiting".
-- **Recent documents:** the five newest purchase requests, purchase orders or requisition slips (segmented PR / PO / RIS, full names from sm): number with its status badge under it, purpose with office, requester or supplier and age, and the amount (or item count for an RIS). A row opens the request (PR) or the list.
-- **Today:** the day's facility bookings as a timeline (past grey, now or next crimson with "· Now" / "· Next", later hollow; pending ones say so), then deliveries due this week: purchase orders approved or with the supplier whose expected delivery is within seven days, a late one on a red-50 row with "1 day overdue" in red.
-- **Stock to reorder:** only items at or below their reorder point, out of stock first: name, "4 of 30 bottles · reorder point", a thin meter, and the state (Out of stock in red, Critical in ink, Low muted).
-- **Recent activity:** the latest five audit entries as sentences ("Marites Villanueva released RIS-2026-000045") with neutral initials discs and a relative time.
-- **Removed from the old dashboard:** the date chip and "New Purchase Request" button (the top bar carries both), the pastel "Operational Summary" carousel, the "System Notifications" panel (the bell carries it), and the first-five-items inventory bars.
-- **Status colours:** settled with the Purchase Request module — see The Three Meanings Rule.
-
-### Admin Purchase Requests (signature)
-The first module page in this world (18 Sep 2026, comp `.impeccable/comps/admin-pr-list.html`). The page's root carries `data-municipal` on a wrapper inside `PageTransition`, which does not forward attributes.
-- **Head:** the title at 20px, then the page in this office's own numbers — "46 requests · 2 waiting for action · ₱1,410,500 this year" — in place of a sentence describing the feature. Export and Print sit left of the one crimson button, "New Purchase Request".
-- **One crimson create per screen.** The top bar's global "+ New" was a solid crimson button, which put two crimson "start a document" controls on every module page. It is now white with a crimson plus; the page's own button, which names what it makes, keeps the fill.
-- **Queue strip:** six counts under the head — All, **Waiting for action**, Drafts, Approved, Completed, Closed — as a `tablist`, 34px, 6px corners; the current one is white with a hairline and the card's whisper shadow. Waiting for action carries the only crimson count on the page (the office asking for you); the rest are ink on the current queue, muted elsewhere. It replaced the "All Statuses" dropdown: eight statuses were more precision than the work needs, and none of them said how much was waiting. `waiting` is exactly `PENDING_PR_STATUSES`, so the strip, the sidebar badge and the dashboard tile cannot disagree.
-- **Filtering:** status left the query and is narrowed in the page, because the strip has to count the queues it is not on. Search and office stay server-side. The list already downloaded every matching row to paginate it.
-- **Table:** nine columns at 48px a row, every cell one line — PR number (600, tabular), office as a neutral code chip (its full name on hover), requester, purpose, amount, filed, waiting, status. 25 to a page. Cell padding tightens to 12px (`dense` on EnterpriseTable) because nine columns do not fit 1366 at the shared 16px, and the status was the column that fell off the edge. Purpose is the one elastic column (`w-full max-w-0 truncate`): it takes what the other eight leave. No overflow at 1440 or 1366; 1280 scrolls 58px.
-- **Waiting:** calendar days in the current queue, counted from the last time the request moved, not from filing — "today", "2 days". At five days or more it goes ink and 600 instead of muted; no new colour, because nothing has gone wrong, it is just old. A request nobody owes an action on shows an em dash.
-- **Status:** the three-meaning palette. Only "Department Head Review" is respelled ("Dept Head Review") to fit the column; the drawer and the printed form keep the full words.
-- **Empty states** name the queue, not the table: "Nothing is waiting for action", "No drafts", "Nothing rejected or cancelled".
-- **Header band:** `table-head-band` now paints `--thead-bg`. It used to lay `--accent-subtle` over white, which is neutral for the ink accent it was written against but `#f6eced` inside `[data-municipal]` — so the first list in the crimson scope came out with a pink header.
-
 ### Tracked Request
 The Track page's result, one white card under the reference field. A request that is not found is a field error on that field (red border, 12.5px message, focus returned), not a separate card.
 - **Heading:** the document type in muted 500 weight, a middle dot, and the reference number in tabular figures, at 17px. On a phone the type and the number take a line each.
@@ -418,7 +364,7 @@ The admin's sign-in page. The owner asked for it to look "a little different fro
 ### Don't:
 - **Don't** add a dark mode, a theme switcher or an alternate portal palette. The portal is light mode only.
 - **Don't** edit the shared filing wizards (Purchase Request, Requisition and Issue Slip, Reservation) to change how they look in the portal.
-- **Don't** apply portal tokens globally. In the admin, apply them (through `data-municipal`) only to the parts that have been redesigned: the sign-in page, the sidebar, the top bar and the dashboard so far.
+- **Don't** apply portal tokens globally or to admin routes. The sign-in page is the one exception; the admin behind it keeps its own design until it is redesigned.
 - **Don't** use crimson as a bright field, a card fill or a text background.
 - **Don't** add shadows to cards, buttons or bands.
 - **Don't** set anything but the office name in Spectral, and don't use a serif display headline.

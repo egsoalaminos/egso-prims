@@ -29,6 +29,16 @@ export { CardCarousel } from "@/components/layout/card-carousel";
 export { PageTransition } from "@/components/layout/page-transition";
 
 // Navigation
+export {
+  Sidebar,
+  SidebarBrand,
+  SidebarContent,
+  SidebarGroup,
+  SidebarDivider,
+  SidebarItem,
+  SidebarFooter,
+} from "@/components/navigation/sidebar";
+export { SidebarUser } from "@/components/navigation/sidebar-user";
 export { Breadcrumb, type BreadcrumbItem } from "@/components/navigation/breadcrumb";
 export { Stepper, type StepperStep } from "@/components/navigation/stepper";
 export { TopBar, NotificationBell } from "@/components/navigation/top-bar";

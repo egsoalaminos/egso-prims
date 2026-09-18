@@ -1,5 +1,11 @@
 # Purchase Requests — list
 
+> **REVERTED, 18 September 2026.** None of this ships. The owner asked for the
+> whole admin to go back to its pre-redesign design — *"yung design ng admin web
+> app ibalik mo nalang sa dati"* — and it did, in the commit that follows the one
+> this brief was written for. The portal and the sign-in sheet were kept. Read
+> this as a record of what was tried and why, not as a description of the app.
+
 Mode: **Operate**. The office's procurement register and the first admin module
 brought into the 17–18 September 2026 world. Comp: `.impeccable/comps/admin-pr-list.html`.
 

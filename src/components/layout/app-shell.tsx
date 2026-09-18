@@ -1,42 +1,31 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
-import { SidebarProvider } from "@/components/ui/sidebar";
 import { PageTitle, Subtitle } from "@/components/typography/typography";
 
 /**
- * Application frame: the shadcn/ui sidebar (icon rail + module panel) beside
- * the content column.
+ * Application frame: sidebar rail + content column.
  *
- * `SidebarProvider` owns the open state (the layout persists it), the Cmd/Ctrl+B
- * shortcut and the phone sheet. The content column is exactly one window tall
- * and scrolls inside itself, so the frame never moves.
+ * Three surfaces, three depths — the rail (`--sidebar`) sits below the canvas
+ * (`--canvas`, the portal's bond paper), and the white cards sit above it. The
+ * outer ground matches the rail so the frame holds its material before the
+ * sidebar paints and behind it on overscroll.
  */
 export function AppShell({
   sidebar,
   topBar,
   children,
-  open,
-  onOpenChange,
 }: {
   sidebar: React.ReactNode;
   topBar: React.ReactNode;
   children: React.ReactNode;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
 }) {
   return (
-    <SidebarProvider
-      open={open}
-      onOpenChange={onOpenChange}
-      // Rail 68px + panel 264px open; the rail alone collapsed.
-      style={{ "--sidebar-width": "20.75rem", "--sidebar-width-icon": "4.25rem" } as React.CSSProperties}
-      className="bg-canvas font-sans antialiased"
-    >
+    <div className="flex min-h-screen bg-sidebar font-sans antialiased">
       {/*
-       * First stop in the tab order. The rail and panel carry ~20 controls and
-       * the top bar another five, so without this a keyboard user walks all of
-       * them again on every route change.
+       * First stop in the tab order. The rail carries ~15 nav items and the
+       * top bar another four controls, so without this a keyboard user walks
+       * all of them again on every route change.
        */}
       <a
         href="#main-content"
@@ -45,19 +34,17 @@ export function AppShell({
         Skip to content
       </a>
       {sidebar}
-      <div className="flex h-svh min-w-0 flex-1 flex-col bg-canvas">
+      <div className="flex h-screen min-w-0 flex-1 flex-col bg-canvas">
         {topBar}
         <main
           id="main-content"
           tabIndex={-1}
-          // `overscroll-contain`: reaching the top or bottom of a page stops
-          // there instead of passing the scroll on to the window.
-          className="flex-1 space-y-6 overflow-y-auto overscroll-contain px-5 py-6 focus-visible:outline-none md:px-8"
+          className="flex-1 space-y-6 overflow-y-auto px-5 py-6 focus-visible:outline-none md:px-8"
         >
           {children}
         </main>
       </div>
-    </SidebarProvider>
+    </div>
   );
 }
 

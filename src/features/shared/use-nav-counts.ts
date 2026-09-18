@@ -20,7 +20,6 @@ import { stockStatusOf } from "@/features/inventory/types";
 export interface NavCounts {
   pendingPRs: number;
   pendingPOs: number;
-  pendingRIS: number;
   pendingReservations: number;
   stockAlerts: number;
 }
@@ -28,7 +27,6 @@ export interface NavCounts {
 const EMPTY: NavCounts = {
   pendingPRs: 0,
   pendingPOs: 0,
-  pendingRIS: 0,
   pendingReservations: 0,
   stockAlerts: 0,
 };
@@ -67,14 +65,13 @@ async function countStockAlerts(): Promise<number> {
 }
 
 export async function loadNavCounts(): Promise<NavCounts> {
-  const [pendingPRs, pendingPOs, pendingRIS, pendingReservations, stockAlerts] = await Promise.all([
+  const [pendingPRs, pendingPOs, pendingReservations, stockAlerts] = await Promise.all([
     countByStatus("purchase_requests", PENDING_PR_STATUSES),
     countByStatus("purchase_orders", ["Pending Approval"]),
-    countByStatus("ris_requests", ["Pending Approval"]),
     countByStatus("reservations", ["Pending"]),
     countStockAlerts(),
   ]);
-  return { pendingPRs, pendingPOs, pendingRIS, pendingReservations, stockAlerts };
+  return { pendingPRs, pendingPOs, pendingReservations, stockAlerts };
 }
 
 /**
@@ -100,7 +97,7 @@ export function useNavCounts(): NavCounts {
   }, [load]);
 
   useRealtimeRefresh(
-    ["purchase_requests", "purchase_orders", "ris_requests", "reservations", "inventory_items"],
+    ["purchase_requests", "purchase_orders", "reservations", "inventory_items"],
     load,
   );
 
