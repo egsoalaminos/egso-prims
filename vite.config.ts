@@ -15,4 +15,12 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    // Vite's default CSS target is Chrome 111, the first to read oklch(), so
+    // every Tailwind colour ships without a fallback. Office PCs on Windows 7
+    // and 8.1 cannot update past Chrome/Edge 109 and render the whole admin
+    // colourless, with black borders. Naming 109 makes Lightning CSS emit a
+    // hex value first and keep oklch/lab for browsers that support it.
+    cssTarget: ["chrome109", "edge109", "firefox114", "safari16.4", "ios16.4"],
+  },
 });
