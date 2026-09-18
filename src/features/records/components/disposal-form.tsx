@@ -146,8 +146,12 @@ export function DisposalForm({
    * Values are centred and the agency block takes more than one line, because
    * that is how an accomplished form reads: the agency name carries its
    * division under it, and the address runs to two lines.
+   *
+   * Called as a function, never rendered as <HeaderField />: defined inside
+   * the form, it would be a new component type on every render, so React
+   * would replace the input on each keystroke and the cursor would leave it.
    */
-  const HeaderField = ({
+  const headerField = ({
     label,
     field,
     colSpan,
@@ -230,11 +234,11 @@ export function DisposalForm({
                     Request for Authority to Dispose of Records
                   </div>
                 </td>
-                <HeaderField label="Agency Name:" field="agencyName" colSpan={2} rows={2} />
+                {headerField({ label: "Agency Name:", field: "agencyName", colSpan: 2, rows: 2 })}
                 <td />
               </tr>
               <tr>
-                <HeaderField label="Address:" field="agencyAddress" colSpan={2} rows={2} />
+                {headerField({ label: "Address:", field: "agencyAddress", colSpan: 2, rows: 2 })}
                 <td />
               </tr>
 
@@ -249,8 +253,8 @@ export function DisposalForm({
                     className="m-1 w-[calc(100%-0.5rem)] rounded-[3px] border-neutral-400 px-1.5 py-1 text-[12.5px]"
                   />
                 </td>
-                <HeaderField label="Telephone Number:" field="telephoneNumber" />
-                <HeaderField label="Email Address:" field="emailAddress" />
+                {headerField({ label: "Telephone Number:", field: "telephoneNumber" })}
+                {headerField({ label: "Email Address:", field: "emailAddress" })}
                 <td />
               </tr>
 
@@ -324,19 +328,15 @@ export function DisposalForm({
 
               {/* ---- Location and volume. The paper splits this band evenly. ---- */}
               <tr>
-                <HeaderField label="Location of Records:" field="locationOfRecords" colSpan={2} />
-                <HeaderField label="Volume in Cubic Meter:" field="volumeCubicMeter" colSpan={2} />
+                {headerField({ label: "Location of Records:", field: "locationOfRecords", colSpan: 2 })}
+                {headerField({ label: "Volume in Cubic Meter:", field: "volumeCubicMeter", colSpan: 2 })}
                 <td />
               </tr>
 
               {/* ---- Prepared by and position ---- */}
               <tr>
-                <HeaderField
-                  label="Prepared by: (Name & Signature)"
-                  field="preparedBy"
-                  colSpan={2}
-                />
-                <HeaderField label="Position:" field="preparedByPosition" colSpan={2} />
+                {headerField({ label: "Prepared by: (Name & Signature)", field: "preparedBy", colSpan: 2 })}
+                {headerField({ label: "Position:", field: "preparedByPosition", colSpan: 2 })}
                 <td />
               </tr>
 
