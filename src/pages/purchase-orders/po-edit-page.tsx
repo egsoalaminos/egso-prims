@@ -21,10 +21,14 @@ export function POEditPage() {
 
   const submit = async (input: PODraftInput) => {
     setSubmitting(true);
-    const updated = await updatePurchaseOrder(id, input);
+    try {
+      const updated = await updatePurchaseOrder(id, input);
+      toast.success(`${updated.poNumber} updated`);
+      navigate("/purchase-orders");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Unable to save the purchase order");
+    }
     setSubmitting(false);
-    toast.success(`${updated.poNumber} updated`);
-    navigate("/purchase-orders");
   };
 
   return (

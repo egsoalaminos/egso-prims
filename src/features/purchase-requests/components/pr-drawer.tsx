@@ -51,30 +51,38 @@ export function PRDrawer({
   const approve = async () => {
     if (!pr || !next) return;
     setActing(true);
-    const updated = await setPurchaseRequestStatus(pr.id, next, {
-      by: "Administrator",
-      office: "General Services Office",
-    });
-    setData(updated);
+    try {
+      const updated = await setPurchaseRequestStatus(pr.id, next, {
+        by: "Administrator",
+        office: "General Services Office",
+      });
+      setData(updated);
+      toast.success(`${pr.prNumber} moved to ${next}`);
+      onChanged?.();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Unable to update status");
+    }
     setActing(false);
     setConfirmApprove(false);
-    toast.success(`${pr.prNumber} moved to ${next}`);
-    onChanged?.();
   };
 
   const sendBack = async () => {
     if (!pr) return;
     setActing(true);
-    const updated = await setPurchaseRequestStatus(pr.id, "Draft", {
-      by: "Administrator",
-      office: "General Services Office",
-      remarks: "Returned to requester for revision",
-    });
-    setData(updated);
+    try {
+      const updated = await setPurchaseRequestStatus(pr.id, "Draft", {
+        by: "Administrator",
+        office: "General Services Office",
+        remarks: "Returned to requester for revision",
+      });
+      setData(updated);
+      toast.success(`${pr.prNumber} returned to requester`);
+      onChanged?.();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Unable to return the request");
+    }
     setActing(false);
     setConfirmReturn(false);
-    toast.success(`${pr.prNumber} returned to requester`);
-    onChanged?.();
   };
 
   return (

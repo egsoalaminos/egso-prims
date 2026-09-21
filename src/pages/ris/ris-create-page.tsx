@@ -15,12 +15,16 @@ export function RISCreatePage() {
 
   const submit = async (input: RISDraftInput, asDraft: boolean) => {
     setSubmitting(true);
-    const ris = await createRequest(input, { asDraft });
+    try {
+      const ris = await createRequest(input, { asDraft });
+      toast.success(
+        asDraft ? `${ris.risNumber} saved as draft` : `${ris.risNumber} submitted for approval`,
+      );
+      navigate("/ris");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Unable to submit the requisition and issue slip");
+    }
     setSubmitting(false);
-    toast.success(
-      asDraft ? `${ris.risNumber} saved as draft` : `${ris.risNumber} submitted for approval`,
-    );
-    navigate("/ris");
   };
 
   return (

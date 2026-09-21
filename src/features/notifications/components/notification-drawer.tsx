@@ -60,8 +60,14 @@ export function NotificationDrawer({
   const openRecord = async (n: AppNotification) => {
     const route = notificationRoute(n);
     if (!n.isRead) {
-      await markNotificationRead(n.id);
-      void refresh();
+      // Marking it read is housekeeping; it must never stand between the
+      // notification and the record it points at.
+      try {
+        await markNotificationRead(n.id);
+        void refresh();
+      } catch {
+        /* the record still opens */
+      }
     }
     if (route) {
       onOpenChange(false);
@@ -70,11 +76,15 @@ export function NotificationDrawer({
   };
 
   const markAll = async () => {
-    await markAllNotificationsRead(
-      filter === "All" || filter === "Unread" ? undefined : filter,
-    );
-    toast.success("All notifications marked as read");
-    void refresh();
+    try {
+      await markAllNotificationsRead(
+        filter === "All" || filter === "Unread" ? undefined : filter,
+      );
+      toast.success("All notifications marked as read");
+      void refresh();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Unable to mark the notifications read");
+    }
   };
 
   return (

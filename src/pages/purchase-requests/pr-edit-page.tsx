@@ -21,10 +21,14 @@ export function PREditPage() {
 
   const submit = async (input: PRDraftInput) => {
     setSubmitting(true);
-    const updated = await updatePurchaseRequest(id, input);
+    try {
+      const updated = await updatePurchaseRequest(id, input);
+      toast.success(`${updated.prNumber} updated`);
+      navigate("/purchase-requests");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Unable to save the purchase request");
+    }
     setSubmitting(false);
-    toast.success(`${updated.prNumber} updated`);
-    navigate("/purchase-requests");
   };
 
   return (

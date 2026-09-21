@@ -14,12 +14,16 @@ export function POCreatePage() {
 
   const submit = async (input: PODraftInput, asDraft: boolean) => {
     setSubmitting(true);
-    const po = await createPurchaseOrder(input, { asDraft });
+    try {
+      const po = await createPurchaseOrder(input, { asDraft });
+      toast.success(
+        asDraft ? `${po.poNumber} saved as draft` : `${po.poNumber} submitted for approval`,
+      );
+      navigate("/purchase-orders");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Unable to raise the purchase order");
+    }
     setSubmitting(false);
-    toast.success(
-      asDraft ? `${po.poNumber} saved as draft` : `${po.poNumber} submitted for approval`,
-    );
-    navigate("/purchase-orders");
   };
 
   return (

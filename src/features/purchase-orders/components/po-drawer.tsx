@@ -59,30 +59,38 @@ export function PODrawer({
   const advance = async () => {
     if (!po || !next) return;
     setActing(true);
-    const updated = await setPurchaseOrderStatus(po.id, next, {
-      by: "Administrator",
-      office: "General Services Office",
-    });
-    setData(updated);
+    try {
+      const updated = await setPurchaseOrderStatus(po.id, next, {
+        by: "Administrator",
+        office: "General Services Office",
+      });
+      setData(updated);
+      toast.success(`${po.poNumber} moved to ${next}`);
+      onChanged?.();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Unable to update status");
+    }
     setActing(false);
     setConfirmApprove(false);
-    toast.success(`${po.poNumber} moved to ${next}`);
-    onChanged?.();
   };
 
   const sendBack = async () => {
     if (!po) return;
     setActing(true);
-    const updated = await setPurchaseOrderStatus(po.id, "Draft", {
-      by: "Administrator",
-      office: "General Services Office",
-      remarks: "Returned for revision",
-    });
-    setData(updated);
+    try {
+      const updated = await setPurchaseOrderStatus(po.id, "Draft", {
+        by: "Administrator",
+        office: "General Services Office",
+        remarks: "Returned for revision",
+      });
+      setData(updated);
+      toast.success(`${po.poNumber} returned as draft`);
+      onChanged?.();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Unable to return the order");
+    }
     setActing(false);
     setConfirmReturn(false);
-    toast.success(`${po.poNumber} returned as draft`);
-    onChanged?.();
   };
 
   const approveLabel = next === "Approved" ? "Approve" : next ? `Mark ${next}` : "";

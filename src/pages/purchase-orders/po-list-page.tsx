@@ -101,7 +101,15 @@ export function POListPage() {
   };
 
   const removeRows = async (rows: PurchaseOrder[]) => {
-    await deletePurchaseOrders(rows.map((r) => r.id));
+    try {
+      await deletePurchaseOrders(rows.map((r) => r.id));
+    } catch (e) {
+      // A rejected delete used to leave the rows selected, the table
+      // unchanged and nothing said — indistinguishable from a click that
+      // never landed.
+      toast.error(e instanceof Error ? e.message : "Unable to delete purchase orders");
+      return;
+    }
     setRowSelection({});
     toast.success(`Deleted ${rows.length} purchase order${rows.length === 1 ? "" : "s"}`);
     refreshAll();

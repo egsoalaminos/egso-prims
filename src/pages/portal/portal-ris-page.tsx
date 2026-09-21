@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 
+import { toast } from "@/components";
 import { createRequest, type RISDraftInput } from "@/features/ris/api";
 import { RISWizard } from "@/features/ris/components/ris-form/ris-wizard";
 import { PortalPage, SubmissionSuccess } from "@/features/portal/components/submission-success";
@@ -13,10 +14,16 @@ export function PortalRISPage() {
 
   const submit = async (input: RISDraftInput, asDraft: boolean) => {
     setSubmitting(true);
-    const slip = await createRequest(input, { asDraft });
+    try {
+      const slip = await createRequest(input, { asDraft });
+      setReference(slip.risNumber);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (e) {
+      // Without this a rejected submission left the button spinning for ever
+      // with nothing said, and the filer had no reference number and no reason.
+      toast.error(e instanceof Error ? e.message : "Unable to submit the slip");
+    }
     setSubmitting(false);
-    setReference(slip.risNumber);
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (

@@ -21,10 +21,14 @@ export function RISEditPage() {
 
   const submit = async (input: RISDraftInput) => {
     setSubmitting(true);
-    const updated = await updateRequest(id, input);
+    try {
+      const updated = await updateRequest(id, input);
+      toast.success(`${updated.risNumber} updated`);
+      navigate("/ris");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Unable to save the requisition and issue slip");
+    }
     setSubmitting(false);
-    toast.success(`${updated.risNumber} updated`);
-    navigate("/ris");
   };
 
   return (

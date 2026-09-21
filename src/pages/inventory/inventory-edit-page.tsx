@@ -21,10 +21,14 @@ export function InventoryEditPage() {
 
   const submit = async (input: ItemDraftInput) => {
     setSubmitting(true);
-    const updated = await updateInventoryItem(id, input);
+    try {
+      const updated = await updateInventoryItem(id, input);
+      toast.success(`${updated.itemCode} updated`);
+      navigate("/inventory");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Unable to save the item");
+    }
     setSubmitting(false);
-    toast.success(`${updated.itemCode} updated`);
-    navigate("/inventory");
   };
 
   return (

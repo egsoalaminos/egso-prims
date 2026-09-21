@@ -11,10 +11,14 @@ export function PRCreatePage() {
 
   const submit = async (input: PRDraftInput) => {
     setSubmitting(true);
-    const pr = await createPurchaseRequest(input);
+    try {
+      const pr = await createPurchaseRequest(input);
+      toast.success(`${pr.prNumber} submitted for review`);
+      navigate("/purchase-requests");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Unable to submit the purchase request");
+    }
     setSubmitting(false);
-    toast.success(`${pr.prNumber} submitted for review`);
-    navigate("/purchase-requests");
   };
 
   return (

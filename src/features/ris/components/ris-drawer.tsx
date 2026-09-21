@@ -88,16 +88,20 @@ export function RISDrawer({
   const sendBack = async () => {
     if (!ris) return;
     setActing(true);
-    const updated = await setRequestStatus(ris.id, "Draft", {
-      by: "Administrator",
-      office: "General Services Office",
-      remarks: "Returned to requester for revision",
-    });
-    setData(updated);
+    try {
+      const updated = await setRequestStatus(ris.id, "Draft", {
+        by: "Administrator",
+        office: "General Services Office",
+        remarks: "Returned to requester for revision",
+      });
+      setData(updated);
+      toast.success(`${ris.risNumber} returned as draft`);
+      onChanged?.();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Unable to return the slip");
+    }
     setActing(false);
     setConfirmReturn(false);
-    toast.success(`${ris.risNumber} returned as draft`);
-    onChanged?.();
   };
 
   const primaryLabel = releasing ? "Release" : next === "Completed" ? "Mark Completed" : "Approve";

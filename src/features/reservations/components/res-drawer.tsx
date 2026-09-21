@@ -62,16 +62,20 @@ export function ResDrawer({
   ) => {
     if (!r) return;
     setActing(true);
-    const updated = await setReservationStatus(r.id, status, {
-      by: "Administrator",
-      office: "General Services Office",
-      remarks,
-    });
-    setData(updated);
+    try {
+      const updated = await setReservationStatus(r.id, status, {
+        by: "Administrator",
+        office: "General Services Office",
+        remarks,
+      });
+      setData(updated);
+      toast.success(`${r.resNumber} ${status.toLowerCase()}`);
+      onChanged?.();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Unable to update the reservation");
+    }
     setActing(false);
     close(false);
-    toast.success(`${r.resNumber} ${status.toLowerCase()}`);
-    onChanged?.();
   };
 
   return (

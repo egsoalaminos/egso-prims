@@ -11,10 +11,14 @@ export function InventoryCreatePage() {
 
   const submit = async (input: ItemDraftInput) => {
     setSubmitting(true);
-    const item = await createInventoryItem(input);
+    try {
+      const item = await createInventoryItem(input);
+      toast.success(`${item.itemCode} registered in inventory`);
+      navigate("/inventory");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Unable to register the item");
+    }
     setSubmitting(false);
-    toast.success(`${item.itemCode} registered in inventory`);
-    navigate("/inventory");
   };
 
   return (

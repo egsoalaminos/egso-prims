@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 
+import { toast } from "@/components";
 import { createPurchaseRequest, type PRDraftInput } from "@/features/purchase-requests/api";
 import { PRWizard } from "@/features/purchase-requests/components/pr-form/pr-wizard";
 import { PortalPage, SubmissionSuccess } from "@/features/portal/components/submission-success";
@@ -13,10 +14,16 @@ export function PortalRequestPage() {
 
   const submit = async (input: PRDraftInput) => {
     setSubmitting(true);
-    const pr = await createPurchaseRequest(input);
+    try {
+      const pr = await createPurchaseRequest(input);
+      setReference(pr.prNumber);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (e) {
+      // Without this a rejected submission left the button spinning for ever
+      // with nothing said, and the filer had no reference number and no reason.
+      toast.error(e instanceof Error ? e.message : "Unable to submit the purchase request");
+    }
     setSubmitting(false);
-    setReference(pr.prNumber);
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (

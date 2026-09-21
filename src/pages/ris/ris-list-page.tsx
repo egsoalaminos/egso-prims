@@ -95,7 +95,15 @@ export function RISListPage() {
   };
 
   const removeRows = async (rows: RequestForIssuance[]) => {
-    await deleteRequests(rows.map((r) => r.id));
+    try {
+      await deleteRequests(rows.map((r) => r.id));
+    } catch (e) {
+      // A rejected delete used to leave the rows selected, the table
+      // unchanged and nothing said — indistinguishable from a click that
+      // never landed.
+      toast.error(e instanceof Error ? e.message : "Unable to delete the slips");
+      return;
+    }
     setRowSelection({});
     toast.success(`Deleted ${rows.length} slip${rows.length === 1 ? "" : "s"}`);
     refreshAll();

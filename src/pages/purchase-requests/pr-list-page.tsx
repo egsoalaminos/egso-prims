@@ -83,7 +83,15 @@ export function PRListPage() {
   };
 
   const removeRows = async (rows: PurchaseRequest[]) => {
-    await deletePurchaseRequests(rows.map((r) => r.id));
+    try {
+      await deletePurchaseRequests(rows.map((r) => r.id));
+    } catch (e) {
+      // A rejected delete used to leave the rows selected, the table
+      // unchanged and nothing said — indistinguishable from a click that
+      // never landed.
+      toast.error(e instanceof Error ? e.message : "Unable to delete purchase requests");
+      return;
+    }
     setRowSelection({});
     toast.success(`Deleted ${rows.length} purchase request${rows.length === 1 ? "" : "s"}`);
     void refresh();
