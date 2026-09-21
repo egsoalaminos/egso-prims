@@ -1,4 +1,4 @@
-import { isRouteErrorResponse, useNavigate, useRouteError } from "react-router-dom";
+import { isRouteErrorResponse, useLocation, useNavigate, useRouteError } from "react-router-dom";
 import { AlertTriangle, ArrowLeft, RotateCw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -16,11 +16,26 @@ import { Button } from "@/components/ui/button";
  * person reading it. The technical detail is kept, but folded away — it is for
  * the person who has to fix it, not the clerk who hit it.
  */
-export function RouteError() {
+export function RouteError({ notFound: unknownAddress = false }: { notFound?: boolean } = {}) {
   const error = useRouteError();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
 
-  const notFound = isRouteErrorResponse(error) && error.status === 404;
+  /*
+   * An unmatched URL reaches this component as the catch-all route's element,
+   * not as an errorElement, so there is no route error to read and the page
+   * announced a failure ("your work has not been submitted") for what is only
+   * a wrong address. The catch-all says so itself instead.
+   */
+  const notFound = unknownAddress || (isRouteErrorResponse(error) && error.status === 404);
+
+  /*
+   * The portal is used by staff of the other offices, who hold no account
+   * here: sending them "back" to the admin dashboard only bounces them to a
+   * login they cannot pass. Within the portal, back means the portal.
+   */
+  const inPortal = pathname === "/portal" || pathname.startsWith("/portal/");
+  const home = inPortal ? "/portal" : "/";
 
   const detail =
     error instanceof Error
@@ -47,9 +62,9 @@ export function RouteError() {
         </p>
 
         <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5">
-          <Button onClick={() => navigate("/", { replace: true })}>
+          <Button onClick={() => navigate(home, { replace: true })}>
             <ArrowLeft />
-            Back to Dashboard
+            {inPortal ? "Back to the portal" : "Back to Dashboard"}
           </Button>
           {!notFound && (
             <Button variant="secondary" onClick={() => window.location.reload()}>

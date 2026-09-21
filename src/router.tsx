@@ -237,5 +237,5 @@ export const router = createBrowserRouter([
   },
   // Anything else. Without this a mistyped or stale URL matched nothing and
   // rendered an empty document.
-  { path: "*", element: <RouteError /> },
+  { path: "*", element: <RouteError notFound /> },
 ]);
