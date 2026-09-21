@@ -46,6 +46,7 @@ import {
   RES_STEP_FIELDS,
   type ResFormValues,
 } from "@/features/reservations/components/res-form/schema";
+import { reportLoadFailure } from "@/features/shared/load-guard";
 
 const WIZARD_STEPS = [
   { label: "Borrower", description: "Who is requesting" },
@@ -115,12 +116,18 @@ export function ResWizard({ initial, submitting, onSubmit, onCancel }: ResWizard
     }
     let live = true;
     setChecking(true);
-    void findConflicts(facilityId, dateStr, "00:00", "24:00", initial?.id).then((rows) => {
-      if (live) {
-        setDayBookings(rows);
+    void findConflicts(facilityId, dateStr, "00:00", "24:00", initial?.id)
+      .then((rows) => {
+        if (live) {
+          setDayBookings(rows);
+          setChecking(false);
+        }
+      })
+      .catch((e) => {
+        if (!live) return;
         setChecking(false);
-      }
-    });
+        reportLoadFailure(e, "that day's bookings");
+      });
     return () => {
       live = false;
     };

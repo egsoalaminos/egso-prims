@@ -30,6 +30,7 @@ import { useRequest } from "@/features/ris/hooks";
 import { nextRISStatus } from "@/features/ris/lib";
 import { RISDetailPanels } from "@/features/ris/components/ris-detail-panels";
 import { RISPrintSheet } from "@/features/shared/procurement-sheets";
+import { reportLoadFailure } from "@/features/shared/load-guard";
 
 /** Right slide-over showing the full issuance slip. */
 export function RISDrawer({
@@ -59,7 +60,9 @@ export function RISDrawer({
     setConfirmAdvance(true);
     if (releasing) {
       setStock(null);
-      void listInventoryItems().then(setStock);
+      void listInventoryItems()
+        .then(setStock)
+        .catch((e) => reportLoadFailure(e, "stock levels"));
     }
   };
 

@@ -33,6 +33,7 @@ import type { AuditEntry } from "@/features/audit/types";
 import { departmentByCode } from "@/features/purchase-requests/types";
 import { CommentThread } from "@/features/shared/comment-thread";
 import { HistoryFeed, type HistoryEntry } from "@/features/shared/history-feed";
+import { reportLoadFailure } from "@/features/shared/load-guard";
 
 const fmt = (iso: string) => format(new Date(iso), "d MMM yyyy · h:mm:ss a");
 
@@ -106,18 +107,24 @@ export function AuditDrawer({
     }
     let live = true;
     setLoading(true);
-    void getAuditEntry(entryId).then(async (e) => {
-      if (!live) return;
-      setEntry(e);
-      setLoading(false);
-      if (e) {
-        const [rel, ses] = await Promise.all([listRelatedEntries(e), listSessionEntries(e)]);
-        if (live) {
-          setRelated(rel);
-          setSession(ses);
+    void getAuditEntry(entryId)
+      .then(async (e) => {
+        if (!live) return;
+        setEntry(e);
+        setLoading(false);
+        if (e) {
+          const [rel, ses] = await Promise.all([listRelatedEntries(e), listSessionEntries(e)]);
+          if (live) {
+            setRelated(rel);
+            setSession(ses);
+          }
         }
-      }
-    });
+      })
+      .catch((e) => {
+        if (!live) return;
+        setLoading(false);
+        reportLoadFailure(e, "that audit entry");
+      });
     return () => {
       live = false;
     };

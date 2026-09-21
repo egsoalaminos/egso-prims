@@ -42,6 +42,7 @@ import {
   RIS_STEP_FIELDS,
   type RISFormValues,
 } from "@/features/ris/components/ris-form/schema";
+import { reportLoadFailure } from "@/features/shared/load-guard";
 
 const WIZARD_STEPS = [
   { label: "Slip Details", description: "Requester & receiver" },
@@ -85,8 +86,12 @@ export function RISWizard({
   const [inventory, setInventory] = React.useState<InventoryItem[]>([]);
 
   React.useEffect(() => {
-    void listPurchaseRequests().then((rows) => setApprovedPRs(rows.filter((p) => canRaisePO(p.status))));
-    void listInventoryItems().then(setInventory);
+    void listPurchaseRequests()
+      .then((rows) => setApprovedPRs(rows.filter((p) => canRaisePO(p.status))))
+      .catch((e) => reportLoadFailure(e, "approved purchase requests"));
+    void listInventoryItems()
+      .then(setInventory)
+      .catch((e) => reportLoadFailure(e, "the inventory"));
   }, []);
 
   const form = useForm<RISFormValues>({

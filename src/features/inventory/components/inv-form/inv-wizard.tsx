@@ -32,6 +32,7 @@ import {
   ITEM_STEP_FIELDS,
   type ItemFormValues,
 } from "@/features/inventory/components/inv-form/schema";
+import { reportLoadFailure } from "@/features/shared/load-guard";
 
 const WIZARD_STEPS = [
   { label: "Basic Information", description: "Identity & specs" },
@@ -60,7 +61,9 @@ export function InvWizard({ initial, submitting, onSubmit, onCancel }: InvWizard
   React.useEffect(() => {
     // Values already on the register join the standard lists, so anything a
     // previous item introduced is offered rather than retyped.
-    void listInventoryItems().then(setExisting);
+    void listInventoryItems()
+      .then(setExisting)
+      .catch((e) => reportLoadFailure(e, "the existing item values"));
   }, []);
 
   const suggestions = React.useMemo(

@@ -47,6 +47,7 @@ import {
   PO_STEP_FIELDS,
   type POFormValues,
 } from "@/features/purchase-orders/components/po-form/schema";
+import { reportLoadFailure } from "@/features/shared/load-guard";
 
 const WIZARD_STEPS = [
   { label: "Order Details", description: "Source PR & supplier" },
@@ -88,7 +89,9 @@ export function POWizard({
   React.useEffect(() => {
     // Source list: requests that have cleared approval. Filtering client-side
     // keeps this in step with canRaisePO, which spans more than one status.
-    void listPurchaseRequests().then((rows) => setApprovedPRs(rows.filter((p) => canRaisePO(p.status))));
+    void listPurchaseRequests()
+      .then((rows) => setApprovedPRs(rows.filter((p) => canRaisePO(p.status))))
+      .catch((e) => reportLoadFailure(e, "approved purchase requests"));
   }, []);
 
   const form = useForm<POFormValues>({

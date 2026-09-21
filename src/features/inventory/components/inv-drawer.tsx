@@ -31,6 +31,7 @@ import { HistoryFeed } from "@/features/shared/history-feed";
 import { InvOverview } from "@/features/inventory/components/inv-overview";
 import { StockCardTable } from "@/features/inventory/components/inv-stock-card";
 import { supplierById } from "@/features/purchase-orders/types";
+import { reportLoadFailure } from "@/features/shared/load-guard";
 
 /** Right slide-over: item overview + stock card + attachments/comments/history. */
 export function InvDrawer({
@@ -57,9 +58,11 @@ export function InvDrawer({
     }
     // Inventory still references the supplier register; orders are matched on
     // the name, which is what a purchase order now records.
-    void listPurchaseOrders({ supplierName: supplierById(item.supplierId)?.name }).then((pos) =>
-      setDeliveries(pos.filter((po) => ["Released", "Completed"].includes(po.status))),
-    );
+    void listPurchaseOrders({ supplierName: supplierById(item.supplierId)?.name })
+      .then((pos) =>
+        setDeliveries(pos.filter((po) => ["Released", "Completed"].includes(po.status))),
+      )
+      .catch((e) => reportLoadFailure(e, "this item's deliveries"));
   }, [item?.supplierId, item?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (

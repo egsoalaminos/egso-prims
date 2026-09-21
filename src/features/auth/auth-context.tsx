@@ -118,14 +118,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Session restore on boot.
   React.useEffect(() => {
     if (supabase) {
-      void supabase.auth.getSession().then(({ data }) => {
-        if (data.session) {
-          setUser(userFromSession(data.session));
-          setStatus("authenticated");
-        } else {
+      void supabase.auth
+        .getSession()
+        .then(({ data }) => {
+          if (data.session) {
+            setUser(userFromSession(data.session));
+            setStatus("authenticated");
+          } else {
+            setStatus("unauthenticated");
+          }
+        })
+        .catch(() => {
+          /*
+           * The restore can fail outright rather than come back empty: a
+           * Supabase project that has been idle for a week is paused and its
+           * hostname stops resolving. Without this the status never left
+           * "loading", and the application hung on "Restoring session…" for
+           * ever with nothing written and nothing in the console — the one
+           * failure that looks identical to a slow connection.
+           *
+           * Treating it as no session puts the person on the sign-in screen,
+           * where the toast explains why signing in will not work yet.
+           */
           setStatus("unauthenticated");
-        }
-      });
+          toast.error(
+            "Could not reach the server to restore your session. Check your connection and try again.",
+          );
+        });
       const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
         if (session) {
           setUser(userFromSession(session));
