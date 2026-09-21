@@ -2,6 +2,7 @@ import * as React from "react";
 import { createPortal } from "react-dom";
 
 import { BRAND_LOGO } from "@/lib/brand";
+import { PROCUREMENT_SIGNATORIES, type Official } from "@/lib/officials";
 
 /**
  * The official Municipality of Alaminos procurement form.
@@ -31,25 +32,26 @@ export interface PrintColumn {
   width?: string;
 }
 
-export interface PrintSignatory {
-  name: string;
-  title: string;
-}
-
-/** The officials who sign every procurement document. */
-export const PROCUREMENT_SIGNATORIES: PrintSignatory[] = [
-  { name: "FLORENTINO J. DESTACAMENTO", title: "General Services Officer" },
-  { name: "ROWENA C. LANDICHO", title: "Municipal Treasurer" },
-  { name: "Hon. ERICSON R. LOPEZ", title: "Municipal Mayor" },
-];
+/** An official who signs a document: kept in @/lib/officials, so every sheet
+ *  this system prints names the same people. */
+export type PrintSignatory = Official;
+export { PROCUREMENT_SIGNATORIES };
 
 /** Two-decimal peso figure, unadorned — the form's columns are already labelled. */
 export const printAmount = (n: number) =>
   n.toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-/** dd/mm/yyyy, the format the paper form is filled in with. */
+/**
+ * dd/mm/yyyy, the format the paper form is filled in with.
+ *
+ * A missing or unreadable date prints as a blank for the office to write in.
+ * The records forms already do this; here an empty column value reached
+ * `new Date`, and "NaN/NaN/NaN" went out on an official document.
+ */
 export const printDate = (iso: string) => {
+  if (!iso) return "";
   const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
   return `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}`;
 };
 

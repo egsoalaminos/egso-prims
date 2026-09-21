@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 
 import { BRAND_LOGO } from "@/lib/brand";
+import { GENERAL_SERVICES_OFFICER } from "@/lib/officials";
 
 /**
  * Print-friendly report rendering: opens a dedicated window with the official
@@ -13,8 +14,8 @@ export function printReport({
   columns,
   rows,
   preparedBy = "Administrator — General Services Office",
-  approvedBy = "Engr. Paolo Madrigal",
-  approvedByRole = "GSO Head — Noted by",
+  approvedBy = GENERAL_SERVICES_OFFICER.name,
+  approvedByRole = `${GENERAL_SERVICES_OFFICER.title} — Noted by`,
   subtitle,
   summary,
   numericColumns,

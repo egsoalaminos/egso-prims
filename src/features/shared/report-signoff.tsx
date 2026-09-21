@@ -1,8 +1,10 @@
 import * as React from "react";
 
-const APPROVER_ROLE = "Municipal General Services Officer";
+import { GENERAL_SERVICES_OFFICER } from "@/lib/officials";
+
+const APPROVER_ROLE = GENERAL_SERVICES_OFFICER.title;
 const PREPARER_ROLE = "Administrative Officer — General Services Office";
-const DEFAULT_APPROVER = "Engr. Paolo Madrigal";
+const DEFAULT_APPROVER = GENERAL_SERVICES_OFFICER.name;
 
 /**
  * Report signature block with inline-editable names. You edit the "Prepared by"
