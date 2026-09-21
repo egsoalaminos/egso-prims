@@ -13,8 +13,13 @@ export interface MetricCardProps {
   /** Display format for the animated value. */
   kind?: CountKind;
   icon: React.ComponentType<{ className?: string }>;
-  /** Trend line under the value, with a green/red indicator dot. */
-  trend?: { label: string; direction: "up" | "down" };
+  /**
+   * The line under the value. `up` and `down` colour it green or red, so they
+   * are for a direction that was actually measured; `none` is a plain caption
+   * for a count that is only ever itself, and is the honest choice for a
+   * standing figure like "awaiting review".
+   */
+  trend?: { label: string; direction: "up" | "down" | "none" };
   /** Called when the corner arrow action is clicked. */
   onOpen?: () => void;
   loading?: boolean;
@@ -69,10 +74,22 @@ export function MetricCard({
               <span
                 className={cn(
                   "h-1.5 w-1.5 rounded-full",
-                  trend.direction === "up" ? "bg-green-500" : "bg-red-500",
+                  trend.direction === "none"
+                    ? "bg-neutral-300"
+                    : trend.direction === "up"
+                      ? "bg-green-500"
+                      : "bg-red-500",
                 )}
               />
-              <span className={trend.direction === "up" ? "text-green-600" : "text-red-600"}>
+              <span
+                className={
+                  trend.direction === "none"
+                    ? "text-neutral-500"
+                    : trend.direction === "up"
+                      ? "text-green-600"
+                      : "text-red-600"
+                }
+              >
                 {trend.label}
               </span>
             </div>

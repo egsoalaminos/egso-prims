@@ -65,6 +65,7 @@ import { facilityById, type Reservation } from "@/features/reservations/types";
 import { listAuditEntries } from "@/features/audit/api";
 import type { AuditEntry } from "@/features/audit/types";
 import { useRealtimeRefresh } from "@/features/shared/use-realtime";
+import { reportLoadFailure } from "@/features/shared/load-guard";
 
 /* ---------------- live data ---------------- */
 
@@ -103,6 +104,12 @@ function useDashboardData() {
         reservations,
         audit,
       });
+    } catch (e) {
+      // Without this the six fetches rejected into nothing: `data` stayed null,
+      // every tile read zero and every panel read empty, and the first screen
+      // after sign-in reported a quiet office instead of a failed load. Every
+      // other list in the system already says so; this one now does too.
+      reportLoadFailure(e, "the dashboard");
     } finally {
       setLoading(false);
     }
@@ -166,11 +173,19 @@ export function DashboardPage() {
     data?.items.filter((it) => stockStatusOf(it) !== "Available").length ?? 0;
   const totalUnits = data?.items.reduce((s, it) => s + it.onHand, 0) ?? 0;
 
+  /*
+   * Each tile counts what is standing on the desk right now; none of them
+   * compares today with anything, so none of them has a direction. They used
+   * to claim one anyway, and the claim contradicted itself: "awaiting
+   * approval" was printed in green under Purchase Orders and in red under the
+   * Requisition and Issue Slips directly beside it. The line under the value
+   * is a caption now, and the colour is spent where it means something.
+   */
   const stats = [
-    { label: "Pending Purchase Requests", value: pendingPRs, icon: FileText, trend: { label: "awaiting review", direction: "up" as const } },
-    { label: "Pending Purchase Orders", value: data?.poPending ?? 0, icon: ShoppingCart, trend: { label: "awaiting approval", direction: "up" as const } },
-    { label: "Pending Requisition and Issue Slips", value: data?.risPending ?? 0, icon: ClipboardList, trend: { label: "awaiting approval", direction: "down" as const } },
-    { label: "Inventory Alerts", value: lowStock, icon: AlertTriangle, trend: { label: "low, critical & out of stock", direction: "down" as const } },
+    { label: "Pending Purchase Requests", value: pendingPRs, icon: FileText, trend: { label: "awaiting review", direction: "none" as const } },
+    { label: "Pending Purchase Orders", value: data?.poPending ?? 0, icon: ShoppingCart, trend: { label: "awaiting approval", direction: "none" as const } },
+    { label: "Pending Requisition and Issue Slips", value: data?.risPending ?? 0, icon: ClipboardList, trend: { label: "awaiting approval", direction: "none" as const } },
+    { label: "Inventory Alerts", value: lowStock, icon: AlertTriangle, trend: { label: "low, critical & out of stock", direction: "none" as const } },
   ];
 
   const prColumns = React.useMemo<ColumnDef<PurchaseRequest, unknown>[]>(

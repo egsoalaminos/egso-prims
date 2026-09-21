@@ -38,7 +38,10 @@ export function ProgressBar({
   trackClassName?: string;
   className?: string;
 }) {
-  const pct = Math.max(0, Math.min(100, value));
+  // A caller dividing by a total that came back zero hands this NaN, and a
+  // NaN width is an invalid declaration the browser drops — the fill then
+  // disappears rather than reading empty. An unmeasurable bar is an empty one.
+  const pct = Number.isFinite(value) ? Math.max(0, Math.min(100, value)) : 0;
   const resolved: ProgressTone =
     tone ?? (autoTone ? (pct < 25 ? "danger" : pct < 50 ? "warning" : "success") : "neutral");
   return (
