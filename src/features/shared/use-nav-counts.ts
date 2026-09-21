@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { friendlyDbError, requireDb, unwrap } from "@/lib/db";
+import { countRows, requireDb, unwrap } from "@/lib/db";
 import { useRealtimeRefresh } from "@/features/shared/use-realtime";
 import { PENDING_PR_STATUSES } from "@/features/purchase-requests/types";
 import { stockStatusOf } from "@/features/inventory/types";
@@ -31,17 +31,6 @@ const EMPTY: NavCounts = {
   stockAlerts: 0,
 };
 
-/** `head: true` asks PostgREST for the count alone — no rows come back. */
-async function countByStatus(table: string, statuses: readonly string[]): Promise<number> {
-  const db = requireDb();
-  const res = await db
-    .from(table)
-    .select("id", { count: "exact", head: true })
-    .in("status", statuses as string[]);
-  if (res.error) throw friendlyDbError(res.error);
-  return res.count ?? 0;
-}
-
 /**
  * Stock alerts cannot be counted by the database: `stockStatusOf` compares each
  * item's balance against its own reorder and critical levels, which PostgREST
@@ -66,9 +55,9 @@ async function countStockAlerts(): Promise<number> {
 
 export async function loadNavCounts(): Promise<NavCounts> {
   const [pendingPRs, pendingPOs, pendingReservations, stockAlerts] = await Promise.all([
-    countByStatus("purchase_requests", PENDING_PR_STATUSES),
-    countByStatus("purchase_orders", ["Pending Approval"]),
-    countByStatus("reservations", ["Pending"]),
+    countRows("purchase_requests", PENDING_PR_STATUSES),
+    countRows("purchase_orders", ["Pending Approval"]),
+    countRows("reservations", ["Pending"]),
     countStockAlerts(),
   ]);
   return { pendingPRs, pendingPOs, pendingReservations, stockAlerts };

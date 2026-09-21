@@ -51,8 +51,6 @@ import {
   PENDING_PR_STATUSES,
   type PurchaseRequest,
 } from "@/features/purchase-requests/types";
-import { listPurchaseOrders } from "@/features/purchase-orders/api";
-import { listRequests } from "@/features/ris/api";
 import { listInventoryItems } from "@/features/inventory/api";
 import { stockStatusOf, type InventoryItem } from "@/features/inventory/types";
 import { useAuth } from "@/features/auth/auth-context";
@@ -63,6 +61,7 @@ import { MODULE_ICON, moduleTone } from "@/features/notifications/module-icons";
 import { listReservations } from "@/features/reservations/api";
 import { facilityById, type Reservation } from "@/features/reservations/types";
 import { listAuditEntries } from "@/features/audit/api";
+import { countRows } from "@/lib/db";
 import type { AuditEntry } from "@/features/audit/types";
 import { useRealtimeRefresh } from "@/features/shared/use-realtime";
 import { reportLoadFailure } from "@/features/shared/load-guard";
@@ -86,20 +85,32 @@ function useDashboardData() {
 
   const load = React.useCallback(async () => {
     try {
-      const [prs, pos, ris, items, reservations, audit] = await Promise.all([
-        listPurchaseRequests(),
-        listPurchaseOrders(),
-        listRequests(),
-        listInventoryItems(),
-        listReservations(),
-        listAuditEntries(),
-      ]);
+      /*
+       * Purchase orders and issue slips only ever reach this screen as four
+       * numbers, and the activity panel only ever shows the newest five
+       * entries. They were being loaded whole: every order and every slip in
+       * the office crossed the wire so that four tiles could print a count,
+       * and the entire audit trail — the fastest-growing table there is — so
+       * that five lines could be listed. The counts are counted by the
+       * database now and the trail is asked for five rows.
+       */
+      const [prs, poPending, poCount, risPending, risIssued, items, reservations, audit] =
+        await Promise.all([
+          listPurchaseRequests(),
+          countRows("purchase_orders", ["Pending Approval"]),
+          countRows("purchase_orders"),
+          countRows("ris_requests", ["Pending Approval"]),
+          countRows("ris_requests", ["Released", "Completed"]),
+          listInventoryItems(),
+          listReservations(),
+          listAuditEntries({ limit: DASHBOARD_ACTIVITY_LIMIT }),
+        ]);
       setData({
         prs,
-        poPending: pos.filter((p) => p.status === "Pending Approval").length,
-        poCount: pos.length,
-        risPending: ris.filter((r) => r.status === "Pending Approval").length,
-        risIssued: ris.filter((r) => ["Released", "Completed"].includes(r.status)).length,
+        poPending,
+        poCount,
+        risPending,
+        risIssued,
         items,
         reservations,
         audit,
@@ -143,6 +154,9 @@ const moduleActivity: Record<string, { icon: React.ComponentType<{ className?: s
 
 /** How many notifications the dashboard panel shows before deferring to the drawer. */
 const DASHBOARD_NOTIFICATION_LIMIT = 5;
+
+/** How many audit entries the activity panel shows — and asks the database for. */
+const DASHBOARD_ACTIVITY_LIMIT = 5;
 
 /* ---------------- Page ---------------- */
 
@@ -280,7 +294,7 @@ export function DashboardPage() {
       };
     });
 
-  const recentActivity = (data?.audit ?? []).slice(0, 5).map((e) => {
+  const recentActivity = (data?.audit ?? []).slice(0, DASHBOARD_ACTIVITY_LIMIT).map((e) => {
     const pres = moduleActivity[e.module] ?? moduleActivity.System;
     return {
       icon: pres.icon,

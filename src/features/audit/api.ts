@@ -66,6 +66,7 @@ export async function listAuditEntries(filters: AuditListFilters = {}): Promise<
       ),
     );
   }
+  if (filters.limit) return unwrap(await q.limit(filters.limit)).map(rowToEntry);
   return (await fetchAll((from, to) => q.range(from, to))).map(rowToEntry);
 }
 

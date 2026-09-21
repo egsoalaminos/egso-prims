@@ -76,6 +76,22 @@ export async function fetchAll<T>(
   }
 }
 
+/**
+ * How many rows match, without transferring any.
+ *
+ * `head: true` asks PostgREST for the count alone, so a screen that only
+ * prints a number never pays for the rows behind it. A dashboard tile reading
+ * "3 pending" was loading every purchase order in the office to find out.
+ */
+export async function countRows(table: string, statuses?: readonly string[]): Promise<number> {
+  const db = requireDb();
+  let q = db.from(table).select("id", { count: "exact", head: true });
+  if (statuses?.length) q = q.in("status", statuses as string[]);
+  const res = await q;
+  if (res.error) throw friendlyDbError(res.error);
+  return res.count ?? 0;
+}
+
 /** Builds a PostgREST .or() clause matching `q` across the given columns. */
 export function searchOr(columns: string[], q: string): string {
   const safe = q.replaceAll(",", " ").replaceAll("%", "").trim();

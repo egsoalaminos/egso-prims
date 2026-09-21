@@ -5,6 +5,13 @@ import { motion, useReducedMotion } from "motion/react";
  * Wrap each routed page's root so navigation feels consistent app-wide. Tuning
  * lives here only, so every module shares the exact same motion.
  *
+ * The durations are short on purpose. The AnimatePresence around the router
+ * runs in `wait` mode, so the exit finishes before the next page is even
+ * mounted: every millisecond here is added to every click, and it is spent
+ * before the new page can start loading its data. At 120ms out and 220ms in,
+ * the office was waiting a third of a second on every navigation for an
+ * animation, and the system read as slow when it was only being polite.
+ *
  * A visitor who has asked their system for reduced motion gets the fade without
  * the travel. This is the single place every routed page passes through, so
  * honouring the preference here covers the whole application — the portal a
@@ -29,9 +36,9 @@ export function PageTransition({
       exit={{
         opacity: 0,
         y: still ? 0 : -6,
-        transition: { duration: 0.12, ease: "easeIn" },
+        transition: { duration: 0.07, ease: "easeIn" },
       }}
-      transition={{ duration: still ? 0.12 : 0.22, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: still ? 0.1 : 0.15, ease: [0.16, 1, 0.3, 1] }}
       className={className}
     >
       {children}

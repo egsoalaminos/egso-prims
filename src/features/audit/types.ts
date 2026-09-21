@@ -114,4 +114,10 @@ export interface AuditListFilters {
   module?: AuditModule;
   action?: AuditAction;
   severity?: AuditSeverity;
+  /**
+   * Stop after this many of the newest entries. The dashboard shows five, and
+   * without this it read the whole trail — the fastest-growing table in the
+   * system — to display them.
+   */
+  limit?: number;
 }
