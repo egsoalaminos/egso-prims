@@ -232,10 +232,40 @@ const systemNav: (ModuleNavItem & { trailing?: React.ReactNode })[] = [
   { icon: Settings, label: "Settings", to: "/settings" },
 ];
 
+/** Every path the sidebar leads to, so an item can tell when a deeper one owns
+ *  the page. Declared here because the last of the item lists is above it. */
+const NAV_PATHS: string[] = [
+  dashboardItem,
+  inventoryItem,
+  reservationItem,
+  violationItem,
+  reportsItem,
+  ...procurementChildren,
+  ...utilitiesChildren,
+  ...recordsChildren,
+  ...systemNav,
+]
+  .map((item) => item.to)
+  .filter((to): to is string => Boolean(to));
+
+/**
+ * Whether a sidebar item leads to the page on screen.
+ *
+ * An item owns a path when the path is inside it AND no other item sits deeper
+ * on the same path. Records Management nests — /records, /records/inventory and
+ * /records/disposal are three items, not one with two children — so the plain
+ * prefix test this used to be lit "Records Disposition Schedule" on all three
+ * of them, and the group showed two items open at once.
+ */
 function isActive(pathname: string, to?: string) {
   if (!to) return false;
   if (to === "/") return pathname === "/";
-  return pathname === to || pathname.startsWith(`${to}/`);
+  if (pathname !== to && !pathname.startsWith(`${to}/`)) return false;
+  return !NAV_PATHS.some(
+    (deeper) =>
+      deeper.startsWith(`${to}/`) &&
+      (pathname === deeper || pathname.startsWith(`${deeper}/`)),
+  );
 }
 
 /**
