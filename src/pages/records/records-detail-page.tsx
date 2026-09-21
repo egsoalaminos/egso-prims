@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Pencil, Printer, Trash2 } from "lucide-react";
+import { ArrowLeft, Pencil, Printer, Trash2 } from "lucide-react";
 
 import {
   Button,
@@ -81,6 +81,10 @@ export function RecordsDetailPage() {
           actions={
             <div className="flex items-center gap-2">
               <StatusBadge status={schedule.status as DocumentStatus} />
+              <Button variant="ghost" onClick={() => navigate("/records")}>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back
+              </Button>
               <Button variant="outline" onClick={() => window.print()}>
                 <Printer className="mr-2 h-4 w-4" />
                 Print

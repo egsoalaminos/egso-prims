@@ -374,6 +374,16 @@ function AppSidebar({
   );
 }
 
+/**
+ * A record's id in the URL is a database key, not something to put in front of
+ * a clerk: the trail read "Authority to Dispose of Records ›
+ * 4e78e5a8-14af-46c5-b1dd-612adde44872", and the edit page read "Edit
+ * 4e78e5a8-…". The page heading underneath already carries the document number
+ * the office files by, so the trail ends at the section instead.
+ */
+const isRecordId = (segment: string) =>
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(segment);
+
 /** Derives the breadcrumb trail from the current route. */
 function useBreadcrumbs(): BreadcrumbItem[] {
   const { pathname } = useLocation();
@@ -421,8 +431,8 @@ function useBreadcrumbs(): BreadcrumbItem[] {
     } else {
       crumbs.push({ label, onClick: () => navigate(prefix) });
       if (rest[0] === "new") crumbs.push({ label: newLabel });
-      else if (rest[1] === "edit") crumbs.push({ label: `Edit ${rest[0]}` });
-      else crumbs.push({ label: rest[0] });
+      else if (rest[1] === "edit") crumbs.push({ label: isRecordId(rest[0]) ? "Edit" : `Edit ${rest[0]}` });
+      else if (!isRecordId(rest[0])) crumbs.push({ label: rest[0] });
     }
     return crumbs;
   }
