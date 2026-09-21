@@ -115,11 +115,25 @@ export function DisposalPrintForm({ request }: { request: DisposalRequestWithIte
               <Field label="Email Address:" value={request.emailAddress} />
             </tr>
           </tbody>
+        </table>
 
-          {/*
-           * In <thead> so the browser repeats the headings on every page a long
-           * request runs to.
-           */}
+        {/*
+         * The column headings open a second table so that they print under the
+         * identity block. A browser draws a table's <thead> first whatever
+         * order the source puts it in, so in one table these headings landed
+         * above the form's own title. The -mt-px laps the two tables' borders
+         * onto each other, so the sheet still reads as one ruled form, and the
+         * headings stay in a <thead> that repeats on every page a long request
+         * runs to.
+         */}
+        <table className="-mt-px w-full table-fixed border-collapse">
+          <colgroup>
+            <col className="w-[13%]" />
+            <col />
+            <col className="w-[18%]" />
+            <col className="w-[24%]" />
+          </colgroup>
+
           <thead>
             <tr>
               <Head>

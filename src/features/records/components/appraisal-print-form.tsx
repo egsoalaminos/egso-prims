@@ -152,12 +152,36 @@ export function AppraisalPrintForm({
               />
             </tr>
           </tbody>
+        </table>
 
-          {/*
-           * The column headings live in <thead> so the browser repeats them on
-           * every page — which is what the workbook's separate "Succeeding"
-           * sheet exists to do on paper.
-           */}
+        {/*
+         * The column headings open a second table so that they print under the
+         * identity block and fields 1-8. A browser draws a table's <thead>
+         * first whatever order the source puts it in, so in one table these
+         * headings landed above the form's own title. The -mt-px laps the two
+         * tables' borders onto each other, so the sheet still reads as one
+         * ruled form, and the headings stay in a <thead> the browser repeats on
+         * every page — which is what the workbook's separate "Succeeding" sheet
+         * exists to do on paper.
+         */}
+        <table className="-mt-px w-full table-fixed border-collapse">
+          <colgroup>
+            <col className="w-[13%]" />
+            <col className="w-[8%]" />
+            <col className="w-[5%]" />
+            <col className="w-[6%]" />
+            <col className="w-[6%]" />
+            <col className="w-[8%]" />
+            <col className="w-[6%]" />
+            <col className="w-[6%]" />
+            <col className="w-[6%]" />
+            <col className="w-[7%]" />
+            <col className="w-[4%]" />
+            <col className="w-[4%]" />
+            <col className="w-[4%]" />
+            <col className="w-[13%]" />
+          </colgroup>
+
           <thead>
             <tr>
               <Head rowSpan={2}>9. Records Series Title and Description</Head>

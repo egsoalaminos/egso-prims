@@ -19,3 +19,4 @@
 
 alter table public.disposal_requests
   add column if not exists certified_by_position text;
+
