@@ -61,7 +61,14 @@ function Head({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function DisposalPrintForm({ request }: { request: DisposalRequestWithItems }) {
+/**
+ * The form itself, without the sheet it sits on.
+ *
+ * The record's own page shows this on screen at the size it prints, and the
+ * print wrapper below puts the same component on paper. One recreation of the
+ * National Archives form, so the screen and the paper cannot drift apart.
+ */
+export function DisposalRequestSheet({ request }: { request: DisposalRequestWithItems }) {
   /*
    * Inside the table the paper carries only the column rules — no line
    * between one record series and the next, and no ruled blank rows under
@@ -72,163 +79,170 @@ export function DisposalPrintForm({ request }: { request: DisposalRequestWithIte
   const bodyCell = "border-x border-black px-1.5 pb-3 text-[10.5px] leading-[1.5]";
 
   return (
-    <PrintSheet>
-      <div className="font-[Arial,Helvetica,sans-serif] text-black">
-        {/* The form's own margin notes. */}
-        <div className="mb-1 flex items-start justify-between text-[9.5px] leading-[1.35]">
-          <span className="whitespace-pre-line">{FORM_MARKINGS.reference}</span>
-          <span>{FORM_MARKINGS.copies}</span>
-        </div>
-
-        <table className="w-full table-fixed border-collapse">
-          <colgroup>
-            <col className="w-[13%]" />
-            <col />
-            <col className="w-[18%]" />
-            <col className="w-[24%]" />
-          </colgroup>
-
-          <tbody>
-            {/* ---- Identity block, agency name and address ---- */}
-            <tr>
-              <td rowSpan={2} colSpan={2} className={`${CELL} px-2 py-2 text-center align-middle`}>
-                <div className="text-[11px] font-bold uppercase leading-[1.3]">
-                  National Archives of the Philippines
-                </div>
-                <div className="text-[10px] italic leading-[1.35]">
-                  Pambansang Sinupan ng Pilipinas
-                </div>
-                <div className="mt-2 text-[12px] font-bold uppercase leading-[1.3]">
-                  Request for Authority to Dispose of Records
-                </div>
-              </td>
-              <Field label="Agency Name:" value={request.agencyName} colSpan={2} />
-            </tr>
-            <tr>
-              <Field label="Address:" value={request.agencyAddress} colSpan={2} />
-            </tr>
-
-            {/* ---- Date, telephone, email ---- */}
-            <tr>
-              <Field label="Date:" value={printLongDate(request.requestDate)} colSpan={2} />
-              <Field label="Telephone Number:" value={request.telephoneNumber} />
-              <Field label="Email Address:" value={request.emailAddress} />
-            </tr>
-          </tbody>
-        </table>
-
-        {/*
-         * The column headings open a second table so that they print under the
-         * identity block. A browser draws a table's <thead> first whatever
-         * order the source puts it in, so in one table these headings landed
-         * above the form's own title. The -mt-px laps the two tables' borders
-         * onto each other, so the sheet still reads as one ruled form, and the
-         * headings stay in a <thead> that repeats on every page a long request
-         * runs to.
-         */}
-        <table className="-mt-px w-full table-fixed border-collapse">
-          <colgroup>
-            <col className="w-[13%]" />
-            <col />
-            <col className="w-[18%]" />
-            <col className="w-[24%]" />
-          </colgroup>
-
-          <thead>
-            <tr>
-              <Head>
-                GRDS/
-                <br />
-                RDS Item No.
-              </Head>
-              <Head>Record Series Title and Description</Head>
-              <Head>Period Covered</Head>
-              <Head>
-                Retention Period and Provision/s Complied{" "}
-                <span className="font-bold italic">(If Any)</span>
-              </Head>
-            </tr>
-          </thead>
-
-          <tbody>
-            {request.items.map((it) => (
-              // Line breaks are the office's own: a series is a heading with
-              // its kinds listed under it, and collapsing them would change
-              // what the form says.
-              <tr key={it.id} className="align-top">
-                <td className={`${bodyCell} whitespace-pre-line pt-3 text-center`}>
-                  {it.grdsRdsItemNo ?? ""}
-                </td>
-                <td className={`${bodyCell} whitespace-pre-line pt-3`}>
-                  {it.titleAndDescription}
-                </td>
-                <td className={`${bodyCell} whitespace-pre-line pt-3 text-center`}>
-                  {it.periodCovered ?? ""}
-                </td>
-                <td className={`${bodyCell} whitespace-pre-line pt-3`}>
-                  {it.retentionAndProvisions ?? ""}
-                </td>
-              </tr>
-            ))}
-            {/*
-             * The open remainder of the sheet. One tall run of column rules,
-             * not a stack of ruled blank rows: on the paper the space under
-             * the last entry is simply empty.
-             */}
-            <tr>
-              <td className="h-[150px] border-x border-black" />
-              <td className="border-x border-black" />
-              <td className="border-x border-black" />
-              <td className="border-x border-black" />
-            </tr>
-
-            {/* ---- Location and volume. The paper splits this band evenly. ---- */}
-            <tr>
-              <Field label="Location of Records:" value={request.locationOfRecords} colSpan={2} />
-              <Field label="Volume in Cubic Meter:" value={request.volumeCubicMeter} colSpan={2} />
-            </tr>
-
-            {/* ---- Prepared by and position ---- */}
-            <tr>
-              <Field
-                label="Prepared by: (Name & Signature)"
-                value={request.preparedBy}
-                colSpan={2}
-              />
-              <Field label="Position:" value={request.preparedByPosition} colSpan={2} />
-            </tr>
-
-            {/* ---- The certification ---- */}
-            <tr>
-              <td colSpan={4} className={`${CELL} px-2 py-2`}>
-                <div className="text-[8.5px] font-bold uppercase leading-[1.3]">
-                  Certified and Approved by:
-                </div>
-                <p className="mx-auto mt-3 max-w-[32rem] text-center text-[11px] leading-[1.5]">
-                  {CERTIFICATION_TEXT}
-                </p>
-                {/*
-                 * Name, then the position it is signed under, then the
-                 * caption. No rule between them: on an accomplished form the
-                 * officer signs over their own printed name, and a line drawn
-                 * through that is not what the paper shows.
-                 */}
-                <div className="mx-auto mt-12 max-w-[24rem] text-center">
-                  <div className="text-[11px] font-bold leading-[1.4]">
-                    {request.certifiedBy || " "}
-                  </div>
-                  <div className="text-[11px] font-bold leading-[1.4]">
-                    {request.certifiedByPosition || " "}
-                  </div>
-                  <div className="mt-0.5 whitespace-pre-line text-[9px] leading-[1.3]">
-                    {CERTIFIED_BY_CAPTION}
-                  </div>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+    <div className="font-[Arial,Helvetica,sans-serif] text-black">
+      {/* The form's own margin notes. */}
+      <div className="mb-1 flex items-start justify-between text-[9.5px] leading-[1.35]">
+        <span className="whitespace-pre-line">{FORM_MARKINGS.reference}</span>
+        <span>{FORM_MARKINGS.copies}</span>
       </div>
+
+      <table className="w-full table-fixed border-collapse">
+        <colgroup>
+          <col className="w-[13%]" />
+          <col />
+          <col className="w-[18%]" />
+          <col className="w-[24%]" />
+        </colgroup>
+
+        <tbody>
+          {/* ---- Identity block, agency name and address ---- */}
+          <tr>
+            <td rowSpan={2} colSpan={2} className={`${CELL} px-2 py-2 text-center align-middle`}>
+              <div className="text-[11px] font-bold uppercase leading-[1.3]">
+                National Archives of the Philippines
+              </div>
+              <div className="text-[10px] italic leading-[1.35]">
+                Pambansang Sinupan ng Pilipinas
+              </div>
+              <div className="mt-2 text-[12px] font-bold uppercase leading-[1.3]">
+                Request for Authority to Dispose of Records
+              </div>
+            </td>
+            <Field label="Agency Name:" value={request.agencyName} colSpan={2} />
+          </tr>
+          <tr>
+            <Field label="Address:" value={request.agencyAddress} colSpan={2} />
+          </tr>
+
+          {/* ---- Date, telephone, email ---- */}
+          <tr>
+            <Field label="Date:" value={printLongDate(request.requestDate)} colSpan={2} />
+            <Field label="Telephone Number:" value={request.telephoneNumber} />
+            <Field label="Email Address:" value={request.emailAddress} />
+          </tr>
+        </tbody>
+      </table>
+
+      {/*
+       * The column headings open a second table so that they print under the
+       * identity block. A browser draws a table's <thead> first whatever
+       * order the source puts it in, so in one table these headings landed
+       * above the form's own title. The -mt-px laps the two tables' borders
+       * onto each other, so the sheet still reads as one ruled form, and the
+       * headings stay in a <thead> that repeats on every page a long request
+       * runs to.
+       */}
+      <table className="-mt-px w-full table-fixed border-collapse">
+        <colgroup>
+          <col className="w-[13%]" />
+          <col />
+          <col className="w-[18%]" />
+          <col className="w-[24%]" />
+        </colgroup>
+
+        <thead>
+          <tr>
+            <Head>
+              GRDS/
+              <br />
+              RDS Item No.
+            </Head>
+            <Head>Record Series Title and Description</Head>
+            <Head>Period Covered</Head>
+            <Head>
+              Retention Period and Provision/s Complied{" "}
+              <span className="font-bold italic">(If Any)</span>
+            </Head>
+          </tr>
+        </thead>
+
+        <tbody>
+          {request.items.map((it) => (
+            // Line breaks are the office's own: a series is a heading with
+            // its kinds listed under it, and collapsing them would change
+            // what the form says.
+            <tr key={it.id} className="align-top">
+              <td className={`${bodyCell} whitespace-pre-line pt-3 text-center`}>
+                {it.grdsRdsItemNo ?? ""}
+              </td>
+              <td className={`${bodyCell} whitespace-pre-line pt-3`}>
+                {it.titleAndDescription}
+              </td>
+              <td className={`${bodyCell} whitespace-pre-line pt-3 text-center`}>
+                {it.periodCovered ?? ""}
+              </td>
+              <td className={`${bodyCell} whitespace-pre-line pt-3`}>
+                {it.retentionAndProvisions ?? ""}
+              </td>
+            </tr>
+          ))}
+          {/*
+           * The open remainder of the sheet. One tall run of column rules,
+           * not a stack of ruled blank rows: on the paper the space under
+           * the last entry is simply empty.
+           */}
+          <tr>
+            <td className="h-[150px] border-x border-black" />
+            <td className="border-x border-black" />
+            <td className="border-x border-black" />
+            <td className="border-x border-black" />
+          </tr>
+
+          {/* ---- Location and volume. The paper splits this band evenly. ---- */}
+          <tr>
+            <Field label="Location of Records:" value={request.locationOfRecords} colSpan={2} />
+            <Field label="Volume in Cubic Meter:" value={request.volumeCubicMeter} colSpan={2} />
+          </tr>
+
+          {/* ---- Prepared by and position ---- */}
+          <tr>
+            <Field
+              label="Prepared by: (Name & Signature)"
+              value={request.preparedBy}
+              colSpan={2}
+            />
+            <Field label="Position:" value={request.preparedByPosition} colSpan={2} />
+          </tr>
+
+          {/* ---- The certification ---- */}
+          <tr>
+            <td colSpan={4} className={`${CELL} px-2 py-2`}>
+              <div className="text-[8.5px] font-bold uppercase leading-[1.3]">
+                Certified and Approved by:
+              </div>
+              <p className="mx-auto mt-3 max-w-[32rem] text-center text-[11px] leading-[1.5]">
+                {CERTIFICATION_TEXT}
+              </p>
+              {/*
+               * Name, then the position it is signed under, then the
+               * caption. No rule between them: on an accomplished form the
+               * officer signs over their own printed name, and a line drawn
+               * through that is not what the paper shows.
+               */}
+              <div className="mx-auto mt-12 max-w-[24rem] text-center">
+                <div className="text-[11px] font-bold leading-[1.4]">
+                  {request.certifiedBy || " "}
+                </div>
+                <div className="text-[11px] font-bold leading-[1.4]">
+                  {request.certifiedByPosition || " "}
+                </div>
+                <div className="mt-0.5 whitespace-pre-line text-[9px] leading-[1.3]">
+                  {CERTIFIED_BY_CAPTION}
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+/** The printed copy: the same form, portalled clear of the app's frame. */
+export function DisposalPrintForm({ request }: { request: DisposalRequestWithItems }) {
+  return (
+    <PrintSheet>
+      <DisposalRequestSheet request={request} />
     </PrintSheet>
   );
 }

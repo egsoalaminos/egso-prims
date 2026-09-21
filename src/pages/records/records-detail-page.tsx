@@ -4,7 +4,6 @@ import { Pencil, Printer, Trash2 } from "lucide-react";
 
 import {
   Button,
-  ContainerCard,
   DeleteModal,
   PageHeader,
   PageTransition,
@@ -15,31 +14,21 @@ import {
 } from "@/components";
 import { deleteSchedule } from "@/features/records/api";
 import { useSchedule } from "@/features/records/hooks";
-import { RecordsPrintForm } from "@/features/records/components/records-print-form";
-
-/** dd MMMM yyyy, matching how the printed form is dated. */
-const longDate = (iso: string) => {
-  const d = new Date(`${iso}T00:00:00`);
-  return Number.isNaN(d.getTime())
-    ? iso
-    : d.toLocaleDateString("en-PH", { day: "2-digit", month: "long", year: "numeric" });
-};
-
-function Meta({ label, value }: { label: string; value: React.ReactNode }) {
-  return (
-    <div>
-      <div className="text-xs text-neutral-500">{label}</div>
-      <div className="mt-0.5 text-sm text-neutral-900">{value}</div>
-    </div>
-  );
-}
+import {
+  RecordsPrintForm,
+  RecordsScheduleSheet,
+} from "@/features/records/components/records-print-form";
+import { PaperSheet } from "@/features/shared/paper-sheet";
 
 /**
- * One disposition schedule, and the button that puts it on paper.
+ * One disposition schedule, shown as the schedule.
  *
- * The print form is mounted here rather than opened in a new route so what is
- * printed is exactly the schedule on screen, with no second fetch that could
- * disagree with it.
+ * The page used to summarise the record into cards and a plain table, and the
+ * National Archives form itself appeared only in the print dialog. The office
+ * files the form, checks the form and is accountable for the form, so the form
+ * is what the page shows — at the size it prints, from the same component that
+ * prints it. The status badge is the one thing here that is not on the paper:
+ * it is this system's own, and the paper has no field for it.
  */
 export function RecordsDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -83,16 +72,15 @@ export function RecordsDetailPage() {
     );
   }
 
-  const totalYears = schedule.series.reduce((sum, s) => sum + s.retentionTotal, 0);
-
   return (
     <>
-      <PageTransition className="space-y-6">
+      <PageTransition className="space-y-5">
         <PageHeader
           title={schedule.scheduleNo}
           description="Records Disposition Schedule"
           actions={
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2">
+              <StatusBadge status={schedule.status as DocumentStatus} />
               <Button variant="outline" onClick={() => window.print()}>
                 <Printer className="mr-2 h-4 w-4" />
                 Print
@@ -109,54 +97,9 @@ export function RecordsDetailPage() {
           }
         />
 
-        <ContainerCard padded>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            <Meta label="Agency Name" value={schedule.agencyName} />
-            <Meta label="Address" value={schedule.agencyAddress} />
-            <Meta label="Date Prepared" value={longDate(schedule.datePrepared)} />
-            <Meta
-              label="Status"
-              value={<StatusBadge status={schedule.status as DocumentStatus} />}
-            />
-          </div>
-        </ContainerCard>
-
-        <ContainerCard padded>
-          <div className="mb-4 flex items-baseline justify-between">
-            <h2 className="text-sm font-semibold text-neutral-900">Record Series</h2>
-            <span className="text-xs text-neutral-500">
-              {schedule.series.length} series · {totalYears} years total retention
-            </span>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[720px] border-collapse text-sm">
-              <thead>
-                <tr className="border-b border-neutral-200 text-left text-xs text-neutral-500">
-                  <th className="w-16 py-2 pr-3 font-medium">Item</th>
-                  <th className="py-2 pr-3 font-medium">Title and Description</th>
-                  <th className="w-20 py-2 pr-3 text-center font-medium">Active</th>
-                  <th className="w-20 py-2 pr-3 text-center font-medium">Storage</th>
-                  <th className="w-20 py-2 pr-3 text-center font-medium">Total</th>
-                  <th className="w-56 py-2 font-medium">Remarks</th>
-                </tr>
-              </thead>
-              <tbody>
-                {schedule.series.map((s) => (
-                  <tr key={s.id} className="border-b border-neutral-100 align-top">
-                    <td className="py-2.5 pr-3 tabular-nums">{s.itemNumber}</td>
-                    <td className="py-2.5 pr-3">{s.titleAndDescription}</td>
-                    <td className="py-2.5 pr-3 text-center tabular-nums">{s.retentionActive}</td>
-                    <td className="py-2.5 pr-3 text-center tabular-nums">{s.retentionStorage}</td>
-                    <td className="py-2.5 pr-3 text-center font-medium tabular-nums">
-                      {s.retentionTotal}
-                    </td>
-                    <td className="py-2.5 text-neutral-600">{s.remarks || "—"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </ContainerCard>
+        <PaperSheet>
+          <RecordsScheduleSheet schedule={schedule} />
+        </PaperSheet>
       </PageTransition>
 
       <RecordsPrintForm schedule={schedule} />

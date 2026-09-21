@@ -79,212 +79,225 @@ function SignLine({ name, caption, label }: { name?: string; caption: string; la
   );
 }
 
-export function AppraisalPrintForm({
-  appraisal,
-}: {
-  appraisal: InventoryAppraisalWithRecords;
-}) {
+/**
+ * The form itself, without the sheet it sits on.
+ *
+ * The record's own page shows this on screen at the size it prints, and the
+ * print wrapper below puts the same component on paper. One recreation of the
+ * National Archives form, so the screen and the paper cannot drift apart.
+ */
+export function AppraisalSheet({ appraisal }: { appraisal: InventoryAppraisalWithRecords }) {
   // The paper is ruled to the foot of the page whether or not the office holds
   // that many series, so short inventories print blank rows.
   const blanks = Math.max(0, 10 - appraisal.records.length);
   const cell = `${CELL} px-1 py-1 text-[9px] leading-[1.3]`;
 
   return (
+    <div className="font-[Arial,Helvetica,sans-serif] text-black">
+      <table className="w-full table-fixed border-collapse">
+        <colgroup>
+          <col className="w-[13%]" />
+          <col className="w-[8%]" />
+          <col className="w-[5%]" />
+          <col className="w-[6%]" />
+          <col className="w-[6%]" />
+          <col className="w-[8%]" />
+          <col className="w-[6%]" />
+          <col className="w-[6%]" />
+          <col className="w-[6%]" />
+          <col className="w-[7%]" />
+          <col className="w-[4%]" />
+          <col className="w-[4%]" />
+          <col className="w-[4%]" />
+          <col className="w-[13%]" />
+        </colgroup>
+
+        <tbody>
+          {/* ---- Identity block and fields 1-8 ---- */}
+          <tr>
+            <td rowSpan={3} colSpan={3} className={`${CELL} px-2 py-2 text-center align-middle`}>
+              <div className="text-[10px] font-bold uppercase leading-[1.3]">
+                National Archives of the Philippines
+              </div>
+              <div className="text-[9px] italic leading-[1.35]">
+                Pambansang Sinupan ng Pilipinas
+              </div>
+              <div className="mt-1.5 text-[11.5px] font-bold uppercase leading-[1.3]">
+                Records Inventory and Appraisal
+              </div>
+            </td>
+            <Field label="1. Name of Office:" value={appraisal.officeName} colSpan={3} rowSpan={2} />
+            <Field
+              label="2. Department/Division:"
+              value={appraisal.departmentDivision}
+              colSpan={4}
+            />
+            <Field label="4. Telephone No.:" value={appraisal.telephoneNo} colSpan={4} />
+          </tr>
+          <tr>
+            <Field label="3. Section/Unit:" value={appraisal.sectionUnit} colSpan={4} />
+            <Field label="5. Email Address:" value={appraisal.emailAddress} colSpan={4} />
+          </tr>
+          <tr>
+            <Field label="6. Address:" value={appraisal.officeAddress} colSpan={3} />
+            <Field
+              label="7. Person-in-Charge of Files:"
+              value={appraisal.personInCharge}
+              colSpan={4}
+            />
+            <Field
+              label="8. Date Prepared:"
+              value={printLongDate(appraisal.datePrepared)}
+              colSpan={4}
+            />
+          </tr>
+        </tbody>
+      </table>
+
+      {/*
+       * The column headings open a second table so that they print under the
+       * identity block and fields 1-8. A browser draws a table's <thead>
+       * first whatever order the source puts it in, so in one table these
+       * headings landed above the form's own title. The -mt-px laps the two
+       * tables' borders onto each other, so the sheet still reads as one
+       * ruled form, and the headings stay in a <thead> the browser repeats on
+       * every page — which is what the workbook's separate "Succeeding" sheet
+       * exists to do on paper.
+       */}
+      <table className="-mt-px w-full table-fixed border-collapse">
+        <colgroup>
+          <col className="w-[13%]" />
+          <col className="w-[8%]" />
+          <col className="w-[5%]" />
+          <col className="w-[6%]" />
+          <col className="w-[6%]" />
+          <col className="w-[8%]" />
+          <col className="w-[6%]" />
+          <col className="w-[6%]" />
+          <col className="w-[6%]" />
+          <col className="w-[7%]" />
+          <col className="w-[4%]" />
+          <col className="w-[4%]" />
+          <col className="w-[4%]" />
+          <col className="w-[13%]" />
+        </colgroup>
+
+        <thead>
+          <tr>
+            <Head rowSpan={2}>9. Records Series Title and Description</Head>
+            <Head rowSpan={2}>
+              10. Period Covered /<br />
+              Inclusive Dates
+            </Head>
+            <Head rowSpan={2}>11. Volume</Head>
+            <Head rowSpan={2}>12. Records Medium</Head>
+            <Head rowSpan={2}>13. Restriction/s</Head>
+            <Head rowSpan={2}>14. Location of Records</Head>
+            <Head rowSpan={2}>15. Frequency of Use</Head>
+            <Head rowSpan={2}>16. Duplication</Head>
+            <Head rowSpan={2}>
+              17. Time Value
+              <br />
+              (T/P)
+            </Head>
+            <Head rowSpan={2}>
+              18. Utility Value
+              <br />
+              Adm/F/L/Arc
+            </Head>
+            <Head colSpan={3}>19. Retention Period</Head>
+            <Head rowSpan={2}>20. Disposition Provision</Head>
+          </tr>
+          <tr>
+            <Head>Active</Head>
+            <Head>Storage</Head>
+            <Head>Total</Head>
+          </tr>
+        </thead>
+
+        <tbody>
+          {appraisal.records.map((r) => (
+            <tr key={r.id}>
+              <td className={cell}>{r.titleAndDescription}</td>
+              <td className={cell}>{r.periodCovered ?? ""}</td>
+              <td className={`${cell} text-center`}>{r.volume ?? ""}</td>
+              <td className={cell}>{r.recordsMedium ?? ""}</td>
+              <td className={cell}>{r.restrictions ?? ""}</td>
+              <td className={cell}>{r.locationOfRecords ?? ""}</td>
+              <td className={cell}>{r.frequencyOfUse ?? ""}</td>
+              <td className={cell}>{r.duplication ?? ""}</td>
+              <td className={`${cell} text-center`}>{r.timeValue ?? ""}</td>
+              <td className={`${cell} text-center`}>{r.utilityValue ?? ""}</td>
+              <td className={`${cell} text-center tabular-nums`}>{r.retentionActive}</td>
+              <td className={`${cell} text-center tabular-nums`}>{r.retentionStorage}</td>
+              <td className={`${cell} text-center tabular-nums`}>{r.retentionTotal}</td>
+              <td className={cell}>{r.dispositionProvision ?? ""}</td>
+            </tr>
+          ))}
+          {Array.from({ length: blanks }, (_, i) => (
+            <tr key={`blank-${i}`}>
+              {Array.from({ length: 14 }, (_, c) => (
+                <td key={c} className={`${CELL} h-[20px]`} />
+              ))}
+            </tr>
+          ))}
+
+          {/* ---- Legend and signatures ---- */}
+          <tr>
+            <td colSpan={14} className={`${CELL} px-2 py-2`}>
+              <div className="text-[8.5px] leading-[1.55]">
+                <span className="font-bold">LEGEND:</span>
+                <div className="mt-0.5 flex flex-wrap gap-x-10">
+                  <span>
+                    <span className="font-bold">TIME VALUE:</span>{" "}
+                    {TIME_VALUES.map((v) => v.label).join("   ")}
+                  </span>
+                  <span>
+                    <span className="font-bold">UTILITY VALUE:</span>{" "}
+                    {UTILITY_VALUES.map((v) => v.label).join("   ")}
+                  </span>
+                </div>
+              </div>
+
+              <div className="mt-4 grid grid-cols-3 gap-10">
+                <SignLine
+                  label="Prepared by:"
+                  name={
+                    [appraisal.preparedBy, appraisal.preparedByPosition]
+                      .filter(Boolean)
+                      .join(" — ") || undefined
+                  }
+                  caption={SIGNATORY_CAPTIONS.preparedBy}
+                />
+                <SignLine
+                  label="Assisted by:"
+                  name={appraisal.assistedBy}
+                  caption={SIGNATORY_CAPTIONS.assistedBy}
+                />
+                <SignLine
+                  label="Approved by:"
+                  name={appraisal.approvedBy}
+                  caption={SIGNATORY_CAPTIONS.approvedBy}
+                />
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+/** The printed copy: the same form, portalled clear of the app's frame. */
+export function AppraisalPrintForm({ appraisal }: { appraisal: InventoryAppraisalWithRecords }) {
+  return (
     <PrintSheet>
-      {/* Twenty columns need the long edge; the workbook prints landscape too. */}
+      {/* Twenty columns need the long edge; the workbook prints landscape too.
+          The page setup belongs to the printed copy: @page is a document-wide
+          rule, so declaring it from the screen view would turn every other
+          document in the app landscape too. */}
       <style>{"@page { size: A4 landscape; margin: 10mm; }"}</style>
-      <div className="font-[Arial,Helvetica,sans-serif] text-black">
-        <table className="w-full table-fixed border-collapse">
-          <colgroup>
-            <col className="w-[13%]" />
-            <col className="w-[8%]" />
-            <col className="w-[5%]" />
-            <col className="w-[6%]" />
-            <col className="w-[6%]" />
-            <col className="w-[8%]" />
-            <col className="w-[6%]" />
-            <col className="w-[6%]" />
-            <col className="w-[6%]" />
-            <col className="w-[7%]" />
-            <col className="w-[4%]" />
-            <col className="w-[4%]" />
-            <col className="w-[4%]" />
-            <col className="w-[13%]" />
-          </colgroup>
-
-          <tbody>
-            {/* ---- Identity block and fields 1-8 ---- */}
-            <tr>
-              <td rowSpan={3} colSpan={3} className={`${CELL} px-2 py-2 text-center align-middle`}>
-                <div className="text-[10px] font-bold uppercase leading-[1.3]">
-                  National Archives of the Philippines
-                </div>
-                <div className="text-[9px] italic leading-[1.35]">
-                  Pambansang Sinupan ng Pilipinas
-                </div>
-                <div className="mt-1.5 text-[11.5px] font-bold uppercase leading-[1.3]">
-                  Records Inventory and Appraisal
-                </div>
-              </td>
-              <Field label="1. Name of Office:" value={appraisal.officeName} colSpan={3} rowSpan={2} />
-              <Field
-                label="2. Department/Division:"
-                value={appraisal.departmentDivision}
-                colSpan={4}
-              />
-              <Field label="4. Telephone No.:" value={appraisal.telephoneNo} colSpan={4} />
-            </tr>
-            <tr>
-              <Field label="3. Section/Unit:" value={appraisal.sectionUnit} colSpan={4} />
-              <Field label="5. Email Address:" value={appraisal.emailAddress} colSpan={4} />
-            </tr>
-            <tr>
-              <Field label="6. Address:" value={appraisal.officeAddress} colSpan={3} />
-              <Field
-                label="7. Person-in-Charge of Files:"
-                value={appraisal.personInCharge}
-                colSpan={4}
-              />
-              <Field
-                label="8. Date Prepared:"
-                value={printLongDate(appraisal.datePrepared)}
-                colSpan={4}
-              />
-            </tr>
-          </tbody>
-        </table>
-
-        {/*
-         * The column headings open a second table so that they print under the
-         * identity block and fields 1-8. A browser draws a table's <thead>
-         * first whatever order the source puts it in, so in one table these
-         * headings landed above the form's own title. The -mt-px laps the two
-         * tables' borders onto each other, so the sheet still reads as one
-         * ruled form, and the headings stay in a <thead> the browser repeats on
-         * every page — which is what the workbook's separate "Succeeding" sheet
-         * exists to do on paper.
-         */}
-        <table className="-mt-px w-full table-fixed border-collapse">
-          <colgroup>
-            <col className="w-[13%]" />
-            <col className="w-[8%]" />
-            <col className="w-[5%]" />
-            <col className="w-[6%]" />
-            <col className="w-[6%]" />
-            <col className="w-[8%]" />
-            <col className="w-[6%]" />
-            <col className="w-[6%]" />
-            <col className="w-[6%]" />
-            <col className="w-[7%]" />
-            <col className="w-[4%]" />
-            <col className="w-[4%]" />
-            <col className="w-[4%]" />
-            <col className="w-[13%]" />
-          </colgroup>
-
-          <thead>
-            <tr>
-              <Head rowSpan={2}>9. Records Series Title and Description</Head>
-              <Head rowSpan={2}>
-                10. Period Covered /<br />
-                Inclusive Dates
-              </Head>
-              <Head rowSpan={2}>11. Volume</Head>
-              <Head rowSpan={2}>12. Records Medium</Head>
-              <Head rowSpan={2}>13. Restriction/s</Head>
-              <Head rowSpan={2}>14. Location of Records</Head>
-              <Head rowSpan={2}>15. Frequency of Use</Head>
-              <Head rowSpan={2}>16. Duplication</Head>
-              <Head rowSpan={2}>
-                17. Time Value
-                <br />
-                (T/P)
-              </Head>
-              <Head rowSpan={2}>
-                18. Utility Value
-                <br />
-                Adm/F/L/Arc
-              </Head>
-              <Head colSpan={3}>19. Retention Period</Head>
-              <Head rowSpan={2}>20. Disposition Provision</Head>
-            </tr>
-            <tr>
-              <Head>Active</Head>
-              <Head>Storage</Head>
-              <Head>Total</Head>
-            </tr>
-          </thead>
-
-          <tbody>
-            {appraisal.records.map((r) => (
-              <tr key={r.id}>
-                <td className={cell}>{r.titleAndDescription}</td>
-                <td className={cell}>{r.periodCovered ?? ""}</td>
-                <td className={`${cell} text-center`}>{r.volume ?? ""}</td>
-                <td className={cell}>{r.recordsMedium ?? ""}</td>
-                <td className={cell}>{r.restrictions ?? ""}</td>
-                <td className={cell}>{r.locationOfRecords ?? ""}</td>
-                <td className={cell}>{r.frequencyOfUse ?? ""}</td>
-                <td className={cell}>{r.duplication ?? ""}</td>
-                <td className={`${cell} text-center`}>{r.timeValue ?? ""}</td>
-                <td className={`${cell} text-center`}>{r.utilityValue ?? ""}</td>
-                <td className={`${cell} text-center tabular-nums`}>{r.retentionActive}</td>
-                <td className={`${cell} text-center tabular-nums`}>{r.retentionStorage}</td>
-                <td className={`${cell} text-center tabular-nums`}>{r.retentionTotal}</td>
-                <td className={cell}>{r.dispositionProvision ?? ""}</td>
-              </tr>
-            ))}
-            {Array.from({ length: blanks }, (_, i) => (
-              <tr key={`blank-${i}`}>
-                {Array.from({ length: 14 }, (_, c) => (
-                  <td key={c} className={`${CELL} h-[20px]`} />
-                ))}
-              </tr>
-            ))}
-
-            {/* ---- Legend and signatures ---- */}
-            <tr>
-              <td colSpan={14} className={`${CELL} px-2 py-2`}>
-                <div className="text-[8.5px] leading-[1.55]">
-                  <span className="font-bold">LEGEND:</span>
-                  <div className="mt-0.5 flex flex-wrap gap-x-10">
-                    <span>
-                      <span className="font-bold">TIME VALUE:</span>{" "}
-                      {TIME_VALUES.map((v) => v.label).join("   ")}
-                    </span>
-                    <span>
-                      <span className="font-bold">UTILITY VALUE:</span>{" "}
-                      {UTILITY_VALUES.map((v) => v.label).join("   ")}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="mt-4 grid grid-cols-3 gap-10">
-                  <SignLine
-                    label="Prepared by:"
-                    name={
-                      [appraisal.preparedBy, appraisal.preparedByPosition]
-                        .filter(Boolean)
-                        .join(" — ") || undefined
-                    }
-                    caption={SIGNATORY_CAPTIONS.preparedBy}
-                  />
-                  <SignLine
-                    label="Assisted by:"
-                    name={appraisal.assistedBy}
-                    caption={SIGNATORY_CAPTIONS.assistedBy}
-                  />
-                  <SignLine
-                    label="Approved by:"
-                    name={appraisal.approvedBy}
-                    caption={SIGNATORY_CAPTIONS.approvedBy}
-                  />
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <AppraisalSheet appraisal={appraisal} />
     </PrintSheet>
   );
 }
