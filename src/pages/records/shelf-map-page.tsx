@@ -103,10 +103,51 @@ function InlineText({
   );
 }
 
-/* ---------------- the series standing on a level ---------------- */
+/* ---------------- the objects on the shelf ---------------- */
 
-/** One record series, as it reads on the shelf: its schedule, then its title. */
-function SeriesTag({
+/**
+ * The colour of a folder's label band, keyed to the schedule it belongs to.
+ *
+ * This is the one colour on the page and it states something a clerk can say
+ * out loud: folders of the same colour came from the same disposition
+ * schedule. It is never the only carrier — the schedule number is printed on
+ * the spine beside it — so the map still reads in greyscale and to anyone who
+ * does not see the difference.
+ */
+const LABEL_TONES = [
+  "bg-[#7e1624] text-white",
+  "bg-[#1d4ed8] text-white",
+  "bg-[#166534] text-white",
+  "bg-[#b45309] text-white",
+  "bg-[#5b21b6] text-white",
+  "bg-[#0f766e] text-white",
+] as const;
+
+function labelTone(scheduleNo: string): string {
+  let hash = 0;
+  for (let i = 0; i < scheduleNo.length; i++) hash = (hash * 31 + scheduleNo.charCodeAt(i)) >>> 0;
+  return LABEL_TONES[hash % LABEL_TONES.length];
+}
+
+/**
+ * Folders on a shelf are not all one height, and a row of identical
+ * rectangles reads as a chart rather than as a shelf. Three heights, picked
+ * from the series' own id so a folder keeps its height between visits.
+ */
+const SPINE_HEIGHTS = ["h-[122px]", "h-[134px]", "h-[128px]"] as const;
+
+function spineHeight(id: string): string {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) hash = (hash * 17 + id.charCodeAt(i)) >>> 0;
+  return SPINE_HEIGHTS[hash % SPINE_HEIGHTS.length];
+}
+
+/**
+ * One record series, drawn as what it is on the steel: a box file standing on
+ * its end, its title down the spine, its schedule on a label band near the
+ * top. It casts a short shadow onto the board it stands on.
+ */
+function FolderSpine({
   series,
   onRemove,
   still,
@@ -116,34 +157,50 @@ function SeriesTag({
   still: boolean;
 }) {
   return (
-    <motion.span
+    <motion.div
       layout={!still}
-      initial={still ? false : { opacity: 0, scale: 0.96 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={still ? { opacity: 0 } : { opacity: 0, scale: 0.96 }}
-      transition={{ duration: still ? 0.1 : 0.16, ease: [0.16, 1, 0.3, 1] }}
-      className="group inline-flex max-w-full items-center gap-2 rounded-[3px] border border-neutral-300 bg-white py-1 pl-2 pr-1 text-[12.5px] leading-[1.4]"
+      initial={still ? false : { opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={still ? { opacity: 0 } : { opacity: 0, y: 8 }}
+      transition={{ duration: still ? 0.1 : 0.2, ease: [0.16, 1, 0.3, 1] }}
+      className={`group/spine relative flex w-[46px] shrink-0 flex-col items-center rounded-t-[2px] border border-neutral-400 bg-neutral-50 pb-1 pt-1.5 shadow-[0_1px_2px_rgba(0,0,0,0.12)] transition hover:-translate-y-0.5 hover:shadow-[0_3px_6px_rgba(0,0,0,0.16)] ${spineHeight(series.id)}`}
+      title={`${series.titleAndDescription} — ${series.scheduleNo}, item ${series.itemNumber}`}
     >
-      <span className="tabular-nums text-neutral-500">
-        {series.scheduleNo}
-        <span className="text-neutral-400"> · {series.itemNumber}</span>
+      {/* The written label band: schedule colour, item number. */}
+      <span
+        className={`flex h-[19px] w-[27px] shrink-0 items-center justify-center rounded-[1px] text-[11px] font-semibold tabular-nums ${labelTone(series.scheduleNo)}`}
+      >
+        {series.itemNumber}
       </span>
-      <span className="truncate text-neutral-900">{series.titleAndDescription}</span>
-      <IconButton
-        size="icon-sm"
+
+      {/* The title, read the way a spine is read: bottom to top. */}
+      <span
+        className="mt-1 w-[30px] flex-1 overflow-hidden text-[11px] leading-[1.25] text-neutral-800"
+        style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
+      >
+        {series.titleAndDescription}
+      </span>
+
+      {/* Taking a folder off the shelf is deliberate, so it stays out of the
+          way until the folder is pointed at or focused. */}
+      <button
+        type="button"
         aria-label={`Take ${series.titleAndDescription} off this level`}
         onClick={onRemove}
-        className="bg-transparent text-neutral-400 hover:text-neutral-900"
+        className="absolute -right-1.5 -top-1.5 grid h-[18px] w-[18px] place-items-center rounded-full border border-neutral-400 bg-white text-neutral-500 opacity-0 transition hover:text-neutral-900 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring) group-hover/spine:opacity-100"
       >
-        <X className="h-3.5 w-3.5" />
-      </IconButton>
-    </motion.span>
+        <X className="h-3 w-3" />
+      </button>
+    </motion.div>
   );
 }
 
-/* ---------------- one lettered level ---------------- */
-
-function LevelBand({
+/**
+ * One lettered bay: the folders standing in it, the board they stand on, and
+ * the label strip clipped to the board's front edge — which is where a records
+ * room writes what the level holds, and so is where this one is named.
+ */
+function ShelfBay({
   level,
   series,
   still,
@@ -161,48 +218,48 @@ function LevelBand({
   onDelete: () => void;
 }) {
   return (
-    <div className="flex gap-3 border-t border-neutral-200 px-4 py-3.5">
-      {/* The divider's letter, marked as it is on the steel. */}
-      <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-[3px] border border-neutral-400 bg-neutral-50 text-[12.5px] font-semibold text-neutral-900">
-        {level.label}
-      </span>
-
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <InlineText
-            value={level.category ?? ""}
-            placeholder="Name what this level holds"
-            ariaLabel={`Category on level ${level.label}`}
-            className="max-w-[16rem] text-[13px] font-semibold uppercase tracking-[0.04em] text-neutral-900"
-            onCommit={(category) => onRename({ category })}
-          />
-          <span className="shrink-0 text-[12px] tabular-nums text-neutral-500">
-            {series.length === 0
-              ? "empty"
-              : `${series.length} series`}
+    <div>
+      {/* The bay. Folders stand on the board, so they align to its bottom. */}
+      <div className="flex min-h-[154px] items-end gap-[3px] overflow-x-auto bg-neutral-100 px-3 pt-4 shadow-[inset_0_6px_8px_-6px_rgba(0,0,0,0.22)]">
+        <AnimatePresence initial={false}>
+          {series.map((s) => (
+            <FolderSpine
+              key={s.id}
+              series={s}
+              still={still}
+              onRemove={() => onRemoveSeries(s.id)}
+            />
+          ))}
+        </AnimatePresence>
+        {series.length === 0 && (
+          <span className="pb-2 text-[12px] italic text-neutral-400">
+            This level is empty.
           </span>
-        </div>
-
-        <div className="mt-2 flex flex-wrap items-center gap-1.5">
-          <AnimatePresence initial={false}>
-            {series.map((s) => (
-              <SeriesTag
-                key={s.id}
-                series={s}
-                still={still}
-                onRemove={() => onRemoveSeries(s.id)}
-              />
-            ))}
-          </AnimatePresence>
-          {series.length === 0 && (
-            <span className="text-[12.5px] text-neutral-500">Nothing on this level yet.</span>
-          )}
-        </div>
+        )}
       </div>
 
-      <div className="flex shrink-0 items-start gap-1">
-        <Button variant="ghost" size="sm" onClick={onPlace}>
-          <Plus className="mr-1.5 h-3.5 w-3.5" />
+      {/* The board itself: its top face, then the front edge that carries the
+          label holder. */}
+      <>
+        <div className="h-[7px] border-t border-neutral-400 bg-neutral-300" />
+        <div className="h-[3px] bg-neutral-500" />
+      </>
+      <div className="flex items-center gap-2 border-b border-neutral-300 bg-neutral-100 px-3 py-1.5">
+        <span className="grid h-[19px] w-[19px] shrink-0 place-items-center rounded-[2px] border border-neutral-500 bg-white text-[11px] font-bold text-neutral-900">
+          {level.label}
+        </span>
+        <InlineText
+          value={level.category ?? ""}
+          placeholder="Name what this level holds"
+          ariaLabel={`Category on level ${level.label}`}
+          className="max-w-[15rem] text-[11.5px] font-semibold uppercase tracking-[0.08em] text-neutral-700"
+          onCommit={(category) => onRename({ category })}
+        />
+        <span className="ml-auto shrink-0 text-[11.5px] tabular-nums text-neutral-500">
+          {series.length}
+        </span>
+        <Button variant="ghost" size="xs" onClick={onPlace}>
+          <Plus className="mr-1 h-3 w-3" />
           Place
         </Button>
         <IconButton
@@ -211,7 +268,7 @@ function LevelBand({
           onClick={onDelete}
           className="bg-transparent text-neutral-400 hover:text-neutral-900"
         >
-          <Trash2 className="h-3.5 w-3.5" />
+          <Trash2 className="h-3 w-3" />
         </IconButton>
       </div>
     </div>
@@ -249,7 +306,7 @@ function ShelfCard({
   );
 
   return (
-    <ContainerCard>
+    <ContainerCard className="overflow-hidden">
       <div className="flex items-start gap-3 px-4 py-3.5">
         <div className="min-w-0 flex-1">
           <InlineText
@@ -271,7 +328,7 @@ function ShelfCard({
         <div className="flex shrink-0 items-center gap-2">
           <span className="text-[12px] tabular-nums text-neutral-500">
             {shelf.levels.length} {shelf.levels.length === 1 ? "level" : "levels"} · {total}{" "}
-            {total === 1 ? "series" : "series"}
+            series
           </span>
           <Button variant="outline" size="sm" onClick={onAddLevel}>
             <Plus className="mr-1.5 h-3.5 w-3.5" />
@@ -293,18 +350,32 @@ function ShelfCard({
           This shelf has no levels yet. Add one and it is lettered A.
         </div>
       ) : (
-        shelf.levels.map((level) => (
-          <LevelBand
-            key={level.id}
-            level={level}
-            still={still}
-            series={seriesByLevel.get(level.id) ?? []}
-            onPlace={() => onPlaceOnLevel(level)}
-            onRemoveSeries={onRemoveSeries}
-            onRename={(changes) => onRenameLevel(level, changes)}
-            onDelete={() => onDeleteLevel(level)}
+        /* The unit itself. The uprights run the full height beside the bays,
+           which is what makes a stack of boards read as one shelf. */
+        <div className="relative border-t border-neutral-200 bg-neutral-50 px-[11px] pb-[11px] pt-0">
+          <span
+            aria-hidden
+            className="absolute inset-y-0 left-0 w-[11px] border-r border-neutral-500 bg-neutral-400"
           />
-        ))
+          <span
+            aria-hidden
+            className="absolute inset-y-0 right-0 w-[11px] border-l border-neutral-500 bg-neutral-400"
+          />
+          <div className="relative bg-white">
+            {shelf.levels.map((level) => (
+              <ShelfBay
+                key={level.id}
+                level={level}
+                still={still}
+                series={seriesByLevel.get(level.id) ?? []}
+                onPlace={() => onPlaceOnLevel(level)}
+                onRemoveSeries={onRemoveSeries}
+                onRename={(changes) => onRenameLevel(level, changes)}
+                onDelete={() => onDeleteLevel(level)}
+              />
+            ))}
+          </div>
+        </div>
       )}
     </ContainerCard>
   );
@@ -487,8 +558,18 @@ export function ShelfMapPage() {
                   {unplaced.map((s) => (
                     <li
                       key={s.id}
-                      className="flex items-start gap-2 border-t border-neutral-200 px-4 py-2.5"
+                      className="flex items-start gap-2.5 border-t border-neutral-200 px-4 py-2.5"
                     >
+                      {/* The same folder, lying off the shelf: same label
+                          colour, so the eye can follow it onto the steel. */}
+                      <span
+                        aria-hidden
+                        className="mt-0.5 flex h-[26px] w-[18px] shrink-0 flex-col items-center rounded-t-[2px] border border-neutral-400 bg-neutral-50 pt-[3px]"
+                      >
+                        <span
+                          className={`h-[9px] w-[12px] rounded-[1px] ${labelTone(s.scheduleNo)}`}
+                        />
+                      </span>
                       <div className="min-w-0 flex-1">
                         <div className="truncate text-[13px] text-neutral-900">
                           {s.titleAndDescription}
