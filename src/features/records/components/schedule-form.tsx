@@ -2,6 +2,7 @@ import * as React from "react";
 import { Plus, Trash2 } from "lucide-react";
 
 import { Button, DatePicker, IconButton, SelectField } from "@/components";
+import { PaperSheet, SHEET_WIDTH } from "@/features/shared/paper-sheet";
 import {
   CELL,
   EDITABLE_CELL,
@@ -117,7 +118,13 @@ export function ScheduleForm({
   };
 
   return (
-    <form onSubmit={submit} className="space-y-4">
+    // The form is the sheet it becomes, so everything on the page — the
+    // status field above it, the buttons below — lines up with its edges.
+    <form
+      onSubmit={submit}
+      className="mx-auto w-full space-y-4"
+      style={{ maxWidth: SHEET_WIDTH.portrait }}
+    >
       {/*
        * Status is the system's own field, not the Archives'. It sits outside
        * the form so the sheet on screen stays the sheet on paper.
@@ -139,191 +146,192 @@ export function ScheduleForm({
         <FillLegend />
       </div>
 
-      {/*
-       * The sheet runs to the right edge of the page: it pulls back the shell's
-       * own right padding, because a government form is read across its columns
-       * and every millimetre there is width the description and remarks can
-       * use. The row controls keep a lane of their own so nothing is clipped.
-       */}
-      <div className="w-full overflow-x-auto md:-mr-8">
-        <table className="w-full min-w-[900px] table-fixed border-collapse bg-white font-[Arial,Helvetica,sans-serif]">
-          {/*
-           * The row-control lane is a fixed 40px — just the icon. It used to be
-           * a percentage, which on a wide screen reserved well over a hundred
-           * pixels for one small button and left the ruled sheet ending short
-           * of the page. The description column is left unsized so it absorbs
-           * whatever the ruled columns do not need.
-           */}
-          <colgroup>
-            <col className="w-[5%]" />
-            <col />
-            <col className="w-[7%]" />
-            <col className="w-[7%]" />
-            <col className="w-[7%]" />
-            <col className="w-[26%]" />
-            <col className="w-10" />
-          </colgroup>
+      <PaperSheet>
+        {/*
+         * The row controls hang in the sheet's own right margin, so the ruled
+         * columns keep exactly the width they have on the printed sheet and the
+         * form lines up with the document it becomes.
+         */}
+        <div className="-mr-10">
+          <table className="w-full table-fixed border-collapse font-[Arial,Helvetica,sans-serif]">
+            {/*
+             * The row-control lane is a fixed 40px — just the icon. It used to be
+             * a percentage, which on a wide screen reserved well over a hundred
+             * pixels for one small button and left the ruled sheet ending short
+             * of the page. The description column is left unsized so it absorbs
+             * whatever the ruled columns do not need.
+             */}
+            <colgroup>
+              <col className="w-[5%]" />
+              <col />
+              <col className="w-[7%]" />
+              <col className="w-[7%]" />
+              <col className="w-[7%]" />
+              <col className="w-[26%]" />
+              <col className="w-10" />
+            </colgroup>
 
-          <tbody>
-            {/* ---- Identity block, fields 1 and 2 ---- */}
-            <tr>
-              <td rowSpan={2} colSpan={2} className={`${CELL} px-2 py-3 text-center align-middle`}>
-                <div className="text-[11px] font-bold uppercase leading-[1.3]">
-                  National Archives of the Philippines
-                </div>
-                <div className="text-[10px] italic leading-[1.35]">
-                  Pambansang Sinupan ng Pilipinas
-                </div>
-                <div className="mt-2 text-[12.5px] font-bold uppercase leading-[1.3]">
-                  Records Disposition Schedule
-                </div>
-              </td>
-              <td colSpan={4} className={EDITABLE_CELL}>
-                <FieldLabel>1. Agency Name:</FieldLabel>
-                <input
-                  aria-label="Agency name"
-                  value={agencyName}
-                  onChange={(e) => setAgencyName(e.target.value)}
-                  required
-                  className={INPUT}
-                />
-              </td>
-              <td />
-            </tr>
-            <tr>
-              <td colSpan={4} className={EDITABLE_CELL}>
-                <FieldLabel>2. Address:</FieldLabel>
-                <input
-                  aria-label="Agency address"
-                  value={agencyAddress}
-                  onChange={(e) => setAgencyAddress(e.target.value)}
-                  required
-                  className={INPUT}
-                />
-              </td>
-              <td />
-            </tr>
-
-            {/* ---- Fields 3 and 4 ---- */}
-            <tr>
-              <td colSpan={2} className={CELL}>
-                <FieldLabel>3. Schedule No.</FieldLabel>
-                <div className="px-1.5 py-1 text-[12.5px] leading-[1.4]">
-                  {initial ? (
-                    <span className="tabular-nums">{initial.scheduleNo}</span>
-                  ) : (
-                    <span className="text-neutral-500">Allocated when you save</span>
-                  )}
-                </div>
-              </td>
-              <td colSpan={4} className={EDITABLE_CELL}>
-                <FieldLabel>4. Date Prepared:</FieldLabel>
-                <DatePicker
-                  id="date-prepared"
-                  value={datePrepared}
-                  onChange={setDatePrepared}
-                  className="m-1 w-[calc(100%-0.5rem)] rounded-[3px] border-neutral-400 px-1.5 py-1 text-[12.5px]"
-                />
-              </td>
-              <td />
-            </tr>
-
-            {/* ---- Column headings, fields 5 to 8 ---- */}
-            <tr className="text-[9px] font-bold uppercase leading-[1.25]">
-              <td rowSpan={2} className={`${CELL} px-1 py-1 text-center align-middle`}>
-                5. Item
-                <br />
-                Number
-              </td>
-              <td rowSpan={2} className={`${CELL} px-1 py-1 text-center align-middle`}>
-                6. Record Series Title and Description
-              </td>
-              <td colSpan={3} className={`${CELL} px-1 py-1 text-center`}>
-                7. Retention Period
-              </td>
-              <td rowSpan={2} className={`${CELL} px-1 py-1 text-center align-middle`}>
-                8. Remarks
-              </td>
-              <td />
-            </tr>
-            <tr className="text-[9px] font-bold leading-[1.25]">
-              <td className={`${CELL} px-1 py-0.5 text-center`}>Active</td>
-              <td className={`${CELL} px-1 py-0.5 text-center`}>Storage</td>
-              <td className={`${CELL} px-1 py-0.5 text-center`}>Total</td>
-              <td />
-            </tr>
-
-            {/* ---- The record series ---- */}
-            {series.map((row, i) => (
-              <tr key={i}>
-                <td className={`${CELL} px-1 py-1 text-center text-[12.5px] tabular-nums`}>
-                  {i + 1}
+            <tbody>
+              {/* ---- Identity block, fields 1 and 2 ---- */}
+              <tr>
+                <td rowSpan={2} colSpan={2} className={`${CELL} px-2 py-3 text-center align-middle`}>
+                  <div className="text-[11px] font-bold uppercase leading-[1.3]">
+                    National Archives of the Philippines
+                  </div>
+                  <div className="text-[10px] italic leading-[1.35]">
+                    Pambansang Sinupan ng Pilipinas
+                  </div>
+                  <div className="mt-2 text-[12.5px] font-bold uppercase leading-[1.3]">
+                    Records Disposition Schedule
+                  </div>
                 </td>
-                <td className={EDITABLE_CELL}>
-                  <textarea
-                    aria-label={`Item ${i + 1} record series title and description`}
-                    rows={2}
-                    value={row.titleAndDescription}
-                    onChange={(e) => patch(i, { titleAndDescription: e.target.value })}
+                <td colSpan={4} className={EDITABLE_CELL}>
+                  <FieldLabel>1. Agency Name:</FieldLabel>
+                  <input
+                    aria-label="Agency name"
+                    value={agencyName}
+                    onChange={(e) => setAgencyName(e.target.value)}
                     required
-                    className={`${INPUT} resize-y`}
+                    className={INPUT}
                   />
                 </td>
-                <YearsCell
-                  label={`Item ${i + 1} active retention in years`}
-                  value={row.retentionActive}
-                  onChange={(n) => patch(i, { retentionActive: n })}
-                />
-                <YearsCell
-                  label={`Item ${i + 1} storage retention in years`}
-                  value={row.retentionStorage}
-                  onChange={(n) => patch(i, { retentionStorage: n })}
-                />
-                {/*
-                 * Total is read-only here for the same reason it is a generated
-                 * column in the database: the printed figure is arithmetic, and
-                 * a typed one could disagree with its own parts.
-                 */}
-                <td className={`${CELL} px-1 py-1 text-center text-[12.5px] font-medium tabular-nums`}>
-                  {row.retentionActive + row.retentionStorage}
-                </td>
-                <td className={EDITABLE_CELL}>
-                  <textarea
-                    aria-label={`Item ${i + 1} remarks`}
-                    rows={2}
-                    value={row.remarks ?? ""}
-                    onChange={(e) => patch(i, { remarks: e.target.value })}
-                    className={`${INPUT} resize-y`}
-                  />
-                </td>
-                <td className="pl-1.5 align-middle">
-                  <IconButton
-                    type="button"
-                    size="icon-sm"
-                    aria-label={`Remove item ${i + 1}`}
-                    disabled={series.length === 1}
-                    onClick={() => removeRow(i)}
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </IconButton>
-                </td>
+                <td />
               </tr>
-            ))}
+              <tr>
+                <td colSpan={4} className={EDITABLE_CELL}>
+                  <FieldLabel>2. Address:</FieldLabel>
+                  <input
+                    aria-label="Agency address"
+                    value={agencyAddress}
+                    onChange={(e) => setAgencyAddress(e.target.value)}
+                    required
+                    className={INPUT}
+                  />
+                </td>
+                <td />
+              </tr>
 
-            {/* ---- The statutory footer, in the form's own words ---- */}
-            <tr>
-              <td colSpan={6} className={`${CELL} px-2 py-1.5 text-[9.5px] leading-[1.45]`}>
-                <span className="font-bold">IMPORTANT:</span> Pursuant to Section 18, Article III,
-                RA 9470 s. 2007, &ldquo;No government department, bureau, agency and
-                instrumentality shall dispose of, destroy or authorize the disposal or destruction
-                of any public records, which are in the custody or under its control except with
-                the prior written authority of the executive director.&rdquo;
-              </td>
-              <td />
-            </tr>
-          </tbody>
-        </table>
-      </div>
+              {/* ---- Fields 3 and 4 ---- */}
+              <tr>
+                <td colSpan={2} className={CELL}>
+                  <FieldLabel>3. Schedule No.</FieldLabel>
+                  <div className="px-1.5 py-1 text-[12.5px] leading-[1.4]">
+                    {initial ? (
+                      <span className="tabular-nums">{initial.scheduleNo}</span>
+                    ) : (
+                      <span className="text-neutral-500">Allocated when you save</span>
+                    )}
+                  </div>
+                </td>
+                <td colSpan={4} className={EDITABLE_CELL}>
+                  <FieldLabel>4. Date Prepared:</FieldLabel>
+                  <DatePicker
+                    id="date-prepared"
+                    value={datePrepared}
+                    onChange={setDatePrepared}
+                    className="m-1 w-[calc(100%-0.5rem)] rounded-[3px] border-neutral-400 px-1.5 py-1 text-[12.5px]"
+                  />
+                </td>
+                <td />
+              </tr>
+
+              {/* ---- Column headings, fields 5 to 8 ---- */}
+              <tr className="text-[9px] font-bold uppercase leading-[1.25]">
+                <td rowSpan={2} className={`${CELL} px-1 py-1 text-center align-middle`}>
+                  5. Item
+                  <br />
+                  Number
+                </td>
+                <td rowSpan={2} className={`${CELL} px-1 py-1 text-center align-middle`}>
+                  6. Record Series Title and Description
+                </td>
+                <td colSpan={3} className={`${CELL} px-1 py-1 text-center`}>
+                  7. Retention Period
+                </td>
+                <td rowSpan={2} className={`${CELL} px-1 py-1 text-center align-middle`}>
+                  8. Remarks
+                </td>
+                <td />
+              </tr>
+              <tr className="text-[9px] font-bold leading-[1.25]">
+                <td className={`${CELL} px-1 py-0.5 text-center`}>Active</td>
+                <td className={`${CELL} px-1 py-0.5 text-center`}>Storage</td>
+                <td className={`${CELL} px-1 py-0.5 text-center`}>Total</td>
+                <td />
+              </tr>
+
+              {/* ---- The record series ---- */}
+              {series.map((row, i) => (
+                <tr key={i}>
+                  <td className={`${CELL} px-1 py-1 text-center text-[12.5px] tabular-nums`}>
+                    {i + 1}
+                  </td>
+                  <td className={EDITABLE_CELL}>
+                    <textarea
+                      aria-label={`Item ${i + 1} record series title and description`}
+                      rows={2}
+                      value={row.titleAndDescription}
+                      onChange={(e) => patch(i, { titleAndDescription: e.target.value })}
+                      required
+                      className={`${INPUT} resize-y`}
+                    />
+                  </td>
+                  <YearsCell
+                    label={`Item ${i + 1} active retention in years`}
+                    value={row.retentionActive}
+                    onChange={(n) => patch(i, { retentionActive: n })}
+                  />
+                  <YearsCell
+                    label={`Item ${i + 1} storage retention in years`}
+                    value={row.retentionStorage}
+                    onChange={(n) => patch(i, { retentionStorage: n })}
+                  />
+                  {/*
+                   * Total is read-only here for the same reason it is a generated
+                   * column in the database: the printed figure is arithmetic, and
+                   * a typed one could disagree with its own parts.
+                   */}
+                  <td className={`${CELL} px-1 py-1 text-center text-[12.5px] font-medium tabular-nums`}>
+                    {row.retentionActive + row.retentionStorage}
+                  </td>
+                  <td className={EDITABLE_CELL}>
+                    <textarea
+                      aria-label={`Item ${i + 1} remarks`}
+                      rows={2}
+                      value={row.remarks ?? ""}
+                      onChange={(e) => patch(i, { remarks: e.target.value })}
+                      className={`${INPUT} resize-y`}
+                    />
+                  </td>
+                  <td className="pl-1.5 align-middle">
+                    <IconButton
+                      type="button"
+                      size="icon-sm"
+                      aria-label={`Remove item ${i + 1}`}
+                      disabled={series.length === 1}
+                      onClick={() => removeRow(i)}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </IconButton>
+                  </td>
+                </tr>
+              ))}
+
+              {/* ---- The statutory footer, in the form's own words ---- */}
+              <tr>
+                <td colSpan={6} className={`${CELL} px-2 py-1.5 text-[9.5px] leading-[1.45]`}>
+                  <span className="font-bold">IMPORTANT:</span> Pursuant to Section 18, Article III,
+                  RA 9470 s. 2007, &ldquo;No government department, bureau, agency and
+                  instrumentality shall dispose of, destroy or authorize the disposal or destruction
+                  of any public records, which are in the custody or under its control except with
+                  the prior written authority of the executive director.&rdquo;
+                </td>
+                <td />
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </PaperSheet>
 
       <Button type="button" variant="outline" onClick={addRow}>
         <Plus className="mr-2 h-4 w-4" />

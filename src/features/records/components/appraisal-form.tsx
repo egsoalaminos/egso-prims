@@ -2,6 +2,7 @@ import * as React from "react";
 import { Plus, Trash2 } from "lucide-react";
 
 import { Button, DatePicker, IconButton, SelectField } from "@/components";
+import { PaperSheet, SHEET_WIDTH } from "@/features/shared/paper-sheet";
 import {
   CELL,
   EDITABLE_CELL,
@@ -249,7 +250,13 @@ export function AppraisalForm({
   );
 
   return (
-    <form onSubmit={submit} className="space-y-4">
+    // The form is the sheet it becomes, so everything on the page — the
+    // status field above it, the buttons below — lines up with its edges.
+    <form
+      onSubmit={submit}
+      className="mx-auto w-full space-y-4"
+      style={{ maxWidth: SHEET_WIDTH.landscape }}
+    >
       <div className="flex flex-wrap items-center gap-3">
         <label htmlFor="appraisal-status" className="text-xs font-medium text-neutral-700">
           Status
@@ -272,273 +279,282 @@ export function AppraisalForm({
        * inside its own frame. Folding it into a narrower shape would be a form
        * the National Archives never printed.
        */}
-      <div className="w-full overflow-x-auto md:-mr-8">
-        <table className="w-full min-w-[1700px] table-fixed border-collapse bg-white font-[Arial,Helvetica,sans-serif]">
-          <colgroup>
-            <col className="w-[13%]" />
-            <col className="w-[8%]" />
-            <col className="w-[5%]" />
-            <col className="w-[6%]" />
-            <col className="w-[6%]" />
-            <col className="w-[8%]" />
-            <col className="w-[6%]" />
-            <col className="w-[6%]" />
-            <col className="w-[6%]" />
-            <col className="w-[7%]" />
-            <col className="w-[4%]" />
-            <col className="w-[4%]" />
-            <col className="w-[4%]" />
-            <col className="w-[13%]" />
-            <col className="w-10" />
-          </colgroup>
+      {/* Twenty columns need the long edge, so this one is the landscape
+          sheet — the orientation it is viewed and printed in. */}
+      <PaperSheet orientation="landscape">
+        {/*
+         * The row controls hang in the sheet's own right margin, so the ruled
+         * columns keep exactly the width they have on the printed sheet and the
+         * form lines up with the document it becomes.
+         */}
+        <div className="-mr-10">
+          <table className="w-full table-fixed border-collapse font-[Arial,Helvetica,sans-serif]">
+            <colgroup>
+              <col className="w-[13%]" />
+              <col className="w-[8%]" />
+              <col className="w-[5%]" />
+              <col className="w-[6%]" />
+              <col className="w-[6%]" />
+              <col className="w-[8%]" />
+              <col className="w-[6%]" />
+              <col className="w-[6%]" />
+              <col className="w-[6%]" />
+              <col className="w-[7%]" />
+              <col className="w-[4%]" />
+              <col className="w-[4%]" />
+              <col className="w-[4%]" />
+              <col className="w-[13%]" />
+              <col className="w-10" />
+            </colgroup>
 
-          <tbody>
-            {/* ---- Identity block and fields 1-8 ---- */}
-            <tr>
-              <td rowSpan={3} colSpan={3} className={`${CELL} px-2 py-3 text-center align-middle`}>
-                <div className="text-[11px] font-bold uppercase leading-[1.3]">
-                  National Archives of the Philippines
-                </div>
-                <div className="text-[10px] italic leading-[1.35]">
-                  Pambansang Sinupan ng Pilipinas
-                </div>
-                <div className="mt-2 text-[12.5px] font-bold uppercase leading-[1.3]">
-                  Records Inventory and Appraisal
-                </div>
-              </td>
-              {headerField({ label: "1. Name of Office:", field: "officeName", colSpan: 3, rowSpan: 2 })}
-              {headerField({ label: "2. Department/Division:", field: "departmentDivision", colSpan: 4 })}
-              {headerField({ label: "4. Telephone No.:", field: "telephoneNo", colSpan: 4 })}
-              <td />
-            </tr>
-            <tr>
-              {headerField({ label: "3. Section/Unit:", field: "sectionUnit", colSpan: 4 })}
-              {headerField({ label: "5. Email Address:", field: "emailAddress", colSpan: 4 })}
-              <td />
-            </tr>
-            <tr>
-              {headerField({ label: "6. Address:", field: "officeAddress", colSpan: 3 })}
-              {headerField({ label: "7. Person-in-Charge of Files:", field: "personInCharge", colSpan: 4 })}
-              <td colSpan={4} className={EDITABLE_CELL}>
-                <FieldLabel>8. Date Prepared:</FieldLabel>
-                <DatePicker
-                  id="date-prepared"
-                  value={datePrepared}
-                  onChange={setDatePrepared}
-                  className="m-1 w-[calc(100%-0.5rem)] rounded-[3px] border-neutral-400 px-1.5 py-1 text-[12.5px]"
-                />
-              </td>
-              <td />
-            </tr>
-
-            {/* ---- Column headings, fields 9 to 20 ---- */}
-            <tr>
-              <Head rowSpan={2}>9. Records Series Title and Description</Head>
-              <Head rowSpan={2}>
-                10. Period Covered /<br />
-                Inclusive Dates
-              </Head>
-              <Head rowSpan={2}>11. Volume</Head>
-              <Head rowSpan={2}>12. Records Medium</Head>
-              <Head rowSpan={2}>13. Restriction/s</Head>
-              <Head rowSpan={2}>14. Location of Records</Head>
-              <Head rowSpan={2}>15. Frequency of Use</Head>
-              <Head rowSpan={2}>16. Duplication</Head>
-              <Head rowSpan={2}>
-                17. Time Value
-                <br />
-                (T/P)
-              </Head>
-              <Head rowSpan={2}>
-                18. Utility Value
-                <br />
-                Adm/F/L/Arc
-              </Head>
-              <Head colSpan={3}>19. Retention Period</Head>
-              <Head rowSpan={2}>20. Disposition Provision</Head>
-              <td />
-            </tr>
-            <tr>
-              <Head>Active</Head>
-              <Head>Storage</Head>
-              <Head>Total</Head>
-              <td />
-            </tr>
-
-            {/* ---- The record lines ---- */}
-            {records.map((row, i) => (
-              <tr key={i}>
-                <td className={EDITABLE_CELL}>
-                  <textarea
-                    aria-label={`Item ${i + 1} records series title and description`}
-                    rows={2}
-                    value={row.titleAndDescription}
-                    onChange={(e) => patch(i, { titleAndDescription: e.target.value })}
-                    required
-                    className={`${INPUT} resize-y`}
-                  />
-                </td>
-                <TextCell
-                  label={`Item ${i + 1} period covered`}
-                  value={row.periodCovered}
-                  onChange={(v) => patch(i, { periodCovered: v })}
-                />
-                <TextCell
-                  label={`Item ${i + 1} volume`}
-                  value={row.volume}
-                  onChange={(v) => patch(i, { volume: v })}
-                />
-                <TextCell
-                  label={`Item ${i + 1} records medium`}
-                  value={row.recordsMedium}
-                  onChange={(v) => patch(i, { recordsMedium: v })}
-                />
-                <TextCell
-                  label={`Item ${i + 1} restrictions`}
-                  value={row.restrictions}
-                  onChange={(v) => patch(i, { restrictions: v })}
-                />
-                <TextCell
-                  label={`Item ${i + 1} location of records`}
-                  value={row.locationOfRecords}
-                  onChange={(v) => patch(i, { locationOfRecords: v })}
-                />
-                <TextCell
-                  label={`Item ${i + 1} frequency of use`}
-                  value={row.frequencyOfUse}
-                  onChange={(v) => patch(i, { frequencyOfUse: v })}
-                />
-                <TextCell
-                  label={`Item ${i + 1} duplication`}
-                  value={row.duplication}
-                  onChange={(v) => patch(i, { duplication: v })}
-                />
-                {/*
-                 * Fields 17 and 18 are a closed vocabulary — the form prints
-                 * its own legend for them — so they are chosen, not typed.
-                 */}
-                <td className={EDITABLE_CELL}>
-                  <select
-                    aria-label={`Item ${i + 1} time value`}
-                    value={row.timeValue ?? ""}
-                    onChange={(e) =>
-                      patch(i, { timeValue: (e.target.value || undefined) as TimeValue | undefined })
-                    }
-                    className={INPUT}
-                  >
-                    <option value="">—</option>
-                    {TIME_VALUES.map((v) => (
-                      <option key={v.code} value={v.code}>
-                        {v.label}
-                      </option>
-                    ))}
-                  </select>
-                </td>
-                <td className={EDITABLE_CELL}>
-                  <select
-                    aria-label={`Item ${i + 1} utility value`}
-                    value={row.utilityValue ?? ""}
-                    onChange={(e) =>
-                      patch(i, {
-                        utilityValue: (e.target.value || undefined) as UtilityValue | undefined,
-                      })
-                    }
-                    className={INPUT}
-                  >
-                    <option value="">—</option>
-                    {UTILITY_VALUES.map((v) => (
-                      <option key={v.code} value={v.code}>
-                        {v.label}
-                      </option>
-                    ))}
-                  </select>
-                </td>
-                <YearsCell
-                  label={`Item ${i + 1} active retention in years`}
-                  value={row.retentionActive}
-                  onChange={(n) => patch(i, { retentionActive: n })}
-                />
-                <YearsCell
-                  label={`Item ${i + 1} storage retention in years`}
-                  value={row.retentionStorage}
-                  onChange={(n) => patch(i, { retentionStorage: n })}
-                />
-                <td
-                  className={`${CELL} px-1 py-1 text-center text-[12.5px] font-medium tabular-nums`}
-                >
-                  {row.retentionActive + row.retentionStorage}
-                </td>
-                <TextCell
-                  label={`Item ${i + 1} disposition provision`}
-                  value={row.dispositionProvision}
-                  onChange={(v) => patch(i, { dispositionProvision: v })}
-                />
-                <td className="pl-1.5 align-middle">
-                  <IconButton
-                    type="button"
-                    size="icon-sm"
-                    aria-label={`Remove item ${i + 1}`}
-                    disabled={records.length === 1}
-                    onClick={() => removeRow(i)}
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </IconButton>
-                </td>
-              </tr>
-            ))}
-
-            {/* ---- Legend and signatures, as printed at the foot ---- */}
-            <tr>
-              <td colSpan={14} className={`${CELL} px-3 py-3`}>
-                <div className="text-[9.5px] leading-[1.6]">
-                  <span className="font-bold">LEGEND:</span>
-                  <div className="mt-1 flex flex-wrap gap-x-8">
-                    <span>
-                      <span className="font-bold">TIME VALUE:</span>{" "}
-                      {TIME_VALUES.map((v) => v.label).join("   ")}
-                    </span>
-                    <span>
-                      <span className="font-bold">UTILITY VALUE:</span>{" "}
-                      {UTILITY_VALUES.map((v) => v.label).join("   ")}
-                    </span>
+            <tbody>
+              {/* ---- Identity block and fields 1-8 ---- */}
+              <tr>
+                <td rowSpan={3} colSpan={3} className={`${CELL} px-2 py-3 text-center align-middle`}>
+                  <div className="text-[11px] font-bold uppercase leading-[1.3]">
+                    National Archives of the Philippines
                   </div>
-                </div>
+                  <div className="text-[10px] italic leading-[1.35]">
+                    Pambansang Sinupan ng Pilipinas
+                  </div>
+                  <div className="mt-2 text-[12.5px] font-bold uppercase leading-[1.3]">
+                    Records Inventory and Appraisal
+                  </div>
+                </td>
+                {headerField({ label: "1. Name of Office:", field: "officeName", colSpan: 3, rowSpan: 2 })}
+                {headerField({ label: "2. Department/Division:", field: "departmentDivision", colSpan: 4 })}
+                {headerField({ label: "4. Telephone No.:", field: "telephoneNo", colSpan: 4 })}
+                <td />
+              </tr>
+              <tr>
+                {headerField({ label: "3. Section/Unit:", field: "sectionUnit", colSpan: 4 })}
+                {headerField({ label: "5. Email Address:", field: "emailAddress", colSpan: 4 })}
+                <td />
+              </tr>
+              <tr>
+                {headerField({ label: "6. Address:", field: "officeAddress", colSpan: 3 })}
+                {headerField({ label: "7. Person-in-Charge of Files:", field: "personInCharge", colSpan: 4 })}
+                <td colSpan={4} className={EDITABLE_CELL}>
+                  <FieldLabel>8. Date Prepared:</FieldLabel>
+                  <DatePicker
+                    id="date-prepared"
+                    value={datePrepared}
+                    onChange={setDatePrepared}
+                    className="m-1 w-[calc(100%-0.5rem)] rounded-[3px] border-neutral-400 px-1.5 py-1 text-[12.5px]"
+                  />
+                </td>
+                <td />
+              </tr>
 
-                <div className="mt-5 grid gap-8 md:grid-cols-3">
-                  <SignatureBlock
-                    label="Prepared by:"
-                    caption={SIGNATORY_CAPTIONS.preparedBy}
-                    value={header.preparedBy}
-                    onChange={setField("preparedBy")}
-                    extra={
-                      <input
-                        aria-label="Position of the person who prepared this"
-                        placeholder="Position"
-                        value={header.preparedByPosition}
-                        onChange={(e) => setField("preparedByPosition")(e.target.value)}
-                        className="mt-1 w-full rounded-[3px] border border-neutral-400 bg-white px-1.5 py-1 text-[12.5px] outline-none focus:border-neutral-600 focus:ring-2 focus:ring-(--accent-ring)"
-                      />
-                    }
+              {/* ---- Column headings, fields 9 to 20 ---- */}
+              <tr>
+                <Head rowSpan={2}>9. Records Series Title and Description</Head>
+                <Head rowSpan={2}>
+                  10. Period Covered /<br />
+                  Inclusive Dates
+                </Head>
+                <Head rowSpan={2}>11. Volume</Head>
+                <Head rowSpan={2}>12. Records Medium</Head>
+                <Head rowSpan={2}>13. Restriction/s</Head>
+                <Head rowSpan={2}>14. Location of Records</Head>
+                <Head rowSpan={2}>15. Frequency of Use</Head>
+                <Head rowSpan={2}>16. Duplication</Head>
+                <Head rowSpan={2}>
+                  17. Time Value
+                  <br />
+                  (T/P)
+                </Head>
+                <Head rowSpan={2}>
+                  18. Utility Value
+                  <br />
+                  Adm/F/L/Arc
+                </Head>
+                <Head colSpan={3}>19. Retention Period</Head>
+                <Head rowSpan={2}>20. Disposition Provision</Head>
+                <td />
+              </tr>
+              <tr>
+                <Head>Active</Head>
+                <Head>Storage</Head>
+                <Head>Total</Head>
+                <td />
+              </tr>
+
+              {/* ---- The record lines ---- */}
+              {records.map((row, i) => (
+                <tr key={i}>
+                  <td className={EDITABLE_CELL}>
+                    <textarea
+                      aria-label={`Item ${i + 1} records series title and description`}
+                      rows={2}
+                      value={row.titleAndDescription}
+                      onChange={(e) => patch(i, { titleAndDescription: e.target.value })}
+                      required
+                      className={`${INPUT} resize-y`}
+                    />
+                  </td>
+                  <TextCell
+                    label={`Item ${i + 1} period covered`}
+                    value={row.periodCovered}
+                    onChange={(v) => patch(i, { periodCovered: v })}
                   />
-                  <SignatureBlock
-                    label="Assisted by:"
-                    caption={SIGNATORY_CAPTIONS.assistedBy}
-                    value={header.assistedBy}
-                    onChange={setField("assistedBy")}
+                  <TextCell
+                    label={`Item ${i + 1} volume`}
+                    value={row.volume}
+                    onChange={(v) => patch(i, { volume: v })}
                   />
-                  <SignatureBlock
-                    label="Approved by:"
-                    caption={SIGNATORY_CAPTIONS.approvedBy}
-                    value={header.approvedBy}
-                    onChange={setField("approvedBy")}
+                  <TextCell
+                    label={`Item ${i + 1} records medium`}
+                    value={row.recordsMedium}
+                    onChange={(v) => patch(i, { recordsMedium: v })}
                   />
-                </div>
-              </td>
-              <td />
-            </tr>
-          </tbody>
-        </table>
-      </div>
+                  <TextCell
+                    label={`Item ${i + 1} restrictions`}
+                    value={row.restrictions}
+                    onChange={(v) => patch(i, { restrictions: v })}
+                  />
+                  <TextCell
+                    label={`Item ${i + 1} location of records`}
+                    value={row.locationOfRecords}
+                    onChange={(v) => patch(i, { locationOfRecords: v })}
+                  />
+                  <TextCell
+                    label={`Item ${i + 1} frequency of use`}
+                    value={row.frequencyOfUse}
+                    onChange={(v) => patch(i, { frequencyOfUse: v })}
+                  />
+                  <TextCell
+                    label={`Item ${i + 1} duplication`}
+                    value={row.duplication}
+                    onChange={(v) => patch(i, { duplication: v })}
+                  />
+                  {/*
+                   * Fields 17 and 18 are a closed vocabulary — the form prints
+                   * its own legend for them — so they are chosen, not typed.
+                   */}
+                  <td className={EDITABLE_CELL}>
+                    <select
+                      aria-label={`Item ${i + 1} time value`}
+                      value={row.timeValue ?? ""}
+                      onChange={(e) =>
+                        patch(i, { timeValue: (e.target.value || undefined) as TimeValue | undefined })
+                      }
+                      className={INPUT}
+                    >
+                      <option value="">—</option>
+                      {TIME_VALUES.map((v) => (
+                        <option key={v.code} value={v.code}>
+                          {v.label}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                  <td className={EDITABLE_CELL}>
+                    <select
+                      aria-label={`Item ${i + 1} utility value`}
+                      value={row.utilityValue ?? ""}
+                      onChange={(e) =>
+                        patch(i, {
+                          utilityValue: (e.target.value || undefined) as UtilityValue | undefined,
+                        })
+                      }
+                      className={INPUT}
+                    >
+                      <option value="">—</option>
+                      {UTILITY_VALUES.map((v) => (
+                        <option key={v.code} value={v.code}>
+                          {v.label}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                  <YearsCell
+                    label={`Item ${i + 1} active retention in years`}
+                    value={row.retentionActive}
+                    onChange={(n) => patch(i, { retentionActive: n })}
+                  />
+                  <YearsCell
+                    label={`Item ${i + 1} storage retention in years`}
+                    value={row.retentionStorage}
+                    onChange={(n) => patch(i, { retentionStorage: n })}
+                  />
+                  <td
+                    className={`${CELL} px-1 py-1 text-center text-[12.5px] font-medium tabular-nums`}
+                  >
+                    {row.retentionActive + row.retentionStorage}
+                  </td>
+                  <TextCell
+                    label={`Item ${i + 1} disposition provision`}
+                    value={row.dispositionProvision}
+                    onChange={(v) => patch(i, { dispositionProvision: v })}
+                  />
+                  <td className="pl-1.5 align-middle">
+                    <IconButton
+                      type="button"
+                      size="icon-sm"
+                      aria-label={`Remove item ${i + 1}`}
+                      disabled={records.length === 1}
+                      onClick={() => removeRow(i)}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </IconButton>
+                  </td>
+                </tr>
+              ))}
+
+              {/* ---- Legend and signatures, as printed at the foot ---- */}
+              <tr>
+                <td colSpan={14} className={`${CELL} px-3 py-3`}>
+                  <div className="text-[9.5px] leading-[1.6]">
+                    <span className="font-bold">LEGEND:</span>
+                    <div className="mt-1 flex flex-wrap gap-x-8">
+                      <span>
+                        <span className="font-bold">TIME VALUE:</span>{" "}
+                        {TIME_VALUES.map((v) => v.label).join("   ")}
+                      </span>
+                      <span>
+                        <span className="font-bold">UTILITY VALUE:</span>{" "}
+                        {UTILITY_VALUES.map((v) => v.label).join("   ")}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="mt-5 grid gap-8 md:grid-cols-3">
+                    <SignatureBlock
+                      label="Prepared by:"
+                      caption={SIGNATORY_CAPTIONS.preparedBy}
+                      value={header.preparedBy}
+                      onChange={setField("preparedBy")}
+                      extra={
+                        <input
+                          aria-label="Position of the person who prepared this"
+                          placeholder="Position"
+                          value={header.preparedByPosition}
+                          onChange={(e) => setField("preparedByPosition")(e.target.value)}
+                          className="mt-1 w-full rounded-[3px] border border-neutral-400 bg-white px-1.5 py-1 text-[12.5px] outline-none focus:border-neutral-600 focus:ring-2 focus:ring-(--accent-ring)"
+                        />
+                      }
+                    />
+                    <SignatureBlock
+                      label="Assisted by:"
+                      caption={SIGNATORY_CAPTIONS.assistedBy}
+                      value={header.assistedBy}
+                      onChange={setField("assistedBy")}
+                    />
+                    <SignatureBlock
+                      label="Approved by:"
+                      caption={SIGNATORY_CAPTIONS.approvedBy}
+                      value={header.approvedBy}
+                      onChange={setField("approvedBy")}
+                    />
+                  </div>
+                </td>
+                <td />
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </PaperSheet>
 
       <Button type="button" variant="outline" onClick={addRow}>
         <Plus className="mr-2 h-4 w-4" />

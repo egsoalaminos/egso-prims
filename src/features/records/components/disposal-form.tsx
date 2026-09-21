@@ -2,6 +2,7 @@ import * as React from "react";
 import { Plus, Trash2 } from "lucide-react";
 
 import { Button, DatePicker, IconButton, SelectField } from "@/components";
+import { PaperSheet, SHEET_WIDTH } from "@/features/shared/paper-sheet";
 import {
   CELL,
   EDITABLE_CELL,
@@ -185,7 +186,13 @@ export function DisposalForm({
   );
 
   return (
-    <form onSubmit={submit} className="space-y-4">
+    // The form is the sheet it becomes, so everything on the page — the
+    // status field above it, the buttons below — lines up with its edges.
+    <form
+      onSubmit={submit}
+      className="mx-auto w-full space-y-4"
+      style={{ maxWidth: SHEET_WIDTH.portrait }}
+    >
       <div className="flex flex-wrap items-center gap-3">
         <label htmlFor="disposal-status" className="text-xs font-medium text-neutral-700">
           Status
@@ -203,15 +210,20 @@ export function DisposalForm({
         <FillLegend />
       </div>
 
-      <div className="w-full overflow-x-auto md:-mr-8">
-        <div className="min-w-[900px]">
+      <PaperSheet>
+        {/*
+         * The row controls hang in the sheet's own right margin, so the ruled
+         * columns keep exactly the width they have on the printed sheet and the
+         * form lines up with the document it becomes.
+         */}
+        <div className="-mr-10">
           {/* The form's own margin notes, printed on the paper. */}
           <div className="mb-1 flex items-start justify-between text-[9.5px] leading-[1.35] text-black">
             <span className="whitespace-pre-line">{FORM_MARKINGS.reference}</span>
             <span>{FORM_MARKINGS.copies}</span>
           </div>
 
-          <table className="w-full table-fixed border-collapse bg-white font-[Arial,Helvetica,sans-serif]">
+          <table className="w-full table-fixed border-collapse font-[Arial,Helvetica,sans-serif]">
             <colgroup>
               <col className="w-[13%]" />
               <col />
@@ -383,7 +395,7 @@ export function DisposalForm({
             </tbody>
           </table>
         </div>
-      </div>
+      </PaperSheet>
 
       <Button type="button" variant="outline" onClick={addRow}>
         <Plus className="mr-2 h-4 w-4" />

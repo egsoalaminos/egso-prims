@@ -17,6 +17,13 @@ import * as React from "react";
  * which is what escapes the app's fixed-height frame; this copy carries
  * data-print-hide so a page holding both puts only one of them on paper.
  */
+/**
+ * The sheet's own width, so what sits above and below it on the page — a
+ * status field, the Save and Cancel buttons — lines up with its edges instead
+ * of running the width of the window.
+ */
+export const SHEET_WIDTH = { portrait: "210mm", landscape: "297mm" } as const;
+
 export function PaperSheet({
   orientation = "portrait",
   children,
