@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import type { ColumnDef } from "@tanstack/react-table";
-import { Archive, Plus } from "lucide-react";
+import { Archive, Layers, Plus } from "lucide-react";
 
 import {
   Button,
@@ -86,10 +86,18 @@ export function RecordsListPage() {
         title="Records Management"
         description="Records disposition schedules filed with the National Archives of the Philippines."
         actions={
-          <Button onClick={() => navigate("/records/new")}>
-            <Plus className="mr-2 h-4 w-4" />
-            New Schedule
-          </Button>
+          <div className="flex items-center gap-2">
+            {/* A schedule says how long a series is kept; the room says where
+                it is. The two belong to each other, so each opens the other. */}
+            <Button variant="outline" onClick={() => navigate("/records/shelves")}>
+              <Layers className="mr-2 h-4 w-4" />
+              Records Room
+            </Button>
+            <Button onClick={() => navigate("/records/new")}>
+              <Plus className="mr-2 h-4 w-4" />
+              New Schedule
+            </Button>
+          </div>
         }
       />
 

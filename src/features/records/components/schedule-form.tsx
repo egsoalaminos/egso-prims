@@ -93,6 +93,8 @@ export function ScheduleForm({
   const [status, setStatus] = React.useState<ScheduleStatus>(initial?.status ?? "Draft");
   const [series, setSeries] = React.useState<RecordSeriesDraft[]>(
     initial?.series.map((s) => ({
+      // Kept so the save updates these lines rather than replacing them.
+      id: s.id,
       itemNumber: s.itemNumber,
       titleAndDescription: s.titleAndDescription,
       retentionActive: s.retentionActive,

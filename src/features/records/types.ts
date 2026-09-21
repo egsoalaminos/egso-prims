@@ -41,8 +41,20 @@ export interface RecordSeries {
   remarks?: string;
 }
 
-/** A line as the form collects it, before the database assigns identity. */
-export type RecordSeriesDraft = Omit<RecordSeries, "id" | "scheduleId" | "retentionTotal">;
+/**
+ * A line as the form collects it.
+ *
+ * `id` is carried through an edit rather than dropped. A save rewrites a
+ * schedule's lines, and re-inserting them under fresh identities meant a
+ * one-character fix to a title read, to everything downstream, as every
+ * series in the schedule being destroyed and a new set created: the audit
+ * trail said so, and anything attached to a series — where it sits on the
+ * shelf — went with it. A line the clerk added in this session has no id
+ * yet, and the database assigns one.
+ */
+export type RecordSeriesDraft = Omit<RecordSeries, "id" | "scheduleId" | "retentionTotal"> & {
+  id?: string;
+};
 
 /** The form's header — fields 1 through 4 — without its lines. */
 export interface DispositionSchedule {

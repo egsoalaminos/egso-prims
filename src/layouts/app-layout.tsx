@@ -461,6 +461,7 @@ function useBreadcrumbs(): BreadcrumbItem[] {
     } else {
       crumbs.push({ label, onClick: () => navigate(prefix) });
       if (rest[0] === "new") crumbs.push({ label: newLabel });
+      else if (rest[0] === "shelves") crumbs.push({ label: "Records Room" });
       else if (rest[1] === "edit") crumbs.push({ label: isRecordId(rest[0]) ? "Edit" : `Edit ${rest[0]}` });
       else if (!isRecordId(rest[0])) crumbs.push({ label: rest[0] });
     }

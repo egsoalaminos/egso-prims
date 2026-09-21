@@ -209,6 +209,7 @@ const DisposalEditPage = lazyPage(
   () => import("@/pages/records/disposal-edit-page"),
   "DisposalEditPage",
 );
+const ShelfMapPage = lazyPage(() => import("@/pages/records/shelf-map-page"), "ShelfMapPage");
 
 export const router = createBrowserRouter([
   { path: "login", element: <LoginPage />, errorElement: <RouteError /> },
@@ -262,6 +263,7 @@ export const router = createBrowserRouter([
           { path: "records/new", element: <RecordsCreatePage /> },
           // Declared before "records/:id" so the static segment is unmistakable:
           // an inventory route must never be read as a schedule id.
+          { path: "records/shelves", element: <ShelfMapPage /> },
           { path: "records/inventory", element: <RecordsInventoryListPage /> },
           { path: "records/inventory/new", element: <RecordsInventoryCreatePage /> },
           { path: "records/inventory/:id", element: <RecordsInventoryDetailPage /> },

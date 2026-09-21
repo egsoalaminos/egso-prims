@@ -61,7 +61,7 @@ function rowToSeries(r: any): RecordSeries {
 function seriesRows(scheduleId: string, input: ScheduleInput) {
   const ts = nowIso();
   return input.series.map((s, i) => ({
-    id: uid(),
+    id: s.id ?? uid(),
     schedule_id: scheduleId,
     item_number: i + 1,
     title_and_description: s.titleAndDescription.trim(),
@@ -201,8 +201,28 @@ export async function updateSchedule(
       .single(),
   );
 
+  /*
+   * The lines are rewritten as a set, because the form submits the whole
+   * form. Where each series sits in the records room is not part of that
+   * form, so it is read first and put back on the rows that survive: a clerk
+   * correcting a retention period must not silently empty the shelf map.
+   * A series the clerk removed takes its placement with it, which is right.
+   */
+  const placements = new Map<string, string | null>(
+    (
+      unwrap(
+        await db.from(SERIES).select("id, shelf_level_id").eq("schedule_id", id),
+      ) as { id: string; shelf_level_id: string | null }[]
+    ).map((r) => [r.id, r.shelf_level_id]),
+  );
+
+  const rows = seriesRows(id, input).map((r) => ({
+    ...r,
+    shelf_level_id: placements.get(r.id) ?? null,
+  }));
+
   unwrap(await db.from(SERIES).delete().eq("schedule_id", id).select());
-  unwrap(await db.from(SERIES).insert(seriesRows(id, input)).select());
+  unwrap(await db.from(SERIES).insert(rows).select());
 
   return rowToSchedule(header);
 }
