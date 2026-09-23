@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Archive, ArrowLeft, Layers, Plus, Trash2, X } from "lucide-react";
 
@@ -47,6 +47,10 @@ import {
  * cards inside a card; and each level's letter sits in a small square, the way
  * a divider is marked on the shelf itself. The one thing the page repeats is
  * that square, so the eye can find "Level B" the way a hand finds it.
+ *
+ * The page opens on the room seen from the door — every shelf side by side,
+ * drawn small — and a shelf opens to its levels only once it is chosen, the
+ * way a clerk walks to one unit rather than reading them all at once.
  *
  * Nothing here is filed with the National Archives — it is the office's own
  * map of its own room — so it carries none of the NAP form's chrome.
@@ -381,12 +385,103 @@ function ShelfCard({
   );
 }
 
+/* ---------------- the room, seen from the door ---------------- */
+
+/** Heights for the small folders on a tile, so a row does not read as a bar. */
+const MINI_SPINE_HEIGHTS = ["h-[72%]", "h-[82%]", "h-[77%]"] as const;
+
+/**
+ * One shelf as it looks from across the room: the uprights, the boards, and
+ * how full each level is. You pick the shelf you want to walk to here, and
+ * only then does it open to its levels and the folders on them.
+ */
+function ShelfTile({
+  shelf,
+  seriesByLevel,
+  onOpen,
+}: {
+  shelf: ShelfWithLevels;
+  seriesByLevel: Map<string, MappedSeries[]>;
+  onOpen: () => void;
+}) {
+  const total = shelf.levels.reduce(
+    (sum, level) => sum + (seriesByLevel.get(level.id)?.length ?? 0),
+    0,
+  );
+
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      aria-label={`Open ${shelf.name}`}
+      className="group block w-full rounded-[3px] text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring) focus-visible:ring-offset-2"
+    >
+      <div className="relative aspect-[4/5] border border-neutral-400 bg-neutral-50 px-[8px] pb-[8px] shadow-[0_1px_2px_rgba(0,0,0,0.10)] transition group-hover:-translate-y-0.5 group-hover:shadow-[0_6px_14px_rgba(0,0,0,0.14)]">
+        <span
+          aria-hidden
+          className="absolute inset-y-0 left-0 w-[8px] border-r border-neutral-500 bg-neutral-400"
+        />
+        <span
+          aria-hidden
+          className="absolute inset-y-0 right-0 w-[8px] border-l border-neutral-500 bg-neutral-400"
+        />
+        <div className="relative flex h-full flex-col border-t-[3px] border-neutral-500 bg-white">
+          {shelf.levels.length === 0 ? (
+            <span className="m-auto px-2 text-center text-[11.5px] italic text-neutral-400">
+              No levels yet
+            </span>
+          ) : (
+            shelf.levels.map((level) => {
+              const onLevel = seriesByLevel.get(level.id) ?? [];
+              return (
+                <div
+                  key={level.id}
+                  className="flex min-h-0 flex-1 items-end gap-[2px] overflow-hidden border-b-[3px] border-neutral-400 bg-neutral-100 px-1.5 shadow-[inset_0_4px_5px_-4px_rgba(0,0,0,0.22)]"
+                >
+                  {onLevel.slice(0, 14).map((s, i) => (
+                    <span
+                      key={s.id}
+                      aria-hidden
+                      className={`flex w-[7px] shrink-0 flex-col rounded-t-[1px] border border-neutral-400 bg-neutral-50 pt-[2px] ${MINI_SPINE_HEIGHTS[i % MINI_SPINE_HEIGHTS.length]}`}
+                    >
+                      <span className={`mx-auto h-[5px] w-[4px] ${labelTone(s.scheduleNo)}`} />
+                    </span>
+                  ))}
+                </div>
+              );
+            })
+          )}
+        </div>
+      </div>
+
+      <div className="mt-2 px-0.5">
+        <div className="truncate text-[13.5px] font-semibold text-neutral-900 group-hover:underline">
+          {shelf.name}
+        </div>
+        {shelf.location ? (
+          <div className="truncate text-[12px] text-neutral-500">{shelf.location}</div>
+        ) : null}
+        <div className="text-[12px] tabular-nums text-neutral-500">
+          {shelf.levels.length} {shelf.levels.length === 1 ? "level" : "levels"} · {total} series
+        </div>
+      </div>
+    </button>
+  );
+}
+
 /* ---------------- page ---------------- */
 
 export function ShelfMapPage() {
   const navigate = useNavigate();
   const { shelves, series, loading, refresh } = useShelfMap();
   const still = useReducedMotion() ?? false;
+
+  // The open shelf lives in the address, so the browser's Back returns to
+  // the room rather than leaving it.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const openShelf = shelves.find((s) => s.id === searchParams.get("shelf")) ?? null;
+  const openShelfById = (id: string | null) =>
+    setSearchParams(id ? { shelf: id } : {}, { replace: false });
 
   const [newShelfOpen, setNewShelfOpen] = React.useState(false);
   const [newShelfName, setNewShelfName] = React.useState("");
@@ -489,19 +584,34 @@ export function ShelfMapPage() {
           </ContainerCard>
         ) : (
           <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
-            <div className="space-y-4">
-              {shelves.map((shelf) => (
+            {!openShelf ? (
+              <div className="grid grid-cols-2 content-start gap-x-5 gap-y-6 sm:grid-cols-3">
+                {shelves.map((shelf) => (
+                  <ShelfTile
+                    key={shelf.id}
+                    shelf={shelf}
+                    seriesByLevel={seriesByLevel}
+                    onOpen={() => openShelfById(shelf.id)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <Button variant="ghost" size="sm" onClick={() => openShelfById(null)}>
+                  <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
+                  All shelves
+                </Button>
                 <ShelfCard
-                  key={shelf.id}
-                  shelf={shelf}
+                  key={openShelf.id}
+                  shelf={openShelf}
                   still={still}
                   seriesByLevel={seriesByLevel}
                   onRenameShelf={(changes) =>
                     void run(
                       () =>
-                        updateShelf(shelf.id, {
-                          name: changes.name ?? shelf.name,
-                          location: changes.location ?? shelf.location,
+                        updateShelf(openShelf.id, {
+                          name: changes.name ?? openShelf.name,
+                          location: changes.location ?? openShelf.location,
                         }),
                       "Unable to rename the shelf",
                     )
@@ -510,14 +620,14 @@ export function ShelfMapPage() {
                     void run(
                       () =>
                         createLevel(
-                          shelf.id,
-                          { label: nextLevelLabel(shelf.levels) },
-                          shelf.levels.length,
+                          openShelf.id,
+                          { label: nextLevelLabel(openShelf.levels) },
+                          openShelf.levels.length,
                         ),
                       "Unable to add the level",
                     )
                   }
-                  onDeleteShelf={() => setShelfToRemove(shelf)}
+                  onDeleteShelf={() => setShelfToRemove(openShelf)}
                   onRenameLevel={(level, changes) =>
                     void run(
                       () =>
@@ -537,8 +647,8 @@ export function ShelfMapPage() {
                     void run(() => placeSeries(id, null), "Unable to take the series off")
                   }
                 />
-              ))}
-            </div>
+              </div>
+            )}
 
             {/* What still has no home. The point of the map is seeing this. */}
             <ContainerCard className="h-fit lg:sticky lg:top-0">
