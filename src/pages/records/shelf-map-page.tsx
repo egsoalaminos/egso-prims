@@ -132,7 +132,9 @@ function InlineText({
 function slottedUpright(slot: number, pitch: number): React.CSSProperties {
   return {
     backgroundColor: "#b9bec6",
-    backgroundImage: `repeating-linear-gradient(to bottom, transparent 0 ${pitch - slot}px, #4b5160 ${pitch - slot}px ${pitch}px)`,
+    // The holes are the palette's neutral-600 (DESIGN.md nav-idle). The build
+    // emits that token as #525252 for old Chrome, so it holds on office PCs.
+    backgroundImage: `repeating-linear-gradient(to bottom, transparent 0 ${pitch - slot}px, var(--color-neutral-600) ${pitch - slot}px ${pitch}px)`,
     backgroundSize: `${Math.max(3, Math.round(slot * 0.8))}px 100%`,
     backgroundPosition: "center top",
     backgroundRepeat: "no-repeat",
