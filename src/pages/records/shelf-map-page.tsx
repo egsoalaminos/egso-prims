@@ -49,8 +49,8 @@ import {
  * "Level B" the way a hand finds it.
  *
  * The page opens on the room seen from the door — every shelf side by side,
- * drawn small — and the chosen shelf opens below it, the room staying in
- * view, the way a clerk walks to one unit rather than reading them all.
+ * drawn small — and a shelf opens to its levels only once it is chosen, the
+ * way a clerk walks to one unit rather than reading them all at once.
  *
  * Nothing here is filed with the National Archives — it is the office's own
  * map of its own room — so it carries none of the NAP form's chrome.
@@ -423,17 +423,15 @@ function ShelfCard({
  * One shelf as it looks from across the room: the slotted uprights, the
  * boards, and the archive boxes on each level — each with its label card and
  * its schedule's colour, so how full a level is shows before you walk to it.
- * Choosing a shelf opens it below; the room stays in view above it.
+ * Choosing a shelf opens it in place of the room.
  */
 function ShelfTile({
   shelf,
   seriesByLevel,
-  open,
   onOpen,
 }: {
   shelf: ShelfWithLevels;
   seriesByLevel: Map<string, MappedSeries[]>;
-  open: boolean;
   onOpen: () => void;
 }) {
   const total = shelf.levels.reduce(
@@ -446,14 +444,9 @@ function ShelfTile({
       type="button"
       onClick={onOpen}
       aria-label={`Open ${shelf.name}`}
-      aria-pressed={open}
       className="group block w-full text-left focus-visible:outline-none"
     >
-      <div
-        className={`relative aspect-[4/5] p-[5px] outline-offset-0 transition group-focus-visible:ring-2 group-focus-visible:ring-(--accent-ring) ${
-          open ? "outline outline-2 outline-[#7e1624]" : "group-hover:-translate-y-0.5"
-        }`}
-      >
+      <div className="relative aspect-[4/5] p-[5px] transition group-hover:-translate-y-0.5 group-focus-visible:ring-2 group-focus-visible:ring-(--accent-ring)">
         <div className="relative flex h-full flex-col bg-[#eceef1] px-[9px]">
           <span
             aria-hidden
@@ -504,11 +497,7 @@ function ShelfTile({
       </div>
 
       <div className="mt-2 px-0.5">
-        <div
-          className={`truncate text-[14px] font-semibold group-hover:underline ${
-            open ? "text-[#7e1624]" : "text-neutral-900"
-          }`}
-        >
+        <div className="truncate text-[14px] font-semibold text-neutral-900 group-hover:underline">
           {shelf.name}
         </div>
         <div className="truncate text-[12.5px] tabular-nums text-neutral-500">
@@ -635,20 +624,23 @@ export function ShelfMapPage() {
           </ContainerCard>
         ) : (
           <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
-            <div className="min-w-0 space-y-6">
+            {!openShelf ? (
               <div className="grid grid-cols-2 content-start gap-x-6 gap-y-6 sm:grid-cols-3">
                 {shelves.map((shelf) => (
                   <ShelfTile
                     key={shelf.id}
                     shelf={shelf}
-                    open={openShelf?.id === shelf.id}
                     seriesByLevel={seriesByLevel}
-                    onOpen={() => openShelfById(openShelf?.id === shelf.id ? null : shelf.id)}
+                    onOpen={() => openShelfById(shelf.id)}
                   />
                 ))}
               </div>
-
-              {openShelf && (
+            ) : (
+              <div className="min-w-0 space-y-3">
+                <Button variant="ghost" size="sm" onClick={() => openShelfById(null)}>
+                  <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
+                  All shelves
+                </Button>
                 <ShelfCard
                   key={openShelf.id}
                   shelf={openShelf}
@@ -695,8 +687,8 @@ export function ShelfMapPage() {
                     void run(() => placeSeries(id, null), "Unable to take the series off")
                   }
                 />
-              )}
-            </div>
+              </div>
+            )}
 
             {/* What still has no home. The point of the map is seeing this. */}
             <ContainerCard className="h-fit lg:sticky lg:top-0">
