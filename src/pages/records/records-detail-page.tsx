@@ -19,6 +19,7 @@ import {
   RecordsScheduleSheet,
 } from "@/features/records/components/records-print-form";
 import { PaperSheet } from "@/features/shared/paper-sheet";
+import { ScheduleStorage } from "@/features/records/components/room/schedule-storage";
 
 /**
  * One disposition schedule, shown as the schedule.
@@ -104,6 +105,8 @@ export function RecordsDetailPage() {
         <PaperSheet>
           <RecordsScheduleSheet schedule={schedule} />
         </PaperSheet>
+
+        <ScheduleStorage series={schedule.series} />
       </PageTransition>
 
       <RecordsPrintForm schedule={schedule} />

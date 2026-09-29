@@ -1,4 +1,4 @@
-import { fetchAll, requireDb, searchOr, unwrap } from "@/lib/db";
+import { fetchAll, friendlyDbError, requireDb, searchOr, unwrap } from "@/lib/db";
 import { nextDocumentNumber } from "@/features/shared/doc-numbers";
 import type {
   DispositionSchedule,
@@ -202,33 +202,64 @@ export async function updateSchedule(
   );
 
   /*
-   * The lines are rewritten as a set, because the form submits the whole
-   * form. Where each series sits in the records room is not part of that
-   * form, so it is read first and put back on the rows that survive: a clerk
-   * correcting a retention period must not silently empty the shelf map.
-   * A series the clerk removed takes its placement with it, which is right.
+   * The lines are updated in place, not deleted and re-inserted. Files in the
+   * records room belong to a series, and a delete would either take them
+   * with it or be refused by the database — so a one-character fix to a
+   * title would destroy the register or fail to save. Only the lines the
+   * clerk removed are deleted. Storage placement is not in the payload, so an
+   * update leaves it where it is.
+   *
+   * Renumbering happens in one upsert: the item-number constraint is checked
+   * at the end of the statement (migration 045), so rows can pass through
+   * each other's numbers on the way.
    */
-  const placements = new Map<string, string | null>(
+  const existing = new Set(
     (
-      unwrap(
-        await db.from(SERIES).select("id, shelf_level_id").eq("schedule_id", id),
-      ) as { id: string; shelf_level_id: string | null }[]
-    ).map((r) => [r.id, r.shelf_level_id]),
+      unwrap(await db.from(SERIES).select("id").eq("schedule_id", id)) as { id: string }[]
+    ).map((r) => r.id),
   );
+  const rows = seriesRows(id, input);
+  const kept = rows.filter((r) => existing.has(r.id));
+  const added = rows.filter((r) => !existing.has(r.id));
+  const removed = [...existing].filter((rowId) => !rows.some((r) => r.id === rowId));
 
-  const rows = seriesRows(id, input).map((r) => ({
-    ...r,
-    shelf_level_id: placements.get(r.id) ?? null,
-  }));
-
-  unwrap(await db.from(SERIES).delete().eq("schedule_id", id).select());
-  unwrap(await db.from(SERIES).insert(rows).select());
+  if (removed.length > 0) {
+    const { error } = await db.from(SERIES).delete().in("id", removed);
+    if (error) {
+      if (String((error as { message?: string }).message).includes("record_files")) {
+        throw new Error(
+          "A record series you removed still has files filed under it in the Records Room. Keep the line, or remove those files first.",
+        );
+      }
+      throw friendlyDbError(error);
+    }
+  }
+  if (kept.length > 0) {
+    unwrap(
+      await db
+        .from(SERIES)
+        .upsert(kept.map(({ created_at: _created, ...r }) => r), { onConflict: "id" })
+        .select(),
+    );
+  }
+  if (added.length > 0) unwrap(await db.from(SERIES).insert(added).select());
 
   return rowToSchedule(header);
 }
 
-/** Deletes a schedule. Its record series go with it (on delete cascade). */
+/**
+ * Deletes a schedule. Its record series go with it (on delete cascade) —
+ * unless files are filed under one of them, which the database refuses.
+ */
 export async function deleteSchedule(id: string): Promise<void> {
   const db = requireDb();
-  unwrap(await db.from(SCHEDULES).delete().eq("id", id).select());
+  const { error } = await db.from(SCHEDULES).delete().eq("id", id).select();
+  if (error) {
+    if (String((error as { message?: string }).message).includes("record_files")) {
+      throw new Error(
+        "Files in the Records Room are still filed under this schedule's record series. Remove those files before deleting the schedule.",
+      );
+    }
+    throw friendlyDbError(error);
+  }
 }
