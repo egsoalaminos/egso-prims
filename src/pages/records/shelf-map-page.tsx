@@ -24,6 +24,7 @@ import {
   SLOTS,
   boxName,
   boxYearLine,
+  levelName,
   locationOf,
   type BoxContent,
   type DocType,
@@ -53,8 +54,8 @@ import { docTone, formatDate, recordCount } from "@/features/records/components/
  *
  * The rack is drawn at the proportions of a real one. A level holds two
  * boxes, so a shelf is narrow — it is not stretched to the width of the
- * page — and each level is one row: its letter on a rail at the left, its two
- * positions beside it, the board beneath.
+ * page — and each level is one row, named for what is on it ("Disposition
+ * Schedules", "Available Storage"), with its letter beside the name.
  */
 
 /* ---------------- inline editing ---------------- */
@@ -198,7 +199,7 @@ function BoxCard({
 /** A position with no box in it: present, but quiet. */
 function EmptySlot({ slot }: { slot: Slot }) {
   return (
-    <div className="flex h-full min-h-[76px] flex-col justify-center rounded-[3px] border border-dashed border-neutral-300 px-3 text-[12px] leading-snug">
+    <div className="flex h-full min-h-[72px] flex-col justify-center rounded-[3px] border border-dashed border-neutral-300 px-3 text-[12px] leading-snug">
       <span className="font-medium text-neutral-500">Box {slot}</span>
       <span className="text-neutral-400">Empty</span>
     </div>
@@ -206,9 +207,10 @@ function EmptySlot({ slot }: { slot: Slot }) {
 }
 
 /**
- * One level: its letter on a rail at the left, its two box positions beside
- * it, and the board they stand on as the row's lower edge — one row, not a
- * storage band with a separate label bar under it.
+ * One level: what it holds, named from the boxes on it, beside its two box
+ * positions, with the board they stand on beneath — one row. The letter is the
+ * level's fixed place on the steel and stays beside the name, quieter, for
+ * anyone walking to "Level B".
  */
 function LevelRow({
   level,
@@ -225,23 +227,27 @@ function LevelRow({
   locatedBox: string | null;
   onOpenBox: (box: RecordBox) => void;
 }) {
+  const standing = SLOTS.map((slot) => boxAt(slot)).filter((b): b is RecordBox => !!b);
+  const name = levelName(standing.map((b) => b.documentType));
   return (
     <div id={`level-${level.id}`}>
+      {/* One grid: on a phone the name sits above the two boxes; from sm up
+          it takes a column of its own at the left, so naming the level
+          costs no height. */}
       <div
-        className={`grid grid-cols-[1.75rem_minmax(0,1fr)_minmax(0,1fr)] items-stretch gap-2 px-2 sm:grid-cols-[2.75rem_minmax(0,1fr)_minmax(0,1fr)] sm:gap-2.5 sm:px-2.5 pb-2 pt-2.5 shadow-[inset_0_8px_10px_-8px_rgba(0,0,0,0.18)] transition-colors ${
+        className={`grid grid-cols-2 items-stretch gap-2 px-2.5 pb-2 pt-2 shadow-[inset_0_8px_10px_-8px_rgba(0,0,0,0.18)] transition-colors sm:grid-cols-[7.5rem_minmax(0,1fr)_minmax(0,1fr)] sm:gap-2.5 sm:pt-2.5 ${
           located ? "bg-[#fef3c7]" : "bg-[#eceef1]"
         }`}
       >
-        <div className="flex flex-col items-center justify-center gap-1">
+        <div className="col-span-2 flex min-w-0 items-baseline gap-2 px-0.5 sm:col-span-1 sm:flex-col sm:justify-center sm:gap-0.5">
           <span
-            aria-label={`Level ${level.label}`}
-            className="grid h-7 w-7 place-items-center rounded-[2px] bg-neutral-900 text-[13px] font-bold text-white"
+            className={`text-[11.5px] font-semibold uppercase leading-snug tracking-[0.08em] ${
+              standing.length ? "text-neutral-900" : "text-neutral-500"
+            }`}
           >
-            {level.label}
+            {name}
           </span>
-          <span className="hidden text-[11px] font-medium uppercase tracking-[0.08em] text-neutral-500 sm:block">
-            Level
-          </span>
+          <span className="shrink-0 text-[11.5px] text-neutral-500">Level {level.label}</span>
         </div>
         {SLOTS.map((slot) => {
           const box = boxAt(slot);

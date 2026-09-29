@@ -136,3 +136,23 @@ export function locationOf(
   }
   return null;
 }
+
+/** What a level holds, named for the kind of document on it. */
+const LEVEL_NAMES: Record<DocType, string> = {
+  RDS: "Disposition Schedules",
+  RIA: "Inventory & Appraisal",
+  RAD: "Authority to Dispose",
+};
+
+/**
+ * A level's name, read from the boxes standing on it now — never stored, so
+ * it cannot fall out of step with the shelf. One kind of document gives that
+ * kind's name; two kinds side by side give "Mixed Records"; nothing gives
+ * "Available Storage". The letter (A–E) stays the level's fixed coordinate.
+ */
+export function levelName(types: DocType[]): string {
+  const kinds = new Set(types);
+  if (kinds.size === 0) return "Available Storage";
+  if (kinds.size > 1) return "Mixed Records";
+  return LEVEL_NAMES[[...kinds][0]];
+}
