@@ -145,9 +145,10 @@ const LEVEL_NAMES: Record<DocType, string> = {
 };
 
 /**
- * A level's name, read from the boxes standing on it now — never stored, so
- * it cannot fall out of step with the shelf. One kind of document gives that
- * kind's name; two kinds side by side give "Mixed Records"; nothing gives
+ * A level's name, read from the kinds of document filed on it now — pass the
+ * type of each box on the level that holds at least one document. Never
+ * stored, so it cannot fall out of step with the shelf: one kind gives that
+ * kind's name; more than one gives "Mixed Records"; nothing filed gives
  * "Available Storage". The letter (A–E) stays the level's fixed coordinate.
  */
 export function levelName(types: DocType[]): string {

@@ -228,7 +228,10 @@ function LevelRow({
   onOpenBox: (box: RecordBox) => void;
 }) {
   const standing = SLOTS.map((slot) => boxAt(slot)).filter((b): b is RecordBox => !!b);
-  const name = levelName(standing.map((b) => b.documentType));
+  // Named for what is filed here: a box whose documents have all been taken
+  // back out of Approved holds nothing, so it does not name the level.
+  const filed = standing.filter((b) => (counts.get(b.id) ?? 0) > 0);
+  const name = levelName(filed.map((b) => b.documentType));
   return (
     <div id={`level-${level.id}`}>
       {/* One grid: on a phone the name sits above the two boxes; from sm up
@@ -242,7 +245,7 @@ function LevelRow({
         <div className="col-span-2 flex min-w-0 items-baseline gap-2 px-0.5 sm:col-span-1 sm:flex-col sm:justify-center sm:gap-0.5">
           <span
             className={`text-[11.5px] font-semibold uppercase leading-snug tracking-[0.08em] ${
-              standing.length ? "text-neutral-900" : "text-neutral-500"
+              filed.length ? "text-neutral-900" : "text-neutral-500"
             }`}
           >
             {name}
