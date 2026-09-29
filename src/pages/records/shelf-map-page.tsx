@@ -548,15 +548,38 @@ export function ShelfMapPage() {
 
   const unplaced = React.useMemo(() => series.filter((s) => !s.shelfLevelId), [series]);
 
-  const filteredUnplaced = React.useMemo(() => {
+  /** Where a series stands now, in the words on the steel: "Shelf 1 · A · Personnel". */
+  const whereIs = React.useMemo(() => {
+    const map = new Map<string, string>();
+    for (const shelf of shelves)
+      for (const level of shelf.levels)
+        map.set(
+          level.id,
+          `${shelf.name} · ${level.label}${level.category ? ` · ${level.category}` : ""}`,
+        );
+    return map;
+  }, [shelves]);
+
+  /**
+   * What the picker offers for a level: every series that is not already on
+   * it. The ones with no shelf come first, as the suggestion, since giving
+   * them a home is what the map is for; the rest are listed after with where
+   * they stand now, and picking one moves it.
+   */
+  const pickerGroups = React.useMemo(() => {
     const q = pickerSearch.trim().toLowerCase();
-    if (!q) return unplaced;
-    return unplaced.filter(
-      (s) =>
-        s.titleAndDescription.toLowerCase().includes(q) ||
-        s.scheduleNo.toLowerCase().includes(q),
+    const matches = (s: MappedSeries) =>
+      !q ||
+      s.titleAndDescription.toLowerCase().includes(q) ||
+      s.scheduleNo.toLowerCase().includes(q);
+    const candidates = series.filter(
+      (s) => s.shelfLevelId !== placingOn?.id && matches(s),
     );
-  }, [unplaced, pickerSearch]);
+    return {
+      suggested: candidates.filter((s) => !s.shelfLevelId),
+      elsewhere: candidates.filter((s) => s.shelfLevelId),
+    };
+  }, [series, placingOn, pickerSearch]);
 
   /** Runs a write, reports its failure in the office's words, then reloads. */
   const run = async (work: () => Promise<void>, failure: string) => {
@@ -781,7 +804,7 @@ export function ShelfMapPage() {
             ? `Place on level ${placingOn.label}${placingOn.category ? ` · ${placingOn.category}` : ""}`
             : "Place a record series"
         }
-        description="Choose a record series that has no shelf yet."
+        description="Choose the record series that goes on this level."
         icon={Layers}
         hideCancel
         confirmLabel="Done"
@@ -794,39 +817,64 @@ export function ShelfMapPage() {
             value={pickerSearch}
             onChange={(e) => setPickerSearch(e.target.value)}
           />
-          {filteredUnplaced.length === 0 ? (
+          {pickerGroups.suggested.length + pickerGroups.elsewhere.length === 0 ? (
             <p className="py-4 text-center text-[12.5px] text-neutral-500">
-              {unplaced.length === 0
-                ? "Every record series is already on a shelf."
-                : "No unplaced series matches that."}
+              {pickerSearch.trim()
+                ? "No record series matches that."
+                : "There are no other record series to place here yet."}
             </p>
           ) : (
-            <ul className="max-h-64 divide-y divide-neutral-200 overflow-y-auto rounded-[3px] border border-neutral-200">
-              {filteredUnplaced.map((s) => (
-                <li key={s.id}>
-                  <button
-                    type="button"
-                    className="w-full px-3 py-2.5 text-left transition hover:bg-neutral-50 focus-visible:bg-neutral-50 focus-visible:outline-none"
-                    onClick={() => {
-                      const level = placingOn;
-                      if (!level) return;
-                      setPlacingOn(null);
-                      void run(
-                        () => placeSeries(s.id, level.id),
-                        "Unable to place the series",
-                      );
-                    }}
-                  >
-                    <span className="block truncate text-[13px] text-neutral-900">
-                      {s.titleAndDescription}
-                    </span>
-                    <span className="block text-[12px] tabular-nums text-neutral-500">
-                      {s.scheduleNo} · item {s.itemNumber}
-                    </span>
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <div className="max-h-72 space-y-3 overflow-y-auto">
+              {(
+                [
+                  ["Suggested · not yet on a shelf", pickerGroups.suggested],
+                  ["Already on a shelf · choosing one moves it here", pickerGroups.elsewhere],
+                ] as const
+              ).map(([heading, list]) =>
+                list.length === 0 ? null : (
+                  <div key={heading}>
+                    <div className="px-0.5 pb-1 text-[11.5px] font-semibold uppercase tracking-[0.06em] text-neutral-500">
+                      {heading}
+                    </div>
+                    <ul className="divide-y divide-neutral-200 rounded-[3px] border border-neutral-200">
+                      {list.map((s) => (
+                        <li key={s.id}>
+                          <button
+                            type="button"
+                            className="flex w-full items-start gap-2.5 px-3 py-2.5 text-left transition hover:bg-neutral-50 focus-visible:bg-neutral-50 focus-visible:outline-none"
+                            onClick={() => {
+                              const level = placingOn;
+                              if (!level) return;
+                              setPlacingOn(null);
+                              void run(
+                                () => placeSeries(s.id, level.id),
+                                "Unable to place the series",
+                              );
+                            }}
+                          >
+                            <span
+                              aria-hidden
+                              className={`mt-1 h-[8px] w-[8px] shrink-0 ${labelTone(s.scheduleNo)}`}
+                            />
+                            <span className="min-w-0 flex-1">
+                              <span className="block truncate text-[13px] text-neutral-900">
+                                {s.titleAndDescription}
+                              </span>
+                              <span className="block truncate text-[12px] tabular-nums text-neutral-500">
+                                {s.scheduleNo} · item {s.itemNumber}
+                                {s.shelfLevelId
+                                  ? ` · now on ${whereIs.get(s.shelfLevelId) ?? "another shelf"}`
+                                  : ""}
+                              </span>
+                            </span>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ),
+              )}
+            </div>
           )}
         </div>
       </ConfirmationModal>
