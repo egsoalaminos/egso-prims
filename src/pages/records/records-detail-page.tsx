@@ -19,7 +19,7 @@ import {
   RecordsScheduleSheet,
 } from "@/features/records/components/records-print-form";
 import { PaperSheet } from "@/features/shared/paper-sheet";
-import { ScheduleStorage } from "@/features/records/components/room/schedule-storage";
+import { FiledLocation } from "@/features/records/components/room/filed-location";
 
 /**
  * One disposition schedule, shown as the schedule.
@@ -106,7 +106,7 @@ export function RecordsDetailPage() {
           <RecordsScheduleSheet schedule={schedule} />
         </PaperSheet>
 
-        <ScheduleStorage series={schedule.series} />
+        <FiledLocation type="RDS" sourceId={schedule.id} />
       </PageTransition>
 
       <RecordsPrintForm schedule={schedule} />

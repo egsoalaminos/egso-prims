@@ -1,33 +1,32 @@
+import type { DocType } from "@/features/records/shelf-types";
+
 /**
- * Words and colours the Records Room, its drawer and the schedule page share.
+ * Words and colours the Records Room, its drawers and the document pages share.
  */
 
 /**
- * The colour of a record series, keyed to the schedule it belongs to: boxes
- * of the same colour were declared by the same disposition schedule. It is
- * never the only carrier — the schedule number is printed beside it.
+ * The colour band on a box says which kind of document is inside: one colour
+ * per form. It is never the only carrier — the kind is printed on the label
+ * beside it — so the room still reads in greyscale.
  */
-const LABEL_TONES = [
-  "bg-[#7e1624] text-white",
-  "bg-[#1d4ed8] text-white",
-  "bg-[#166534] text-white",
-  "bg-[#b45309] text-white",
-  "bg-[#5b21b6] text-white",
-  "bg-[#0f766e] text-white",
-] as const;
+const DOC_TONES: Record<DocType, string> = {
+  RDS: "bg-[#7e1624]",
+  RIA: "bg-[#1d4ed8]",
+  RAD: "bg-[#166534]",
+};
 
-export function labelTone(scheduleNo: string): string {
-  let hash = 0;
-  for (let i = 0; i < scheduleNo.length; i++) hash = (hash * 31 + scheduleNo.charCodeAt(i)) >>> 0;
-  return LABEL_TONES[hash % LABEL_TONES.length];
+export function docTone(type: DocType): string {
+  return DOC_TONES[type];
 }
 
-/** "RDS-2026-000003 · Item 1" — how a series is cited. */
-export function seriesCitation(scheduleNo: string, itemNumber: number): string {
-  return `${scheduleNo} · Item ${itemNumber}`;
+/** yyyy-MM-dd → "Sep 29, 2026". */
+export function formatDate(iso: string): string {
+  if (!iso) return "—";
+  const d = new Date(`${iso.slice(0, 10)}T00:00:00`);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" });
 }
 
-/** A retention period in years: "1 year", "0 years". */
-export function years(n: number): string {
-  return `${n} ${n === 1 ? "year" : "years"}`;
+export function recordCount(n: number): string {
+  return `${n} ${n === 1 ? "record" : "records"}`;
 }

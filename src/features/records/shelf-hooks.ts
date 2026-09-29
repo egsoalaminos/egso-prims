@@ -2,28 +2,31 @@ import * as React from "react";
 
 import { reportLoadFailure } from "@/features/shared/load-guard";
 import { useRealtimeRefresh } from "@/features/shared/use-realtime";
-import { listMappedSeries, listShelves } from "@/features/records/shelf-api";
-import type { MappedSeries, ShelfWithLevels } from "@/features/records/shelf-types";
+import { listBoxes, listContents, listShelves } from "@/features/records/shelf-api";
+import type { BoxContent, RecordBox, ShelfWithLevels } from "@/features/records/shelf-types";
 
 /**
- * The records room, read as one picture.
- *
- * The shelves and the series are loaded together because the map is only
- * meaningful as a whole: a level means nothing without what is on it, and the
- * unplaced list means nothing without the levels it could go to.
+ * The Records Room, read as one picture: shelves, the boxes standing on them,
+ * and the documents in the boxes. Loaded together because a box means little
+ * without its place, and a place little without what stands there.
  */
-export function useShelfMap() {
+export function useRecordsRoom() {
   const [shelves, setShelves] = React.useState<ShelfWithLevels[]>([]);
-  const [series, setSeries] = React.useState<MappedSeries[]>([]);
+  const [boxes, setBoxes] = React.useState<RecordBox[]>([]);
+  const [contents, setContents] = React.useState<BoxContent[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const [failed, setFailed] = React.useState(false);
 
   const load = React.useCallback(async () => {
     try {
-      const [nextShelves, nextSeries] = await Promise.all([listShelves(), listMappedSeries()]);
-      setShelves(nextShelves);
-      setSeries(nextSeries);
+      const [s, b, c] = await Promise.all([listShelves(), listBoxes(), listContents()]);
+      setShelves(s);
+      setBoxes(b);
+      setContents(c);
+      setFailed(false);
     } catch (e) {
-      reportLoadFailure(e, "the shelf map");
+      setFailed(true);
+      reportLoadFailure(e, "the Records Room");
     } finally {
       setLoading(false);
     }
@@ -33,12 +36,20 @@ export function useShelfMap() {
     void load();
   }, [load]);
 
-  // A series moves when someone edits a schedule, not only when the map is
-  // used, so the schedules table is watched too.
+  // Documents are filed when they are approved on their own pages, so the
+  // three document tables are watched as well as the room's own.
   useRealtimeRefresh(
-    ["record_shelves", "record_shelf_levels", "record_series", "disposition_schedules"],
+    [
+      "record_shelves",
+      "record_shelf_levels",
+      "record_boxes",
+      "record_box_contents",
+      "disposition_schedules",
+      "inventory_appraisals",
+      "disposal_requests",
+    ],
     load,
   );
 
-  return { shelves, series, loading, refresh: load };
+  return { shelves, boxes, contents, loading, failed, refresh: load };
 }

@@ -19,6 +19,7 @@ import {
   AppraisalSheet,
 } from "@/features/records/components/appraisal-print-form";
 import { PaperSheet } from "@/features/shared/paper-sheet";
+import { FiledLocation } from "@/features/records/components/room/filed-location";
 
 /**
  * One records inventory, shown as the inventory.
@@ -104,6 +105,8 @@ export function InventoryDetailPage() {
         <PaperSheet orientation="landscape">
           <AppraisalSheet appraisal={appraisal} />
         </PaperSheet>
+
+        <FiledLocation type="RIA" sourceId={appraisal.id} />
       </PageTransition>
 
       <AppraisalPrintForm appraisal={appraisal} />

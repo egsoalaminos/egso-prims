@@ -1,59 +1,64 @@
 /**
- * Where the paper is.
+ * The Records Room: one room, its shelves, and the boxes on them.
  *
- * A disposition schedule says how long a record series is kept. It does not
- * say which shelf to walk to. These are the room's own furniture — a shelf,
- * the lettered levels it is divided into — and the link that puts a series on
- * one of them.
- *
- * The category belongs to the level, not to the series, because the divider
- * is the thing the office labels: Shelf 1, Level A, "Personnel".
+ * Every shelf has exactly five levels, A to E, and every level exactly two box
+ * positions, so a shelf holds ten boxes. A box holds one kind of Records
+ * Management document for one year — "Records Disposition Schedule — 2026 —
+ * Box 01" — and the documents inside it are the approved documents
+ * themselves, referenced, not copied. Filing is done by the database when a
+ * document is approved (migration 047); nothing here places a document by
+ * hand.
  */
 
-/** One lettered floor of a shelf, and what it holds. */
+/** The three kinds of document the room keeps, by the codes their numbers use. */
+export type DocType = "RDS" | "RIA" | "RAD";
+
+export const DOC_TYPES: Record<
+  DocType,
+  { name: string; short: string; route: (id: string) => string }
+> = {
+  RDS: {
+    name: "Records Disposition Schedule",
+    short: "Disposition Schedule",
+    route: (id) => `/records/${id}`,
+  },
+  RIA: {
+    name: "Records Inventory and Appraisal",
+    short: "Inventory and Appraisal",
+    route: (id) => `/records/inventory/${id}`,
+  },
+  RAD: {
+    name: "Request for Authority to Dispose of Records",
+    short: "Authority to Dispose",
+    route: (id) => `/records/disposal/${id}`,
+  },
+};
+
+export const LEVEL_LABELS = ["A", "B", "C", "D", "E"] as const;
+export const SLOTS = [1, 2] as const;
+export type Slot = (typeof SLOTS)[number];
+
+/** One lettered floor of a shelf. */
 export interface ShelfLevel {
   id: string;
   shelfId: string;
-  /** The divider's letter, as painted on the steel: A, B, C. */
+  /** A to E. */
   label: string;
-  /** What this level holds — "Personnel", "Finance". Optional until named. */
-  category?: string;
   position: number;
 }
 
-/** A shelf standing in a room. */
+/** A shelf standing in the room. */
 export interface Shelf {
   id: string;
   name: string;
-  /** Which room it stands in. A one-room office has nothing to say here. */
+  /** Where in the room it stands, if the office says. */
   location?: string;
   position: number;
 }
 
-/** A shelf with its levels, top to bottom — what the map reads. */
+/** A shelf with its levels, A to E — what the room reads. */
 export interface ShelfWithLevels extends Shelf {
   levels: ShelfLevel[];
-}
-
-/**
- * A record series as the map needs it: what it is, which schedule declared
- * it, and where it sits. `shelfLevelId` is undefined for a series nobody has
- * placed yet, which is a normal state and not an error.
- */
-export interface MappedSeries {
-  id: string;
-  scheduleId: string;
-  scheduleNo: string;
-  /** The schedule's field 1, for searching by agency. */
-  agencyName: string;
-  itemNumber: number;
-  titleAndDescription: string;
-  /** Field 7, in years. A retention period — not a count of anything. */
-  retentionActive: number;
-  retentionStorage: number;
-  retentionTotal: number;
-  remarks?: string;
-  shelfLevelId?: string;
 }
 
 export interface ShelfInput {
@@ -61,57 +66,72 @@ export interface ShelfInput {
   location?: string;
 }
 
-export interface LevelInput {
-  label: string;
-  category?: string;
+/** A physical box standing in one position on one level. */
+export interface RecordBox {
+  id: string;
+  documentType: DocType;
+  year: number;
+  /** Box 01, Box 02 … within one kind and year. */
+  sequence: number;
+  shelfLevelId: string;
+  slot: Slot;
+  /** A correction to the generated name, when the physical label differs. */
+  labelOverride?: string;
 }
 
-/**
- * The next free letter on a shelf: A, then B, and so on past the ones already
- * used. After Z it keeps counting with AA, which no office will reach but
- * which beats handing back an empty label.
- */
-export function nextLevelLabel(levels: ShelfLevel[]): string {
-  const taken = new Set(levels.map((l) => l.label.trim().toUpperCase()));
-  for (let i = 0; i < 26; i++) {
-    const letter = String.fromCharCode(65 + i);
-    if (!taken.has(letter)) return letter;
-  }
-  for (let i = 0; i < 26; i++) {
-    const letter = `A${String.fromCharCode(65 + i)}`;
-    if (!taken.has(letter)) return letter;
-  }
-  return `L${levels.length + 1}`;
+/** One approved document in a box, with what identifies it on its own form. */
+export interface BoxContent {
+  id: string;
+  boxId: string;
+  documentType: DocType;
+  /** The document's own id, for its detail page. */
+  sourceId: string;
+  /** RDS-2026-000003, RIA-…, RAD-… */
+  documentNo: string;
+  /** Agency or office, as the form names it. */
+  agency: string;
+  /** yyyy-MM-dd: date prepared, or the request date. */
+  date: string;
+  filedAt: string;
 }
 
-/** A resolved location: the shelf and level, and the words for them. */
-export interface HomeLocation {
+/** Where a box is, and the words for it. */
+export interface BoxLocation {
   shelfId: string;
   shelfName: string;
   levelId: string;
   levelLabel: string;
-  category?: string;
-  /** "Shelf 1 → Level A → Procurement" */
+  slot: Slot;
+  /** "Shelf 1 → Level A → Box 1" */
   text: string;
 }
 
-/** Where a shelf level is, in the words on the steel. */
-export function homeOf(
-  levelId: string | undefined,
+/** "Records Disposition Schedule — 2026 — Box 01", unless corrected by hand. */
+export function boxName(box: RecordBox): string {
+  if (box.labelOverride?.trim()) return box.labelOverride.trim();
+  return `${DOC_TYPES[box.documentType].name} — ${box.year} — Box ${String(box.sequence).padStart(2, "0")}`;
+}
+
+/** "2026 · Box 01" — the second line of a box's label. */
+export function boxYearLine(box: RecordBox): string {
+  return `${box.year} · Box ${String(box.sequence).padStart(2, "0")}`;
+}
+
+export function locationOf(
+  box: Pick<RecordBox, "shelfLevelId" | "slot"> | undefined,
   shelves: ShelfWithLevels[],
-): HomeLocation | null {
-  if (!levelId) return null;
+): BoxLocation | null {
+  if (!box) return null;
   for (const shelf of shelves) {
-    const level = shelf.levels.find((l) => l.id === levelId);
+    const level = shelf.levels.find((l) => l.id === box.shelfLevelId);
     if (!level) continue;
-    const category = level.category?.trim() || undefined;
     return {
       shelfId: shelf.id,
       shelfName: shelf.name,
       levelId: level.id,
       levelLabel: level.label,
-      category,
-      text: `${shelf.name} → Level ${level.label}${category ? ` → ${category}` : ""}`,
+      slot: box.slot,
+      text: `${shelf.name} → Level ${level.label} → Box ${box.slot}`,
     };
   }
   return null;

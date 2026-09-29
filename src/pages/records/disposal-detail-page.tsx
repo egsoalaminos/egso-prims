@@ -19,6 +19,7 @@ import {
   DisposalRequestSheet,
 } from "@/features/records/components/disposal-print-form";
 import { PaperSheet } from "@/features/shared/paper-sheet";
+import { FiledLocation } from "@/features/records/components/room/filed-location";
 
 /**
  * One request for authority to dispose, shown as NAP Form No. 3.
@@ -105,6 +106,8 @@ export function DisposalDetailPage() {
         <PaperSheet>
           <DisposalRequestSheet request={request} />
         </PaperSheet>
+
+        <FiledLocation type="RAD" sourceId={request.id} />
       </PageTransition>
 
       <DisposalPrintForm request={request} />

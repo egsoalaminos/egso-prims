@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { Archive, ArrowLeft, Layers, Plus, Trash2, X } from "lucide-react";
+import { useReducedMotion } from "motion/react";
+import { Archive, ArrowLeft, Layers, Plus, Trash2 } from "lucide-react";
 
 import {
   Button,
@@ -17,47 +17,44 @@ import {
   Spinner,
   toast,
 } from "@/components";
-import { useShelfMap } from "@/features/records/shelf-hooks";
+import { useRecordsRoom } from "@/features/records/shelf-hooks";
+import { createShelf, deleteShelf, updateShelf } from "@/features/records/shelf-api";
 import {
-  createLevel,
-  createShelf,
-  deleteLevel,
-  deleteShelf,
-  placeSeries,
-  updateLevel,
-  updateShelf,
-} from "@/features/records/shelf-api";
-import {
-  homeOf,
-  nextLevelLabel,
-  type MappedSeries,
+  DOC_TYPES,
+  SLOTS,
+  boxName,
+  boxYearLine,
+  locationOf,
+  type BoxContent,
+  type DocType,
+  type RecordBox,
   type ShelfLevel,
   type ShelfWithLevels,
+  type Slot,
 } from "@/features/records/shelf-types";
-import { AssignStorageDialog } from "@/features/records/components/room/assign-storage-dialog";
-import { NeedsAttention } from "@/features/records/components/room/needs-attention";
-import { SeriesDetailDrawer } from "@/features/records/components/room/series-detail-drawer";
+import { BoxDrawer } from "@/features/records/components/room/box-drawer";
 import { LocationLine } from "@/features/records/components/room/room-parts";
-import { labelTone, seriesCitation } from "@/features/records/components/room/room-format";
+import { docTone, formatDate, recordCount } from "@/features/records/components/room/room-format";
 
 /**
- * The Records Room: where each record series of the disposition schedules is
- * kept.
+ * The Records Room: one room, its shelves, and the boxes on them.
  *
- * The unit here is the record series — the line of a Records Disposition
- * Schedule — and nothing smaller. A schedule declares "Item 1, Testing, keep
- * one year"; this room says which shelf and level that series stands on. The
- * page answers four questions: what series exist, where each one is, which
- * still have no place, and where a particular one can be found.
+ * Every shelf has five levels, A to E, and every level two box positions. A
+ * box holds one kind of Records Management document for one year —
+ * "Records Disposition Schedule — 2026 — Box 01" — and inside it are the
+ * approved documents themselves. Nobody files by hand: when a schedule, an
+ * inventory or a disposal request is approved, the database puts it in the
+ * current box for its kind and year, making the box (and, if the room is
+ * full, a shelf) when there is none (migration 047).
  *
- * A series is given its place by Assign Storage, which writes
- * record_series.shelf_level_id — from here, or from the schedule's own page,
- * through the same dialog. There is no second place a location is stored.
+ * So this page is for finding and seeing, not placing: search answers "where
+ * is RDS-2026-000003", View Location points at the box, and a box opens to
+ * what is in it. Moving a box, correcting its label and adding a shelf are the
+ * only changes made here.
  *
  * The shelves are drawn as the steel they describe: a slotted-angle rack,
- * each series an archive box with its end facing out and a label card read
- * straight across. The page opens on the room seen from the door, and a
- * shelf opens to its levels once it is chosen.
+ * five boards, and on each board two archive boxes with their ends facing
+ * out and a label card you read straight across.
  */
 
 /* ---------------- inline editing ---------------- */
@@ -75,14 +72,12 @@ function InlineText({
   placeholder,
   ariaLabel,
   className = "",
-  style,
   onCommit,
 }: {
   value: string;
   placeholder: string;
   ariaLabel: string;
   className?: string;
-  style?: React.CSSProperties;
   onCommit: (next: string) => void;
 }) {
   const [draft, setDraft] = React.useState(value);
@@ -99,7 +94,6 @@ function InlineText({
       aria-label={ariaLabel}
       value={draft}
       placeholder={placeholder}
-      style={style}
       onChange={(e) => setDraft(e.target.value)}
       onBlur={commit}
       onKeyDown={(e) => {
@@ -136,191 +130,134 @@ function slottedUpright(slot: number, pitch: number): React.CSSProperties {
 /** The cardboard of an archive box, the same on the tile and on the open shelf. */
 const BOX = "border border-[#d9cfc1] bg-[#f4efe8]";
 
+const boxCount = (n: number) => `${n} ${n === 1 ? "box" : "boxes"}`;
+
 /**
- * One record series, drawn as what it is on the steel: an archive box with
- * its end facing out — a hand-hole at the top and a white label card you read
- * straight across. The card cites the series the way the schedule does: its
- * title, then the schedule number and item.
+ * One box on the steel: an archive box with its end facing out — a hand-hole
+ * and a label card read straight across, naming the kind of document, the
+ * year and box number, and how many documents are inside.
  */
-function ArchiveBox({
-  series,
+function BoxCard({
+  box,
+  count,
   highlighted,
-  still,
   onOpen,
-  onUnassign,
 }: {
-  series: MappedSeries;
+  box: RecordBox;
+  count: number;
   highlighted: boolean;
-  still: boolean;
   onOpen: () => void;
-  onUnassign: () => void;
 }) {
   return (
-    <motion.div
-      layout={!still}
-      initial={still ? false : { opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={still ? { opacity: 0 } : { opacity: 0, y: 8 }}
-      transition={{ duration: still ? 0.1 : 0.2, ease: [0.16, 1, 0.3, 1] }}
-      className={`group/box relative w-[158px] shrink-0 rounded-t-[2px] shadow-[0_1px_2px_rgba(0,0,0,0.10)] transition hover:-translate-y-0.5 hover:shadow-[0_4px_8px_rgba(0,0,0,0.14)] ${BOX} ${
+    <button
+      type="button"
+      id={`box-${box.id}`}
+      onClick={onOpen}
+      aria-label={`${boxName(box)}, ${recordCount(count)}. Open the box.`}
+      className={`flex h-full w-full flex-col items-center rounded-t-[2px] px-2.5 pb-2.5 pt-2 text-left shadow-[0_1px_2px_rgba(0,0,0,0.10)] transition hover:-translate-y-0.5 hover:shadow-[0_4px_8px_rgba(0,0,0,0.14)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring) ${BOX} ${
         highlighted ? "outline outline-[3px] outline-offset-2 outline-[#d97706]" : ""
       }`}
     >
-      <button
-        type="button"
-        onClick={onOpen}
-        aria-label={`${series.titleAndDescription}, ${seriesCitation(series.scheduleNo, series.itemNumber)}. Show details.`}
-        className="flex w-full flex-col items-center px-2 pb-2 pt-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring)"
-      >
-        {/* The hand-hole. */}
-        <span aria-hidden className="h-[6px] w-[34px] rounded-full bg-[#625d55]" />
-
-        {/* The label card. The colour square says which schedule declared
-            the series; the schedule number beside it says it in words. */}
-        <span className="mt-2 block w-full border border-[#e2dbd0] bg-white px-2 py-1.5">
-          <span className="line-clamp-2 min-h-[2.5em] text-[12.5px] font-semibold leading-[1.25] text-neutral-900">
-            {series.titleAndDescription}
-          </span>
-          {/* Schedule number and item on their own lines: together they run
-              wider than the card, and a truncated citation loses the item. */}
-          <span className="mt-1 flex items-center gap-1.5 text-[11px] leading-tight">
-            <span aria-hidden className={`h-[8px] w-[8px] shrink-0 ${labelTone(series.scheduleNo)}`} />
-            <span className="tabular-nums text-neutral-600">{series.scheduleNo}</span>
-          </span>
-          <span className="mt-0.5 block pl-[14px] text-[11px] font-medium leading-tight tabular-nums text-neutral-800">
-            Item {series.itemNumber}
+      {/* The hand-hole. */}
+      <span aria-hidden className="h-[6px] w-[40px] rounded-full bg-[#625d55]" />
+      <span className="mt-2 block w-full border border-[#e2dbd0] bg-white px-2.5 py-2">
+        <span className="flex items-center gap-1.5">
+          <span aria-hidden className={`h-[8px] w-[8px] shrink-0 ${docTone(box.documentType)}`} />
+          <span className="truncate text-[11.5px] font-semibold uppercase tracking-[0.06em] text-neutral-900">
+            {box.labelOverride?.trim() || DOC_TYPES[box.documentType].short}
           </span>
         </span>
-      </button>
+        <span className="mt-1 block text-[12.5px] font-semibold uppercase tabular-nums tracking-[0.04em] text-neutral-800">
+          {boxYearLine(box)}
+        </span>
+        <span className="mt-0.5 block text-[12px] tabular-nums text-neutral-600">
+          {recordCount(count)}
+        </span>
+      </span>
+    </button>
+  );
+}
 
-      {/* Taking a series off its level is deliberate, so it stays out of the
-          way until the box is pointed at or focused, and it asks first. */}
-      <button
-        type="button"
-        aria-label={`Unassign storage for ${series.titleAndDescription}`}
-        onClick={onUnassign}
-        className="absolute -right-1.5 -top-1.5 grid h-[18px] w-[18px] place-items-center rounded-full border border-neutral-400 bg-white text-neutral-500 opacity-0 transition hover:text-neutral-900 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring) group-hover/box:opacity-100"
-      >
-        <X className="h-3 w-3" />
-      </button>
-    </motion.div>
+/** A position on the board with no box in it. */
+function EmptySlot({ slot }: { slot: Slot }) {
+  return (
+    <div className="grid h-full min-h-[104px] w-full place-items-center rounded-t-[2px] border border-dashed border-neutral-400 text-center text-[12px] text-neutral-500">
+      <span>
+        Box {slot}
+        <span className="block text-[11.5px] text-neutral-400">Empty position</span>
+      </span>
+    </div>
   );
 }
 
 /**
- * The label tag is as wide as what is written on it, the way a tag is cut to
- * its text. Worked out rather than measured: capitals set wide run about
- * 0.8em a letter, and the input's own padding and border add 14px.
- */
-function tagWidth(text: string): string {
-  return `calc(${text.length * 0.82}em + 14px)`;
-}
-
-const seriesCount = (n: number) => `${n} record series`;
-
-/**
- * One lettered level: the boxes standing in it, the board they stand on, and
- * the label tag clipped to the board's front — which is where a records room
- * writes what the level holds, and so is where this one is named.
+ * One lettered level: two box positions standing on a board, and the level's
+ * letter on a tag clipped to the board's front.
  */
 function ShelfBay({
   level,
-  series,
-  still,
+  boxAt,
+  counts,
   highlightedLevel,
-  highlightedSeries,
-  onAssign,
-  onOpenSeries,
-  onUnassignSeries,
-  onRename,
-  onDelete,
+  highlightedBox,
+  onOpenBox,
 }: {
   level: ShelfLevel;
-  series: MappedSeries[];
-  still: boolean;
+  boxAt: (slot: Slot) => RecordBox | undefined;
+  counts: Map<string, number>;
   highlightedLevel: boolean;
-  highlightedSeries: string | null;
-  onAssign: () => void;
-  onOpenSeries: (s: MappedSeries) => void;
-  onUnassignSeries: (s: MappedSeries) => void;
-  onRename: (changes: { label?: string; category?: string }) => void;
-  onDelete: () => void;
+  highlightedBox: string | null;
+  onOpenBox: (box: RecordBox) => void;
 }) {
   return (
     <div
       id={`level-${level.id}`}
-      className={`relative transition ${
+      className={`relative ${
         highlightedLevel ? "z-10 outline outline-[3px] outline-offset-[-3px] outline-[#d97706]" : ""
       }`}
     >
       {highlightedLevel && (
-        <span className="absolute right-3 top-2 rounded-[3px] bg-[#d97706] px-2 py-0.5 text-[11.5px] font-semibold uppercase tracking-[0.06em] text-white">
+        <span className="absolute right-3 top-2 z-10 rounded-[3px] bg-[#d97706] px-2 py-0.5 text-[11.5px] font-semibold uppercase tracking-[0.06em] text-white">
           It is here
         </span>
       )}
 
-      {/* The bay. Boxes stand on the board, so they align to its bottom. */}
+      {/* The bay: exactly two positions, side by side on the board. */}
       <div
-        className={`flex min-h-[132px] flex-wrap items-end gap-2 px-3 pt-6 shadow-[inset_0_8px_10px_-8px_rgba(0,0,0,0.18)] transition-colors ${
+        className={`grid grid-cols-2 items-end gap-3 px-3 pt-7 shadow-[inset_0_8px_10px_-8px_rgba(0,0,0,0.18)] transition-colors ${
           highlightedLevel ? "bg-[#fef3c7]" : "bg-[#eceef1]"
         }`}
       >
-        <AnimatePresence initial={false}>
-          {series.map((s) => (
-            <ArchiveBox
-              key={s.id}
-              series={s}
-              highlighted={highlightedSeries === s.id}
-              still={still}
-              onOpen={() => onOpenSeries(s)}
-              onUnassign={() => onUnassignSeries(s)}
-            />
-          ))}
-        </AnimatePresence>
-        {series.length === 0 && (
-          <span className="self-center text-[12.5px] italic text-neutral-500">
-            No record series is assigned to this level.
-          </span>
-        )}
+        {SLOTS.map((slot) => {
+          const box = boxAt(slot);
+          return (
+            <div key={slot} className="h-full">
+              {box ? (
+                <BoxCard
+                  box={box}
+                  count={counts.get(box.id) ?? 0}
+                  highlighted={highlightedBox === box.id}
+                  onOpen={() => onOpenBox(box)}
+                />
+              ) : (
+                <EmptySlot slot={slot} />
+              )}
+            </div>
+          );
+        })}
       </div>
 
-      {/* The board: its top face, then its front edge. */}
+      {/* The board, and the level's tag on its front edge. */}
       <div className="h-[7px] border-t border-[#9aa1ab] bg-[#c4c9d1]" />
-
-      {/* The label tag on the front of the board. */}
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 bg-[#eceef1] px-3 py-2">
-        <div className="flex min-w-0 items-center gap-2 rounded-[2px] border border-neutral-500 bg-white py-1 pl-1 pr-1.5">
-          <span className="grid h-[20px] w-[20px] shrink-0 place-items-center rounded-[2px] bg-neutral-900 text-[11.5px] font-bold text-white">
+      <div className="flex items-center gap-2 bg-[#eceef1] px-3 py-2">
+        <span className="inline-flex items-center gap-2 rounded-[2px] border border-neutral-500 bg-white py-1 pl-1 pr-2.5">
+          <span className="grid h-[20px] w-[20px] place-items-center rounded-[2px] bg-neutral-900 text-[11.5px] font-bold text-white">
             {level.label}
           </span>
-          <InlineText
-            value={level.category ?? ""}
-            placeholder="Name what this level holds"
-            ariaLabel={`Category on level ${level.label}`}
-            className="max-w-full text-[11.5px] font-semibold uppercase tracking-[0.1em] text-neutral-900 placeholder:uppercase"
-            style={{ width: tagWidth(level.category || "Name what this level holds") }}
-            onCommit={(category) => onRename({ category })}
-          />
-        </div>
-        <span className="shrink-0 text-[12px] tabular-nums text-neutral-500">
-          {seriesCount(series.length)}
+          <span className="text-[11.5px] font-semibold uppercase tracking-[0.1em] text-neutral-900">
+            Level {level.label}
+          </span>
         </span>
-        <button
-          type="button"
-          onClick={onAssign}
-          className="ml-auto inline-flex shrink-0 items-center rounded-[3px] border border-dashed border-neutral-400 px-2.5 py-1 text-[12px] font-medium text-neutral-800 transition hover:border-neutral-600 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring)"
-        >
-          <Plus className="mr-1 h-3 w-3" />
-          Assign record series
-        </button>
-        <IconButton
-          size="icon-sm"
-          aria-label={`Remove level ${level.label}`}
-          onClick={onDelete}
-          className="bg-transparent text-neutral-400 hover:text-neutral-900"
-        >
-          <Trash2 className="h-3 w-3" />
-        </IconButton>
       </div>
     </div>
   );
@@ -330,38 +267,25 @@ function ShelfBay({
 
 function ShelfCard({
   shelf,
-  seriesByLevel,
-  still,
+  boxesOnShelf,
+  boxAt,
+  counts,
   highlightedLevel,
-  highlightedSeries,
+  highlightedBox,
   onRenameShelf,
-  onAddLevel,
   onDeleteShelf,
-  onRenameLevel,
-  onDeleteLevel,
-  onAssignToLevel,
-  onOpenSeries,
-  onUnassignSeries,
+  onOpenBox,
 }: {
   shelf: ShelfWithLevels;
-  seriesByLevel: Map<string, MappedSeries[]>;
-  still: boolean;
+  boxesOnShelf: number;
+  boxAt: (levelId: string, slot: Slot) => RecordBox | undefined;
+  counts: Map<string, number>;
   highlightedLevel: string | null;
-  highlightedSeries: string | null;
+  highlightedBox: string | null;
   onRenameShelf: (changes: { name?: string; location?: string }) => void;
-  onAddLevel: () => void;
   onDeleteShelf: () => void;
-  onRenameLevel: (level: ShelfLevel, changes: { label?: string; category?: string }) => void;
-  onDeleteLevel: (level: ShelfLevel) => void;
-  onAssignToLevel: (level: ShelfLevel) => void;
-  onOpenSeries: (s: MappedSeries) => void;
-  onUnassignSeries: (s: MappedSeries) => void;
+  onOpenBox: (box: RecordBox) => void;
 }) {
-  const total = shelf.levels.reduce(
-    (sum, level) => sum + (seriesByLevel.get(level.id)?.length ?? 0),
-    0,
-  );
-
   return (
     <ContainerCard className="overflow-hidden">
       <div className="flex flex-wrap items-start gap-3 px-4 py-3.5">
@@ -381,16 +305,11 @@ function ShelfCard({
             onCommit={(location) => onRenameShelf({ location })}
           />
         </div>
-
         <div className="flex shrink-0 items-center gap-2">
           <span className="text-[12px] tabular-nums text-neutral-500">
-            {shelf.levels.length} {shelf.levels.length === 1 ? "level" : "levels"} ·{" "}
-            {seriesCount(total)}
+            5 levels · {boxCount(boxesOnShelf)} · {10 - boxesOnShelf} empty{" "}
+            {10 - boxesOnShelf === 1 ? "position" : "positions"}
           </span>
-          <Button variant="outline" size="sm" onClick={onAddLevel}>
-            <Plus className="mr-1.5 h-3.5 w-3.5" />
-            Level
-          </Button>
           <IconButton
             size="icon-sm"
             aria-label={`Remove ${shelf.name}`}
@@ -402,43 +321,33 @@ function ShelfCard({
         </div>
       </div>
 
-      {shelf.levels.length === 0 ? (
-        <div className="border-t border-neutral-200 px-4 py-5 text-[12.5px] text-neutral-500">
-          This shelf has no levels yet. Add one and it is lettered A.
+      {/* The rack. The slotted uprights run the full height beside the
+          levels, which is what makes a stack of boards read as one unit. */}
+      <div className="relative border-t border-neutral-200 px-[14px]">
+        <span
+          aria-hidden
+          className="absolute inset-y-0 left-0 w-[14px] border-r border-[#8f959e]"
+          style={slottedUpright(6, 22)}
+        />
+        <span
+          aria-hidden
+          className="absolute inset-y-0 right-0 w-[14px] border-l border-[#8f959e]"
+          style={slottedUpright(6, 22)}
+        />
+        <div className="relative">
+          {shelf.levels.map((level) => (
+            <ShelfBay
+              key={level.id}
+              level={level}
+              boxAt={(slot) => boxAt(level.id, slot)}
+              counts={counts}
+              highlightedLevel={highlightedLevel === level.id}
+              highlightedBox={highlightedBox}
+              onOpenBox={onOpenBox}
+            />
+          ))}
         </div>
-      ) : (
-        /* The rack. The slotted uprights run the full height beside the
-           levels, which is what makes a stack of boards read as one unit. */
-        <div className="relative border-t border-neutral-200 px-[14px]">
-          <span
-            aria-hidden
-            className="absolute inset-y-0 left-0 w-[14px] border-r border-[#8f959e]"
-            style={slottedUpright(6, 22)}
-          />
-          <span
-            aria-hidden
-            className="absolute inset-y-0 right-0 w-[14px] border-l border-[#8f959e]"
-            style={slottedUpright(6, 22)}
-          />
-          <div className="relative">
-            {shelf.levels.map((level) => (
-              <ShelfBay
-                key={level.id}
-                level={level}
-                still={still}
-                series={seriesByLevel.get(level.id) ?? []}
-                highlightedLevel={highlightedLevel === level.id}
-                highlightedSeries={highlightedSeries}
-                onAssign={() => onAssignToLevel(level)}
-                onOpenSeries={onOpenSeries}
-                onUnassignSeries={onUnassignSeries}
-                onRename={(changes) => onRenameLevel(level, changes)}
-                onDelete={() => onDeleteLevel(level)}
-              />
-            ))}
-          </div>
-        </div>
-      )}
+      </div>
     </ContainerCard>
   );
 }
@@ -446,24 +355,21 @@ function ShelfCard({
 /* ---------------- the room, seen from the door ---------------- */
 
 /**
- * One shelf as it looks from across the room: the slotted uprights, the
- * boards, and a box for each record series on each level, in its schedule's
- * colour, so how full a level is shows before you walk to it.
+ * One shelf as it looks from across the room: the uprights, five boards, and
+ * on each board its two positions — a box in the colour of its document kind,
+ * or an empty outline — so free space shows before you walk to it.
  */
 function ShelfTile({
   shelf,
-  seriesByLevel,
+  boxesOnShelf,
+  boxAt,
   onOpen,
 }: {
   shelf: ShelfWithLevels;
-  seriesByLevel: Map<string, MappedSeries[]>;
+  boxesOnShelf: number;
+  boxAt: (levelId: string, slot: Slot) => RecordBox | undefined;
   onOpen: () => void;
 }) {
-  const total = shelf.levels.reduce(
-    (sum, level) => sum + (seriesByLevel.get(level.id)?.length ?? 0),
-    0,
-  );
-
   return (
     <button
       type="button"
@@ -483,41 +389,39 @@ function ShelfTile({
             className="absolute inset-y-0 right-0 w-[9px] border-l border-[#8f959e]"
             style={slottedUpright(4, 14)}
           />
-          {/* The top rail. */}
           <span aria-hidden className="absolute inset-x-0 top-0 h-[4px] bg-[#8f959e]" />
-
-          {shelf.levels.length === 0 ? (
-            <span className="m-auto px-2 text-center text-[11.5px] italic text-neutral-500">
-              No levels yet
-            </span>
-          ) : (
-            <div className="relative flex h-full flex-col pt-[4px]">
-              {shelf.levels.map((level) => {
-                const onLevel = seriesByLevel.get(level.id) ?? [];
-                return (
-                  <div key={level.id} className="flex min-h-0 flex-1 flex-col">
-                    <div className="flex min-h-0 flex-1 items-end gap-[3px] overflow-hidden px-[6px]">
-                      {onLevel.map((s) => (
-                        <span
-                          key={s.id}
-                          aria-hidden
-                          className={`flex h-[62%] max-h-[84px] w-[20px] shrink-0 flex-col px-[3px] pb-[3px] ${BOX}`}
-                        >
-                          <span className="flex-[4]" />
-                          <span className={`h-[2px] shrink-0 ${labelTone(s.scheduleNo)}`} />
-                          <span className="mt-[2px] flex-[5] bg-white" />
-                        </span>
-                      ))}
-                    </div>
-                    <span
-                      aria-hidden
-                      className="h-[6px] shrink-0 border-t border-[#9aa1ab] bg-[#c4c9d1]"
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          )}
+          <div className="relative flex h-full flex-col pt-[4px]">
+            {shelf.levels.map((level) => (
+              <div key={level.id} className="flex min-h-0 flex-1 flex-col">
+                <div className="grid min-h-0 flex-1 grid-cols-2 items-end gap-[6px] px-[8px] pt-[6px]">
+                  {SLOTS.map((slot) => {
+                    const box = boxAt(level.id, slot);
+                    return box ? (
+                      <span
+                        key={slot}
+                        aria-hidden
+                        className={`flex h-[78%] flex-col px-[12%] pb-[6%] ${BOX}`}
+                      >
+                        <span className="flex-[3]" />
+                        <span className={`h-[3px] shrink-0 ${docTone(box.documentType)}`} />
+                        <span className="mt-[2px] flex-[4] bg-white" />
+                      </span>
+                    ) : (
+                      <span
+                        key={slot}
+                        aria-hidden
+                        className="h-[78%] border border-dashed border-neutral-300"
+                      />
+                    );
+                  })}
+                </div>
+                <span
+                  aria-hidden
+                  className="h-[6px] shrink-0 border-t border-[#9aa1ab] bg-[#c4c9d1]"
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -526,9 +430,7 @@ function ShelfTile({
           {shelf.name}
         </div>
         <div className="truncate text-[12.5px] tabular-nums text-neutral-500">
-          {shelf.location ? `${shelf.location} · ` : ""}
-          {shelf.levels.length} {shelf.levels.length === 1 ? "level" : "levels"} ·{" "}
-          {seriesCount(total)}
+          {shelf.location ? `${shelf.location} · ` : ""}5 levels · {boxCount(boxesOnShelf)}
         </div>
       </div>
     </button>
@@ -539,11 +441,11 @@ function ShelfTile({
 
 export function ShelfMapPage() {
   const navigate = useNavigate();
-  const { shelves, series, loading, refresh } = useShelfMap();
+  const { shelves, boxes, contents, loading, failed, refresh } = useRecordsRoom();
   const still = useReducedMotion() ?? false;
 
   // The open shelf lives in the address, so the browser's Back returns to
-  // the room rather than leaving it. `level` and `series` are set by View
+  // the room rather than leaving it. `level` and `box` are set by View
   // Location, to say which part of the shelf to point at.
   const [searchParams, setSearchParams] = useSearchParams();
   const openShelf = shelves.find((s) => s.id === searchParams.get("shelf")) ?? null;
@@ -551,131 +453,112 @@ export function ShelfMapPage() {
     setSearchParams(id ? { shelf: id } : {}, { replace: false });
 
   const [query, setQuery] = React.useState("");
+  const [openBoxId, setOpenBoxId] = React.useState<string | null>(null);
 
   const [newShelfOpen, setNewShelfOpen] = React.useState(false);
   const [newShelfName, setNewShelfName] = React.useState("");
   const [newShelfLocation, setNewShelfLocation] = React.useState("");
   const [saving, setSaving] = React.useState(false);
-
-  const [placingOn, setPlacingOn] = React.useState<ShelfLevel | null>(null);
-  const [pickerSearch, setPickerSearch] = React.useState("");
-
   const [shelfToRemove, setShelfToRemove] = React.useState<ShelfWithLevels | null>(null);
-  const [levelToRemove, setLevelToRemove] = React.useState<ShelfLevel | null>(null);
-  const [seriesToUnassign, setSeriesToUnassign] = React.useState<MappedSeries | null>(null);
-
-  // Held by id and read back from the live list, so an open drawer shows the
-  // series as it is now, not as it was when clicked.
-  const [assigningId, setAssigningId] = React.useState<string | null>(null);
-  const [detailId, setDetailId] = React.useState<string | null>(null);
-  const seriesById = (id: string | null) =>
-    id ? (series.find((s) => s.id === id) ?? null) : null;
-  const assigning = seriesById(assigningId);
-  const detail = seriesById(detailId);
 
   /* ---- derived ---- */
 
-  const seriesByLevel = React.useMemo(() => {
-    const map = new Map<string, MappedSeries[]>();
-    for (const s of series) {
-      if (!s.shelfLevelId) continue;
-      const list = map.get(s.shelfLevelId);
-      if (list) list.push(s);
-      else map.set(s.shelfLevelId, [s]);
+  const boxByPosition = React.useMemo(() => {
+    const map = new Map<string, RecordBox>();
+    for (const b of boxes) map.set(`${b.shelfLevelId}:${b.slot}`, b);
+    return map;
+  }, [boxes]);
+  const boxAt = (levelId: string, slot: Slot) => boxByPosition.get(`${levelId}:${slot}`);
+
+  const contentsByBox = React.useMemo(() => {
+    const map = new Map<string, BoxContent[]>();
+    for (const c of contents) {
+      const list = map.get(c.boxId);
+      if (list) list.push(c);
+      else map.set(c.boxId, [c]);
     }
     return map;
-  }, [series]);
+  }, [contents]);
 
-  const unassignedSeries = React.useMemo(() => series.filter((s) => !s.shelfLevelId), [series]);
+  const counts = React.useMemo(() => {
+    const map = new Map<string, number>();
+    for (const [id, list] of contentsByBox) map.set(id, list.length);
+    return map;
+  }, [contentsByBox]);
 
-  /* ---- search ---- */
+  const boxesOn = (shelf: ShelfWithLevels) =>
+    shelf.levels.reduce(
+      (sum, level) => sum + SLOTS.filter((slot) => boxAt(level.id, slot)).length,
+      0,
+    );
+
+  const boxById = (id: string) => boxes.find((b) => b.id === id);
+  const openBox = openBoxId ? (boxById(openBoxId) ?? null) : null;
+
+  const totalPositions = shelves.length * 10;
+  const perType = (t: DocType) => contents.filter((c) => c.documentType === t).length;
+
+  /* ---- search: across the documents actually in boxes ---- */
 
   const q = query.trim().toLowerCase();
-
-  /**
-   * Record series matching the search, across what the schedule says about
-   * them and where the room keeps them. "item 3" and a bare "3" both find
-   * item 3; "level a" finds everything on a Level A.
-   */
   const results = React.useMemo(() => {
     if (!q) return [];
-    return series.filter((s) => {
-      const home = homeOf(s.shelfLevelId, shelves);
-      const haystack = [
-        s.titleAndDescription,
-        s.scheduleNo,
-        s.agencyName,
-        s.remarks ?? "",
-        `item ${s.itemNumber}`,
-        home?.shelfName ?? "",
-        home ? `level ${home.levelLabel}` : "",
-        home?.category ?? "",
-      ].map((v) => v.toLowerCase());
-      return haystack.some((v) => v.includes(q)) || String(s.itemNumber) === q;
+    return contents.filter((c) => {
+      const box = boxes.find((b) => b.id === c.boxId);
+      const location = locationOf(box, shelves);
+      return [
+        c.documentNo,
+        c.agency,
+        DOC_TYPES[c.documentType].name,
+        c.documentType,
+        box ? boxName(box) : "",
+        box ? String(box.year) : "",
+        location?.text ?? "",
+      ].some((v) => v.toLowerCase().includes(q));
     });
-  }, [series, shelves, q]);
-
-  /* ---- level picker ---- */
-
-  /**
-   * What the picker offers for a level: every series that is not already on
-   * it. The ones with no storage come first, as the suggestion; the rest are
-   * listed with where they stand now, and choosing one moves it.
-   */
-  const pickerGroups = React.useMemo(() => {
-    const needle = pickerSearch.trim().toLowerCase();
-    const matches = (s: MappedSeries) =>
-      !needle ||
-      s.titleAndDescription.toLowerCase().includes(needle) ||
-      s.scheduleNo.toLowerCase().includes(needle);
-    const candidates = series.filter((s) => s.shelfLevelId !== placingOn?.id && matches(s));
-    return {
-      suggested: candidates.filter((s) => !s.shelfLevelId),
-      elsewhere: candidates.filter((s) => s.shelfLevelId),
-    };
-  }, [series, placingOn, pickerSearch]);
+  }, [contents, boxes, shelves, q]);
 
   /* ---- view location ---- */
 
-  // Pointed at from the address so it survives the shelf opening: the level
-  // is scrolled to and outlined, and the series' box with it, for a few
-  // seconds — long enough to read "this is where I need to go".
+  // Pointed at from the address so it survives the shelf opening, and so the
+  // document pages can link here: the level is scrolled to and outlined, and
+  // the box with it, for a few seconds.
   const flashLevel = searchParams.get("level");
-  const flashSeries = searchParams.get("series");
-  const [flash, setFlash] = React.useState<{ level: string | null; series: string | null }>({
+  const flashBox = searchParams.get("box");
+  const [flash, setFlash] = React.useState<{ level: string | null; box: string | null }>({
     level: null,
-    series: null,
+    box: null,
   });
 
   React.useEffect(() => {
-    if (!openShelf || (!flashLevel && !flashSeries)) return;
-    setFlash({ level: flashLevel, series: flashSeries });
-    const target = document.getElementById(`level-${flashLevel}`);
-    target?.scrollIntoView({ block: "center", behavior: still ? "auto" : "smooth" });
+    if (!openShelf || (!flashLevel && !flashBox)) return;
+    setFlash({ level: flashLevel, box: flashBox });
+    document
+      .getElementById(`level-${flashLevel}`)
+      ?.scrollIntoView({ block: "center", behavior: still ? "auto" : "smooth" });
     const t = window.setTimeout(() => {
-      setFlash({ level: null, series: null });
+      setFlash({ level: null, box: null });
       setSearchParams({ shelf: openShelf.id }, { replace: true });
     }, 4500);
     return () => window.clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [openShelf?.id, flashLevel, flashSeries]);
+  }, [openShelf?.id, flashLevel, flashBox]);
 
-  const viewLocation = (s: MappedSeries) => {
-    const home = homeOf(s.shelfLevelId, shelves);
-    if (!home) return;
+  const viewLocation = (box: RecordBox | undefined) => {
+    const location = locationOf(box, shelves);
+    if (!box || !location) return;
     setQuery("");
-    setDetailId(null);
+    setOpenBoxId(null);
     setSearchParams(
-      { shelf: home.shelfId, level: home.levelId, series: s.id },
+      { shelf: location.shelfId, level: location.levelId, box: box.id },
       { replace: false },
     );
   };
 
-  const viewRds = (s: MappedSeries) => navigate(`/records/${s.scheduleId}`);
+  const viewRecord = (c: BoxContent) => navigate(DOC_TYPES[c.documentType].route(c.sourceId));
 
   /* ---- writes ---- */
 
-  /** Runs a write, reports its failure in the office's words, then reloads. */
   const run = async (work: () => Promise<void>, failure: string) => {
     try {
       await work();
@@ -688,7 +571,10 @@ export function ShelfMapPage() {
   const addShelf = async () => {
     setSaving(true);
     try {
-      await createShelf({ name: newShelfName, location: newShelfLocation }, shelves.length);
+      await createShelf(
+        { name: newShelfName, location: newShelfLocation },
+        shelves.reduce((max, s) => Math.max(max, s.position + 1), 0),
+      );
       await refresh();
       setNewShelfOpen(false);
       setNewShelfName("");
@@ -697,13 +583,6 @@ export function ShelfMapPage() {
       toast.error(e instanceof Error ? e.message : "Unable to add the shelf");
     }
     setSaving(false);
-  };
-
-  /** What loses its place if these levels go. */
-  const consequenceOf = (levelIds: string[]) => {
-    const onThem = series.filter((s) => s.shelfLevelId && levelIds.includes(s.shelfLevelId));
-    if (onThem.length === 0) return "No record series is assigned to it.";
-    return `${seriesCount(onThem.length)} will have no storage location until assigned again. Nothing is deleted, and they will be listed under Needs attention.`;
   };
 
   if (loading) {
@@ -719,7 +598,7 @@ export function ShelfMapPage() {
       <PageTransition className="space-y-5">
         <PageHeader
           title="Records Room"
-          description="Where each record series of the disposition schedules is kept — shelf, level and category."
+          description="Approved Records Management documents, filed automatically into boxes — five levels to a shelf, two boxes to a level."
           actions={
             <div className="flex flex-wrap items-center gap-2">
               <Button variant="ghost" onClick={() => navigate("/records")}>
@@ -734,22 +613,30 @@ export function ShelfMapPage() {
           }
         />
 
-        {shelves.length === 0 ? (
+        {failed && shelves.length === 0 ? (
+          <ContainerCard padded>
+            <div className="flex items-center justify-between gap-3 text-[13px] text-neutral-700">
+              The Records Room could not be loaded.
+              <Button variant="outline" size="sm" onClick={() => void refresh()}>
+                Try again
+              </Button>
+            </div>
+          </ContainerCard>
+        ) : shelves.length === 0 ? (
           <ContainerCard padded>
             <EmptyState
               icon={Layers}
-              title="The room has no shelves on it yet"
-              description="Add the first shelf, give it the name the office already calls it, and divide it into lettered levels. Then assign each record series a level."
+              title="The room has no shelves yet"
+              description="Add a shelf, or approve a disposition schedule, inventory or disposal request — the first one filed brings a shelf with it."
               action={{ label: "Add Shelf", onClick: () => setNewShelfOpen(true) }}
             />
           </ContainerCard>
         ) : (
-          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_300px]">
             <div className="min-w-0 space-y-5">
-              {/* Find a record series. */}
               <div className="space-y-3">
                 <SearchBar
-                  placeholder="Find a record series — title, RDS no., item, agency, shelf, level or category"
+                  placeholder="Find a filed document — number, agency, document type or box"
                   widthClassName="w-full"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
@@ -759,7 +646,8 @@ export function ShelfMapPage() {
                   <ContainerCard className="overflow-hidden">
                     <div className="flex items-center justify-between px-4 py-3">
                       <h2 className="text-[13.5px] font-semibold text-neutral-900">
-                        {results.length} record series found
+                        {results.length} filed {results.length === 1 ? "document" : "documents"}{" "}
+                        found
                       </h2>
                       <Button variant="ghost" size="sm" onClick={() => setQuery("")}>
                         Clear
@@ -767,49 +655,47 @@ export function ShelfMapPage() {
                     </div>
                     {results.length === 0 ? (
                       <p className="border-t border-neutral-200 px-4 py-4 text-[12.5px] text-neutral-500">
-                        No record series matches that.
+                        No filed document matches that. Documents are filed once they are Approved.
                       </p>
                     ) : (
                       <ul className="divide-y divide-neutral-200 border-t border-neutral-200">
-                        {results.slice(0, 100).map((s) => {
-                          const home = homeOf(s.shelfLevelId, shelves);
+                        {results.slice(0, 100).map((c) => {
+                          const box = boxById(c.boxId);
                           return (
                             <li
-                              key={s.id}
+                              key={c.id}
                               className="flex flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:gap-4"
                             >
-                              <button
-                                type="button"
-                                onClick={() => setDetailId(s.id)}
-                                className="min-w-0 flex-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring)"
-                              >
-                                <div className="truncate text-[13.5px] font-semibold text-neutral-900">
-                                  {s.titleAndDescription}
+                              <div className="min-w-0 flex-1">
+                                <div className="text-[13.5px] font-semibold tabular-nums text-neutral-900">
+                                  {c.documentNo}
                                 </div>
-                                <div className="mt-0.5 flex items-center gap-1.5 text-[12px] tabular-nums text-neutral-500">
+                                <div className="mt-0.5 flex items-center gap-1.5 text-[12px] text-neutral-600">
                                   <span
                                     aria-hidden
-                                    className={`h-[8px] w-[8px] shrink-0 ${labelTone(s.scheduleNo)}`}
+                                    className={`h-[8px] w-[8px] shrink-0 ${docTone(c.documentType)}`}
                                   />
-                                  {seriesCitation(s.scheduleNo, s.itemNumber)}
+                                  <span className="truncate">
+                                    {DOC_TYPES[c.documentType].name} · {c.agency} ·{" "}
+                                    {formatDate(c.date)}
+                                  </span>
                                 </div>
-                                <div className="mt-1">
-                                  <LocationLine home={home} />
+                                <div className="mt-1 flex min-w-0 flex-wrap items-center gap-x-2">
+                                  <LocationLine location={locationOf(box, shelves)} />
+                                  {box ? (
+                                    <span className="truncate text-[12px] text-neutral-500">
+                                      {boxName(box)}
+                                    </span>
+                                  ) : null}
                                 </div>
-                              </button>
+                              </div>
                               <div className="flex shrink-0 items-center gap-1.5">
-                                <Button variant="ghost" size="sm" onClick={() => viewRds(s)}>
-                                  View RDS
+                                <Button variant="ghost" size="sm" onClick={() => viewRecord(c)}>
+                                  View Record
                                 </Button>
-                                {home ? (
-                                  <Button size="sm" onClick={() => viewLocation(s)}>
-                                    View Location
-                                  </Button>
-                                ) : (
-                                  <Button size="sm" onClick={() => setAssigningId(s.id)}>
-                                    Assign Storage
-                                  </Button>
-                                )}
+                                <Button size="sm" onClick={() => viewLocation(box)}>
+                                  View Location
+                                </Button>
                               </div>
                             </li>
                           );
@@ -831,7 +717,8 @@ export function ShelfMapPage() {
                     <ShelfTile
                       key={shelf.id}
                       shelf={shelf}
-                      seriesByLevel={seriesByLevel}
+                      boxesOnShelf={boxesOn(shelf)}
+                      boxAt={boxAt}
                       onOpen={() => openShelfById(shelf.id)}
                     />
                   ))}
@@ -845,10 +732,11 @@ export function ShelfMapPage() {
                   <ShelfCard
                     key={openShelf.id}
                     shelf={openShelf}
-                    still={still}
-                    seriesByLevel={seriesByLevel}
+                    boxesOnShelf={boxesOn(openShelf)}
+                    boxAt={boxAt}
+                    counts={counts}
                     highlightedLevel={flash.level}
-                    highlightedSeries={flash.series}
+                    highlightedBox={flash.box}
                     onRenameShelf={(changes) =>
                       void run(
                         () =>
@@ -859,81 +747,67 @@ export function ShelfMapPage() {
                         "Unable to rename the shelf",
                       )
                     }
-                    onAddLevel={() =>
-                      void run(
-                        () =>
-                          createLevel(
-                            openShelf.id,
-                            { label: nextLevelLabel(openShelf.levels) },
-                            openShelf.levels.length,
-                          ),
-                        "Unable to add the level",
-                      )
-                    }
                     onDeleteShelf={() => setShelfToRemove(openShelf)}
-                    onRenameLevel={(level, changes) =>
-                      void run(
-                        () =>
-                          updateLevel(level.id, {
-                            label: changes.label ?? level.label,
-                            category: changes.category ?? level.category,
-                          }),
-                        "Unable to rename the level",
-                      )
-                    }
-                    onDeleteLevel={(level) => setLevelToRemove(level)}
-                    onAssignToLevel={(level) => {
-                      setPickerSearch("");
-                      setPlacingOn(level);
-                    }}
-                    onOpenSeries={(s) => setDetailId(s.id)}
-                    onUnassignSeries={(s) => setSeriesToUnassign(s)}
+                    onOpenBox={(b) => setOpenBoxId(b.id)}
                   />
                 </div>
               )}
             </div>
 
-            <NeedsAttention
-              unassignedSeries={unassignedSeries}
-              onAssign={(s) => setAssigningId(s.id)}
-            />
+            {/* The room at a glance. */}
+            <ContainerCard className="h-fit overflow-hidden lg:sticky lg:top-0">
+              <div className="px-4 py-3.5">
+                <h2 className="text-[14px] font-semibold text-neutral-900">The room</h2>
+                <p className="mt-0.5 text-[12.5px] text-neutral-500">
+                  Documents are filed here automatically when they are Approved.
+                </p>
+              </div>
+              <dl className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1.5 border-t border-neutral-200 px-4 py-3 text-[13px]">
+                <dt className="text-neutral-600">Shelves</dt>
+                <dd className="text-right tabular-nums text-neutral-900">{shelves.length}</dd>
+                <dt className="text-neutral-600">Boxes</dt>
+                <dd className="text-right tabular-nums text-neutral-900">{boxes.length}</dd>
+                <dt className="text-neutral-600">Empty positions</dt>
+                <dd className="text-right tabular-nums text-neutral-900">
+                  {Math.max(0, totalPositions - boxes.length)} of {totalPositions}
+                </dd>
+              </dl>
+              <div className="border-t border-neutral-200 px-4 py-3">
+                <div className="text-[11.5px] font-semibold uppercase tracking-[0.08em] text-neutral-500">
+                  Filed documents
+                </div>
+                <ul className="mt-1.5 space-y-1 text-[13px]">
+                  {(Object.keys(DOC_TYPES) as DocType[]).map((t) => (
+                    <li key={t} className="flex items-center gap-2">
+                      <span aria-hidden className={`h-[8px] w-[8px] shrink-0 ${docTone(t)}`} />
+                      <span className="flex-1 text-neutral-700">{DOC_TYPES[t].short}</span>
+                      <span className="tabular-nums text-neutral-900">{perType(t)}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </ContainerCard>
           </div>
         )}
       </PageTransition>
 
-      {/* ---- one record series ---- */}
-      <SeriesDetailDrawer
-        series={detail}
-        home={homeOf(detail?.shelfLevelId, shelves)}
-        onOpenChange={(open) => !open && setDetailId(null)}
-        onViewRds={() => detail && viewRds(detail)}
-        onViewLocation={() => detail && viewLocation(detail)}
-        onAssignStorage={() => detail && setAssigningId(detail.id)}
-      />
-
-      {/* ---- assign storage (from anywhere) ---- */}
-      <AssignStorageDialog
-        open={assigning !== null}
-        onOpenChange={(open) => !open && setAssigningId(null)}
-        series={
-          assigning
-            ? {
-                id: assigning.id,
-                title: assigning.titleAndDescription,
-                shelfLevelId: assigning.shelfLevelId,
-              }
-            : null
-        }
+      <BoxDrawer
+        box={openBox}
+        location={locationOf(openBox ?? undefined, shelves)}
+        contents={openBox ? (contentsByBox.get(openBox.id) ?? []) : []}
         shelves={shelves}
-        onAssigned={() => void refresh()}
+        boxes={boxes}
+        onOpenChange={(open) => !open && setOpenBoxId(null)}
+        onViewRecord={viewRecord}
+        onViewLocation={() => viewLocation(openBox ?? undefined)}
+        onChanged={() => void refresh()}
       />
 
-      {/* ---- add a shelf ---- */}
       <ConfirmationModal
         open={newShelfOpen}
         onOpenChange={setNewShelfOpen}
         title="Add a shelf"
-        description="Name it the way the office already refers to it."
+        description="It comes with levels A to E, two box positions each. Name it the way the office already refers to it."
         icon={Archive}
         confirmLabel="Add Shelf"
         loading={saving}
@@ -942,131 +816,27 @@ export function ShelfMapPage() {
         <div className="mt-4 space-y-3 text-left">
           <Input
             aria-label="Shelf name"
-            placeholder="Shelf 1"
+            placeholder={`Shelf ${shelves.length + 1}`}
             value={newShelfName}
             onChange={(e) => setNewShelfName(e.target.value)}
           />
           <Input
             aria-label="Where the shelf stands"
-            placeholder="Main Records Room (optional)"
+            placeholder="Where it stands (optional)"
             value={newShelfLocation}
             onChange={(e) => setNewShelfLocation(e.target.value)}
           />
         </div>
       </ConfirmationModal>
 
-      {/* ---- assign a series to this level ---- */}
-      <ConfirmationModal
-        open={placingOn !== null}
-        onOpenChange={(open) => !open && setPlacingOn(null)}
-        title={
-          placingOn
-            ? `Assign a record series to Level ${placingOn.label}${placingOn.category ? ` · ${placingOn.category}` : ""}`
-            : "Assign a record series"
-        }
-        description="A series already on another level moves here."
-        icon={Layers}
-        hideCancel
-        confirmLabel="Done"
-        onConfirm={() => setPlacingOn(null)}
-      >
-        <div className="mt-4 space-y-3 text-left">
-          <SearchBar
-            placeholder="Search series or RDS no.…"
-            widthClassName="w-full"
-            value={pickerSearch}
-            onChange={(e) => setPickerSearch(e.target.value)}
-          />
-          {pickerGroups.suggested.length + pickerGroups.elsewhere.length === 0 ? (
-            <p className="py-4 text-center text-[12.5px] text-neutral-500">
-              {pickerSearch.trim()
-                ? "No record series matches that."
-                : "There are no other record series to assign here yet."}
-            </p>
-          ) : (
-            <div className="max-h-72 space-y-3 overflow-y-auto">
-              {(
-                [
-                  ["Suggested · no storage yet", pickerGroups.suggested],
-                  ["Already stored elsewhere · choosing one moves it here", pickerGroups.elsewhere],
-                ] as const
-              ).map(([heading, list]) =>
-                list.length === 0 ? null : (
-                  <div key={heading}>
-                    <div className="px-0.5 pb-1 text-[11.5px] font-semibold uppercase tracking-[0.06em] text-neutral-500">
-                      {heading}
-                    </div>
-                    <ul className="divide-y divide-neutral-200 rounded-[3px] border border-neutral-200">
-                      {list.map((s) => (
-                        <li key={s.id}>
-                          <button
-                            type="button"
-                            className="flex w-full items-start gap-2.5 px-3 py-2.5 text-left transition hover:bg-neutral-50 focus-visible:bg-neutral-50 focus-visible:outline-none"
-                            onClick={() => {
-                              const level = placingOn;
-                              if (!level) return;
-                              setPlacingOn(null);
-                              void run(
-                                () => placeSeries(s.id, level.id),
-                                "Unable to assign the series",
-                              );
-                            }}
-                          >
-                            <span
-                              aria-hidden
-                              className={`mt-1 h-[8px] w-[8px] shrink-0 ${labelTone(s.scheduleNo)}`}
-                            />
-                            <span className="min-w-0 flex-1">
-                              <span className="block truncate text-[13px] text-neutral-900">
-                                {s.titleAndDescription}
-                              </span>
-                              <span className="block truncate text-[12px] tabular-nums text-neutral-500">
-                                {seriesCitation(s.scheduleNo, s.itemNumber)}
-                                {s.shelfLevelId
-                                  ? ` · now on ${homeOf(s.shelfLevelId, shelves)?.text ?? "another shelf"}`
-                                  : ""}
-                              </span>
-                            </span>
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ),
-              )}
-            </div>
-          )}
-        </div>
-      </ConfirmationModal>
-
-      {/* ---- unassign a series ---- */}
-      <ConfirmationModal
-        open={seriesToUnassign !== null}
-        onOpenChange={(open) => !open && setSeriesToUnassign(null)}
-        title={
-          seriesToUnassign
-            ? `Unassign storage for ${seriesToUnassign.titleAndDescription}?`
-            : "Unassign storage?"
-        }
-        description="The series will have no storage location until it is assigned one again. Nothing is deleted."
-        icon={Layers}
-        tone="warning"
-        confirmLabel="Unassign"
-        onConfirm={() => {
-          const s = seriesToUnassign;
-          setSeriesToUnassign(null);
-          if (s) void run(() => placeSeries(s.id, null), "Unable to unassign the series");
-        }}
-      />
-
       <DeleteModal
         open={shelfToRemove !== null}
         onOpenChange={(open) => !open && setShelfToRemove(null)}
         title={shelfToRemove ? `Remove ${shelfToRemove.name}?` : "Remove this shelf?"}
         description={
-          shelfToRemove
-            ? `The shelf and its levels are removed. ${consequenceOf(shelfToRemove.levels.map((l) => l.id))}`
-            : undefined
+          shelfToRemove && boxesOn(shelfToRemove) > 0
+            ? `${boxCount(boxesOn(shelfToRemove))} still ${boxesOn(shelfToRemove) === 1 ? "stands" : "stand"} on this shelf. Move ${boxesOn(shelfToRemove) === 1 ? "it" : "them"} to another shelf first — a shelf holding boxes cannot be removed.`
+            : "The empty shelf and its five levels are removed."
         }
         onConfirm={() => {
           const shelf = shelfToRemove;
@@ -1076,18 +846,6 @@ export function ShelfMapPage() {
             await deleteShelf(shelf.id);
             openShelfById(null);
           }, "Unable to remove the shelf");
-        }}
-      />
-
-      <DeleteModal
-        open={levelToRemove !== null}
-        onOpenChange={(open) => !open && setLevelToRemove(null)}
-        title={levelToRemove ? `Remove level ${levelToRemove.label}?` : "Remove this level?"}
-        description={levelToRemove ? consequenceOf([levelToRemove.id]) : undefined}
-        onConfirm={() => {
-          const level = levelToRemove;
-          setLevelToRemove(null);
-          if (level) void run(() => deleteLevel(level.id), "Unable to remove the level");
         }}
       />
     </>
