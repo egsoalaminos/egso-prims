@@ -44,8 +44,15 @@ export interface MappedSeries {
   id: string;
   scheduleId: string;
   scheduleNo: string;
+  /** The schedule's field 1, for searching by agency. */
+  agencyName: string;
   itemNumber: number;
   titleAndDescription: string;
+  /** Field 7, in years. A retention period — not a count of anything. */
+  retentionActive: number;
+  retentionStorage: number;
+  retentionTotal: number;
+  remarks?: string;
   shelfLevelId?: string;
 }
 
@@ -75,4 +82,37 @@ export function nextLevelLabel(levels: ShelfLevel[]): string {
     if (!taken.has(letter)) return letter;
   }
   return `L${levels.length + 1}`;
+}
+
+/** A resolved location: the shelf and level, and the words for them. */
+export interface HomeLocation {
+  shelfId: string;
+  shelfName: string;
+  levelId: string;
+  levelLabel: string;
+  category?: string;
+  /** "Shelf 1 → Level A → Procurement" */
+  text: string;
+}
+
+/** Where a shelf level is, in the words on the steel. */
+export function homeOf(
+  levelId: string | undefined,
+  shelves: ShelfWithLevels[],
+): HomeLocation | null {
+  if (!levelId) return null;
+  for (const shelf of shelves) {
+    const level = shelf.levels.find((l) => l.id === levelId);
+    if (!level) continue;
+    const category = level.category?.trim() || undefined;
+    return {
+      shelfId: shelf.id,
+      shelfName: shelf.name,
+      levelId: level.id,
+      levelLabel: level.label,
+      category,
+      text: `${shelf.name} → Level ${level.label}${category ? ` → ${category}` : ""}`,
+    };
+  }
+  return null;
 }

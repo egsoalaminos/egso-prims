@@ -33,17 +33,23 @@ function rowToLevel(r: any): ShelfLevel {
 }
 
 function rowToMappedSeries(r: any): MappedSeries {
+  // PostgREST returns an embedded parent as an object, or as a one-element
+  // array depending on how it resolves the relationship; both are handled
+  // so a schedule number never renders as "undefined" on the map.
+  const schedule = Array.isArray(r.disposition_schedules)
+    ? r.disposition_schedules[0]
+    : r.disposition_schedules;
   return {
     id: r.id,
     scheduleId: r.schedule_id,
-    // PostgREST returns an embedded parent as an object, or as a one-element
-    // array depending on how it resolves the relationship; both are handled
-    // so a schedule number never renders as "undefined" on the map.
-    scheduleNo: Array.isArray(r.disposition_schedules)
-      ? (r.disposition_schedules[0]?.schedule_no ?? "")
-      : (r.disposition_schedules?.schedule_no ?? ""),
+    scheduleNo: schedule?.schedule_no ?? "",
+    agencyName: schedule?.agency_name ?? "",
     itemNumber: r.item_number,
     titleAndDescription: r.title_and_description,
+    retentionActive: r.retention_active ?? 0,
+    retentionStorage: r.retention_storage ?? 0,
+    retentionTotal: r.retention_total ?? 0,
+    remarks: r.remarks ?? undefined,
     shelfLevelId: r.shelf_level_id ?? undefined,
   };
 }
@@ -103,7 +109,8 @@ export async function listMappedSeries(): Promise<MappedSeries[]> {
       .from(SERIES)
       .select(
         `id, schedule_id, item_number, title_and_description, shelf_level_id,
-         ${SCHEDULES}(schedule_no)`,
+         retention_active, retention_storage, retention_total, remarks,
+         ${SCHEDULES}(schedule_no, agency_name)`,
       )
       .order("item_number", { ascending: true })
       .range(from, to),

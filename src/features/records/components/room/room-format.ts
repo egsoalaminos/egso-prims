@@ -1,5 +1,5 @@
 /**
- * Words and colours the Records Room, its drawers and the schedule page share.
+ * Words and colours the Records Room, its drawer and the schedule page share.
  */
 
 /**
@@ -22,19 +22,12 @@ export function labelTone(scheduleNo: string): string {
   return LABEL_TONES[hash % LABEL_TONES.length];
 }
 
-/** "12 files · 1 checked out", or "No files yet". */
-export function fileCountText(total: number, out: number): string {
-  if (total === 0) return "No files yet";
-  return `${total} ${total === 1 ? "file" : "files"}${out > 0 ? ` · ${out} checked out` : ""}`;
+/** "RDS-2026-000003 · Item 1" — how a series is cited. */
+export function seriesCitation(scheduleNo: string, itemNumber: number): string {
+  return `${scheduleNo} · Item ${itemNumber}`;
 }
 
-export function formatWhen(iso: string | undefined): string {
-  if (!iso) return "";
-  return new Date(iso).toLocaleString("en-PH", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
+/** A retention period in years: "1 year", "0 years". */
+export function years(n: number): string {
+  return `${n} ${n === 1 ? "year" : "years"}`;
 }

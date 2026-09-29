@@ -1,4 +1,4 @@
-import { fetchAll, friendlyDbError, requireDb, searchOr, unwrap } from "@/lib/db";
+import { fetchAll, requireDb, searchOr, unwrap } from "@/lib/db";
 import { nextDocumentNumber } from "@/features/shared/doc-numbers";
 import type {
   DispositionSchedule,
@@ -202,12 +202,12 @@ export async function updateSchedule(
   );
 
   /*
-   * The lines are updated in place, not deleted and re-inserted. Files in the
-   * records room belong to a series, and a delete would either take them
-   * with it or be refused by the database — so a one-character fix to a
-   * title would destroy the register or fail to save. Only the lines the
-   * clerk removed are deleted. Storage placement is not in the payload, so an
-   * update leaves it where it is.
+   * The lines are updated in place, not deleted and re-inserted, so each
+   * series keeps its identity across a save. Anything that points at a
+   * series — its shelf in the Records Room, its audit history — survives a
+   * one-character fix to a title or a reordering of the lines. Only the lines
+   * the clerk removed are deleted, and storage placement is not in the
+   * payload, so an update leaves each series on its shelf.
    *
    * Renumbering happens in one upsert: the item-number constraint is checked
    * at the end of the statement (migration 045), so rows can pass through
@@ -224,15 +224,7 @@ export async function updateSchedule(
   const removed = [...existing].filter((rowId) => !rows.some((r) => r.id === rowId));
 
   if (removed.length > 0) {
-    const { error } = await db.from(SERIES).delete().in("id", removed);
-    if (error) {
-      if (String((error as { message?: string }).message).includes("record_files")) {
-        throw new Error(
-          "A record series you removed still has files filed under it in the Records Room. Keep the line, or remove those files first.",
-        );
-      }
-      throw friendlyDbError(error);
-    }
+    unwrap(await db.from(SERIES).delete().in("id", removed).select());
   }
   if (kept.length > 0) {
     unwrap(
@@ -247,19 +239,8 @@ export async function updateSchedule(
   return rowToSchedule(header);
 }
 
-/**
- * Deletes a schedule. Its record series go with it (on delete cascade) —
- * unless files are filed under one of them, which the database refuses.
- */
+/** Deletes a schedule. Its record series go with it (on delete cascade). */
 export async function deleteSchedule(id: string): Promise<void> {
   const db = requireDb();
-  const { error } = await db.from(SCHEDULES).delete().eq("id", id).select();
-  if (error) {
-    if (String((error as { message?: string }).message).includes("record_files")) {
-      throw new Error(
-        "Files in the Records Room are still filed under this schedule's record series. Remove those files before deleting the schedule.",
-      );
-    }
-    throw friendlyDbError(error);
-  }
+  unwrap(await db.from(SCHEDULES).delete().eq("id", id).select());
 }

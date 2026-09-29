@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { Archive, ArrowLeft, FilePlus2, Layers, Plus, Trash2, X } from "lucide-react";
+import { Archive, ArrowLeft, Layers, Plus, Trash2, X } from "lucide-react";
 
 import {
   Button,
@@ -17,9 +17,7 @@ import {
   Spinner,
   toast,
 } from "@/components";
-import { departmentByCode } from "@/features/purchase-requests/types";
 import { useShelfMap } from "@/features/records/shelf-hooks";
-import { useRecordFiles } from "@/features/records/file-hooks";
 import {
   createLevel,
   createShelf,
@@ -30,42 +28,36 @@ import {
   updateShelf,
 } from "@/features/records/shelf-api";
 import {
+  homeOf,
   nextLevelLabel,
   type MappedSeries,
   type ShelfLevel,
   type ShelfWithLevels,
 } from "@/features/records/shelf-types";
-import { homeOf, type RecordFile } from "@/features/records/file-types";
 import { AssignStorageDialog } from "@/features/records/components/room/assign-storage-dialog";
-import { ReturnDialog, RetrieveDialog } from "@/features/records/components/room/custody-dialogs";
-import { FileDetailDrawer } from "@/features/records/components/room/file-detail-drawer";
-import { FileRecordDrawer } from "@/features/records/components/room/file-record-drawer";
-import { FileRow } from "@/features/records/components/room/file-row";
 import { NeedsAttention } from "@/features/records/components/room/needs-attention";
-import { SeriesFilesDrawer } from "@/features/records/components/room/series-files-drawer";
+import { SeriesDetailDrawer } from "@/features/records/components/room/series-detail-drawer";
 import { LocationLine } from "@/features/records/components/room/room-parts";
-import { fileCountText, labelTone } from "@/features/records/components/room/room-format";
+import { labelTone, seriesCitation } from "@/features/records/components/room/room-format";
 
 /**
- * The Records Room.
+ * The Records Room: where each record series of the disposition schedules is
+ * kept.
  *
- * Built around what a records clerk actually does, in order of how often:
- * find a record and say where it is; take one out and bring it back; file a
- * new one. None of that needs the shelves — search answers "where", the
- * filing dialog answers "where does this go", and each file carries its own
- * custody. The shelves are the room drawn for setting it up and for seeing
- * it: which series stands where, and how full each level is.
+ * The unit here is the record series — the line of a Records Disposition
+ * Schedule — and nothing smaller. A schedule declares "Item 1, Testing, keep
+ * one year"; this room says which shelf and level that series stands on. The
+ * page answers four questions: what series exist, where each one is, which
+ * still have no place, and where a particular one can be found.
  *
- * Two actions are kept deliberately apart. Assign Storage gives a record
- * series its shelf level — set-up, done once. File a Record puts one physical
- * record under a series — daily, and never asks for a shelf, because the
- * series already has one. A file's home is always its series' level; there is
- * no second place a location is stored (migration 045).
+ * A series is given its place by Assign Storage, which writes
+ * record_series.shelf_level_id — from here, or from the schedule's own page,
+ * through the same dialog. There is no second place a location is stored.
  *
  * The shelves are drawn as the steel they describe: a slotted-angle rack,
  * each series an archive box with its end facing out and a label card read
- * straight across. One box is one series however many files it holds; the
- * files are in search and behind the box.
+ * straight across. The page opens on the room seen from the door, and a
+ * shelf opens to its levels once it is chosen.
  */
 
 /* ---------------- inline editing ---------------- */
@@ -144,29 +136,20 @@ function slottedUpright(slot: number, pitch: number): React.CSSProperties {
 /** The cardboard of an archive box, the same on the tile and on the open shelf. */
 const BOX = "border border-[#d9cfc1] bg-[#f4efe8]";
 
-/** How many files a series holds and how many of them are out. */
-interface SeriesCount {
-  total: number;
-  out: number;
-}
-const NO_FILES: SeriesCount = { total: 0, out: 0 };
-
 /**
  * One record series, drawn as what it is on the steel: an archive box with
  * its end facing out — a hand-hole at the top and a white label card you read
- * straight across. The card says what the box is and how much is in it; the
- * box opens to its files.
+ * straight across. The card cites the series the way the schedule does: its
+ * title, then the schedule number and item.
  */
 function ArchiveBox({
   series,
-  count,
   highlighted,
   still,
   onOpen,
   onUnassign,
 }: {
   series: MappedSeries;
-  count: SeriesCount;
   highlighted: boolean;
   still: boolean;
   onOpen: () => void;
@@ -174,7 +157,6 @@ function ArchiveBox({
 }) {
   return (
     <motion.div
-      id={`series-box-${series.id}`}
       layout={!still}
       initial={still ? false : { opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
@@ -187,7 +169,7 @@ function ArchiveBox({
       <button
         type="button"
         onClick={onOpen}
-        aria-label={`${series.titleAndDescription}: ${fileCountText(count.total, count.out)}. Open its files.`}
+        aria-label={`${series.titleAndDescription}, ${seriesCitation(series.scheduleNo, series.itemNumber)}. Show details.`}
         className="flex w-full flex-col items-center px-2 pb-2 pt-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring)"
       >
         {/* The hand-hole. */}
@@ -196,26 +178,23 @@ function ArchiveBox({
         {/* The label card. The colour square says which schedule declared
             the series; the schedule number beside it says it in words. */}
         <span className="mt-2 block w-full border border-[#e2dbd0] bg-white px-2 py-1.5">
-          <span className="flex items-center gap-1.5 text-[11px] leading-tight">
-            <span aria-hidden className={`h-[8px] w-[8px] shrink-0 ${labelTone(series.scheduleNo)}`} />
-            <span className="truncate tabular-nums text-neutral-500">{series.scheduleNo}</span>
-          </span>
-          <span className="mt-1 line-clamp-2 min-h-[2.5em] text-[12.5px] font-semibold leading-[1.25] text-neutral-900">
+          <span className="line-clamp-2 min-h-[2.5em] text-[12.5px] font-semibold leading-[1.25] text-neutral-900">
             {series.titleAndDescription}
           </span>
-          <span
-            className={`mt-1 block truncate text-[11.5px] tabular-nums ${
-              count.out > 0 ? "text-[#92400e]" : "text-neutral-600"
-            }`}
-          >
-            {fileCountText(count.total, count.out)}
+          {/* Schedule number and item on their own lines: together they run
+              wider than the card, and a truncated citation loses the item. */}
+          <span className="mt-1 flex items-center gap-1.5 text-[11px] leading-tight">
+            <span aria-hidden className={`h-[8px] w-[8px] shrink-0 ${labelTone(series.scheduleNo)}`} />
+            <span className="tabular-nums text-neutral-600">{series.scheduleNo}</span>
+          </span>
+          <span className="mt-0.5 block pl-[14px] text-[11px] font-medium leading-tight tabular-nums text-neutral-800">
+            Item {series.itemNumber}
           </span>
         </span>
       </button>
 
-      {/* Taking a series off its level changes where all its files live, so
-          it stays out of the way until the box is pointed at or focused, and
-          it asks first. */}
+      {/* Taking a series off its level is deliberate, so it stays out of the
+          way until the box is pointed at or focused, and it asks first. */}
       <button
         type="button"
         aria-label={`Unassign storage for ${series.titleAndDescription}`}
@@ -237,6 +216,8 @@ function tagWidth(text: string): string {
   return `calc(${text.length * 0.82}em + 14px)`;
 }
 
+const seriesCount = (n: number) => `${n} record series`;
+
 /**
  * One lettered level: the boxes standing in it, the board they stand on, and
  * the label tag clipped to the board's front — which is where a records room
@@ -245,7 +226,6 @@ function tagWidth(text: string): string {
 function ShelfBay({
   level,
   series,
-  counts,
   still,
   highlightedLevel,
   highlightedSeries,
@@ -257,7 +237,6 @@ function ShelfBay({
 }: {
   level: ShelfLevel;
   series: MappedSeries[];
-  counts: Map<string, SeriesCount>;
   still: boolean;
   highlightedLevel: boolean;
   highlightedSeries: string | null;
@@ -267,8 +246,6 @@ function ShelfBay({
   onRename: (changes: { label?: string; category?: string }) => void;
   onDelete: () => void;
 }) {
-  const files = series.reduce((sum, s) => sum + (counts.get(s.id)?.total ?? 0), 0);
-
   return (
     <div
       id={`level-${level.id}`}
@@ -284,7 +261,7 @@ function ShelfBay({
 
       {/* The bay. Boxes stand on the board, so they align to its bottom. */}
       <div
-        className={`flex min-h-[150px] flex-wrap items-end gap-2 px-3 pt-6 shadow-[inset_0_8px_10px_-8px_rgba(0,0,0,0.18)] transition-colors ${
+        className={`flex min-h-[132px] flex-wrap items-end gap-2 px-3 pt-6 shadow-[inset_0_8px_10px_-8px_rgba(0,0,0,0.18)] transition-colors ${
           highlightedLevel ? "bg-[#fef3c7]" : "bg-[#eceef1]"
         }`}
       >
@@ -293,7 +270,6 @@ function ShelfBay({
             <ArchiveBox
               key={s.id}
               series={s}
-              count={counts.get(s.id) ?? NO_FILES}
               highlighted={highlightedSeries === s.id}
               still={still}
               onOpen={() => onOpenSeries(s)}
@@ -327,7 +303,7 @@ function ShelfBay({
           />
         </div>
         <span className="shrink-0 text-[12px] tabular-nums text-neutral-500">
-          {series.length} series · {files} {files === 1 ? "file" : "files"}
+          {seriesCount(series.length)}
         </span>
         <button
           type="button"
@@ -355,7 +331,6 @@ function ShelfBay({
 function ShelfCard({
   shelf,
   seriesByLevel,
-  counts,
   still,
   highlightedLevel,
   highlightedSeries,
@@ -370,7 +345,6 @@ function ShelfCard({
 }: {
   shelf: ShelfWithLevels;
   seriesByLevel: Map<string, MappedSeries[]>;
-  counts: Map<string, SeriesCount>;
   still: boolean;
   highlightedLevel: string | null;
   highlightedSeries: string | null;
@@ -383,8 +357,10 @@ function ShelfCard({
   onOpenSeries: (s: MappedSeries) => void;
   onUnassignSeries: (s: MappedSeries) => void;
 }) {
-  const onShelf = shelf.levels.flatMap((level) => seriesByLevel.get(level.id) ?? []);
-  const files = onShelf.reduce((sum, s) => sum + (counts.get(s.id)?.total ?? 0), 0);
+  const total = shelf.levels.reduce(
+    (sum, level) => sum + (seriesByLevel.get(level.id)?.length ?? 0),
+    0,
+  );
 
   return (
     <ContainerCard className="overflow-hidden">
@@ -409,7 +385,7 @@ function ShelfCard({
         <div className="flex shrink-0 items-center gap-2">
           <span className="text-[12px] tabular-nums text-neutral-500">
             {shelf.levels.length} {shelf.levels.length === 1 ? "level" : "levels"} ·{" "}
-            {onShelf.length} series · {files} {files === 1 ? "file" : "files"}
+            {seriesCount(total)}
           </span>
           <Button variant="outline" size="sm" onClick={onAddLevel}>
             <Plus className="mr-1.5 h-3.5 w-3.5" />
@@ -451,7 +427,6 @@ function ShelfCard({
                 level={level}
                 still={still}
                 series={seriesByLevel.get(level.id) ?? []}
-                counts={counts}
                 highlightedLevel={highlightedLevel === level.id}
                 highlightedSeries={highlightedSeries}
                 onAssign={() => onAssignToLevel(level)}
@@ -472,24 +447,22 @@ function ShelfCard({
 
 /**
  * One shelf as it looks from across the room: the slotted uprights, the
- * boards, and a box for each series on each level, in its schedule's colour,
- * so how full a level is shows before you walk to it. The numbers under it
- * are the ones a clerk needs: series, files, and how many are out.
+ * boards, and a box for each record series on each level, in its schedule's
+ * colour, so how full a level is shows before you walk to it.
  */
 function ShelfTile({
   shelf,
   seriesByLevel,
-  counts,
   onOpen,
 }: {
   shelf: ShelfWithLevels;
   seriesByLevel: Map<string, MappedSeries[]>;
-  counts: Map<string, SeriesCount>;
   onOpen: () => void;
 }) {
-  const onShelf = shelf.levels.flatMap((level) => seriesByLevel.get(level.id) ?? []);
-  const files = onShelf.reduce((sum, s) => sum + (counts.get(s.id)?.total ?? 0), 0);
-  const out = onShelf.reduce((sum, s) => sum + (counts.get(s.id)?.out ?? 0), 0);
+  const total = shelf.levels.reduce(
+    (sum, level) => sum + (seriesByLevel.get(level.id)?.length ?? 0),
+    0,
+  );
 
   return (
     <button
@@ -555,11 +528,7 @@ function ShelfTile({
         <div className="truncate text-[12.5px] tabular-nums text-neutral-500">
           {shelf.location ? `${shelf.location} · ` : ""}
           {shelf.levels.length} {shelf.levels.length === 1 ? "level" : "levels"} ·{" "}
-          {onShelf.length} series
-        </div>
-        <div className="truncate text-[12.5px] tabular-nums text-neutral-500">
-          {files} {files === 1 ? "file" : "files"}
-          {out > 0 ? <span className="text-[#92400e]"> · {out} checked out</span> : null}
+          {seriesCount(total)}
         </div>
       </div>
     </button>
@@ -571,12 +540,6 @@ function ShelfTile({
 export function ShelfMapPage() {
   const navigate = useNavigate();
   const { shelves, series, loading, refresh } = useShelfMap();
-  const {
-    files,
-    loading: filesLoading,
-    failed: filesFailed,
-    refresh: refreshFiles,
-  } = useRecordFiles();
   const still = useReducedMotion() ?? false;
 
   // The open shelf lives in the address, so the browser's Back returns to
@@ -601,25 +564,14 @@ export function ShelfMapPage() {
   const [levelToRemove, setLevelToRemove] = React.useState<ShelfLevel | null>(null);
   const [seriesToUnassign, setSeriesToUnassign] = React.useState<MappedSeries | null>(null);
 
-  // Files and series are held by id and read back from the live lists, so an
-  // open drawer shows the file as it is now, not as it was when clicked.
-  const [filingOpen, setFilingOpen] = React.useState(false);
-  const [filingSeriesId, setFilingSeriesId] = React.useState<string | undefined>();
-  const [viewingId, setViewingId] = React.useState<string | null>(null);
-  const [retrievingId, setRetrievingId] = React.useState<string | null>(null);
-  const [returningId, setReturningId] = React.useState<string | null>(null);
+  // Held by id and read back from the live list, so an open drawer shows the
+  // series as it is now, not as it was when clicked.
   const [assigningId, setAssigningId] = React.useState<string | null>(null);
-  const [seriesOpenId, setSeriesOpenId] = React.useState<string | null>(null);
-
-  const fileById = (id: string | null) => (id ? (files.find((f) => f.id === id) ?? null) : null);
+  const [detailId, setDetailId] = React.useState<string | null>(null);
   const seriesById = (id: string | null) =>
     id ? (series.find((s) => s.id === id) ?? null) : null;
-
-  const viewing = fileById(viewingId);
-  const retrieving = fileById(retrievingId);
-  const returning = fileById(returningId);
   const assigning = seriesById(assigningId);
-  const seriesOpen = seriesById(seriesOpenId);
+  const detail = seriesById(detailId);
 
   /* ---- derived ---- */
 
@@ -634,64 +586,32 @@ export function ShelfMapPage() {
     return map;
   }, [series]);
 
-  const filesBySeries = React.useMemo(() => {
-    const map = new Map<string, RecordFile[]>();
-    for (const f of files) {
-      const list = map.get(f.seriesId);
-      if (list) list.push(f);
-      else map.set(f.seriesId, [f]);
-    }
-    return map;
-  }, [files]);
-
-  const counts = React.useMemo(() => {
-    const map = new Map<string, SeriesCount>();
-    for (const [id, list] of filesBySeries) {
-      map.set(id, {
-        total: list.length,
-        out: list.filter((f) => f.status === "Checked out").length,
-      });
-    }
-    return map;
-  }, [filesBySeries]);
-
   const unassignedSeries = React.useMemo(() => series.filter((s) => !s.shelfLevelId), [series]);
-  const checkedOut = React.useMemo(
-    () => files.filter((f) => f.status === "Checked out"),
-    [files],
-  );
-  // In storage by status, but its series has no shelf — the one real
-  // inconsistency, and not the same thing as a file that is out on purpose.
-  const homelessFiles = React.useMemo(
-    () => files.filter((f) => f.status === "In storage" && !homeOf(f.homeLevelId, shelves)),
-    [files, shelves],
-  );
-
-  /** Where a series stands now: "Shelf 1 → Level A → Personnel". */
-  const whereIs = (levelId: string | undefined) => homeOf(levelId, shelves)?.text;
 
   /* ---- search ---- */
 
   const q = query.trim().toLowerCase();
 
-  const fileResults = React.useMemo(() => {
-    if (!q) return [];
-    return files.filter((f) => {
-      const home = homeOf(f.homeLevelId, shelves);
-      const office = f.officeCode ? departmentByCode(f.officeCode).name : "";
-      return [f.fileNo, f.title, f.seriesTitle, f.scheduleNo, office, f.officeCode ?? "",
-        home?.category ?? "", home?.shelfName ?? "", f.heldBy ?? ""]
-        .some((v) => v.toLowerCase().includes(q));
-    });
-  }, [files, shelves, q]);
-
-  const seriesResults = React.useMemo(() => {
+  /**
+   * Record series matching the search, across what the schedule says about
+   * them and where the room keeps them. "item 3" and a bare "3" both find
+   * item 3; "level a" finds everything on a Level A.
+   */
+  const results = React.useMemo(() => {
     if (!q) return [];
     return series.filter((s) => {
       const home = homeOf(s.shelfLevelId, shelves);
-      return [s.titleAndDescription, s.scheduleNo, home?.category ?? ""].some((v) =>
-        v.toLowerCase().includes(q),
-      );
+      const haystack = [
+        s.titleAndDescription,
+        s.scheduleNo,
+        s.agencyName,
+        s.remarks ?? "",
+        `item ${s.itemNumber}`,
+        home?.shelfName ?? "",
+        home ? `level ${home.levelLabel}` : "",
+        home?.category ?? "",
+      ].map((v) => v.toLowerCase());
+      return haystack.some((v) => v.includes(q)) || String(s.itemNumber) === q;
     });
   }, [series, shelves, q]);
 
@@ -699,9 +619,8 @@ export function ShelfMapPage() {
 
   /**
    * What the picker offers for a level: every series that is not already on
-   * it. The ones with no shelf come first, as the suggestion; the rest are
-   * listed with where they stand now, and choosing one moves it — files and
-   * all, since a file's home is its series'.
+   * it. The ones with no storage come first, as the suggestion; the rest are
+   * listed with where they stand now, and choosing one moves it.
    */
   const pickerGroups = React.useMemo(() => {
     const needle = pickerSearch.trim().toLowerCase();
@@ -741,28 +660,26 @@ export function ShelfMapPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openShelf?.id, flashLevel, flashSeries]);
 
-  const viewLocation = (levelId: string | undefined, seriesId?: string) => {
-    const home = homeOf(levelId, shelves);
+  const viewLocation = (s: MappedSeries) => {
+    const home = homeOf(s.shelfLevelId, shelves);
     if (!home) return;
     setQuery("");
-    setViewingId(null);
-    setSeriesOpenId(null);
-    const params: Record<string, string> = { shelf: home.shelfId, level: home.levelId };
-    if (seriesId) params.series = seriesId;
-    setSearchParams(params, { replace: false });
+    setDetailId(null);
+    setSearchParams(
+      { shelf: home.shelfId, level: home.levelId, series: s.id },
+      { replace: false },
+    );
   };
+
+  const viewRds = (s: MappedSeries) => navigate(`/records/${s.scheduleId}`);
 
   /* ---- writes ---- */
-
-  const refreshAll = async () => {
-    await Promise.all([refresh(), refreshFiles()]);
-  };
 
   /** Runs a write, reports its failure in the office's words, then reloads. */
   const run = async (work: () => Promise<void>, failure: string) => {
     try {
       await work();
-      await refreshAll();
+      await refresh();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : failure);
     }
@@ -782,19 +699,11 @@ export function ShelfMapPage() {
     setSaving(false);
   };
 
-  const openFiling = (seriesId?: string) => {
-    setFilingSeriesId(seriesId);
-    setFilingOpen(true);
-  };
-
-  /** Series and files that lose their home if these levels go. */
+  /** What loses its place if these levels go. */
   const consequenceOf = (levelIds: string[]) => {
     const onThem = series.filter((s) => s.shelfLevelId && levelIds.includes(s.shelfLevelId));
-    const fileCount = onThem.reduce((sum, s) => sum + (counts.get(s.id)?.total ?? 0), 0);
-    if (onThem.length === 0) return "Nothing is assigned to it.";
-    return `${onThem.length} record ${onThem.length === 1 ? "series" : "series"}${
-      fileCount > 0 ? ` and their ${fileCount} ${fileCount === 1 ? "file" : "files"}` : ""
-    } will have no storage location until assigned again. Nothing is deleted, and they will be listed under Needs attention.`;
+    if (onThem.length === 0) return "No record series is assigned to it.";
+    return `${seriesCount(onThem.length)} will have no storage location until assigned again. Nothing is deleted, and they will be listed under Needs attention.`;
   };
 
   if (loading) {
@@ -810,20 +719,16 @@ export function ShelfMapPage() {
       <PageTransition className="space-y-5">
         <PageHeader
           title="Records Room"
-          description="File, find, retrieve and return records — and where each record series is kept."
+          description="Where each record series of the disposition schedules is kept — shelf, level and category."
           actions={
             <div className="flex flex-wrap items-center gap-2">
               <Button variant="ghost" onClick={() => navigate("/records")}>
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Schedules
               </Button>
-              <Button variant="outline" onClick={() => setNewShelfOpen(true)}>
+              <Button onClick={() => setNewShelfOpen(true)}>
                 <Plus className="mr-2 h-4 w-4" />
                 Add Shelf
-              </Button>
-              <Button onClick={() => openFiling()}>
-                <FilePlus2 className="mr-2 h-4 w-4" />
-                File a Record
               </Button>
             </div>
           }
@@ -834,17 +739,17 @@ export function ShelfMapPage() {
             <EmptyState
               icon={Layers}
               title="The room has no shelves on it yet"
-              description="Add the first shelf, give it the name the office already calls it, and divide it into lettered levels. Then assign each record series a level, and records can be filed."
+              description="Add the first shelf, give it the name the office already calls it, and divide it into lettered levels. Then assign each record series a level."
               action={{ label: "Add Shelf", onClick: () => setNewShelfOpen(true) }}
             />
           </ContainerCard>
         ) : (
           <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
             <div className="min-w-0 space-y-5">
-              {/* Find a record — the question asked most. */}
+              {/* Find a record series. */}
               <div className="space-y-3">
                 <SearchBar
-                  placeholder="Find a record — file no., title, series, office or category"
+                  placeholder="Find a record series — title, RDS no., item, agency, shelf, level or category"
                   widthClassName="w-full"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
@@ -854,91 +759,67 @@ export function ShelfMapPage() {
                   <ContainerCard className="overflow-hidden">
                     <div className="flex items-center justify-between px-4 py-3">
                       <h2 className="text-[13.5px] font-semibold text-neutral-900">
-                        {filesLoading
-                          ? "Searching the register…"
-                          : `${fileResults.length} ${fileResults.length === 1 ? "record" : "records"} found`}
+                        {results.length} record series found
                       </h2>
                       <Button variant="ghost" size="sm" onClick={() => setQuery("")}>
                         Clear
                       </Button>
                     </div>
-
-                    {filesFailed ? (
-                      <div className="flex items-center justify-between gap-3 border-t border-neutral-200 px-4 py-4 text-[12.5px] text-neutral-600">
-                        The file register could not be loaded.
-                        <Button variant="outline" size="sm" onClick={() => void refreshFiles()}>
-                          Try again
-                        </Button>
-                      </div>
-                    ) : fileResults.length > 0 ? (
-                      <ul className="divide-y divide-neutral-200 border-t border-neutral-200">
-                        {fileResults.slice(0, 100).map((f) => (
-                          <FileRow
-                            key={f.id}
-                            file={f}
-                            home={homeOf(f.homeLevelId, shelves)}
-                            onView={() => setViewingId(f.id)}
-                            onViewLocation={() => viewLocation(f.homeLevelId, f.seriesId)}
-                            onRetrieve={() => setRetrievingId(f.id)}
-                            onReturn={() => setReturningId(f.id)}
-                          />
-                        ))}
-                      </ul>
-                    ) : !filesLoading ? (
+                    {results.length === 0 ? (
                       <p className="border-t border-neutral-200 px-4 py-4 text-[12.5px] text-neutral-500">
-                        No record matches that.
-                        {files.length === 0 ? " Nothing has been filed yet." : ""}
+                        No record series matches that.
                       </p>
-                    ) : null}
-                    {fileResults.length > 100 && (
+                    ) : (
+                      <ul className="divide-y divide-neutral-200 border-t border-neutral-200">
+                        {results.slice(0, 100).map((s) => {
+                          const home = homeOf(s.shelfLevelId, shelves);
+                          return (
+                            <li
+                              key={s.id}
+                              className="flex flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:gap-4"
+                            >
+                              <button
+                                type="button"
+                                onClick={() => setDetailId(s.id)}
+                                className="min-w-0 flex-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring)"
+                              >
+                                <div className="truncate text-[13.5px] font-semibold text-neutral-900">
+                                  {s.titleAndDescription}
+                                </div>
+                                <div className="mt-0.5 flex items-center gap-1.5 text-[12px] tabular-nums text-neutral-500">
+                                  <span
+                                    aria-hidden
+                                    className={`h-[8px] w-[8px] shrink-0 ${labelTone(s.scheduleNo)}`}
+                                  />
+                                  {seriesCitation(s.scheduleNo, s.itemNumber)}
+                                </div>
+                                <div className="mt-1">
+                                  <LocationLine home={home} />
+                                </div>
+                              </button>
+                              <div className="flex shrink-0 items-center gap-1.5">
+                                <Button variant="ghost" size="sm" onClick={() => viewRds(s)}>
+                                  View RDS
+                                </Button>
+                                {home ? (
+                                  <Button size="sm" onClick={() => viewLocation(s)}>
+                                    View Location
+                                  </Button>
+                                ) : (
+                                  <Button size="sm" onClick={() => setAssigningId(s.id)}>
+                                    Assign Storage
+                                  </Button>
+                                )}
+                              </div>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                    {results.length > 100 && (
                       <p className="border-t border-neutral-200 px-4 py-2.5 text-[12px] text-neutral-500">
                         Showing the first 100. Add more to the search to narrow it.
                       </p>
-                    )}
-
-                    {/* A series answers "where does this kind of record go"
-                        even before anything has been filed under it. */}
-                    {seriesResults.length > 0 && (
-                      <div className="border-t border-neutral-200 bg-neutral-50/60">
-                        <div className="px-4 pb-1 pt-3 text-[11.5px] font-semibold uppercase tracking-[0.08em] text-neutral-500">
-                          Record series
-                        </div>
-                        <ul className="divide-y divide-neutral-200">
-                          {seriesResults.slice(0, 20).map((s) => (
-                            <li key={s.id} className="flex flex-wrap items-center gap-3 px-4 py-2.5">
-                              <span
-                                aria-hidden
-                                className={`h-[8px] w-[8px] shrink-0 ${labelTone(s.scheduleNo)}`}
-                              />
-                              <div className="min-w-0 flex-1">
-                                <div className="truncate text-[13px] text-neutral-900">
-                                  {s.titleAndDescription}
-                                </div>
-                                <LocationLine home={homeOf(s.shelfLevelId, shelves)} />
-                              </div>
-                              <span className="text-[12px] tabular-nums text-neutral-500">
-                                {fileCountText(
-                                  counts.get(s.id)?.total ?? 0,
-                                  counts.get(s.id)?.out ?? 0,
-                                )}
-                              </span>
-                              {s.shelfLevelId ? (
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => viewLocation(s.shelfLevelId, s.id)}
-                                >
-                                  View Location
-                                </Button>
-                              ) : (
-                                <Button size="sm" onClick={() => setAssigningId(s.id)}>
-                                  Assign Storage
-                                </Button>
-                              )}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
                     )}
                   </ContainerCard>
                 ) : null}
@@ -951,7 +832,6 @@ export function ShelfMapPage() {
                       key={shelf.id}
                       shelf={shelf}
                       seriesByLevel={seriesByLevel}
-                      counts={counts}
                       onOpen={() => openShelfById(shelf.id)}
                     />
                   ))}
@@ -967,7 +847,6 @@ export function ShelfMapPage() {
                     shelf={openShelf}
                     still={still}
                     seriesByLevel={seriesByLevel}
-                    counts={counts}
                     highlightedLevel={flash.level}
                     highlightedSeries={flash.series}
                     onRenameShelf={(changes) =>
@@ -1007,7 +886,7 @@ export function ShelfMapPage() {
                       setPickerSearch("");
                       setPlacingOn(level);
                     }}
-                    onOpenSeries={(s) => setSeriesOpenId(s.id)}
+                    onOpenSeries={(s) => setDetailId(s.id)}
                     onUnassignSeries={(s) => setSeriesToUnassign(s)}
                   />
                 </div>
@@ -1016,64 +895,20 @@ export function ShelfMapPage() {
 
             <NeedsAttention
               unassignedSeries={unassignedSeries}
-              filesBySeries={filesBySeries}
-              homelessFiles={homelessFiles}
-              checkedOut={checkedOut}
               onAssign={(s) => setAssigningId(s.id)}
-              onOpenFile={(f) => setViewingId(f.id)}
-              onReturn={(f) => setReturningId(f.id)}
             />
           </div>
         )}
       </PageTransition>
 
-      {/* ---- file a record ---- */}
-      <FileRecordDrawer
-        open={filingOpen}
-        onOpenChange={setFilingOpen}
-        series={series}
-        shelves={shelves}
-        initialSeriesId={filingSeriesId}
-        onAssignStorage={(s) => setAssigningId(s.id)}
-        onFiled={() => void refreshAll()}
-      />
-
-      {/* ---- one file ---- */}
-      <FileDetailDrawer
-        file={viewing}
-        home={homeOf(viewing?.homeLevelId, shelves)}
-        onOpenChange={(open) => !open && setViewingId(null)}
-        onViewLocation={() => viewing && viewLocation(viewing.homeLevelId, viewing.seriesId)}
-        onRetrieve={() => viewing && setRetrievingId(viewing.id)}
-        onReturn={() => viewing && setReturningId(viewing.id)}
-        onAssignStorage={() => viewing && setAssigningId(viewing.seriesId)}
-      />
-
-      {/* ---- the files in one series ---- */}
-      <SeriesFilesDrawer
-        series={seriesOpen}
-        files={seriesOpen ? (filesBySeries.get(seriesOpen.id) ?? []) : []}
-        home={homeOf(seriesOpen?.shelfLevelId, shelves)}
-        onOpenChange={(open) => !open && setSeriesOpenId(null)}
-        onFileHere={() => seriesOpen && openFiling(seriesOpen.id)}
-        onView={(f) => setViewingId(f.id)}
-        onViewLocation={(f) => viewLocation(f.homeLevelId, f.seriesId)}
-        onRetrieve={(f) => setRetrievingId(f.id)}
-        onReturn={(f) => setReturningId(f.id)}
-      />
-
-      {/* ---- custody ---- */}
-      <RetrieveDialog
-        file={retrieving}
-        home={homeOf(retrieving?.homeLevelId, shelves)}
-        onOpenChange={(open) => !open && setRetrievingId(null)}
-        onDone={() => void refreshFiles()}
-      />
-      <ReturnDialog
-        file={returning}
-        home={homeOf(returning?.homeLevelId, shelves)}
-        onOpenChange={(open) => !open && setReturningId(null)}
-        onDone={() => void refreshFiles()}
+      {/* ---- one record series ---- */}
+      <SeriesDetailDrawer
+        series={detail}
+        home={homeOf(detail?.shelfLevelId, shelves)}
+        onOpenChange={(open) => !open && setDetailId(null)}
+        onViewRds={() => detail && viewRds(detail)}
+        onViewLocation={() => detail && viewLocation(detail)}
+        onAssignStorage={() => detail && setAssigningId(detail.id)}
       />
 
       {/* ---- assign storage (from anywhere) ---- */}
@@ -1090,8 +925,7 @@ export function ShelfMapPage() {
             : null
         }
         shelves={shelves}
-        fileCount={assigning ? (counts.get(assigning.id)?.total ?? 0) : 0}
-        onAssigned={() => void refreshAll()}
+        onAssigned={() => void refresh()}
       />
 
       {/* ---- add a shelf ---- */}
@@ -1130,7 +964,7 @@ export function ShelfMapPage() {
             ? `Assign a record series to Level ${placingOn.label}${placingOn.category ? ` · ${placingOn.category}` : ""}`
             : "Assign a record series"
         }
-        description="Its files will be kept on this level. A series already on another level moves here with all its files."
+        description="A series already on another level moves here."
         icon={Layers}
         hideCancel
         confirmLabel="Done"
@@ -1138,7 +972,7 @@ export function ShelfMapPage() {
       >
         <div className="mt-4 space-y-3 text-left">
           <SearchBar
-            placeholder="Search series or schedule no.…"
+            placeholder="Search series or RDS no.…"
             widthClassName="w-full"
             value={pickerSearch}
             onChange={(e) => setPickerSearch(e.target.value)}
@@ -1163,42 +997,39 @@ export function ShelfMapPage() {
                       {heading}
                     </div>
                     <ul className="divide-y divide-neutral-200 rounded-[3px] border border-neutral-200">
-                      {list.map((s) => {
-                        const c = counts.get(s.id) ?? NO_FILES;
-                        return (
-                          <li key={s.id}>
-                            <button
-                              type="button"
-                              className="flex w-full items-start gap-2.5 px-3 py-2.5 text-left transition hover:bg-neutral-50 focus-visible:bg-neutral-50 focus-visible:outline-none"
-                              onClick={() => {
-                                const level = placingOn;
-                                if (!level) return;
-                                setPlacingOn(null);
-                                void run(
-                                  () => placeSeries(s.id, level.id),
-                                  "Unable to assign the series",
-                                );
-                              }}
-                            >
-                              <span
-                                aria-hidden
-                                className={`mt-1 h-[8px] w-[8px] shrink-0 ${labelTone(s.scheduleNo)}`}
-                              />
-                              <span className="min-w-0 flex-1">
-                                <span className="block truncate text-[13px] text-neutral-900">
-                                  {s.titleAndDescription}
-                                </span>
-                                <span className="block truncate text-[12px] tabular-nums text-neutral-500">
-                                  {s.scheduleNo} · {fileCountText(c.total, c.out)}
-                                  {s.shelfLevelId
-                                    ? ` · now on ${whereIs(s.shelfLevelId) ?? "another shelf"}`
-                                    : ""}
-                                </span>
+                      {list.map((s) => (
+                        <li key={s.id}>
+                          <button
+                            type="button"
+                            className="flex w-full items-start gap-2.5 px-3 py-2.5 text-left transition hover:bg-neutral-50 focus-visible:bg-neutral-50 focus-visible:outline-none"
+                            onClick={() => {
+                              const level = placingOn;
+                              if (!level) return;
+                              setPlacingOn(null);
+                              void run(
+                                () => placeSeries(s.id, level.id),
+                                "Unable to assign the series",
+                              );
+                            }}
+                          >
+                            <span
+                              aria-hidden
+                              className={`mt-1 h-[8px] w-[8px] shrink-0 ${labelTone(s.scheduleNo)}`}
+                            />
+                            <span className="min-w-0 flex-1">
+                              <span className="block truncate text-[13px] text-neutral-900">
+                                {s.titleAndDescription}
                               </span>
-                            </button>
-                          </li>
-                        );
-                      })}
+                              <span className="block truncate text-[12px] tabular-nums text-neutral-500">
+                                {seriesCitation(s.scheduleNo, s.itemNumber)}
+                                {s.shelfLevelId
+                                  ? ` · now on ${homeOf(s.shelfLevelId, shelves)?.text ?? "another shelf"}`
+                                  : ""}
+                              </span>
+                            </span>
+                          </button>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 ),
@@ -1217,11 +1048,7 @@ export function ShelfMapPage() {
             ? `Unassign storage for ${seriesToUnassign.titleAndDescription}?`
             : "Unassign storage?"
         }
-        description={
-          seriesToUnassign && (counts.get(seriesToUnassign.id)?.total ?? 0) > 0
-            ? `Its ${counts.get(seriesToUnassign.id)?.total} files will show "Unassigned storage location" until the series is assigned a level again. Nothing is deleted.`
-            : "The series will have no shelf until it is assigned one again. Nothing is deleted."
-        }
+        description="The series will have no storage location until it is assigned one again. Nothing is deleted."
         icon={Layers}
         tone="warning"
         confirmLabel="Unassign"

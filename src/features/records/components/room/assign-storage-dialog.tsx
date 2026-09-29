@@ -3,8 +3,7 @@ import { Layers } from "lucide-react";
 
 import { ConfirmationModal, toast } from "@/components";
 import { placeSeries } from "@/features/records/shelf-api";
-import { homeOf } from "@/features/records/file-types";
-import type { ShelfWithLevels } from "@/features/records/shelf-types";
+import { homeOf, type ShelfWithLevels } from "@/features/records/shelf-types";
 
 /**
  * Assign Storage: the one place a record series is given its shelf level.
@@ -19,15 +18,12 @@ export function AssignStorageDialog({
   onOpenChange,
   series,
   shelves,
-  fileCount = 0,
   onAssigned,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   series: { id: string; title: string; shelfLevelId?: string } | null;
   shelves: ShelfWithLevels[];
-  /** How many files follow the series to its new home. */
-  fileCount?: number;
   onAssigned?: () => void;
 }) {
   const [saving, setSaving] = React.useState<string | null>(null);
@@ -53,11 +49,8 @@ export function AssignStorageDialog({
       open={open}
       onOpenChange={onOpenChange}
       title={series ? `Assign storage · ${series.title}` : "Assign storage"}
-      description={
-        fileCount > 0
-          ? `Choose the shelf level this series is kept on. Its ${fileCount} ${fileCount === 1 ? "file follows" : "files follow"} it there.`
-          : "Choose the shelf level this series is kept on. Every file filed under it will go there."
-      }
+      description="Choose the shelf level this record series is kept on."
+
       icon={Layers}
       hideCancel
       confirmLabel="Close"
