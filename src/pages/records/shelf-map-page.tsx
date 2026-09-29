@@ -42,15 +42,15 @@ import {
  * memory. This page is the furniture: a shelf, the lettered levels it is
  * divided into, the category each level holds, and the series standing on it.
  *
- * It is drawn as the steel it describes rather than as another register. A
- * shelf is one ruled card; its levels are bands separated by hairlines, not
- * cards inside a card; and each level's letter sits in a small square, the way
- * a divider is marked on the shelf itself. The one thing the page repeats is
- * that square, so the eye can find "Level B" the way a hand finds it.
+ * It is drawn as the steel it describes rather than as another register: a
+ * slotted-angle rack, and each series an archive box with its end facing out,
+ * a hand-hole and a label card you read straight across. Each level's letter
+ * and category sit on a tag on the front of its board, so the eye can find
+ * "Level B" the way a hand finds it.
  *
  * The page opens on the room seen from the door — every shelf side by side,
- * drawn small — and a shelf opens to its levels only once it is chosen, the
- * way a clerk walks to one unit rather than reading them all at once.
+ * drawn small — and the chosen shelf opens below it, the room staying in
+ * view, the way a clerk walks to one unit rather than reading them all.
  *
  * Nothing here is filed with the National Archives — it is the office's own
  * map of its own room — so it carries none of the NAP form's chrome.
@@ -71,12 +71,14 @@ function InlineText({
   placeholder,
   ariaLabel,
   className = "",
+  style,
   onCommit,
 }: {
   value: string;
   placeholder: string;
   ariaLabel: string;
   className?: string;
+  style?: React.CSSProperties;
   onCommit: (next: string) => void;
 }) {
   const [draft, setDraft] = React.useState(value);
@@ -93,6 +95,7 @@ function InlineText({
       aria-label={ariaLabel}
       value={draft}
       placeholder={placeholder}
+      style={style}
       onChange={(e) => setDraft(e.target.value)}
       onBlur={commit}
       onKeyDown={(e) => {
@@ -133,25 +136,32 @@ function labelTone(scheduleNo: string): string {
   return LABEL_TONES[hash % LABEL_TONES.length];
 }
 
-/**
- * Folders on a shelf are not all one height, and a row of identical
- * rectangles reads as a chart rather than as a shelf. Three heights, picked
- * from the series' own id so a folder keeps its height between visits.
- */
-const SPINE_HEIGHTS = ["h-[122px]", "h-[134px]", "h-[128px]"] as const;
+/* ---------------- the steel ---------------- */
 
-function spineHeight(id: string): string {
-  let hash = 0;
-  for (let i = 0; i < id.length; i++) hash = (hash * 17 + id.charCodeAt(i)) >>> 0;
-  return SPINE_HEIGHTS[hash % SPINE_HEIGHTS.length];
+/**
+ * The rack is slotted-angle steel: a grey upright punched with a line of
+ * square holes. Drawn as a gradient rather than as elements, so an upright
+ * the full height of a tall shelf costs nothing.
+ */
+function slottedUpright(slot: number, pitch: number): React.CSSProperties {
+  return {
+    backgroundColor: "#b9bec6",
+    backgroundImage: `repeating-linear-gradient(to bottom, transparent 0 ${pitch - slot}px, #4b5160 ${pitch - slot}px ${pitch}px)`,
+    backgroundSize: `${Math.max(3, Math.round(slot * 0.8))}px 100%`,
+    backgroundPosition: "center top",
+    backgroundRepeat: "no-repeat",
+  };
 }
 
+/** The cardboard of an archive box, the same on the tile and on the open shelf. */
+const BOX = "border border-[#d9cfc1] bg-[#f4efe8]";
+
 /**
- * One record series, drawn as what it is on the steel: a box file standing on
- * its end, its title down the spine, its schedule on a label band near the
- * top. It casts a short shadow onto the board it stands on.
+ * One record series, drawn as what it is on the steel: an archive box with
+ * its end facing out — a hand-hole at the top and a white label card you read
+ * straight across, without turning your head.
  */
-function FolderSpine({
+function ArchiveBox({
   series,
   onRemove,
   still,
@@ -167,31 +177,37 @@ function FolderSpine({
       animate={{ opacity: 1, y: 0 }}
       exit={still ? { opacity: 0 } : { opacity: 0, y: 8 }}
       transition={{ duration: still ? 0.1 : 0.2, ease: [0.16, 1, 0.3, 1] }}
-      className={`group/spine relative flex w-[46px] shrink-0 flex-col items-center rounded-t-[2px] border border-neutral-400 bg-neutral-50 pb-1 pt-1.5 shadow-[0_1px_2px_rgba(0,0,0,0.12)] transition hover:-translate-y-0.5 hover:shadow-[0_3px_6px_rgba(0,0,0,0.16)] ${spineHeight(series.id)}`}
+      className={`group/box relative flex w-[150px] shrink-0 flex-col items-center rounded-t-[2px] px-2 pb-2 pt-2 shadow-[0_1px_2px_rgba(0,0,0,0.10)] transition hover:-translate-y-0.5 hover:shadow-[0_4px_8px_rgba(0,0,0,0.14)] ${BOX}`}
       title={`${series.titleAndDescription} — ${series.scheduleNo}, item ${series.itemNumber}`}
     >
-      {/* The written label band: schedule colour, item number. */}
-      <span
-        className={`flex h-[19px] w-[27px] shrink-0 items-center justify-center rounded-[1px] text-[11px] font-semibold tabular-nums ${labelTone(series.scheduleNo)}`}
-      >
-        {series.itemNumber}
-      </span>
+      {/* The hand-hole. */}
+      <span aria-hidden className="h-[6px] w-[34px] rounded-full bg-[#625d55]" />
 
-      {/* The title, read the way a spine is read: bottom to top. */}
-      <span
-        className="mt-1 w-[30px] flex-1 overflow-hidden text-[11px] leading-[1.25] text-neutral-800"
-        style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
-      >
-        {series.titleAndDescription}
-      </span>
+      {/* The label card. The colour square says which schedule declared it;
+          the schedule number beside it says the same thing in words. */}
+      <div className="mt-2 w-full border border-[#e2dbd0] bg-white px-2 py-1.5">
+        <div className="flex items-center gap-1.5 text-[11px] leading-tight">
+          <span
+            aria-hidden
+            className={`h-[8px] w-[8px] shrink-0 ${labelTone(series.scheduleNo)}`}
+          />
+          <span className="font-semibold text-neutral-900">Item {series.itemNumber}</span>
+        </div>
+        <div className="mt-0.5 truncate text-[11px] tabular-nums leading-tight text-neutral-500">
+          {series.scheduleNo}
+        </div>
+        <div className="mt-1 line-clamp-2 min-h-[2.5em] text-[12px] font-semibold leading-[1.25] text-neutral-900">
+          {series.titleAndDescription}
+        </div>
+      </div>
 
-      {/* Taking a folder off the shelf is deliberate, so it stays out of the
-          way until the folder is pointed at or focused. */}
+      {/* Taking a box off the shelf is deliberate, so it stays out of the way
+          until the box is pointed at or focused. */}
       <button
         type="button"
         aria-label={`Take ${series.titleAndDescription} off this level`}
         onClick={onRemove}
-        className="absolute -right-1.5 -top-1.5 grid h-[18px] w-[18px] place-items-center rounded-full border border-neutral-400 bg-white text-neutral-500 opacity-0 transition hover:text-neutral-900 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring) group-hover/spine:opacity-100"
+        className="absolute -right-1.5 -top-1.5 grid h-[18px] w-[18px] place-items-center rounded-full border border-neutral-400 bg-white text-neutral-500 opacity-0 transition hover:text-neutral-900 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring) group-hover/box:opacity-100"
       >
         <X className="h-3 w-3" />
       </button>
@@ -200,9 +216,18 @@ function FolderSpine({
 }
 
 /**
- * One lettered bay: the folders standing in it, the board they stand on, and
- * the label strip clipped to the board's front edge — which is where a records
- * room writes what the level holds, and so is where this one is named.
+ * The label tag is as wide as what is written on it, the way a tag is cut to
+ * its text. Worked out rather than measured: capitals set wide run about
+ * 0.8em a letter, and the input's own padding and border add 14px.
+ */
+function tagWidth(text: string): string {
+  return `calc(${text.length * 0.82}em + 14px)`;
+}
+
+/**
+ * One lettered level: the boxes standing in it, the board they stand on, and
+ * the label tag clipped to the board's front — which is where a records room
+ * writes what the level holds, and so is where this one is named.
  */
 function ShelfBay({
   level,
@@ -223,11 +248,11 @@ function ShelfBay({
 }) {
   return (
     <div>
-      {/* The bay. Folders stand on the board, so they align to its bottom. */}
-      <div className="flex min-h-[154px] items-end gap-[3px] overflow-x-auto bg-neutral-100 px-3 pt-4 shadow-[inset_0_6px_8px_-6px_rgba(0,0,0,0.22)]">
+      {/* The bay. Boxes stand on the board, so they align to its bottom. */}
+      <div className="flex min-h-[150px] flex-wrap items-end gap-2 bg-[#eceef1] px-3 pt-5 shadow-[inset_0_8px_10px_-8px_rgba(0,0,0,0.18)]">
         <AnimatePresence initial={false}>
           {series.map((s) => (
-            <FolderSpine
+            <ArchiveBox
               key={s.id}
               series={s}
               still={still}
@@ -236,36 +261,41 @@ function ShelfBay({
           ))}
         </AnimatePresence>
         {series.length === 0 && (
-          <span className="pb-2 text-[12px] italic text-neutral-400">
+          <span className="self-center text-[12.5px] italic text-neutral-500">
             This level is empty.
           </span>
         )}
       </div>
 
-      {/* The board itself: its top face, then the front edge that carries the
-          label holder. */}
-      <>
-        <div className="h-[7px] border-t border-neutral-400 bg-neutral-300" />
-        <div className="h-[3px] bg-neutral-500" />
-      </>
-      <div className="flex items-center gap-2 border-b border-neutral-300 bg-neutral-100 px-3 py-1.5">
-        <span className="grid h-[19px] w-[19px] shrink-0 place-items-center rounded-[2px] border border-neutral-500 bg-white text-[11px] font-bold text-neutral-900">
-          {level.label}
+      {/* The board: its top face, then its front edge. */}
+      <div className="h-[7px] border-t border-[#9aa1ab] bg-[#c4c9d1]" />
+
+      {/* The label tag on the front of the board. */}
+      <div className="flex items-center gap-3 bg-[#eceef1] px-3 py-2">
+        <div className="flex min-w-0 items-center gap-2 rounded-[2px] border border-neutral-500 bg-white py-1 pl-1 pr-1.5">
+          <span className="grid h-[20px] w-[20px] shrink-0 place-items-center rounded-[2px] bg-neutral-900 text-[11.5px] font-bold text-white">
+            {level.label}
+          </span>
+          <InlineText
+            value={level.category ?? ""}
+            placeholder="Name what this level holds"
+            ariaLabel={`Category on level ${level.label}`}
+            className="max-w-full text-[11.5px] font-semibold uppercase tracking-[0.1em] text-neutral-900 placeholder:uppercase"
+            style={{ width: tagWidth(level.category || "Name what this level holds") }}
+            onCommit={(category) => onRename({ category })}
+          />
+        </div>
+        <span className="shrink-0 text-[12px] tabular-nums text-neutral-500">
+          {series.length} series
         </span>
-        <InlineText
-          value={level.category ?? ""}
-          placeholder="Name what this level holds"
-          ariaLabel={`Category on level ${level.label}`}
-          className="max-w-[15rem] text-[11.5px] font-semibold uppercase tracking-[0.08em] text-neutral-700"
-          onCommit={(category) => onRename({ category })}
-        />
-        <span className="ml-auto shrink-0 text-[11.5px] tabular-nums text-neutral-500">
-          {series.length}
-        </span>
-        <Button variant="ghost" size="xs" onClick={onPlace}>
+        <button
+          type="button"
+          onClick={onPlace}
+          className="ml-auto inline-flex shrink-0 items-center rounded-[3px] border border-dashed border-neutral-400 px-2.5 py-1 text-[12px] font-medium text-neutral-800 transition hover:border-neutral-600 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring)"
+        >
           <Plus className="mr-1 h-3 w-3" />
-          Place
-        </Button>
+          Place a series
+        </button>
         <IconButton
           size="icon-sm"
           aria-label={`Remove level ${level.label}`}
@@ -354,18 +384,20 @@ function ShelfCard({
           This shelf has no levels yet. Add one and it is lettered A.
         </div>
       ) : (
-        /* The unit itself. The uprights run the full height beside the bays,
-           which is what makes a stack of boards read as one shelf. */
-        <div className="relative border-t border-neutral-200 bg-neutral-50 px-[11px] pb-[11px] pt-0">
+        /* The rack. The slotted uprights run the full height beside the
+           levels, which is what makes a stack of boards read as one unit. */
+        <div className="relative border-t border-neutral-200 px-[14px]">
           <span
             aria-hidden
-            className="absolute inset-y-0 left-0 w-[11px] border-r border-neutral-500 bg-neutral-400"
+            className="absolute inset-y-0 left-0 w-[14px] border-r border-[#8f959e]"
+            style={slottedUpright(6, 22)}
           />
           <span
             aria-hidden
-            className="absolute inset-y-0 right-0 w-[11px] border-l border-neutral-500 bg-neutral-400"
+            className="absolute inset-y-0 right-0 w-[14px] border-l border-[#8f959e]"
+            style={slottedUpright(6, 22)}
           />
-          <div className="relative bg-white">
+          <div className="relative">
             {shelf.levels.map((level) => (
               <ShelfBay
                 key={level.id}
@@ -387,21 +419,21 @@ function ShelfCard({
 
 /* ---------------- the room, seen from the door ---------------- */
 
-/** Heights for the small folders on a tile, so a row does not read as a bar. */
-const MINI_SPINE_HEIGHTS = ["h-[72%]", "h-[82%]", "h-[77%]"] as const;
-
 /**
- * One shelf as it looks from across the room: the uprights, the boards, and
- * how full each level is. You pick the shelf you want to walk to here, and
- * only then does it open to its levels and the folders on them.
+ * One shelf as it looks from across the room: the slotted uprights, the
+ * boards, and the archive boxes on each level — each with its label card and
+ * its schedule's colour, so how full a level is shows before you walk to it.
+ * Choosing a shelf opens it below; the room stays in view above it.
  */
 function ShelfTile({
   shelf,
   seriesByLevel,
+  open,
   onOpen,
 }: {
   shelf: ShelfWithLevels;
   seriesByLevel: Map<string, MappedSeries[]>;
+  open: boolean;
   onOpen: () => void;
 }) {
   const total = shelf.levels.reduce(
@@ -414,54 +446,73 @@ function ShelfTile({
       type="button"
       onClick={onOpen}
       aria-label={`Open ${shelf.name}`}
-      className="group block w-full rounded-[3px] text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring) focus-visible:ring-offset-2"
+      aria-pressed={open}
+      className="group block w-full text-left focus-visible:outline-none"
     >
-      <div className="relative aspect-[4/5] border border-neutral-400 bg-neutral-50 px-[8px] pb-[8px] shadow-[0_1px_2px_rgba(0,0,0,0.10)] transition group-hover:-translate-y-0.5 group-hover:shadow-[0_6px_14px_rgba(0,0,0,0.14)]">
-        <span
-          aria-hidden
-          className="absolute inset-y-0 left-0 w-[8px] border-r border-neutral-500 bg-neutral-400"
-        />
-        <span
-          aria-hidden
-          className="absolute inset-y-0 right-0 w-[8px] border-l border-neutral-500 bg-neutral-400"
-        />
-        <div className="relative flex h-full flex-col border-t-[3px] border-neutral-500 bg-white">
+      <div
+        className={`relative aspect-[4/5] p-[5px] outline-offset-0 transition group-focus-visible:ring-2 group-focus-visible:ring-(--accent-ring) ${
+          open ? "outline outline-2 outline-[#7e1624]" : "group-hover:-translate-y-0.5"
+        }`}
+      >
+        <div className="relative flex h-full flex-col bg-[#eceef1] px-[9px]">
+          <span
+            aria-hidden
+            className="absolute inset-y-0 left-0 w-[9px] border-r border-[#8f959e]"
+            style={slottedUpright(4, 14)}
+          />
+          <span
+            aria-hidden
+            className="absolute inset-y-0 right-0 w-[9px] border-l border-[#8f959e]"
+            style={slottedUpright(4, 14)}
+          />
+          {/* The top rail. */}
+          <span aria-hidden className="absolute inset-x-0 top-0 h-[4px] bg-[#8f959e]" />
+
           {shelf.levels.length === 0 ? (
-            <span className="m-auto px-2 text-center text-[11.5px] italic text-neutral-400">
+            <span className="m-auto px-2 text-center text-[11.5px] italic text-neutral-500">
               No levels yet
             </span>
           ) : (
-            shelf.levels.map((level) => {
-              const onLevel = seriesByLevel.get(level.id) ?? [];
-              return (
-                <div
-                  key={level.id}
-                  className="flex min-h-0 flex-1 items-end gap-[2px] overflow-hidden border-b-[3px] border-neutral-400 bg-neutral-100 px-1.5 shadow-[inset_0_4px_5px_-4px_rgba(0,0,0,0.22)]"
-                >
-                  {onLevel.slice(0, 14).map((s, i) => (
+            <div className="relative flex h-full flex-col pt-[4px]">
+              {shelf.levels.map((level) => {
+                const onLevel = seriesByLevel.get(level.id) ?? [];
+                return (
+                  <div key={level.id} className="flex min-h-0 flex-1 flex-col">
+                    <div className="flex min-h-0 flex-1 items-end gap-[3px] overflow-hidden px-[6px]">
+                      {onLevel.map((s) => (
+                        <span
+                          key={s.id}
+                          aria-hidden
+                          className={`flex h-[62%] max-h-[84px] w-[20px] shrink-0 flex-col px-[3px] pb-[3px] ${BOX}`}
+                        >
+                          <span className="flex-[4]" />
+                          <span className={`h-[2px] shrink-0 ${labelTone(s.scheduleNo)}`} />
+                          <span className="mt-[2px] flex-[5] bg-white" />
+                        </span>
+                      ))}
+                    </div>
                     <span
-                      key={s.id}
                       aria-hidden
-                      className={`flex w-[7px] shrink-0 flex-col rounded-t-[1px] border border-neutral-400 bg-neutral-50 pt-[2px] ${MINI_SPINE_HEIGHTS[i % MINI_SPINE_HEIGHTS.length]}`}
-                    >
-                      <span className={`mx-auto h-[5px] w-[4px] ${labelTone(s.scheduleNo)}`} />
-                    </span>
-                  ))}
-                </div>
-              );
-            })
+                      className="h-[6px] shrink-0 border-t border-[#9aa1ab] bg-[#c4c9d1]"
+                    />
+                  </div>
+                );
+              })}
+            </div>
           )}
         </div>
       </div>
 
       <div className="mt-2 px-0.5">
-        <div className="truncate text-[13.5px] font-semibold text-neutral-900 group-hover:underline">
+        <div
+          className={`truncate text-[14px] font-semibold group-hover:underline ${
+            open ? "text-[#7e1624]" : "text-neutral-900"
+          }`}
+        >
           {shelf.name}
         </div>
-        {shelf.location ? (
-          <div className="truncate text-[12px] text-neutral-500">{shelf.location}</div>
-        ) : null}
-        <div className="text-[12px] tabular-nums text-neutral-500">
+        <div className="truncate text-[12.5px] tabular-nums text-neutral-500">
+          {shelf.location ? `${shelf.location} · ` : ""}
           {shelf.levels.length} {shelf.levels.length === 1 ? "level" : "levels"} · {total} series
         </div>
       </div>
@@ -584,23 +635,20 @@ export function ShelfMapPage() {
           </ContainerCard>
         ) : (
           <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
-            {!openShelf ? (
-              <div className="grid grid-cols-2 content-start gap-x-5 gap-y-6 sm:grid-cols-3">
+            <div className="min-w-0 space-y-6">
+              <div className="grid grid-cols-2 content-start gap-x-6 gap-y-6 sm:grid-cols-3">
                 {shelves.map((shelf) => (
                   <ShelfTile
                     key={shelf.id}
                     shelf={shelf}
+                    open={openShelf?.id === shelf.id}
                     seriesByLevel={seriesByLevel}
-                    onOpen={() => openShelfById(shelf.id)}
+                    onOpen={() => openShelfById(openShelf?.id === shelf.id ? null : shelf.id)}
                   />
                 ))}
               </div>
-            ) : (
-              <div className="space-y-3">
-                <Button variant="ghost" size="sm" onClick={() => openShelfById(null)}>
-                  <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
-                  All shelves
-                </Button>
+
+              {openShelf && (
                 <ShelfCard
                   key={openShelf.id}
                   shelf={openShelf}
@@ -647,8 +695,8 @@ export function ShelfMapPage() {
                     void run(() => placeSeries(id, null), "Unable to take the series off")
                   }
                 />
-              </div>
-            )}
+              )}
+            </div>
 
             {/* What still has no home. The point of the map is seeing this. */}
             <ContainerCard className="h-fit lg:sticky lg:top-0">
