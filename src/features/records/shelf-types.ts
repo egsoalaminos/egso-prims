@@ -1,8 +1,8 @@
 /**
  * The Records Room: one room, its shelves, and the boxes on them.
  *
- * Every shelf has exactly five levels, A to E, and every level exactly two box
- * positions, so a shelf holds ten boxes. A box holds one kind of Records
+ * Every shelf has exactly five levels, A to E, and every level exactly three
+ * box positions, so a shelf holds fifteen boxes (migration 048). A box holds one kind of Records
  * Management document for one year — "Records Disposition Schedule — 2026 —
  * Box 01" — and the documents inside it are the approved documents
  * themselves, referenced, not copied. Filing is done by the database when a
@@ -24,7 +24,7 @@ export const DOC_TYPES: Record<
   },
   RIA: {
     name: "Records Inventory and Appraisal",
-    short: "Inventory and Appraisal",
+    short: "Inventory & Appraisal",
     route: (id) => `/records/inventory/${id}`,
   },
   RAD: {
@@ -35,8 +35,11 @@ export const DOC_TYPES: Record<
 };
 
 export const LEVEL_LABELS = ["A", "B", "C", "D", "E"] as const;
-export const SLOTS = [1, 2] as const;
+export const SLOTS = [1, 2, 3] as const;
 export type Slot = (typeof SLOTS)[number];
+
+/** How many boxes one shelf holds: five levels of three positions. */
+export const POSITIONS_PER_SHELF = LEVEL_LABELS.length * SLOTS.length;
 
 /** One lettered floor of a shelf. */
 export interface ShelfLevel {

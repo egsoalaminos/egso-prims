@@ -21,6 +21,7 @@ import { useRecordsRoom } from "@/features/records/shelf-hooks";
 import { createShelf, deleteShelf, updateShelf } from "@/features/records/shelf-api";
 import {
   DOC_TYPES,
+  POSITIONS_PER_SHELF,
   SLOTS,
   boxName,
   boxYearLine,
@@ -40,7 +41,7 @@ import { docTone, formatDate, recordCount } from "@/features/records/components/
 /**
  * The Records Room: one room, its shelves, and the boxes on them.
  *
- * Every shelf has five levels, A to E, and every level two box positions. A
+ * Every shelf has five levels, A to E, and every level three box positions. A
  * box holds one kind of Records Management document for one year —
  * "Records Disposition Schedule — 2026 — Box 01" — and inside it are the
  * approved documents themselves. Nobody files by hand: when a schedule, an
@@ -52,7 +53,7 @@ import { docTone, formatDate, recordCount } from "@/features/records/components/
  * is RDS-2026-000003", View Location points at the box, and a box opens to
  * what is in it.
  *
- * The rack is drawn at the proportions of a real one. A level holds two
+ * The rack is drawn at the proportions of a real one. A level holds three
  * boxes, so a shelf is narrow — it is not stretched to the width of the
  * page — and each level is one row, named for what is on it ("Disposition
  * Schedules", "Available Storage"), with its letter beside the name.
@@ -158,7 +159,7 @@ function BoxCard({
       onClick={onOpen}
       aria-label={`${boxName(box)}, ${recordCount(count)}. Open the box.`}
       title={boxName(box)}
-      className={`relative flex h-full w-full flex-col items-center rounded-[3px] p-1.5 text-left transition hover:border-neutral-500 hover:shadow-[0_2px_6px_rgba(0,0,0,0.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring) ${BOX} ${
+      className={`relative flex h-full w-full min-w-0 flex-col items-center rounded-[3px] p-1 text-left sm:p-1.5 transition hover:border-neutral-500 hover:shadow-[0_2px_6px_rgba(0,0,0,0.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring) ${BOX} ${
         located ? "outline outline-[3px] outline-offset-2 outline-[#d97706]" : ""
       }`}
     >
@@ -169,7 +170,7 @@ function BoxCard({
       )}
       {/* The hand-hole. */}
       <span aria-hidden className="h-[5px] w-[30px] shrink-0 rounded-full bg-[#625d55]" />
-      <span className="mt-1 block w-full min-w-0 border border-[#e2dbd0] bg-white px-2 py-1">
+      <span className="mt-1 block w-full min-w-0 border border-[#e2dbd0] bg-white px-1.5 py-1 sm:px-2">
         <span className="flex min-w-0 items-center gap-1.5">
           <span aria-hidden className={`h-[8px] w-[8px] shrink-0 ${docTone(box.documentType)}`} />
           {box.labelOverride?.trim() ? (
@@ -178,17 +179,20 @@ function BoxCard({
             </span>
           ) : (
             <>
-              <span className="truncate text-[11px] font-semibold uppercase tracking-[0.06em] text-neutral-700 sm:hidden">
+              <span className="truncate text-[11px] font-semibold uppercase tracking-[0.04em] text-neutral-700 md:hidden">
                 {box.documentType}
               </span>
-              <span className="hidden truncate text-[11px] font-semibold uppercase tracking-[0.06em] text-neutral-700 sm:inline">
+              <span className="hidden truncate text-[11px] font-semibold uppercase tracking-[0.04em] text-neutral-700 md:inline">
                 {kind}
               </span>
             </>
           )}
         </span>
-        <span className="mt-0.5 block truncate text-[12px] font-semibold uppercase tabular-nums text-neutral-900 sm:text-[13px] sm:tracking-[0.03em]">
-          {boxYearLine(box)}
+        {/* Wraps between year and box number on a narrow card rather than
+            cutting the box number off; one truncated line from md up. */}
+        <span className="mt-0.5 block text-[12px] font-semibold uppercase leading-tight tabular-nums text-neutral-900 md:truncate md:text-[12.5px]">
+          {box.year}{" "}
+          <span className="whitespace-nowrap">· Box {String(box.sequence).padStart(2, "0")}</span>
         </span>
         <span className="block text-[12px] tabular-nums text-neutral-600">{recordCount(count)}</span>
       </span>
@@ -207,7 +211,7 @@ function EmptySlot({ slot }: { slot: Slot }) {
 }
 
 /**
- * One level: what it holds, named from the boxes on it, beside its two box
+ * One level: what it holds, named from the boxes on it, beside its three box
  * positions, with the board they stand on beneath — one row. The letter is the
  * level's fixed place on the steel and stays beside the name, quieter, for
  * anyone walking to "Level B".
@@ -234,15 +238,15 @@ function LevelRow({
   const name = levelName(filed.map((b) => b.documentType));
   return (
     <div id={`level-${level.id}`}>
-      {/* One grid: on a phone the name sits above the two boxes; from sm up
+      {/* One grid: on a phone the name sits above the three boxes; from sm up
           it takes a column of its own at the left, so naming the level
           costs no height. */}
       <div
-        className={`grid grid-cols-2 items-stretch gap-2 px-2.5 pb-2 pt-2 shadow-[inset_0_8px_10px_-8px_rgba(0,0,0,0.18)] transition-colors sm:grid-cols-[7.5rem_minmax(0,1fr)_minmax(0,1fr)] sm:gap-2.5 sm:pt-2.5 ${
+        className={`grid grid-cols-3 items-stretch gap-1.5 px-2 pb-2 pt-2 shadow-[inset_0_8px_10px_-8px_rgba(0,0,0,0.18)] transition-colors sm:grid-cols-[6.5rem_repeat(3,minmax(0,1fr))] sm:gap-2 sm:px-2.5 sm:pt-2.5 ${
           located ? "bg-[#fef3c7]" : "bg-[#eceef1]"
         }`}
       >
-        <div className="col-span-2 flex min-w-0 items-baseline gap-2 px-0.5 sm:col-span-1 sm:flex-col sm:justify-center sm:gap-0.5">
+        <div className="col-span-3 flex min-w-0 items-baseline gap-2 px-0.5 sm:col-span-1 sm:flex-col sm:justify-center sm:gap-0.5">
           <span
             className={`text-[11.5px] font-semibold uppercase leading-snug tracking-[0.08em] ${
               filed.length ? "text-neutral-900" : "text-neutral-500"
@@ -312,7 +316,7 @@ function ShelfCard({
           ) : null}
         </div>
         <span className="shrink-0 text-[12.5px] tabular-nums text-neutral-600">
-          {boxesOnShelf} of 10 boxes occupied
+          {boxesOnShelf} of {POSITIONS_PER_SHELF} boxes occupied
         </span>
         <IconButton
           size="icon-sm"
@@ -378,7 +382,7 @@ function ShelfTile({
     <button
       type="button"
       onClick={onOpen}
-      aria-label={`Open ${shelf.name}: ${boxesOnShelf} of 10 boxes`}
+      aria-label={`Open ${shelf.name}: ${boxesOnShelf} of ${POSITIONS_PER_SHELF} boxes`}
       className="group block w-full text-left focus-visible:outline-none"
     >
       <div className="relative aspect-[6/5] p-[4px] transition group-hover:-translate-y-0.5 group-focus-visible:ring-2 group-focus-visible:ring-(--accent-ring)">
@@ -397,11 +401,11 @@ function ShelfTile({
           <div className="relative flex h-full flex-col pt-[3px]">
             {shelf.levels.map((level) => (
               <div key={level.id} className="flex min-h-0 flex-1 flex-col">
-                <div className="grid min-h-0 flex-1 grid-cols-2 items-end gap-[6px] px-[8px] pt-[5px]">
+                <div className="grid min-h-0 flex-1 grid-cols-3 items-end gap-[5px] px-[7px] pt-[5px]">
                   {SLOTS.map((slot) => {
                     const box = boxAt(level.id, slot);
                     return box ? (
-                      <span key={slot} aria-hidden className={`flex h-[80%] flex-col px-[10%] pb-[5%] ${BOX}`}>
+                      <span key={slot} aria-hidden className={`flex h-[80%] flex-col px-[12%] pb-[5%] ${BOX}`}>
                         <span className="flex-[3]" />
                         <span className={`h-[3px] shrink-0 ${docTone(box.documentType)}`} />
                         <span className="mt-[2px] flex-[4] bg-white" />
@@ -423,7 +427,7 @@ function ShelfTile({
           {shelf.name}
         </span>
         <span className="shrink-0 text-[12.5px] tabular-nums text-neutral-500">
-          {boxCount(boxesOnShelf)} · {10 - boxesOnShelf} empty
+          {boxCount(boxesOnShelf)} · {POSITIONS_PER_SHELF - boxesOnShelf} empty
         </span>
       </div>
     </button>
@@ -514,7 +518,7 @@ export function ShelfMapPage() {
   const boxById = (id: string) => boxes.find((b) => b.id === id);
   const openBox = openBoxId ? (boxById(openBoxId) ?? null) : null;
 
-  const totalPositions = shelves.length * 10;
+  const totalPositions = shelves.length * POSITIONS_PER_SHELF;
   const perType = (t: DocType) => contents.filter((c) => c.documentType === t).length;
 
   /* ---- search: across the documents actually in boxes ---- */
@@ -614,7 +618,7 @@ export function ShelfMapPage() {
       <PageTransition className="space-y-5">
         <PageHeader
           title="Records Room"
-          description="Approved Records Management documents, filed automatically into boxes — five levels to a shelf, two boxes to a level."
+          description="Approved Records Management documents, filed automatically into boxes — five levels to a shelf, three boxes to a level."
           actions={
             <div className="flex flex-wrap items-center gap-2">
               <Button variant="ghost" onClick={() => navigate("/records")}>
@@ -823,7 +827,7 @@ export function ShelfMapPage() {
         open={newShelfOpen}
         onOpenChange={setNewShelfOpen}
         title="Add a shelf"
-        description="It comes with levels A to E, two box positions each. Name it the way the office already refers to it."
+        description="It comes with levels A to E, three box positions each. Name it the way the office already refers to it."
         icon={Archive}
         confirmLabel="Add Shelf"
         loading={saving}

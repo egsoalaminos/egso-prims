@@ -196,7 +196,7 @@ export function BoxDrawer({
                 {shelves.map((shelf) => (
                   <div key={shelf.id}>
                     <div className="pb-1 text-[12px] font-semibold text-neutral-900">{shelf.name}</div>
-                    <div className="grid grid-cols-[1.5rem_minmax(0,1fr)_minmax(0,1fr)] items-center gap-1.5">
+                    <div className="grid grid-cols-[1.5rem_repeat(3,minmax(0,1fr))] items-center gap-1.5">
                       {shelf.levels.map((level) => (
                         <React.Fragment key={level.id}>
                           <span className="grid h-6 w-6 place-items-center rounded-[2px] bg-neutral-900 text-[11.5px] font-bold text-white">
@@ -214,7 +214,9 @@ export function BoxDrawer({
                                 aria-label={`${shelf.name}, level ${level.label}, box ${slot}${here ? ", this box" : occupied ? ", taken" : ", empty"}`}
                                 className="rounded-[3px] border border-neutral-300 bg-white px-2 py-1.5 text-left text-[12px] text-neutral-800 transition hover:border-neutral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-ring) disabled:cursor-default disabled:border-dashed disabled:bg-transparent disabled:text-neutral-400"
                               >
-                                Box {slot} · {here ? "this box" : occupied ? "taken" : "empty"}
+                                <span className="block truncate">
+                                  Box {slot} · {here ? "this box" : occupied ? "taken" : "empty"}
+                                </span>
                               </button>
                             );
                           })}
